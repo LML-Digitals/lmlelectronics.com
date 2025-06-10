@@ -10,6 +10,13 @@ import {
   Shield,
   Check,
 } from "lucide-react";
+
+// Add Square SDK type declaration
+declare global {
+  interface Window {
+    Square: any;
+  }
+}
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -26,6 +33,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   useCartStore,
   useCartShippingCost,
+  useCartTaxAmount,
   useCartDiscountAmount,
 } from "@/store/cartStore";
 import { formatPrice } from "../../types/product";
@@ -49,8 +57,6 @@ export default function CheckoutPage() {
   const cart = useCartStore((state) => state.cart);
   const getTotalPrice = useCartStore((state) => state.getTotalPrice);
   const getTotalItems = useCartStore((state) => state.getTotalItems);
-  const shippingCost = useCartShippingCost();
-  const discountAmount = useCartDiscountAmount();
   const clearCart = useCartStore((state) => state.clearCart);
 
   const [form, setForm] = useState<CheckoutForm>({
@@ -68,9 +74,30 @@ export default function CheckoutPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "paypal">("card");
+  const [shippingCost, setShippingCost] = useState<number>(5.99);
+  const [taxAmount, setTaxAmount] = useState<number>(0);
+  const [calculationsLoading, setCalculationsLoading] =
+    useState<boolean>(false);
+  const [squareLoaded, setSquareLoaded] = useState(false);
+  const [cardForm, setCardForm] = useState<any>(null);
+  const [paymentComplete, setPaymentComplete] = useState(false);
+
+  // Calculate shipping and tax based on address
+  const shippingAddress =
+    form.address && form.city && form.state && form.zipCode
+      ? {
+          address: form.address,
+          city: form.city,
+          state: form.state,
+          zipCode: form.zipCode,
+          country: form.country,
+        }
+      : undefined;
+
+  const discountAmount = useCartDiscountAmount();
 
   const subtotal = getTotalPrice();
-  const total = subtotal + shippingCost - discountAmount;
+  const total = subtotal + shippingCost + taxAmount - discountAmount;
 
   // Redirect if cart is empty
   useEffect(() => {
@@ -78,6 +105,126 @@ export default function CheckoutPage() {
       router.push("/cart");
     }
   }, [cart.items.length, router]);
+
+  // Load Square Web Payments SDK
+  useEffect(() => {
+    const loadSquareSDK = () => {
+      if (window.Square) {
+        setSquareLoaded(true);
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://web.squarecdn.com/v1/square.js";
+      script.onload = () => setSquareLoaded(true);
+      script.onerror = () => {
+        console.error("Failed to load Square SDK");
+        toast.error("Payment system unavailable. Please try again later.");
+      };
+      document.head.appendChild(script);
+    };
+
+    loadSquareSDK();
+  }, []);
+
+  // Initialize Square payment form when SDK is loaded
+  useEffect(() => {
+    if (!squareLoaded || cardForm) return;
+
+    const initializeSquareForm = async () => {
+      try {
+        const applicationId = process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID;
+        const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID;
+
+        if (!applicationId || !locationId) {
+          console.error("Square configuration missing");
+          toast.error("Payment system configuration error");
+          return;
+        }
+
+        const payments = window.Square.payments(applicationId, locationId);
+        const card = await payments.card();
+        await card.attach("#card-container");
+        setCardForm(card);
+      } catch (error) {
+        console.error("Error initializing Square payment form:", error);
+        toast.error("Failed to load payment form");
+      }
+    };
+
+    initializeSquareForm();
+  }, [squareLoaded]);
+
+  // Calculate shipping and tax when address changes
+  useEffect(() => {
+    if (!shippingAddress || cart.items.length === 0) {
+      // Fallback to simple calculation
+      const totalPrice = cart.items.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+      setShippingCost(totalPrice >= 5000 ? 0 : 5.99); // 5000 cents = $50
+      setTaxAmount(0);
+      return;
+    }
+
+    const calculateCosts = async () => {
+      setCalculationsLoading(true);
+      try {
+        const items = cart.items.map((item) => ({
+          id: item.id,
+          name: item.product.name,
+          price: item.price / 100, // Convert from cents to dollars
+          quantity: item.quantity,
+          catalogObjectId: item.variationId,
+        }));
+
+        // Calculate shipping and tax in parallel
+        const [shippingResponse, taxResponse] = await Promise.all([
+          fetch("/api/calculate/shipping", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              items,
+              shippingAddress,
+              method: "STANDARD",
+            }),
+          }),
+          fetch("/api/calculate/tax", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items, shippingAddress }),
+          }),
+        ]);
+
+        const [shippingResult, taxResult] = await Promise.all([
+          shippingResponse.json(),
+          taxResponse.json(),
+        ]);
+
+        if (shippingResult.success) {
+          setShippingCost(shippingResult.data.cost);
+        }
+
+        if (taxResult.success) {
+          setTaxAmount(taxResult.data.totalTax);
+        }
+      } catch (error) {
+        console.error("Failed to calculate costs:", error);
+        // Fallback to simple calculation
+        const totalPrice = cart.items.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        setShippingCost(totalPrice >= 5000 ? 0 : 5.99);
+        setTaxAmount(0);
+      } finally {
+        setCalculationsLoading(false);
+      }
+    };
+
+    calculateCosts();
+  }, [shippingAddress, cart.items]);
 
   const handleInputChange = (
     field: keyof CheckoutForm,
@@ -122,10 +269,27 @@ export default function CheckoutPage() {
 
     if (!validateForm()) return;
 
+    if (!cardForm) {
+      toast.error(
+        "Payment form not ready. Please wait a moment and try again."
+      );
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Create order with Square
+      // Step 1: Get payment token from the card form
+      const tokenResult = await cardForm.tokenize();
+
+      if (tokenResult.status !== "OK") {
+        const errorMessage =
+          tokenResult.errors?.[0]?.message ||
+          "Failed to process payment method";
+        throw new Error(errorMessage);
+      }
+
+      // Step 2: Create order with Square
       const orderData = {
         items: cart.items.map((item) => ({
           id: item.id,
@@ -150,12 +314,13 @@ export default function CheckoutPage() {
         totals: {
           subtotal,
           shipping: shippingCost,
+          tax: taxAmount,
           discount: discountAmount,
           total,
         },
       };
 
-      const response = await fetch("/api/orders", {
+      const orderResponse = await fetch("/api/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,26 +328,49 @@ export default function CheckoutPage() {
         body: JSON.stringify(orderData),
       });
 
-      if (!response.ok) {
+      if (!orderResponse.ok) {
         throw new Error("Failed to create order");
       }
 
-      const { orderId, paymentUrl } = await response.json();
+      const { orderId } = await orderResponse.json();
 
-      // Clear cart and redirect to payment
-      clearCart();
+      // Step 3: Process payment with Square
+      const paymentResponse = await fetch("/api/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sourceId: tokenResult.token,
+          orderId: orderId,
+          amount: Math.round(total), // Amount in cents
+          currency: "USD",
+        }),
+      });
 
-      if (paymentMethod === "card") {
-        // Redirect to Square payment page or handle in-app payment
-        window.location.href = paymentUrl || `/payment/${orderId}`;
-      } else {
-        // Handle PayPal payment
-        toast.success("Redirecting to PayPal...");
-        // Implement PayPal integration
+      const paymentResult = await paymentResponse.json();
+
+      if (!paymentResult.success) {
+        throw new Error(paymentResult.error || "Payment failed");
       }
+
+      // Step 4: Success! Clear cart and redirect to order details
+      setPaymentComplete(true);
+      clearCart();
+      toast.success("Payment processed successfully!");
+
+      // Redirect to order details page after short delay
+      // setTimeout(() => {
+      //   router.push(`/orders/${orderId}`);
+      // }, 2000);
+      router.push(`/payment/success`);
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error("Failed to process order. Please try again.");
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Payment failed. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -209,7 +397,7 @@ export default function CheckoutPage() {
             </div>
             <div className="flex items-center">
               <Truck className="w-4 h-4 mr-2" />
-              Free Shipping $50+
+              Fast Delivery
             </div>
             <div className="flex items-center">
               <Check className="w-4 h-4 mr-2" />
@@ -388,8 +576,22 @@ export default function CheckoutPage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="AL">Alabama</SelectItem>
+                          <SelectItem value="WA">Washington</SelectItem>
+                          <SelectItem value="AK">Alaska</SelectItem>
+                          <SelectItem value="AZ">Arizona</SelectItem>
+                          <SelectItem value="AR">Arkansas</SelectItem>
+                          <SelectItem value="CA">California</SelectItem>
+                          <SelectItem value="CO">Colorado</SelectItem>
+                          <SelectItem value="CT">Connecticut</SelectItem>
+                          <SelectItem value="DE">Delaware</SelectItem>
                           <SelectItem value="CA">California</SelectItem>
                           <SelectItem value="FL">Florida</SelectItem>
+                          <SelectItem value="GA">Georgia</SelectItem>
+                          <SelectItem value="HI">Hawaii</SelectItem>
+                          <SelectItem value="ID">Idaho</SelectItem>
+                          <SelectItem value="IL">Illinois</SelectItem>
+                          <SelectItem value="IN">Indiana</SelectItem>
+                          <SelectItem value="IA">Iowa</SelectItem>
                           <SelectItem value="NY">New York</SelectItem>
                           <SelectItem value="TX">Texas</SelectItem>
                           {/* Add more states as needed */}
@@ -428,7 +630,7 @@ export default function CheckoutPage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="US">United States</SelectItem>
-                          <SelectItem value="CA">Canada</SelectItem>
+                          {/* <SelectItem value="CA">Canada</SelectItem> */}
                         </SelectContent>
                       </Select>
                     </div>
@@ -486,7 +688,9 @@ export default function CheckoutPage() {
                       }
                       onClick={() => setPaymentMethod("paypal")}
                       className={`h-14 text-base ${
-                        paymentMethod === "paypal" ? "text-black shadow-lg" : ""
+                        paymentMethod === "paypal"
+                          ? "text-black shadow-lg"
+                          : ""
                       }`}
                       style={
                         paymentMethod === "paypal"
@@ -497,6 +701,31 @@ export default function CheckoutPage() {
                       PayPal
                     </Button> */}
                   </div>
+
+                  {/* Square Payment Form */}
+                  {paymentMethod === "card" && (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Card Information
+                        </label>
+                        <div
+                          id="card-container"
+                          className="bg-white border border-gray-300 rounded-lg p-4 min-h-[60px]"
+                          style={{ minHeight: "60px" }}
+                        >
+                          {!cardForm && (
+                            <div className="flex items-center justify-center h-full text-gray-500">
+                              {squareLoaded
+                                ? "Loading payment form..."
+                                : "Loading Square SDK..."}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <p className="text-sm text-green-800 flex items-center">
                       <Lock className="w-4 h-4 mr-2" />
@@ -571,12 +800,22 @@ export default function CheckoutPage() {
                       <div className="text-right">
                         <span className="font-semibold">
                           {shippingCost > 0
-                            ? formatPrice(shippingCost)
-                            : "Free"}
+                            ? "$" + formatPrice(Math.round(shippingCost * 100))
+                            : "$0.00"}
                         </span>
-                        {subtotal >= 50 && (
-                          <div className="text-xs text-green-600">
-                            Free shipping applied!
+                      </div>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Tax</span>
+                      <div className="text-right">
+                        <span className="font-semibold">
+                          {taxAmount > 0
+                            ? formatPrice(Math.round(taxAmount * 100))
+                            : "$0.00"}
+                        </span>
+                        {calculationsLoading && (
+                          <div className="text-xs text-gray-500">
+                            Calculating...
                           </div>
                         )}
                       </div>
@@ -598,18 +837,25 @@ export default function CheckoutPage() {
 
                   <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || !cardForm || paymentComplete}
                     className="w-full text-black font-bold text-lg py-4 shadow-lg hover:opacity-90 transition-opacity cursor-pointer"
                     size="lg"
                     style={{ backgroundColor: "#FDF200" }}
                   >
-                    {isLoading ? (
+                    {paymentComplete ? (
+                      <div className="flex items-center space-x-2">
+                        <Check className="w-5 h-5 text-green-600" />
+                        <span>Payment Successful!</span>
+                      </div>
+                    ) : isLoading ? (
                       <div className="flex items-center space-x-2">
                         <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                        <span>Processing...</span>
+                        <span>Processing Payment...</span>
                       </div>
+                    ) : !cardForm ? (
+                      "Loading Payment Form..."
                     ) : (
-                      `Complete Order • ${formatPrice(total)}`
+                      `Pay Now • ${formatPrice(total)}`
                     )}
                   </Button>
 

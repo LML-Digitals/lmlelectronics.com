@@ -231,8 +231,8 @@ async function FilterSidebar({
 // Product Card Component
 function ProductCard({ product }: { product: Product }) {
   const primaryImage = product.images[0];
-  console.log(product);
-  console.log(primaryImage);
+  // console.log(product);
+  // console.log(primaryImage);
 
   return (
     <Link

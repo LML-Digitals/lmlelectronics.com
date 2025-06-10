@@ -1,3 +1,4 @@
+import React from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Product } from "@/types/product";
@@ -121,12 +122,121 @@ export const useCartStore = create<CartStore>()(
   )
 );
 
-// Helper hooks for additional cart calculations
-export const useCartShippingCost = () => {
-  const totalPrice = useCartStore((state) => state.getTotalPrice());
+// Helper hooks for additional cart calculations with Square integration
+export const useCartShippingCost = (
+  shippingAddress?: {
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  },
+  method: "STANDARD" | "EXPRESS" | "OVERNIGHT" = "STANDARD"
+) => {
+  const cartItems = useCartStore((state) => state.cart.items);
+  const [shippingCost, setShippingCost] = React.useState<number>(5.99);
+  const [loading, setLoading] = React.useState<boolean>(false);
 
-  // Free shipping over $50, otherwise $5.99
-  return totalPrice >= 50 ? 0 : 5.99;
+  React.useEffect(() => {
+    if (!shippingAddress || cartItems.length === 0) {
+      // Fallback to simple calculation
+      const totalPrice = cartItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+      setShippingCost(totalPrice >= 50 ? 0 : 5.99);
+      return;
+    }
+
+    const calculateShipping = async () => {
+      setLoading(true);
+      try {
+        const items = cartItems.map((item) => ({
+          id: item.id,
+          name: item.product.name,
+          price: item.price / 100, // Convert from cents to dollars
+          quantity: item.quantity,
+        }));
+
+        const response = await fetch("/api/calculate/shipping", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items, shippingAddress, method }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          setShippingCost(result.data.cost);
+        }
+      } catch (error) {
+        console.error("Failed to calculate shipping:", error);
+        // Fallback to simple calculation
+        const totalPrice = cartItems.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        setShippingCost(totalPrice >= 50 ? 0 : 5.99);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    calculateShipping();
+  }, [cartItems, shippingAddress, method]);
+
+  return { cost: shippingCost, loading };
+};
+
+export const useCartTaxAmount = (shippingAddress?: {
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}) => {
+  const cartItems = useCartStore((state) => state.cart.items);
+  const [taxAmount, setTaxAmount] = React.useState<number>(0);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (!shippingAddress || cartItems.length === 0) {
+      setTaxAmount(0);
+      return;
+    }
+
+    const calculateTax = async () => {
+      setLoading(true);
+      try {
+        const items = cartItems.map((item) => ({
+          id: item.id,
+          name: item.product.name,
+          price: item.price / 100, // Convert from cents to dollars
+          quantity: item.quantity,
+          catalogObjectId: item.variationId,
+        }));
+
+        const response = await fetch("/api/calculate/tax", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items, shippingAddress }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          setTaxAmount(result.data.totalTax);
+        }
+      } catch (error) {
+        console.error("Failed to calculate tax:", error);
+        setTaxAmount(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    calculateTax();
+  }, [cartItems, shippingAddress]);
+
+  return { amount: taxAmount, loading };
 };
 
 export const useCartDiscountAmount = () => {

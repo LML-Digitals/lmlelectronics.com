@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -15,8 +15,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatPrice } from "../../../types/product";
 import { SquareOrder } from "@/types/square";
+import { getCustomerById } from "@/lib/square/customers";
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
@@ -24,6 +25,10 @@ export default function PaymentSuccessPage() {
   const [order, setOrder] = useState<SquareOrder | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [customerInfo, setCustomerInfo] = useState<{
+    name: string;
+    email: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!orderId) {
@@ -45,6 +50,11 @@ export default function PaymentSuccessPage() {
 
         if (result.success && result.order) {
           setOrder(result.order);
+          const customer = await getCustomerById(result.order.customerId || "");
+          setCustomerInfo({
+            name: customer?.givenName || customer?.familyName || "Customer",
+            email: customer?.emailAddress || "customer@example.com",
+          });
         } else {
           throw new Error("Order not found");
         }
@@ -132,7 +142,7 @@ export default function PaymentSuccessPage() {
   }
 
   const orderTotal = calculateOrderTotal(order);
-  const customerInfo = getCustomerInfo(order);
+  // const customerInfo = getCustomerInfo(order);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -170,11 +180,11 @@ export default function PaymentSuccessPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Customer:</span>
-                  <span>{customerInfo.name}</span>
+                  <span>{customerInfo?.name}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Email:</span>
-                  <span>{customerInfo.email}</span>
+                  <span>{customerInfo?.email}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Items:</span>
@@ -334,5 +344,24 @@ export default function PaymentSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading payment details...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }

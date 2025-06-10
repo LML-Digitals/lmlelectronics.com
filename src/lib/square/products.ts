@@ -59,7 +59,7 @@ export async function getCategoryById(
   categoryId: string
 ): Promise<SquareCategory | null> {
   try {
-    // Use search to find specific category by ID
+    // Use search to find specific category by ID with location filter
     const response = await squareClient.catalog.search({
       objectTypes: ["CATEGORY"],
       includeDeletedObjects: false,
@@ -101,24 +101,17 @@ export async function searchProducts(
   filters: ProductSearchFilters = {}
 ): Promise<ProductSearchResult> {
   try {
-    // First get available categories for smart assignment
-    const availableCategories = await getCategories();
-    // console.log(
-    //   `📂 Available categories for assignment: ${availableCategories.length}`
-    // );
-
+    // Build search request
     const searchRequest: any = {
-      objectTypes: ["ITEM"],
+      objectTypes: ["ITEM", "CATEGORY"],
       includeDeletedObjects: false,
       includeRelatedObjects: true,
       cursor: filters.cursor,
       limit: filters.limit || 500,
+      categoryIds: filters.categoryIds || [],
     };
 
-    // console.log(`🔍 Search request:`, JSON.stringify(searchRequest, null, 2));
-
-    // Build query based on filters
-    // Only add text search query - we'll handle category filtering client-side after smart assignment
+    // Add text search if specified (prioritize text search over category filtering)
     if (filters.query && filters.query.trim()) {
       searchRequest.query = {
         prefixQuery: {
@@ -126,8 +119,10 @@ export async function searchProducts(
           attributePrefix: filters.query,
         },
       };
-      // console.log(`🔍 Added text query: "${filters.query}"`);
     }
+    // Note: Category filtering will be applied client-side since Square API
+    // only allows one query type and we prioritize text search
+    console.log("searchRequest", searchRequest);
 
     const response = await squareClient.catalog.search(searchRequest);
 
@@ -139,77 +134,53 @@ export async function searchProducts(
     const objects = response.objects || [];
     const relatedObjects = response.relatedObjects || [];
 
-    // console.log(`📦 Square API returned ${objects.length} objects`);
-    // console.log(
-    //   `🔗 Square API returned ${relatedObjects.length} related objects`
-    // );
+    console.log(`🔍 Filtered from ${objects.length} Square objects`);
 
-    // Debug: Log types of related objects
-    const relatedObjectTypes = relatedObjects.reduce((acc: any, obj: any) => {
-      acc[obj.type] = (acc[obj.type] || 0) + 1;
-      return acc;
-    }, {});
-    // console.log(`Related object types:`, relatedObjectTypes);
+    // console.log("objects", objects);
 
-    // Convert Square objects to our Product format
-    const products = objects
+    // Filter Square objects FIRST before conversion - more efficient
+    const filteredObjects = objects
       .filter((obj: any) => obj.type === "ITEM")
-      .map((obj: any) =>
-        convertSquareObjectToProduct(obj, relatedObjects, availableCategories)
-      )
+      .filter((obj: any) => {
+        // Filter based on Square's actual ecommerce availability properties
+        const itemData = obj?.itemData || obj?.item_data;
+
+        // Check if product is available for ecommerce and visible
+        const ecomAvailable = itemData?.ecom_available === true;
+        const ecomVisibility = itemData?.ecom_visibility;
+        const isVisible =
+          ecomVisibility !== "UNAVAILABLE" && ecomVisibility !== "UNINDEXED";
+        const isNotArchived = !itemData?.isArchived;
+
+        return ecomAvailable && isVisible && isNotArchived;
+      })
+      // // Apply category filter at the object level if API doesn't support it
+      // .filter((obj: any) => {
+      //   if (!filters.categoryIds || filters.categoryIds.length === 0) {
+      //     return true; // No category filter
+      //   }
+
+      //   const itemData = obj?.itemData || obj?.item_data;
+      //   return (
+      //     itemData?.categoryId &&
+      //     filters.categoryIds.includes(itemData.categoryId)
+      //   );
+      // });
+
+    console.log(`✅ After filtering: ${filteredObjects.length} products`);
+
+    // Convert filtered Square objects to our Product format
+    const products = filteredObjects
+      .map((obj: any) => convertSquareObjectToProduct(obj, relatedObjects))
       .filter(
         (product: Product | null): product is Product => product !== null
       );
 
-    // console.log(`✅ Converted ${products.length} products successfully`);
-
-    // Apply category filtering if specified (now that we have smart assignments)
-    let filteredProducts = products;
-    if (filters.categoryIds && filters.categoryIds.length > 0) {
-      // console.log(
-      //   `🏷️ Filtering products by categories: ${filters.categoryIds.join(", ")}`
-      // );
-      // console.log(
-      //   `📦 Total products before category filtering: ${products.length}`
-      // );
-
-      // Debug: Log all product categories
-      // products.forEach((product, index) => {
-      //   console.log(
-      //     `Product ${index + 1}: "${product.name}" - Category: ${
-      //       product.category?.id || "No category"
-      //     } (${product.category?.name || "N/A"})`
-      //   );
-      // });
-
-      filteredProducts = products.filter((product: Product) => {
-        const hasCategory =
-          product.category &&
-          filters.categoryIds!.includes(product.category.id);
-        if (hasCategory) {
-          // console.log(
-          //   `✅ Product "${product.name}" matches category ${product.category?.id}`
-          // );
-        }
-        return hasCategory;
-      });
-
-      // console.log(
-      //   `📊 Products after category filtering: ${filteredProducts.length}`
-      // );
-    } else {
-      // No category filter - show all products with their assigned categories
-      filteredProducts = products;
-    }
-
     // Apply price filtering if specified
+    let finalProducts = products;
+
     if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
-      // console.log(
-      //   `💰 Applying price filters: ${filters.priceMin || "no min"} - ${
-      //     filters.priceMax || "no max"
-      //   }`
-      // );
-      filteredProducts = filteredProducts.filter((product: Product) => {
+      finalProducts = products.filter((product: Product) => {
         const productPrice = product.price / 100; // Convert from cents to dollars
         if (filters.priceMin !== undefined && productPrice < filters.priceMin) {
           return false;
@@ -219,14 +190,11 @@ export async function searchProducts(
         }
         return true;
       });
-      // console.log(
-      //   `💰 Products after price filtering: ${filteredProducts.length}`
-      // );
     }
 
     // Apply sorting
     if (filters.sortBy) {
-      filteredProducts.sort((a: Product, b: Product) => {
+      finalProducts.sort((a: Product, b: Product) => {
         let comparison = 0;
 
         switch (filters.sortBy) {
@@ -253,7 +221,7 @@ export async function searchProducts(
     }
 
     return {
-      products: filteredProducts,
+      products: finalProducts,
       pagination: {
         cursor: response.cursor,
         hasMore: !!response.cursor,
@@ -281,7 +249,7 @@ export async function getFeaturedProducts(
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   try {
     // First, search for products to find the one with matching slug
-    const searchResult = await searchProducts({ limit: 100 });
+    const searchResult = await searchProducts({ limit: 500 });
 
     const product = searchResult.products.find((p: Product) => p.slug === slug);
 
@@ -304,7 +272,7 @@ export async function getProductById(
   productId: string
 ): Promise<Product | null> {
   try {
-    // Use search to find specific product by ID since direct retrieval method is unclear
+    // Use search to find specific product by ID with location filter
     const response = await squareClient.catalog.search({
       objectTypes: ["ITEM"],
       includeDeletedObjects: false,
@@ -320,13 +288,27 @@ export async function getProductById(
       return null;
     }
 
+    // Check ecommerce availability FIRST before conversion
+    const productItem = product as any;
+    const itemData = productItem?.itemData || productItem?.item_data;
+    const ecomAvailable = itemData?.ecom_available === true;
+    const ecomVisibility = itemData?.ecom_visibility;
+    const isVisible =
+      ecomVisibility !== "UNAVAILABLE" && ecomVisibility !== "UNINDEXED";
+    const isNotArchived = !itemData?.isArchived;
+
+    // Product should be ecom available, visible, and not archived
+    if (!ecomAvailable || !isVisible || !isNotArchived) {
+      return null;
+    }
+
     const relatedObjects = response.relatedObjects || [];
-    const availableCategories = await getCategories();
-    return convertSquareObjectToProduct(
+    const convertedProduct = convertSquareObjectToProduct(
       product,
-      relatedObjects,
-      availableCategories
+      relatedObjects
     );
+
+    return convertedProduct;
   } catch (error) {
     console.error("Error fetching product by ID:", error);
     return null;
@@ -370,7 +352,7 @@ export async function getInventory(
   try {
     // For now, return empty inventory until we figure out the correct method
     // TODO: Implement proper inventory retrieval when method is confirmed
-    console.log("Inventory retrieval not yet implemented:", catalogObjectIds);
+    // console.log("Inventory retrieval not yet implemented:", catalogObjectIds);
     return {};
   } catch (error) {
     console.error("Error fetching inventory:", error);
@@ -383,8 +365,7 @@ export async function getInventory(
  */
 function convertSquareObjectToProduct(
   catalogObject: any,
-  relatedObjects: any[] = [],
-  availableCategories: SquareCategory[]
+  relatedObjects: any[] = []
 ): Product | null {
   try {
     const item = catalogObject;
@@ -404,62 +385,6 @@ function convertSquareObjectToProduct(
     //     `Related Object ${index + 1}: Type=${obj.type}, ID=${obj.id}`
     //   );
     // });
-
-    // Find category name from related objects
-    let categoryName = "";
-    let finalCategory: { id: string; name: string } | undefined;
-
-    if (itemData.categoryId) {
-      // console.log(`🔍 Looking for category with ID: ${itemData.categoryId}`);
-      const category = relatedObjects.find(
-        (obj: any) => obj.id === itemData.categoryId
-      );
-
-      if (category) {
-        categoryName = category?.categoryData?.name || "";
-        finalCategory = {
-          id: itemData.categoryId,
-          name: categoryName,
-        };
-        // console.log(`✅ Found category: ${categoryName}`);
-      } else {
-        // console.log(`❌ Category not found in related objects`);
-
-        // Debug: Show what category IDs are available
-        const categoryObjects = relatedObjects.filter(
-          (obj) => obj.type === "CATEGORY"
-        );
-        console.log(
-          `Available categories: ${categoryObjects
-            .map((c) => `${c.id}:${c.categoryData?.name}`)
-            .join(", ")}`
-        );
-
-        // Fallback: Use a placeholder name based on category ID
-        categoryName = `Category ${itemData.categoryId.slice(-4)}`;
-        finalCategory = {
-          id: itemData.categoryId,
-          name: categoryName,
-        };
-        // console.log(`🔧 Using fallback category name: ${categoryName}`);
-      }
-    } else {
-      // Smart category assignment based on product name
-      // console.log(
-      //   `🤖 No category assigned, attempting smart assignment for: ${itemData.name}`
-      // );
-      finalCategory = assignCategoryToProduct(
-        itemData.name,
-        availableCategories
-      );
-      // if (finalCategory) {
-      //   // console.log(
-      //   //   `✨ Auto-assigned category: ${finalCategory.name} (${finalCategory.id})`
-      //   // );
-      // } else {
-      //   // console.log(`❌ Could not auto-assign category`);
-      // }
-    }
 
     // Find images from related objects
     const productImages = [];
@@ -513,6 +438,25 @@ function convertSquareObjectToProduct(
       inStock: true, // Will be updated with inventory data
     }));
 
+    // Find category from related objects - use only Square's actual categories
+    let finalCategory: { id: string; name: string } | undefined;
+
+    if (itemData.categoryId) {
+      const category = relatedObjects.find(
+        (obj: any) => obj.id === itemData.categoryId && obj.type === "CATEGORY"
+      );
+
+      if (category && category.categoryData) {
+        finalCategory = {
+          id: itemData.categoryId,
+          name: category.categoryData.name || "Unknown Category",
+        };
+      }
+      // If category not found in related objects, we simply don't assign one
+      // This means the product has a categoryId but the category data wasn't included
+    }
+    // If no categoryId, product has no category (undefined)
+
     return {
       id: item.id,
       name: itemData.name,
@@ -535,109 +479,4 @@ function convertSquareObjectToProduct(
     console.error("Error converting Square object to Product:", error);
     return null;
   }
-}
-
-/**
- * Programmatically assign category to products based on product name
- * This is a temporary solution until categories are properly assigned in Square
- */
-function assignCategoryToProduct(
-  productName: string,
-  availableCategories: SquareCategory[]
-): { id: string; name: string } | undefined {
-  const name = productName.toLowerCase();
-
-  // Define category keywords
-  const categoryMappings = [
-    {
-      keywords: ["iphone", "apple", "ios"],
-      priority: 1,
-      fallbackName: "iPhone Repair",
-    },
-    {
-      keywords: ["samsung", "galaxy"],
-      priority: 1,
-      fallbackName: "Samsung Repair",
-    },
-    {
-      keywords: ["google", "pixel"],
-      priority: 1,
-      fallbackName: "Google Pixel",
-    },
-    {
-      keywords: ["case", "cover", "bumper", "protection"],
-      priority: 2,
-      fallbackName: "Cases & Covers",
-    },
-    {
-      keywords: ["glass", "screen", "protector", "tempered"],
-      priority: 2,
-      fallbackName: "Screen Protection",
-    },
-    {
-      keywords: ["charger", "cable", "adapter", "power"],
-      priority: 2,
-      fallbackName: "Charging Accessories",
-    },
-    {
-      keywords: ["battery", "power bank"],
-      priority: 2,
-      fallbackName: "Batteries",
-    },
-    {
-      keywords: ["tool", "kit", "repair"],
-      priority: 2,
-      fallbackName: "Repair Tools",
-    },
-  ];
-
-  // Find the best matching category
-  let bestMatch: { id: string; name: string } | undefined = undefined;
-  let highestPriority = 0;
-  let mostMatches = 0;
-
-  for (const mapping of categoryMappings) {
-    const matches = mapping.keywords.filter((keyword) =>
-      name.includes(keyword)
-    ).length;
-
-    if (matches > 0) {
-      // Higher priority or more keyword matches wins
-      if (
-        mapping.priority > highestPriority ||
-        (mapping.priority === highestPriority && matches > mostMatches)
-      ) {
-        // Try to find a real category that matches
-        const realCategory = availableCategories.find((cat) =>
-          mapping.keywords.some((keyword) =>
-            cat.categoryData.name.toLowerCase().includes(keyword)
-          )
-        );
-
-        if (realCategory) {
-          bestMatch = {
-            id: realCategory.id,
-            name: realCategory.categoryData.name,
-          };
-        } else {
-          // Use the first available category as fallback
-          bestMatch =
-            availableCategories.length > 0
-              ? {
-                  id: availableCategories[0].id,
-                  name: mapping.fallbackName,
-                }
-              : {
-                  id: "auto-generated",
-                  name: mapping.fallbackName,
-                };
-        }
-
-        highestPriority = mapping.priority;
-        mostMatches = matches;
-      }
-    }
-  }
-
-  return bestMatch;
 }

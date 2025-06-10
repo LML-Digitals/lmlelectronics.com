@@ -31,7 +31,7 @@ export default function CartPage() {
   const clearCart = useCartStore((state) => state.clearCart);
   const getTotalPrice = useCartStore((state) => state.getTotalPrice);
   const getTotalItems = useCartStore((state) => state.getTotalItems);
-  const shippingCost = useCartShippingCost();
+  const { cost: shippingCost } = useCartShippingCost();
   const discountAmount = useCartDiscountAmount();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -222,7 +222,7 @@ export default function CartPage() {
                 </div>
                 <div className="flex items-center">
                   <Truck className="w-4 h-4 mr-1 text-blue-600" />
-                  Free Shipping $50+
+                  Fast Delivery
                 </div>
               </div>
             </div>
@@ -255,13 +255,8 @@ export default function CartPage() {
                     <span className="text-gray-600">Shipping</span>
                     <div className="text-right">
                       <span className="font-semibold">
-                        {shippingCost > 0 ? formatPrice(shippingCost) : "Free"}
+                        {shippingCost > 0 ? formatPrice(shippingCost) : 0}
                       </span>
-                      {subtotal >= 50 && (
-                        <div className="text-xs text-green-600">
-                          Free shipping applied!
-                        </div>
-                      )}
                     </div>
                   </div>
 
@@ -307,7 +302,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex items-center space-x-3 text-sm text-gray-600">
                     <Truck className="w-5 h-5 text-blue-600" />
-                    <span>Free shipping on orders over $50</span>
+                    <span>Fast Delivery</span>
                   </div>
                   <div className="text-center text-xs text-gray-500 pt-2">
                     30-day return policy • Expert customer support

@@ -20,7 +20,9 @@ interface HeaderClientProps {
 export function HeaderClient({ navigation }: HeaderClientProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const getTotalItems = useCartStore((state) => state.getTotalItems);
+  const totalItems = useCartStore((state) =>
+    state.cart.items.reduce((total, item) => total + item.quantity, 0)
+  );
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -42,9 +44,9 @@ export function HeaderClient({ navigation }: HeaderClientProps) {
               <span>📧 support@lmlelectronics.com</span>
             </div>
             <div className="hidden md:flex items-center space-x-4">
-              <span>Free shipping on orders over $50</span>
+              <span>Fast Delivery</span>
               <span>•</span>
-              <span>30-day return policy</span>
+              <span>Free Shipping</span>
             </div>
           </div>
         </div>
@@ -94,12 +96,12 @@ export function HeaderClient({ navigation }: HeaderClientProps) {
             <Link href="/cart" className="relative group">
               <Button variant="ghost" size="sm" className="p-2">
                 <ShoppingCart className="h-6 w-6 text-gray-700 group-hover:text-yellow-600" />
-                {getTotalItems() > 0 && (
+                {totalItems > 0 && (
                   <span
                     className="absolute -top-1 -right-1 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold shadow-sm"
                     style={{ backgroundColor: "#FDF200" }}
                   >
-                    {getTotalItems()}
+                    {totalItems}
                   </span>
                 )}
               </Button>
