@@ -1,0 +1,8 @@
+# Product Placeholder Image
+
+This file should be a 800x600 placeholder image for products without images.
+You can replace this with an actual image file or use a service like:
+- https://placehold.co/800x600/cccccc/666666?text=No+Image
+- Or create a simple gray placeholder image
+
+The image should be named "product-placeholder.jpg" and placed in the public/images/ directory. 
