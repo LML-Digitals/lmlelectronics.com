@@ -1,4 +1,4 @@
-# LML Electronics Store
+# LML Electronics Store 1.0
 
 A complete e-commerce website built with Next.js 14, TypeScript, and Square API integration.
 
