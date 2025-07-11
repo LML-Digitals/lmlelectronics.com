@@ -1,496 +1,304 @@
-import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  getCategories,
-  getFeaturedProducts,
-  searchProducts,
-} from "@/lib/square/products";
-import { SquareCategory } from "@/types/square";
-import { Product } from "../types/product";
+import Link from "next/link";
+import ProductCarousel from "@/components/products/ProductCarousel";
+import BundleGrid from "@/components/products/BundleGrid";
+import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
+import { InventoryItem } from "@/types/api";
+import { InventoryItemCategory } from "@/types/api";
+import { Product } from "@/components/products/ProductCarousel";
+import { Star, User } from "lucide-react";
 
-const features = [
-  {
-    name: "Expert Repair Guides",
-    description:
-      "Step-by-step instructions with photos and videos to help you repair your devices.",
-    icon: "📱",
-  },
-  {
-    name: "Quality Components",
-    description:
-      "Premium replacement parts and components from trusted manufacturers.",
-    icon: "🔧",
-  },
-  {
-    name: "Fast Shipping",
-    description:
-      "Free shipping on orders over $50. Express delivery available.",
-    icon: "🚚",
-  },
-  {
-    name: "Expert Support",
-    description:
-      "Get help from our certified repair technicians whenever you need it.",
-    icon: "🎧",
-  },
-];
-
-// Stats will come from Square data
-async function getStats() {
+async function getHomePageData() {
   try {
-    const searchResult = await searchProducts();
-    const products = searchResult.products;
-
-    // Calculate real stats
-    const totalProducts = products.length;
-    const totalCategories = searchResult.facets?.categories?.length || 0;
-    const inStockProducts = products.filter((p) => p.inStock).length;
-
-    return [
-      { name: "Products Available", value: `${totalProducts}+` },
-      { name: "Product Categories", value: `${totalCategories}+` },
-      { name: "Items In Stock", value: `${inStockProducts}+` },
-      { name: "Happy Customers", value: "15,000+" }, // This would need to come from orders/customer data
-    ];
-  } catch (error) {
-    console.error("Error fetching stats:", error);
-    // Fallback stats
-    return [
-      { name: "Successful Repairs", value: "50,000+" },
-      { name: "Happy Customers", value: "15,000+" },
-      { name: "Repair Guides", value: "500+" },
-      { name: "Expert Technicians", value: "25+" },
-    ];
-  }
-}
-
-// Get popular categories from Square
-async function getPopularCategories() {
-  try {
-    console.log("🔍 Fetching categories for landing page...");
-    const [categories, searchResult] = await Promise.all([
-      getCategories(),
-      searchProducts(),
+    const [productsResponse, categoriesResponse] = await Promise.all([
+      fetch(buildApiUrl("/api/inventory/items")),
+      fetch(buildApiUrl("/api/inventory/categories")),
     ]);
 
-    console.log(`📂 Found ${categories.length} categories from Square`);
-    console.log(
-      "Categories:",
-      categories.map((c) => ({ id: c.id, name: c.categoryData.name }))
+    const products = await handleApiResponse<Product[]>(productsResponse);
+    const categories = await handleApiResponse<InventoryItemCategory[]>(
+      categoriesResponse
     );
 
-    const products = searchResult.products;
-    console.log(`📦 Found ${products.length} products`);
-
-    // Calculate category popularity and create popular categories
-    const categoryStats = categories
-      .map((category) => {
-        const categoryProducts = products.filter(
-          (p) => p.category?.id === category.id
-        );
-        console.log(
-          `Category "${category.categoryData.name}" has ${categoryProducts.length} products`
-        );
-        return {
-          ...category,
-          productCount: categoryProducts.length,
-        };
-      })
-      .filter((cat) => cat.productCount > 0)
-      .sort((a, b) => b.productCount - a.productCount)
-      .slice(0, 4); // Get top 4 categories
-
-    console.log(`✅ Found ${categoryStats.length} categories with products`);
-
-    if (categoryStats.length === 0) {
-      console.log(
-        "⚠️ No categories with products found, using fallback categories"
-      );
-      // Fallback categories
-      return [
-        {
-          name: "iPhone Repair Kits",
-          description: "Complete repair solutions for all iPhone models",
-          image: "/images/iphone-repair.jpg",
-          href: "/products?category=iphone-repair",
-          color: "bg-yellow-50 text-yellow-800",
-        },
-        {
-          name: "Samsung Galaxy Kits",
-          description: "Professional-grade tools for Samsung devices",
-          image: "/images/samsung-repair.jpg",
-          href: "/products?category=samsung-repair",
-          color: "bg-yellow-100 text-yellow-900",
-        },
-        {
-          name: "Google Pixel Parts",
-          description: "Original and compatible parts for Pixel phones",
-          image: "/images/google-repair.jpg",
-          href: "/products?category=google-repair",
-          color: "bg-amber-50 text-amber-800",
-        },
-        {
-          name: "Universal Tools",
-          description: "Essential tools for all your repair projects",
-          image: "/images/tools.jpg",
-          href: "/products?category=tools",
-          color: "bg-yellow-50 text-yellow-700",
-        },
-      ];
-    }
-
-    return categoryStats.map((category, index) => ({
-      name: category.categoryData.name,
-      description: `Professional solutions for ${category.categoryData.name.toLowerCase()}`,
-      image: "/images/category-placeholder.jpg",
-      href: `/products?category=${category.id}`,
-      color: [
-        "bg-yellow-50 text-yellow-800",
-        "bg-yellow-100 text-yellow-900",
-        "bg-amber-50 text-amber-800",
-        "bg-yellow-50 text-yellow-700",
-      ][index % 4],
-    }));
+    return { products, categories };
   } catch (error) {
-    console.error("❌ Error fetching categories:", error);
-    // Fallback categories
-    return [
-      {
-        name: "iPhone Repair Kits",
-        description: "Complete repair solutions for all iPhone models",
-        image: "/images/iphone-repair.jpg",
-        href: "/products?category=iphone-repair",
-        color: "bg-yellow-50 text-yellow-800",
-      },
-      {
-        name: "Samsung Galaxy Kits",
-        description: "Professional-grade tools for Samsung devices",
-        image: "/images/samsung-repair.jpg",
-        href: "/products?category=samsung-repair",
-        color: "bg-yellow-100 text-yellow-900",
-      },
-      {
-        name: "Google Pixel Parts",
-        description: "Original and compatible parts for Pixel phones",
-        image: "/images/google-repair.jpg",
-        href: "/products?category=google-repair",
-        color: "bg-amber-50 text-amber-800",
-      },
-      {
-        name: "Universal Tools",
-        description: "Essential tools for all your repair projects",
-        image: "/images/tools.jpg",
-        href: "/products?category=tools",
-        color: "bg-yellow-50 text-yellow-700",
-      },
-    ];
+    console.error("Error fetching home page data:", error);
+    return { products: [], categories: [] };
   }
 }
 
 const testimonials = [
   {
-    name: "Sarah Johnson",
+    quote:
+      "The repair kit had everything I needed, and the instructions were super clear. My phone screen looks brand new!",
+    name: "Alex Johnson",
+    role: "Verified Customer",
+  },
+  {
+    quote:
+      "I was about to buy a new tablet, but LML's battery replacement kit saved me hundreds of dollars. The quality is top-notch.",
+    name: "Samantha Lee",
     role: "DIY Enthusiast",
-    content:
-      "The repair kit saved me $300! Clear instructions and quality parts made the iPhone screen replacement easy.",
-    avatar: "SJ",
   },
   {
-    name: "Mike Chen",
-    role: "Tech Repair Shop Owner",
-    content:
-      "LML Electronics is my go-to supplier. Fast shipping, excellent quality, and competitive prices.",
-    avatar: "MC",
-  },
-  {
-    name: "Amanda Rodriguez",
-    role: "College Student",
-    content:
-      "Fixed my Samsung Galaxy with their kit. Great value and the support team was incredibly helpful!",
-    avatar: "AR",
+    quote:
+      "Fast shipping and fantastic customer support. They helped me choose the right components for my custom project.",
+    name: "Michael Chen",
+    role: "Electronics Hobbyist",
   },
 ];
 
 export default async function Home() {
-  const [stats, popularCategories] = await Promise.all([
-    getStats(),
-    getPopularCategories(),
-  ]);
+  const { products, categories } = await getHomePageData();
 
   return (
-    <div className="bg-white">
+    <main className="flex min-h-screen flex-col">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(253, 242, 0, 0.1) 0%, rgba(214, 205, 0, 0.1) 100%)",
-          }}
-        ></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                Find Your Fix.
-                <span
-                  className="block text-yellow-400"
-                  style={{ color: "#FDF200" }}
-                >
-                  Repair Made Simple.
-                </span>
+      <section className="bg-gray-50">
+        <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-16 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {/* Left Column (Text) */}
+            <div className="text-center md:text-left">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight">
+                <span className="block">Your Device,</span>
+                <span className="block text-secondary">Fixed Right.</span>
               </h1>
-              <p className="text-xl text-gray-100 mb-8 max-w-lg">
-                Explore our complete range of simple, affordable DIY electronic
-                repair kits. Everything you need to get your devices working
-                like new, right here.
+              <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-lg mx-auto md:mx-0">
+                From cracked screens to failing batteries, find high-quality,
+                reliable repair kits and components to bring your electronics
+                back to life.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/products">
-                  <Button
-                    size="lg"
-                    className="text-black font-semibold shadow-xl hover:opacity-90 transition-opacity"
-                    style={{ backgroundColor: "#FDF200" }}
-                  >
-                    Shop Repair Kits
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
+              <div className="mt-8 flex gap-4 justify-center md:justify-start">
+                <Link
+                  href="/products"
+                  className="inline-block bg-secondary text-black px-8 py-3 rounded-lg text-lg font-semibold hover:bg-yellow-400 transition-colors shadow-lg hover:shadow-xl"
+                >
+                  Shop Now
+                </Link>
+                <Link
+                  href="/bundles"
+                  className="inline-block bg-black text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-300 transition-colors"
+                >
+                  View Bundles
                 </Link>
               </div>
             </div>
+
+            {/* Right Column (Image) */}
             <div className="relative">
               <Image
                 src="/images/lml_box.webp"
-                alt="Logo"
-                width={500}
-                height={500}
-                className="object-cover"
+                alt="LML Electronics repair kit box"
+                width={600}
+                height={600}
+                className=""
+                priority
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="bg-gray-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat) => (
-              <div key={stat.name} className="text-center">
-                <div className="text-3xl font-bold text-gray-900 mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-gray-600">{stat.name}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Browse Categories Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Featured Products Carousel */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Shop by Category
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Find exactly what you need with our organized product categories
+            <h2 className="text-3xl font-bold mb-3">Featured Products</h2>
+            <p className="text-gray-600">
+              Discover our most popular repair kits and components
             </p>
           </div>
+          <ProductCarousel products={products} />
+        </div>
+      </section>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {popularCategories.slice(0, 6).map((category, index) => {
-              const icons = ["📱", "🔧", "⚡", "🛠️", "💻", "🔌"];
-              const icon = icons[index % icons.length];
-
-              return (
-                <Link
-                  key={category.name}
-                  href={category.href}
-                  className="group text-center p-6 rounded-xl border border-gray-200 hover:border-yellow-400 transition-all duration-200 hover:shadow-lg bg-white"
-                >
-                  <div className="mb-4">
-                    <div
-                      className="w-16 h-16 mx-auto rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-200"
-                      style={{ backgroundColor: "#FDF20020" }}
-                    >
-                      {icon}
-                    </div>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1 group-hover:text-yellow-600 transition-colors">
-                    {category.name}
-                  </h3>
-                  <p className="text-xs text-gray-500 line-clamp-2">
-                    {category.description}
-                  </p>
-                </Link>
-              );
-            })}
+      {/* Bundles Section */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-3">Popular Bundles</h2>
+            <p className="text-gray-600">
+              Save more with our carefully curated repair bundles
+            </p>
           </div>
+          <BundleGrid />
+        </div>
+      </section>
 
-          <div className="text-center mt-8">
-            <Link href="/products">
-              <Button
-                variant="outline"
-                className="border-yellow-400 text-yellow-500 hover:bg-yellow-400 hover:text-black"
+      {/* Categories Grid */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-3">Browse Categories</h2>
+            <p className="text-gray-600">
+              Find the perfect repair solution for your device
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/products/category/${category.name
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}`}
+                className="block"
               >
-                View All Categories
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Why Choose LML Electronics?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We're your trusted partner for DIY electronic repair solutions.
-              Here's what makes us different.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature) => (
-              <div key={feature.name} className="text-center">
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {feature.name}
-                </h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Popular Categories */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Popular Repair Categories
-            </h2>
-            <p className="text-xl text-gray-600">
-              Find the perfect repair kit for your device
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {popularCategories.map((category, index) => {
-              const icons = ["📱", "🔧", "⚡", "🛠️", "💻", "🔌", "🔋", "⚙️"];
-              const icon = icons[index % icons.length];
-
-              return (
-                <Link key={category.name} href={category.href}>
-                  <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden group">
-                    <div className="aspect-video bg-gray-200 relative">
-                      <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
-                        <span className="text-white text-6xl">{icon}</span>
-                      </div>
-                    </div>
-                    <div className="p-6">
-                      <div
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mb-3 ${category.color}`}
-                      >
+                <div className="bg-white rounded-[20px] p-0 flex flex-col h-full hover:shadow-lg transition-shadow">
+                  <div className="flex items-center justify-center bg-[#f5f6fa] rounded-[20px] h-[150px] w-full mt-0 mb-0 overflow-hidden">
+                    <Image
+                      src={category.image || "/images/product-placeholder.jpg"}
+                      alt={category.name}
+                      width={120}
+                      height={120}
+                      className="object-contain max-h-[120px] max-w-[90%]"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <div className="px-4 py-3">
+                      <h3 className="text-[#3b5b7c] text-base font-normal text-center hover:underline cursor-pointer capitalize">
                         {category.name}
-                      </div>
-                      <p className="text-gray-600 text-sm">
-                        {category.description}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              What Our Customers Say
-            </h2>
-            <p className="text-xl text-gray-600">
-              Join thousands of satisfied customers who've successfully repaired
-              their devices
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
-              <div key={testimonial.name} className="bg-gray-50 rounded-xl p-6">
-                <div className="flex items-center mb-4">
-                  <div
-                    className="w-12 h-12 text-black rounded-full flex items-center justify-center font-semibold shadow-lg"
-                    style={{ backgroundColor: "#FDF200" }}
-                  >
-                    {testimonial.avatar}
-                  </div>
-                  <div className="ml-4">
-                    <div className="font-semibold text-gray-900">
-                      {testimonial.name}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {testimonial.role}
+                      </h3>
                     </div>
                   </div>
                 </div>
-                <p className="text-gray-700 italic">"{testimonial.content}"</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-3">Why Choose Us</h2>
+            <p className="text-gray-600">
+              Experience the best in electronic repair solutions
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+                <Image
+                  src="/window.svg"
+                  alt="Quality"
+                  width={32}
+                  height={32}
+                  className="text-black"
+                />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Premium Quality</h3>
+              <p className="text-gray-600">
+                All our products meet the highest quality standards
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+                <Image
+                  src="/globe.svg"
+                  alt="Shipping"
+                  width={32}
+                  height={32}
+                  className="text-black"
+                />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Fast Shipping</h3>
+              <p className="text-gray-600">
+                Quick delivery to your doorstep worldwide
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+                <Image
+                  src="/file.svg"
+                  alt="Support"
+                  width={32}
+                  height={32}
+                  className="text-black"
+                />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Expert Support</h3>
+              <p className="text-gray-600">
+                Professional guidance when you need it
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-3">What Our Customers Say</h2>
+            <p className="text-gray-600">
+              Real stories from people who've trusted us with their repairs.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className="bg-gray-50 p-8 rounded-lg shadow-sm">
+                <div className="flex">
+                  <Star className="text-yellow-400" />
+                  <Star className="text-yellow-400" />
+                  <Star className="text-yellow-400" />
+                  <Star className="text-yellow-400" />
+                  <Star className="text-yellow-400" />
+                </div>
+                <p className="text-gray-700 italic my-6">
+                  "{testimonial.quote}"
+                </p>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                    <User className="w-6 h-6 text-gray-500" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      {testimonial.name}
+                    </p>
+                    <p className="text-gray-500 text-sm">{testimonial.role}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section
-        className="py-24"
-        style={{
-          background: "linear-gradient(135deg, #FDF200 0%, #D6CD00 100%)",
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-black mb-4">
-            Ready to Start Your Repair Journey?
+      {/* Newsletter Section */}
+      <section className="bg-primary">
+        <div className="max-w-4xl mx-auto text-center py-16 px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-extrabold text-black">
+            Get Repair Tips & Deals
           </h2>
-          <p className="text-xl text-black opacity-80 mb-8 max-w-2xl mx-auto">
-            Browse our complete catalog of repair kits, components, and tools.
-            Get your devices working like new today.
+          <p className="mt-4 text-lg leading-6 text-gray-800">
+            Subscribe to our newsletter and never miss an update on new products
+            and exclusive offers.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/products">
-              <Button
-                size="lg"
-                className="bg-black text-white hover:bg-gray-800 shadow-xl"
+          <form className="mt-8 sm:flex justify-center">
+            <label htmlFor="email-address" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="email-address"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="w-full px-5 py-3 border border-transparent placeholder-gray-500 focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-400 focus:ring-white focus:outline-none rounded-md sm:max-w-xs"
+              placeholder="Enter your email"
+            />
+            <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
+              <button
+                type="submit"
+                className="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-400 focus:ring-black"
               >
-                Shop All Products
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-black text-black hover:bg-black hover:text-white bg-white/90"
-              >
-                Contact Support
-              </Button>
-            </Link>
-          </div>
+                Subscribe
+              </button>
+            </div>
+          </form>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
