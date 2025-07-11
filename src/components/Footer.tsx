@@ -1,69 +1,18 @@
 import Link from "next/link";
-import { getCategories } from "@/lib/square/products";
-import { SquareCategory } from "@/types/square";
 import Image from "next/image";
 
-// Get footer navigation with real categories
-async function getFooterNavigation() {
-  try {
-    const categories = await getCategories();
-
-    return {
-      products: categories.slice(0, 5).map((category) => ({
-        name: category.categoryData.name,
-        href: `/products?category=${category.id}`,
-      })),
-      // support: [
-      //   { name: "Contact Us", href: "/contact" },
-      //   { name: "FAQ", href: "/faq" },
-      //   { name: "Repair Guides", href: "/guides" },
-      //   { name: "Warranty", href: "/warranty" },
-      //   { name: "Returns", href: "/returns" },
-      // ],
-      // company: [
-      //   { name: "About Us", href: "/about" },
-      //   { name: "Careers", href: "/careers" },
-      //   { name: "Press", href: "/press" },
-      //   { name: "Blog", href: "/blog" },
-      // ],
-      // legal: [
-      //   { name: "Privacy Policy", href: "/privacy" },
-      //   { name: "Terms of Service", href: "/terms" },
-      //   { name: "Cookie Policy", href: "/cookies" },
-      // ],
-    };
-  } catch (error) {
-    console.error("Error fetching footer categories:", error);
-    // Fallback navigation
-    return {
-      products: [
-        { name: "Repair Kits", href: "/products?category=repair-kits" },
-        { name: "Components", href: "/products?category=components" },
-        { name: "Apple Parts", href: "/products?brand=apple" },
-        { name: "Samsung Parts", href: "/products?brand=samsung" },
-        { name: "Google Parts", href: "/products?brand=google" },
-      ],
-      support: [
-        { name: "Contact Us", href: "/contact" },
-        { name: "FAQ", href: "/faq" },
-        { name: "Repair Guides", href: "/guides" },
-        { name: "Warranty", href: "/warranty" },
-        { name: "Returns", href: "/returns" },
-      ],
-      company: [
-        { name: "About Us", href: "/about" },
-        { name: "Careers", href: "/careers" },
-        { name: "Press", href: "/press" },
-        { name: "Blog", href: "/blog" },
-      ],
-      legal: [
-        { name: "Privacy Policy", href: "/privacy" },
-        { name: "Terms of Service", href: "/terms" },
-        { name: "Cookie Policy", href: "/cookies" },
-      ],
-    };
-  }
-}
+const navigation = {
+  main: [
+    { name: "Home", href: "/" },
+    { name: "Products", href: "/products" },
+    { name: "Bundles", href: "/products/bundles" },
+    // { name: "Categories", href: "/products/categories" },
+  ],
+  legal: [
+    { name: "Privacy Policy", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms" },
+  ],
+};
 
 const socialLinks = [
   {
@@ -92,71 +41,19 @@ const socialLinks = [
       </svg>
     ),
   },
-  {
-    name: "Twitter",
-    href: "#",
-    icon: (props: any) => (
-      <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
-        <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-      </svg>
-    ),
-  },
-  {
-    name: "YouTube",
-    href: "#",
-    icon: (props: any) => (
-      <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
-        <path
-          fillRule="evenodd"
-          d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.56.419-7.814.419-7.814.419s-6.255 0-7.814-.419a2.505 2.505 0 0 1-1.768-1.768C2 15.255 2 12 2 12s0-3.255.417-4.814a2.507 2.507 0 0 1 1.768-1.768C5.744 5 11.998 5 11.998 5s6.255 0 7.814.418ZM15.194 12 10 15V9l5.194 3Z"
-          clipRule="evenodd"
-        />
-      </svg>
-    ),
-  },
 ];
 
-export default async function Footer() {
-  const footerNavigation = await getFooterNavigation();
-
+export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white" aria-labelledby="footer-heading">
+    <footer className="bg-black text-white" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
-
-      {/* Newsletter Signup */}
-      <div className="bg-gray-800 py-12 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-white mb-2">Stay Updated</h3>
-            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-              Get the latest repair guides, product updates, and exclusive deals
-              delivered to your inbox.
-            </p>
-            <div className="flex flex-col sm:flex-row max-w-md mx-auto gap-3">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 rounded-lg text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-              />
-              <button
-                className="text-black px-6 py-2 rounded-lg font-medium transition-colors hover:opacity-90 shadow-lg"
-                style={{ backgroundColor: "#FDF200" }}
-              >
-                Subscribe
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           {/* Company Info */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center mb-4">
+          <div className="space-y-8 xl:col-span-1">
+            <Link href="/" className="flex items-center">
               <Image
                 src="/images/lml_logo.png"
                 alt="Logo"
@@ -168,142 +65,84 @@ export default async function Footer() {
                 <div className="text-lg font-bold text-white">Electronics</div>
                 <div className="text-xs text-gray-400 -mt-1">Find Your Fix</div>
               </div>
-            </div>
-            <p className="text-gray-300 mb-6 max-w-md">
-              Your trusted partner for DIY electronic repair solutions. We
-              provide high-quality repair kits, components, and tools to help
-              you fix your devices and extend their lifespan.
+            </Link>
+            <p className="text-gray-300 text-base">
+              Your trusted partner for DIY electronic repair solutions. Quality
+              repair kits and components to extend device lifespan.
             </p>
-
-            {/* Contact Info */}
-          </div>
-
-          {/* Products */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">
-              Products
-            </h3>
-            <ul className="space-y-2">
-              {footerNavigation.products.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="text-gray-400 hover:text-yellow-300 transition-colors text-sm"
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support */}
-          {/* <div>
-            <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">
-              Support
-            </h3>
-            <ul className="space-y-2">
-              {footerNavigation.support.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="text-gray-400 hover:text-yellow-300 transition-colors text-sm"
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div> */}
-
-          {/* Company */}
-          {/* <div>
-            <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">
-              Company
-            </h3>
-            <ul className="space-y-2">
-              {footerNavigation.company.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="text-gray-400 hover:text-yellow-300 transition-colors text-sm"
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div> */}
-
-          <div className="space-y-2 text-gray-300">
-            <div className="flex items-center">
-              <span className="mr-2">📞</span>
-              <span>1-800-LML-REPAIR</span>
-            </div>
-            <div className="flex items-center">
-              <span className="mr-2">📧</span>
-              <span>support@lmlelectronics.com</span>
-            </div>
-            <div className="flex items-center">
-              <span className="mr-2">📍</span>
-              <span>123 Electronics St, Tech City, TC 12345</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Social Links */}
-        <div className="mt-12 pt-8 border-t border-gray-700">
-          <div className="flex items-center justify-between">
             <div className="flex space-x-6">
               {socialLinks.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="text-gray-400 hover:text-yellow-300 transition-colors"
+                  className="text-gray-400 hover:text-white transition-colors"
                 >
                   <span className="sr-only">{item.name}</span>
                   <item.icon className="h-6 w-6" aria-hidden="true" />
                 </a>
               ))}
             </div>
+          </div>
 
-            {/* Certifications/Badges */}
-            <div className="flex items-center space-x-4 text-sm text-gray-400">
-              <span className="flex items-center">
-                <span className="mr-1">🔒</span>
-                SSL Secured
-              </span>
-              <span className="flex items-center">
-                <span className="mr-1">✅</span>
-                Certified Repair Center
-              </span>
+          {/* Contact Info */}
+          <div className="mt-12 xl:mt-0 xl:col-span-2">
+            <div className="grid grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase">
+                  Quick Links
+                </h3>
+                <ul className="mt-4 space-y-4">
+                  {navigation.main.map((item) => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className="text-base text-gray-300 hover:text-white transition-colors"
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="">
+                <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase">
+                  Contact
+                </h3>
+                <ul className="mt-4 space-y-4">
+                  <li className="text-base text-gray-300">
+                    <span className="block">1-800-LML-REPAIR</span>
+                    <span className="block break-words text-sm sm:text-base">
+                      support@lmlelectronics.com
+                    </span>
+                  </li>
+                  <li className="text-base text-gray-300">
+                    123 Electronics St,
+                    <br />
+                    Tech City, TC 12345
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Legal Links */}
-        {/* <div className="mt-8 pt-8 border-t border-gray-700">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <p className="text-sm text-gray-400">
-              &copy; 2024 LML Electronics. All rights reserved.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              {footerNavigation.legal.map((item, index) => (
-                <span key={item.name} className="flex items-center">
-                  <Link
-                    href={item.href}
-                    className="text-sm text-gray-400 hover:text-yellow-300 transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                  {index < footerNavigation.legal.length - 1 && (
-                    <span className="ml-6 text-gray-600">•</span>
-                  )}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div> */}
+        <div className="mt-12 border-t border-gray-800 pt-8">
+          <p className="text-base text-gray-400 xl:text-center">
+            &copy; {new Date().getFullYear()} LML Electronics. All rights
+            reserved.
+            {/* {navigation.legal.map((item, index) => (
+              <span key={item.name}>
+                <span className="mx-2">·</span>
+                <Link
+                  href={item.href}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  {item.name}
+                </Link>
+              </span>
+            ))} */}
+          </p>
+        </div>
       </div>
     </footer>
   );
