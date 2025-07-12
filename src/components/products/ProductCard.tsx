@@ -61,7 +61,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   if (!defaultVariation) return null;
 
   return (
-    <Link href={`/products/${product.id}`} className="block">
+    <Link href={`/shop/${product.id}`} className="block">
       <motion.div
         className="bg-gray-100 p-4 rounded-3xl"
         whileHover={{ scale: 1.05 }}

@@ -123,3 +123,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .underline-animation {
+    position: relative;
+    text-decoration: none;
+  }
+  
+  .underline-animation::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: var(--secondary);
+    transition: width 0.3s ease;
+  }
+  
+  .underline-animation:hover::after {
+    width: 100%;
+  }
+}

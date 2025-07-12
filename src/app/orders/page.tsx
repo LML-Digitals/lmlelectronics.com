@@ -48,9 +48,9 @@ export default function OrdersPage() {
         backgroundImage="/images/lml_box.webp"
         breadcrumbs={[{ name: "My Orders", href: "/orders" }]}
       />
-    <div className="max-w-7xl mx-auto">
+    <main className="max-w-7xl mx-auto mb-16">
       <OrdersClient />
-    </div>
+    </main>
     </>
   );
 }

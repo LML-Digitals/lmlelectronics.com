@@ -96,10 +96,10 @@ export default function ProductCarousel({
   const getProductUrl = (product: Product) => {
     // If it has variations, it's a main product
     if (product.variations && product.variations.length > 0) {
-      return `/products/${product.id}`;
+      return `/shop/${product.id}`;
     }
     // Otherwise it's likely a variation
-    return `/products/${product.id}`;
+    return `/shop/${product.id}`;
   };
 
   return (
