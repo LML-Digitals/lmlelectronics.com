@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://lmlelectronics.com';
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://lmlelectronics.com';
 
 function sanitizeSlug(text: string): string {
   if (!text) return '';
