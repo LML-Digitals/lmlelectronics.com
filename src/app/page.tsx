@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import ProductCarousel from "@/components/products/ProductCarousel";
 import BundleGrid from "@/components/products/BundleGrid";
+import ProductsHeroBanner, {
+  ProductsPromoBanner,
+} from "@/components/products/ProductsHeroBanner";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import { InventoryItem } from "@/types/api";
 import { InventoryItemCategory } from "@/types/api";
@@ -50,6 +53,14 @@ const testimonials = [
 
 export default async function Home() {
   const { products, categories } = await getHomePageData();
+  const visibleProducts = products.filter(
+    (p) =>
+      p.isBundle === false &&
+      Array.isArray(p.variations) &&
+      p.variations.some((v) => v.visible === true) &&
+      // Exclude products with a category named 'Tickets'
+      !(Array.isArray(p.categories) && p.categories.some((cat) => cat.name === "Tickets"))
+  );
 
   return (
     <main className="flex min-h-screen flex-col">
@@ -108,7 +119,7 @@ export default async function Home() {
               Discover our most popular repair kits and components
             </p>
           </div>
-          <ProductCarousel products={products} />
+          <ProductCarousel products={visibleProducts} />
         </div>
       </section>
 
@@ -135,7 +146,9 @@ export default async function Home() {
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {categories.map((category) => (
+            {categories
+              .filter((category) => category.visible === true && category.parentId == null && category.name !== "Tickets")
+              .map((category) => (
               <Link
                 key={category.id}
                 href={`/products/category/${category.name
@@ -265,7 +278,51 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* End of Season Sale Banner */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <ProductsHeroBanner
+            label="Limited Time"
+            headline="End of Season Sale"
+            bigWord="SAVE"
+            buttonText="Shop Deals"
+            buttonHref="/products"
+            imageSrc="/images/lml_box.webp"
+            imageAlt="Product"
+            descriptionLabel="Special Offer"
+            description="Up to 30% off select items."
+            small
+          />
+        </div>
+      </section>
 
+      {/* Extra Savings Promo Banner */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          {(() => {
+            const today = new Date();
+            const end = new Date();
+            end.setDate(today.getDate() + 14);
+            const format = (d: Date) =>
+              d.toLocaleString("en-US", { month: "short", day: "numeric" });
+            const dateRange = `${format(today)} to ${format(end)}`;
+            return (
+              <ProductsPromoBanner
+                leftLabel="Limited Time Offer"
+                leftBigText={`EXTRA\nSAVINGS`}
+                leftSubLabel={dateRange}
+                rightLabel="LML Electronics"
+                rightHeadline="Shop & Save Today!"
+                rightSubheadline="Discover deals on phones, parts, and accessories."
+                buttonText="Shop Now"
+                buttonHref="/products"
+                imageSrc="/images/lml_box.webp"
+                imageAlt="Product"
+              />
+            );
+          })()}
+        </div>
+      </section>
     </main>
   );
 }

@@ -36,7 +36,7 @@ export default function ProductsHeroBanner({
         <h1 className={`${small ? "text-2xl md:text-3xl" : "text-4xl md:text-5xl"} font-extrabold text-black mb-1 leading-tight`}>{headline}</h1>
         <div className={`${small ? "text-3xl md:text-5xl" : "text-[64px] md:text-[96px]"} font-extrabold text-white leading-none mb-4`}>{bigWord}</div>
         <Link href={buttonHref}>
-          <button className={`bg-[#ee6e73] text-white px-5 py-2 rounded-xl font-semibold ${small ? "text-base" : "text-lg"} shadow hover:bg-[#e25c61] transition`}>
+          <button className={`bg-black text-white px-5 py-2 rounded-xl font-semibold ${small ? "text-base" : "text-lg"} shadow hover:bg-gray-800 transition`}>
             {buttonText}
           </button>
         </Link>
@@ -88,22 +88,20 @@ export function ProductsPromoBanner({
   imageSrc?: string;
   imageAlt?: string;
 }) {
-  const primaryColor = "#0f766e";
-  const secondaryColor = "#14b8a6";
   return (
     <section
       className="w-full rounded-2xl flex flex-col md:flex-row items-center justify-between gap-8 mt-10 mb-10 max-w-6xl mx-auto px-6 py-8 md:py-12"
-      style={{ backgroundColor: primaryColor }}
+      style={{ backgroundColor: "#FDF200" }}
     >
       {/* Left: Discount and Big Text */}
       <div className="flex-1 flex flex-col justify-center items-start min-w-[200px] px-2 md:px-6">
-        <span className="text-white text-base mb-2 font-medium">
+        <span className="text-black text-base mb-2 font-medium">
           {leftLabel}
         </span>
-        <div className="whitespace-pre-line text-5xl md:text-6xl font-extrabold text-white mb-2 leading-tight">
+        <div className="whitespace-pre-line text-5xl md:text-6xl font-extrabold text-black mb-2 leading-tight">
           {leftBigText}
         </div>
-        <span className="text-white text-base mt-2 font-medium">
+        <span className="text-black text-base mt-2 font-medium">
           {leftSubLabel}
         </span>
       </div>
@@ -122,18 +120,15 @@ export function ProductsPromoBanner({
       </div>
       {/* Right: Headline, Subheadline, Button */}
       <div className="flex-1 flex flex-col justify-center items-end min-w-[200px] px-2 md:px-6 text-right">
-        <span className="text-white text-base mb-2 font-medium">
+        <span className="text-black text-base mb-2 font-medium">
           {rightLabel}
         </span>
-        <div className="text-4xl md:text-5xl font-extrabold text-white mb-2 leading-tight">
+        <div className="text-4xl md:text-5xl font-extrabold text-black mb-2 leading-tight">
           {rightHeadline}
         </div>
-        <div className="text-white text-lg mb-4">{rightSubheadline}</div>
+        <div className="text-black text-lg mb-4">{rightSubheadline}</div>
         <Link href={buttonHref}>
-          <button
-            className="text-white px-6 py-2 rounded-xl font-semibold text-lg shadow border-2 border-white transition"
-            style={{ backgroundColor: secondaryColor }}
-          >
+          <button className="bg-black text-white px-6 py-2 rounded-xl font-semibold text-lg shadow transition hover:bg-gray-800">
             {buttonText}
           </button>
         </Link>

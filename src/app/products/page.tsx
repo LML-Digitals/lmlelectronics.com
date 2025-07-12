@@ -5,9 +5,6 @@ import type { InventoryItemCategory } from "@/types/api";
 
 import CategoryGrid from "@/components/products/CategoryGrid";
 import ProductListing from "@/components/products/ProductListing";
-import ProductsHeroBanner, {
-  ProductsPromoBanner,
-} from "@/components/products/ProductsHeroBanner";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import PageHero from "@/components/PageHero";
 
@@ -63,48 +60,10 @@ export default async function ProductsPage() {
                 <p className="text-red-500 text-lg">{error}</p>
               </div>
             ) : (
-              <CategoryGrid categories={categories} />
+              <CategoryGrid categories={categories.filter(category => category.visible === true && category.parentId == null && category.name !== "Tickets")} />
             )}
           </div>
         </section>
-
-        {/* Smaller Banner at Bottom */}
-        <ProductsHeroBanner
-          label="Limited Time"
-          headline="End of Season Sale"
-          bigWord="SAVE"
-          buttonText="Shop Deals"
-          buttonHref="/products"
-          imageSrc="/images/product-placeholder.jpg"
-          imageAlt="Product"
-          descriptionLabel="Special Offer"
-          description="Up to 30% off select items."
-          small
-        />
-
-        {/* Promo Banner at very bottom */}
-        {(() => {
-          const today = new Date();
-          const end = new Date();
-          end.setDate(today.getDate() + 14);
-          const format = (d: Date) =>
-            d.toLocaleString("en-US", { month: "short", day: "numeric" });
-          const dateRange = `${format(today)} to ${format(end)}`;
-          return (
-            <ProductsPromoBanner
-              leftLabel="Limited Time Offer"
-              leftBigText={`EXTRA\nSAVINGS`}
-              leftSubLabel={dateRange}
-              rightLabel="Shop"
-              rightHeadline="Shop & Save Today!"
-              rightSubheadline="Discover deals on phones, parts, and accessories."
-              buttonText="Shop Now"
-              buttonHref="/products"
-              imageSrc="/images/product-placeholder.jpg"
-              imageAlt="Product"
-            />
-          );
-        })()}
       </main>
     </div>
   );

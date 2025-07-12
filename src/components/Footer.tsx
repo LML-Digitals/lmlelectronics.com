@@ -6,6 +6,7 @@ import NewsletterComp from "@/components/NewsletterComp";
 import { Facebook, Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import PaymentMethods from "@/components/PaymentMethods";
 
 const FooterClient = () => {
   const QuickLinks = [
@@ -195,7 +196,8 @@ const FooterClient = () => {
                     </Link>
                   ))}
                 </ul>
-                
+                {/* Payment Methods Row */}
+                <PaymentMethods />
                 <p className="text-xs text-gray-400">
                   &copy; {new Date().getFullYear()} LML Electronics. All rights reserved.
                 </p>
