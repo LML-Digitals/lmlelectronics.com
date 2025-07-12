@@ -8,7 +8,6 @@ import type { Metadata } from "next";
 import type { InventoryItem } from "@/types/api";
 import ProductVariationSelector from "@/components/products/ProductVariationSelector";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import PageHero from "@/components/PageHero";
 import { formatSlug } from "@/components/products/utils/formatSlug";
 
 export async function generateMetadata({
@@ -60,7 +59,7 @@ export default async function ProductPage({
             <p className="mt-2 text-gray-600">
               The product you're looking for doesn't exist or has been removed.
             </p>
-            <Link href="/products">
+            <Link href="/shop">
               <button className="mt-6 bg-primary text-white hover:bg-primary/90 px-4 py-2 rounded-md">
                 Back to Products
               </button>
@@ -83,15 +82,6 @@ export default async function ProductPage({
 
   return (
     <>
-    <PageHero
-        title={product.name}
-        subtitle={`Browse our extensive selection of ${product.name} products.`}
-        backgroundImage={product.image || "/images/lml_box.webp"}
-        breadcrumbs={[
-          { name: "Products", href: "/products" },
-          { name: product.categories[0]?.name || "All Products", href: `/products/category/${formatSlug(product.categories[0]?.name || "All Products")}` },
-        ]}
-      />
     <div className="max-w-7xl mx-auto">
       <div className="container mx-auto px-4 py-8">
 

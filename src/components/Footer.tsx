@@ -10,25 +10,25 @@ import PaymentMethods from "@/components/PaymentMethods";
 
 const FooterClient = () => {
   const QuickLinks = [
-    { id: 1, link: "Products", href: "/products" },
+    { id: 1, link: "Shop", href: "/shop" },
     { id: 2, link: "Bundles", href: "/bundles" },
     { id: 3, link: "Cart", href: "/cart" },
     { id: 4, link: "Orders", href: "/orders" },
   ];
 
   const Categories = [
-    { id: 1, link: "Phone Repair", href: "/products/category/phone-repair" },
-    { id: 2, link: "Tablet Repair", href: "/products/category/tablet-repair" },
-    { id: 3, link: "Laptop Repair", href: "/products/category/laptop-repair" },
-    { id: 4, link: "Gaming Console", href: "/products/category/gaming-console" },
+    // { id: 1, link: "Phone Repair", href: "/products/category/phone-repair" },
+    // { id: 2, link: "Tablet Repair", href: "/products/category/tablet-repair" },
+    // { id: 3, link: "Laptop Repair", href: "/products/category/laptop-repair" },
+    // { id: 4, link: "Gaming Console", href: "/products/category/gaming-console" },
   ];
 
   const Support = [
     { id: 1, link: "Contact Us", href: "/contact" },
     { id: 2, link: "FAQs", href: "/faqs" },
-    { id: 3, link: "Shipping Info", href: "/shipping" },
-    { id: 4, link: "Returns", href: "/returns" },
-    { id: 5, link: "Repair Guides", href: "/repair-guides" },
+    // { id: 3, link: "Shipping Info", href: "/shipping" },
+    // { id: 4, link: "Returns", href: "/returns" },
+    // { id: 5, link: "Repair Guides", href: "/repair-guides" },
   ];
 
   const platforms = [
@@ -81,7 +81,8 @@ const FooterClient = () => {
           <NewsletterComp />
         </div>
 
-        <div className="flex mt-10 justify-center md:items-start md:justify-center lg:mt-0 md:flex-row gap-10 md:gap-14 w-full">
+        {/* Hidden middle section with links */}
+        {/* <div className="flex mt-10 justify-center md:items-start md:justify-center lg:mt-0 md:flex-row gap-10 md:gap-14 w-full">
           <div className="flex flex-col gap-5">
             <div className="flex flex-col justify-center gap-3 h-3/4">
               <h1 className="font-bold">Quick Links</h1>
@@ -148,7 +149,7 @@ const FooterClient = () => {
               </li>
             </ul>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex flex-col items-center mt-10 gap-3 md:mt-10 lg:mt-0 w-full">
           <h1 className="font-bold text-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { ShoppingCart, Search, Menu, X, ChevronDown, Tag } from "lucide-react";
@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
+import { formatSlug } from "@/components/products/utils/formatSlug";
 
 interface NavigationItem {
   name: string;
@@ -41,29 +43,37 @@ export function HeaderClient({ navigation }: HeaderClientProps) {
   );
   const router = useRouter();
   const pathname = usePathname();
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const response = await fetch(buildApiUrl("/api/inventory/categories"));
+        const data: any[] = await handleApiResponse(response);
+        const filtered = data
+          .filter((cat: any) => cat.visible === true && cat.parentId == null && cat.name !== "Tickets")
+          .map((cat: any) => ({ id: cat.id, name: cat.name }));
+        setCategories(filtered);
+      } catch (err) {
+        setCategories([]);
+      }
     }
-  };
+    fetchCategories();
+  }, []);
 
   // Enhanced navigation with categories
   const enhancedNavLinks = [
     {
       id: 1,
       title: "Shop",
-      link: "/products",
+      link: "/shop",
       hover: true,
       subLinks: [
-        { title: "All Products", link: "/products" },
-        { title: "Phone Repair", link: "/products/category/phone-repair" },
-        { title: "Tablet Repair", link: "/products/category/tablet-repair" },
-        { title: "Laptop Repair", link: "/products/category/laptop-repair" },
-        { title: "Gaming Console", link: "/products/category/gaming-console" },
-        { title: "Tools & Equipment", link: "/products/category/tools" },
+        { title: "All Products", link: "/shop" },
+        ...categories.map((cat) => ({
+          title: cat.name,
+          link: `/shop/category/${formatSlug(cat.name)}`,
+        })),
       ],
     },
     {
@@ -72,12 +82,12 @@ export function HeaderClient({ navigation }: HeaderClientProps) {
       link: "/bundles",
       hover: false,
     },
-    {
-      id: 3,
-      title: "Deals",
-      link: "/deals",
-      hover: false,
-    },
+    // {
+    //   id: 3,
+    //   title: "Deals",
+    //   link: "/deals",
+    //   hover: false,
+    // },
     {
       id: 4,
       title: "Help",
@@ -86,10 +96,10 @@ export function HeaderClient({ navigation }: HeaderClientProps) {
       subLinks: [
         { title: "Contact Us", link: "/contact" },
         { title: "FAQs", link: "/faqs" },
-        { title: "Shipping Info", link: "/shipping" },
-        { title: "Returns", link: "/returns" },
-        { title: "Repair Guides", link: "/repair-guides" },
-        { title: "Track Order", link: "/orders" },
+        // { title: "Shipping Info", link: "/shipping" },
+        // { title: "Returns", link: "/returns" },
+        // { title: "Repair Guides", link: "/repair-guides" },
+        // { title: "Track Order", link: "/orders" },
       ],
     },
   ];
@@ -100,6 +110,14 @@ export function HeaderClient({ navigation }: HeaderClientProps) {
     { id: 3, platform: "LinkedIn", link: "https://linkedin.com/company/lmlelectronics" },
     { id: 4, platform: "Instagram", link: "https://instagram.com/lmlelectronics" },
   ];
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <>

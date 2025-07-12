@@ -72,10 +72,10 @@ export default async function ProductCategoryPage({
     return (
       <>
         <PageHero
-          title="All Products"
+          title="All Shop Items"
           subtitle="Find the perfect components and repair kits for your needs. High-quality parts for every fix."
           backgroundImage="/images/lml_box.webp"
-          breadcrumbs={[{ name: "Products", href: "/products" }]}
+          breadcrumbs={[{ name: "Shop", href: "/shop" }]}
         />
         <div className="max-w-7xl mx-auto">
           <div className="container mx-auto px-4 py-8">
@@ -95,8 +95,8 @@ export default async function ProductCategoryPage({
         subtitle={`Browse our extensive selection of ${category.name} products.`}
         backgroundImage={category.image || "/images/lml_box.webp"}
         breadcrumbs={[
-          { name: "Products", href: "/products" },
-          { name: category.name, href: `/products/category/${formatSlug(category.name)}` },
+          { name: "Shop", href: "/shop" },
+          { name: category.name, href: `/shop/category/${formatSlug(category.name)}` },
         ]}
       />
       <div className="max-w-7xl mx-auto">
@@ -110,7 +110,7 @@ export default async function ProductCategoryPage({
                   {category.children.map((child) => (
                     <Link
                       key={child.id}
-                      href={`/products/category/${formatSlug(child.name)}`}
+                      href={`/shop/category/${formatSlug(child.name)}`}
                     >
                       <div className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
                         <div className="aspect-square relative overflow-hidden">

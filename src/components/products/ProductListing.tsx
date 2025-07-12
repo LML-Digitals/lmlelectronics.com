@@ -2,11 +2,37 @@
 
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
-import ProductCarousel from "./ProductCarousel";
+import ProductCard from "./ProductCard";
 import type { InventoryItem } from "@/types/api";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 
-export default function ProductListing() {
+interface ProductListingProps {
+  filters?: any;
+  sort?: string;
+  setResultsCount?: (count: number) => void;
+}
+
+function sortProducts(products: InventoryItem[], sort: string): InventoryItem[] {
+  switch (sort) {
+    case "price_asc":
+      return [...products].sort((a, b) => (a.variations[0]?.sellingPrice ?? 0) - (b.variations[0]?.sellingPrice ?? 0));
+    case "price_desc":
+      return [...products].sort((a, b) => (b.variations[0]?.sellingPrice ?? 0) - (a.variations[0]?.sellingPrice ?? 0));
+    case "alpha_asc":
+      return [...products].sort((a, b) => a.name.localeCompare(b.name));
+    case "alpha_desc":
+      return [...products].sort((a, b) => b.name.localeCompare(a.name));
+    // Add more cases as needed
+    default:
+      return products;
+  }
+}
+
+export default function ProductListing({
+  filters = {},
+  sort = "alpha_asc",
+  setResultsCount,
+}: ProductListingProps) {
   const [products, setProducts] = useState<InventoryItem[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,8 +49,6 @@ export default function ProductListing() {
           throw new Error("Failed to fetch products");
         }
         const items = await handleApiResponse<InventoryItem[]>(response);
-        console.log(items);
-
         // Filter out items that should not appear in Featured Products
         const filteredItems = items.filter((item) => {
           const itemsToHide = [
@@ -66,6 +90,14 @@ export default function ProductListing() {
     }
   }, [searchTerm, products]);
 
+  // Apply sorting and update results count
+  const sortedProducts = sortProducts(filteredProducts, sort);
+  useEffect(() => {
+    if (setResultsCount) {
+      setResultsCount(sortedProducts.length);
+    }
+  }, [sortedProducts.length, setResultsCount]);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
@@ -87,6 +119,9 @@ export default function ProductListing() {
     );
   }
 
+  // Apply filters (placeholder for now)
+  const filtered = sortedProducts; // TODO: apply filters from props
+
   return (
     <section className="py-12 bg-white">
       <div className="container mx-auto px-4">
@@ -104,25 +139,24 @@ export default function ProductListing() {
           </div>
         </div>
 
-        {filteredProducts.length === 0 ? (
+        {filtered.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500">
               No products found matching your search.
             </p>
           </div>
         ) : (
-          <ProductCarousel
-            products={filteredProducts.map((product) => ({
-              id: product.id,
-              name: product.name,
-              description: product.description || undefined,
-              image: product.image,
-              variations: product.variations.filter((v) => v.visible),
-            }))}
-            title="Featured Products"
-            autoplay={true}
-            autoplaySpeed={3000}
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {filtered.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={{
+                  ...product,
+                  description: product.description || undefined,
+                }}
+              />
+            ))}
+          </div>
         )}
       </div>
     </section>

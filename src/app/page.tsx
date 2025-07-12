@@ -81,7 +81,7 @@ export default async function Home() {
               </p>
               <div className="mt-8 flex gap-4 justify-center md:justify-start">
                 <Link
-                  href="/products"
+                  href="/shop"
                   className="inline-block bg-secondary text-black px-8 py-3 rounded-lg text-lg font-semibold hover:bg-yellow-400 transition-colors shadow-lg hover:shadow-xl"
                 >
                   Shop Now
@@ -151,7 +151,7 @@ export default async function Home() {
               .map((category) => (
               <Link
                 key={category.id}
-                href={`/products/category/${category.name
+                href={`/shop/category/${category.name
                   .toLowerCase()
                   .replace(/\s+/g, "-")}`}
                 className="block"
@@ -286,7 +286,7 @@ export default async function Home() {
             headline="End of Season Sale"
             bigWord="SAVE"
             buttonText="Shop Deals"
-            buttonHref="/products"
+            buttonHref="/shop"
             imageSrc="/images/lml_box.webp"
             imageAlt="Product"
             descriptionLabel="Special Offer"
@@ -315,7 +315,7 @@ export default async function Home() {
                 rightHeadline="Shop & Save Today!"
                 rightSubheadline="Discover deals on phones, parts, and accessories."
                 buttonText="Shop Now"
-                buttonHref="/products"
+                buttonHref="/shop"
                 imageSrc="/images/lml_box.webp"
                 imageAlt="Product"
               />

@@ -8,7 +8,7 @@ export default function ProductsHeroBanner({
   headline = "Summer sale",
   bigWord = "FINE",
   buttonText = "Shop Now",
-  buttonHref = "/products",
+  buttonHref = "/shop",
   imageSrc = "/window.svg",
   imageAlt = "Product",
   descriptionLabel = "Description",
@@ -73,7 +73,7 @@ export function ProductsPromoBanner({
   rightHeadline = "Shop & Save Today!",
   rightSubheadline = "Discover deals on phones, parts, and accessories.",
   buttonText = "Shop Now",
-  buttonHref = "/products",
+  buttonHref = "/shop",
   imageSrc = "/window.svg",
   imageAlt = "Product",
 }: {
