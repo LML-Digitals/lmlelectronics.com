@@ -54,7 +54,7 @@ export default async function Home() {
   return (
     <main className="flex min-h-screen flex-col">
       {/* Hero Section */}
-      <section className="bg-gray-50">
+      <section className="bg-white">
         <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-16 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             {/* Left Column (Text) */}
@@ -265,40 +265,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="bg-primary">
-        <div className="max-w-4xl mx-auto text-center py-16 px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-black">
-            Get Repair Tips & Deals
-          </h2>
-          <p className="mt-4 text-lg leading-6 text-gray-800">
-            Subscribe to our newsletter and never miss an update on new products
-            and exclusive offers.
-          </p>
-          <form className="mt-8 sm:flex justify-center">
-            <label htmlFor="email-address" className="sr-only">
-              Email address
-            </label>
-            <input
-              id="email-address"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="w-full px-5 py-3 border border-transparent placeholder-gray-500 focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-400 focus:ring-white focus:outline-none rounded-md sm:max-w-xs"
-              placeholder="Enter your email"
-            />
-            <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
-              <button
-                type="submit"
-                className="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-400 focus:ring-black"
-              >
-                Subscribe
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
+
     </main>
   );
 }

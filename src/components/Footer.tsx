@@ -1,149 +1,211 @@
-import Link from "next/link";
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import NewsletterComp from "@/components/NewsletterComp";
+import { Facebook, Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
-const navigation = {
-  main: [
-    { name: "Home", href: "/" },
-    { name: "Products", href: "/products" },
-    { name: "Bundles", href: "/products/bundles" },
-    // { name: "Categories", href: "/products/categories" },
-  ],
-  legal: [
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
-  ],
-};
+const FooterClient = () => {
+  const QuickLinks = [
+    { id: 1, link: "Products", href: "/products" },
+    { id: 2, link: "Bundles", href: "/bundles" },
+    { id: 3, link: "Cart", href: "/cart" },
+    { id: 4, link: "Orders", href: "/orders" },
+  ];
 
-const socialLinks = [
-  {
-    name: "Facebook",
-    href: "#",
-    icon: (props: any) => (
-      <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
-        <path
-          fillRule="evenodd"
-          d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
-          clipRule="evenodd"
-        />
-      </svg>
-    ),
-  },
-  {
-    name: "Instagram",
-    href: "#",
-    icon: (props: any) => (
-      <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
-        <path
-          fillRule="evenodd"
-          d="M12.017 0C8.396 0 7.929.013 6.71.072 5.493.131 4.68.333 3.982.63c-.723.31-1.262.781-1.834 1.353C1.576 2.555 1.104 3.094.794 3.817.497 4.515.295 5.328.236 6.545.177 7.764.164 8.231.164 11.852c0 3.621.013 4.088.072 5.307.059 1.217.261 2.03.558 2.728.31.723.781 1.262 1.353 1.834.572.572 1.111 1.044 1.834 1.353.698.297 1.511.499 2.728.558 1.219.059 1.686.072 5.307.072 3.621 0 4.088-.013 5.307-.072 1.217-.059 2.03-.261 2.728-.558.723-.31 1.262-.781 1.834-1.353.572-.572 1.044-1.111 1.353-1.834.297-.698.499-1.511.558-2.728.059-1.219.072-1.686.072-5.307 0-3.621-.013-4.088-.072-5.307-.059-1.217-.261-2.03-.558-2.728-.31-.723-.781-1.262-1.353-1.834C20.444 1.576 19.905 1.104 19.182.794 18.484.497 17.671.295 16.454.236 15.235.177 14.768.164 11.147.164h.87zm-.066 1.985c.401-.007.815-.007 1.233-.007 3.565 0 3.986.012 5.394.07 1.301.059 2.006.274 2.476.456.622.242 1.067.532 1.534.999.467.467.757.912.999 1.534.182.47.397 1.175.456 2.476.058 1.408.07 1.829.07 5.394 0 3.565-.012 3.986-.07 5.394-.059 1.301-.274 2.006-.456 2.476-.242.622-.532 1.067-.999 1.534-.467.467-.912.757-1.534.999-.47.182-1.175.397-2.476.456-1.408.058-1.829.07-5.394.07-3.565 0-3.986-.012-5.394-.07-1.301-.059-2.006-.274-2.476-.456-.622-.242-1.067-.532-1.534-.999-.467-.467-.757-.912-.999-1.534-.182-.47-.397-1.175-.456-2.476-.058-1.408-.07-1.829-.07-5.394 0-3.565.012-3.986.07-5.394.059-1.301.274-2.006.456-2.476.242-.622.532-1.067.999-1.534.467-.467.912-.757 1.534-.999.47-.182 1.175-.397 2.476-.456 1.232-.057 1.703-.069 4.524-.07v.001zm8.633 2.305c-.884 0-1.6.716-1.6 1.6s.716 1.6 1.6 1.6 1.6-.716 1.6-1.6-.716-1.6-1.6-1.6zm-4.585 1.2c-3.729 0-6.75 3.021-6.75 6.75s3.021 6.75 6.75 6.75 6.75-3.021 6.75-6.75-3.021-6.75-6.75-6.75zm0 1.985c2.623 0 4.765 2.142 4.765 4.765s-2.142 4.765-4.765 4.765-4.765-2.142-4.765-4.765 2.142-4.765 4.765-4.765z"
-          clipRule="evenodd"
-        />
-      </svg>
-    ),
-  },
-];
+  const Categories = [
+    { id: 1, link: "Phone Repair", href: "/products/category/phone-repair" },
+    { id: 2, link: "Tablet Repair", href: "/products/category/tablet-repair" },
+    { id: 3, link: "Laptop Repair", href: "/products/category/laptop-repair" },
+    { id: 4, link: "Gaming Console", href: "/products/category/gaming-console" },
+  ];
 
-export default function Footer() {
+  const Support = [
+    { id: 1, link: "Contact Us", href: "/contact" },
+    { id: 2, link: "FAQs", href: "/faqs" },
+    { id: 3, link: "Shipping Info", href: "/shipping" },
+    { id: 4, link: "Returns", href: "/returns" },
+    { id: 5, link: "Repair Guides", href: "/repair-guides" },
+  ];
+
+  const platforms = [
+    {
+      id: 1,
+      platform: <Facebook size={24} />,
+      href: "https://facebook.com/lmlelectronics",
+    },
+    {
+      id: 2,
+      platform: <Youtube size={24} />,
+      href: "https://youtube.com/lmlelectronics",
+    },
+    {
+      id: 3,
+      platform: <Instagram size={24} />,
+      href: "https://instagram.com/lmlelectronics",
+    },
+    {
+      id: 4,
+      platform: <Linkedin size={24} />,
+      href: "https://linkedin.com/company/lmlelectronics",
+    },
+    {
+      id: 5,
+      platform: <Twitter size={24} />,
+      href: "https://twitter.com/lmlelectronics",
+    },
+  ];
+
+  const bottomLinks = [
+    { id: 1, link: "Privacy Policy", href: "/privacy" },
+    { id: 2, link: "Terms & Conditions", href: "/terms" },
+    { id: 3, link: "Refund Policy", href: "/refunds" },
+  ];
+
   return (
-    <footer className="bg-black text-white" aria-labelledby="footer-heading">
-      <h2 id="footer-heading" className="sr-only">
-        Footer
-      </h2>
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="xl:grid xl:grid-cols-3 xl:gap-8">
-          {/* Company Info */}
-          <div className="space-y-8 xl:col-span-1">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/images/lml_logo.png"
-                alt="Logo"
-                width={100}
-                height={100}
-                className="w-10 h-10"
-              />
-              <div className="ml-2">
-                <div className="text-lg font-bold text-white">Electronics</div>
-                <div className="text-xs text-gray-400 -mt-1">Find Your Fix</div>
-              </div>
-            </Link>
-            <p className="text-gray-300 text-base">
-              Your trusted partner for DIY electronic repair solutions. Quality
-              repair kits and components to extend device lifespan.
-            </p>
-            <div className="flex space-x-6">
-              {socialLinks.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  <span className="sr-only">{item.name}</span>
-                  <item.icon className="h-6 w-6" aria-hidden="true" />
-                </a>
-              ))}
+    <div className="bg-black px-10 lg:px-10 xl:px-40 lg:w-screen pt-20 pb-14">
+      <div className="text-white flex flex-col items-center justify-center gap-10 md:items-center lg:items-start md:justify-center lg:flex-row lg:justify-between">
+        <div className="flex flex-col items-center lg:items-start gap-4 w-full">
+          <Link href={"/"}>
+            <Image
+              src="/images/lml_logo.png"
+              width={70}
+              height={70}
+              alt="LML Electronics Logo"
+              className="rounded-lg hover:scale-105 transition-all"
+            />
+          </Link>
+          <NewsletterComp />
+        </div>
+
+        <div className="flex mt-10 justify-center md:items-start md:justify-center lg:mt-0 md:flex-row gap-10 md:gap-14 w-full">
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col justify-center gap-3 h-3/4">
+              <h1 className="font-bold">Quick Links</h1>
+              <ul className="flex flex-col gap-3">
+                {QuickLinks.map((link) => (
+                  <Link
+                    key={link.id}
+                    href={link.href}
+                    className="hover:text-secondary"
+                  >
+                    <li className="text-sm text-gray-400 hover:text-secondary">
+                      {link.link}
+                    </li>
+                  </Link>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-col justify-center gap-3 h-3/4">
+              <h1 className="font-bold">Categories</h1>
+              <ul className="flex flex-col gap-3">
+                {Categories.map((category) => (
+                  <Link
+                    key={category.id}
+                    href={category.href}
+                    className="hover:text-secondary"
+                  >
+                    <li className="text-sm text-gray-400 hover:text-secondary">
+                      {category.link}
+                    </li>
+                  </Link>
+                ))}
+              </ul>
             </div>
           </div>
 
-          {/* Contact Info */}
-          <div className="mt-12 xl:mt-0 xl:col-span-2">
-            <div className="grid grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase">
-                  Quick Links
-                </h3>
-                <ul className="mt-4 space-y-4">
-                  {navigation.main.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className="text-base text-gray-300 hover:text-white transition-colors"
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
+          <div className="flex flex-col justify-center gap-3 h-3/4">
+            <h1 className="font-bold">Support</h1>
+            <ul className="flex flex-col gap-3">
+              {Support.map((support) => (
+                <Link
+                  key={support.id}
+                  href={support.href}
+                  className="hover:text-secondary"
+                >
+                  <li className="text-sm text-gray-400 hover:text-secondary">
+                    {support.link}
+                  </li>
+                </Link>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex flex-col justify-center gap-3 h-3/4">
+            <h1 className="font-bold">Contact</h1>
+            <ul className="flex flex-col gap-3">
+              <li className="text-sm text-gray-400">
+                support@lmlelectronics.com
+              </li>
+              <li className="text-sm text-gray-400">
+                1-800-LML-ELECTRONICS
+              </li>
+              <li className="text-sm text-gray-400">
+                Mon-Fri: 9AM-6PM EST
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center mt-10 gap-3 md:mt-10 lg:mt-0 w-full">
+          <h1 className="font-bold text-center">
+            Follow Us
+          </h1>
+          <div className="flex flex-col items-center justify-center mt-6 md:mt-0 md:items-center lg:justify-start gap-6 md:w-96">
+            <ul className="flex items-center gap-3 mt-2">
+              {platforms.map((social) => (
+                <Link 
+                  key={social.id} 
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <li className="hover:text-secondary hover:scale-110 transition-all">
+                    {social.platform}
+                  </li>
+                </Link>
+              ))}
+            </ul>
+            <div className="text-center">
+              <p className="text-xs text-gray-300 font-extralight">
+                Your trusted partner for DIY electronic repair solutions. High-quality repair kits, components, and tools for Apple, Samsung, Google devices and more.
+                <br />
+                <br />
+                All product and company names are trademarks of their respective holders. iPhone, iPad, iPod, iPod touch, Mac and iMac are registered trademarks and property of Apple, Inc. LML Electronics is a third-party repair company and is not affiliated with Apple.
+              </p>
+              <div className="flex flex-col items-center justify-center gap-3 mt-6">
+                <ul className="flex items-center justify-center gap-3">
+                  {bottomLinks.map((link, index) => (
+                    <Link
+                      key={link.id}
+                      href={link.href}
+                      className="flex items-center gap-3 hover:text-secondary"
+                    >
+                      <li className="text-xs text-white hover:underline hover:underline-offset-1 hover:text-secondary">
+                        {link.link}
+                      </li>
+                      {index < bottomLinks.length - 1 && (
+                        <Separator
+                          orientation="vertical"
+                          className="h-2 text-white"
+                        />
+                      )}
+                    </Link>
                   ))}
                 </ul>
-              </div>
-              <div className="">
-                <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase">
-                  Contact
-                </h3>
-                <ul className="mt-4 space-y-4">
-                  <li className="text-base text-gray-300">
-                    <span className="block">1-800-LML-REPAIR</span>
-                    <span className="block break-words text-sm sm:text-base">
-                      support@lmlelectronics.com
-                    </span>
-                  </li>
-                  <li className="text-base text-gray-300">
-                    123 Electronics St,
-                    <br />
-                    Tech City, TC 12345
-                  </li>
-                </ul>
+                
+                <p className="text-xs text-gray-400">
+                  &copy; {new Date().getFullYear()} LML Electronics. All rights reserved.
+                </p>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="mt-12 border-t border-gray-800 pt-8">
-          <p className="text-base text-gray-400 xl:text-center">
-            &copy; {new Date().getFullYear()} LML Electronics. All rights
-            reserved.
-            {/* {navigation.legal.map((item, index) => (
-              <span key={item.name}>
-                <span className="mx-2">·</span>
-                <Link
-                  href={item.href}
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  {item.name}
-                </Link>
-              </span>
-            ))} */}
-          </p>
-        </div>
       </div>
-    </footer>
+    </div>
   );
-}
+};
+
+export default FooterClient;
