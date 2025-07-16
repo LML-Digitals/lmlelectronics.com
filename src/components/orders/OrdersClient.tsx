@@ -9,12 +9,12 @@ import { Eye, ShoppingBag } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { toast } from "sonner";
-import type { OrderSummary } from "@/types/api";
+import type { OrderDetails  } from "@/types/api";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 
 export default function OrdersClient() {
   const [email, setEmail] = useState("");
-  const [orders, setOrders] = useState<OrderSummary[]>([]);
+  const [orders, setOrders] = useState<OrderDetails[]>([]);
   const [loading, setLoading] = useState(false);
 
   const getStatusColor = (status: string) => {
@@ -42,15 +42,19 @@ export default function OrdersClient() {
     setLoading(true);
     try {
       const response = await fetch(
-        buildApiUrl(`/orders/customer?email=${encodeURIComponent(email)}`),
-        {
+        buildApiUrl("/api/orders"), {
+          method: "POST",
           headers: {
-            Accept: "application/json",
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify({ email: email }),
         }
       );
-      const data = await handleApiResponse<OrderSummary[]>(response);
-      setOrders(data);
+      const data = await handleApiResponse<{
+        success: boolean;
+        data: OrderDetails[];
+      }>(response);
+      setOrders(data.data);
     } catch (error) {
       console.error("Error fetching orders:", error);
       toast.error(
@@ -162,31 +166,6 @@ export default function OrdersClient() {
                                 {order.storeLocation.name}
                               </div>
                             </div>
-
-                            {order.shippingAddress && (
-                              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                                <div className="text-sm">
-                                  <span className="font-medium text-gray-900">
-                                    Shipping Address:
-                                  </span>
-                                  <div className="mt-1 text-gray-600">
-                                    {order.shippingAddress.fullName}
-                                    <br />
-                                    {order.shippingAddress.addressLine1}
-                                    {order.shippingAddress.addressLine2 && (
-                                      <>
-                                        <br />
-                                        {order.shippingAddress.addressLine2}
-                                      </>
-                                    )}
-                                    <br />
-                                    {order.shippingAddress.city},{" "}
-                                    {order.shippingAddress.state}{" "}
-                                    {order.shippingAddress.zipCode}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
 
                             <div className="flex items-center gap-4 text-sm">
                               <div>

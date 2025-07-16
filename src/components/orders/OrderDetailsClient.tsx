@@ -288,7 +288,7 @@ export default function OrderDetailsClient({
               </Card>
 
               {/* Shipping Address */}
-              {order.shippingAddress && (
+              {order.customer?.shippingAddress && (
                 <Card>
                   <CardHeader>
                     <CardTitle>Shipping Address</CardTitle>
@@ -300,40 +300,40 @@ export default function OrderDetailsClient({
                         <div>
                           <p className="font-medium">Delivery Address</p>
                           <div className="text-gray-500 text-sm leading-relaxed">
-                            {order.shippingAddress.fullName}
+                            {order.customer?.shippingAddress.fullName}
                             <br />
-                            {order.shippingAddress.addressLine1}
-                            {order.shippingAddress.addressLine2 && (
+                            {order.customer?.shippingAddress.addressLine1}
+                            {order.customer?.shippingAddress.addressLine2 && (
                               <>
                                 <br />
-                                {order.shippingAddress.addressLine2}
+                                {order.customer?.shippingAddress.addressLine2}
                               </>
                             )}
                             <br />
-                            {order.shippingAddress.city},{" "}
-                            {order.shippingAddress.state}{" "}
-                            {order.shippingAddress.zipCode}
+                            {order.customer?.shippingAddress.city},{" "}
+                            {order.customer?.shippingAddress.state}{" "}
+                            {order.customer?.shippingAddress.zipCode}
                           </div>
                         </div>
                       </div>
-                      {order.shippingAddress.phone && (
+                      {order.customer?.shippingAddress.phone && (
                         <div className="flex items-center gap-2">
                           <Phone className="h-4 w-4 text-gray-500" />
                           <div>
                             <p className="font-medium">Contact Phone</p>
                             <p className="text-gray-500 text-sm">
-                              {order.shippingAddress.phone}
+                              {order.customer?.shippingAddress.phone}
                             </p>
                           </div>
                         </div>
                       )}
-                      {order.shippingAddress.shippingMethod && (
+                      {order.customer?.shippingAddress.shippingMethod && (
                         <div className="flex items-center gap-2">
                           <Package className="h-4 w-4 text-gray-500" />
                           <div>
                             <p className="font-medium">Shipping Method</p>
                             <p className="text-gray-500 text-sm">
-                              {order.shippingAddress.shippingMethod}
+                              {order.customer?.shippingAddress.shippingMethod}
                             </p>
                           </div>
                         </div>
@@ -357,6 +357,10 @@ export default function OrderDetailsClient({
                     <div className="flex justify-between text-sm">
                       <span>Tax</span>
                       <span>${(order.taxAmount || 0).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Shipping</span>
+                      <span>${(order.customer?.shippingAddress.shippingRate || 0).toFixed(2)}</span>
                     </div>
                     {(order.discountAmount || 0) > 0 && (
                       <div className="flex justify-between text-sm text-green-600">
