@@ -28,6 +28,7 @@ import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import { calculateTax } from "@/lib/config/tax";
 import { calculateShipping } from "@/lib/config/shipping";
 import SquarePaymentForm from "./SquarePaymentForm";
+import { sendOrderConfirmationEmail } from "@/lib/email/sendOrderConfirmation";
 
 interface CustomerFormData {
   firstName: string;
@@ -150,14 +151,11 @@ const CheckoutClient = () => {
     }
   };
 
-  const handlePlaceOrder = async () => {
-    // Validation
-    if (!location) {
-      toast.error("Please select a store location");
-      return;
-    }
-
-    if (!paymentToken) {
+  // Refactored: Place order logic
+  const placeOrder = async (token?: string) => {
+    // Use the provided token if passed (from payment success), otherwise use state
+    const paymentTokenToUse = token || paymentToken;
+    if (!paymentTokenToUse) {
       toast.error("Please complete payment to place order");
       return;
     }
@@ -173,7 +171,6 @@ const CheckoutClient = () => {
       state: "State",
       zipCode: "Zip code",
     };
-
     for (const [field, label] of Object.entries(requiredFields)) {
       if (!customerForm[field as keyof CustomerFormData]) {
         toast.error(`${label} is required`);
@@ -182,34 +179,11 @@ const CheckoutClient = () => {
     }
 
     setLoading(true);
-
     try {
-      // // First create/get customer
-      // const customerResponse = await fetch(buildApiUrl("/customers"), {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     firstName: customerForm.firstName,
-      //     lastName: customerForm.lastName,
-      //     email: customerForm.email,
-      //     phone: customerForm.phone,
-      //   }),
-      // });
-
-      // if (!customerResponse.ok) {
-      //   throw new Error("Failed to create/get customer");
-      // }
-
-      // const { customerId } = await customerResponse.json();
-
-      // Then create the order
       const checkoutData = {
         items,
         paymentMethod: "Square",
-        paymentToken,
-        location,
+        paymentToken: paymentTokenToUse,
         customerId: null,
         shippingAddress: {
           fullName: `${customerForm.firstName} ${customerForm.lastName}`,
@@ -234,32 +208,45 @@ const CheckoutClient = () => {
         discountAmount: 0,
         isGuestCheckout: true,
       };
-
       const orderResponse = await fetch(buildApiUrl("/api/checkout"), {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(checkoutData),
       });
-
       if (!orderResponse.ok) {
         console.log(orderResponse);
         throw new Error("Failed to create order");
       }
-
       const data = await handleApiResponse<{ orderId: string }>(orderResponse);
-
-      // Order created successfully
       toast.success(`Order #${data.orderId} has been created`);
+
+      // Send order confirmation email
+      try {
+        await sendOrderConfirmationEmail({
+          to: customerForm.email,
+          orderId: data.orderId,
+          customerName: `${customerForm.firstName} ${customerForm.lastName}`,
+          orderDetailsHtml: `
+            <ul style='padding-left:20px;'>
+              ${items
+                .map(
+                  (item) =>
+                    `<li>${item.quantity} × ${item.name} - $${item.total.toFixed(2)}</li>`
+                )
+                .join("")}
+            </ul>
+            <p style='font-weight:bold;'>Shipping: $${calculatedShipping.toFixed(2)}</p>
+            <p style='font-weight:bold;'>Tax: $${calculatedTax.toFixed(2)}</p>
+            <p style='font-weight:bold;'>Total: $${total.toFixed(2)}</p>
+          `,
+        });
+      } catch (emailErr) {
+        console.error("Failed to send confirmation email:", emailErr);
+      }
 
       // Set order completed flag to prevent cart redirect
       setOrderCompleted(true);
-
-      // Clear the cart
       clearCart();
-
-      // Navigate to success page or order details
       router.push(`/orders/${data.orderId}`);
     } catch (error) {
       console.error("Error placing order:", error);
@@ -513,34 +500,7 @@ const CheckoutClient = () => {
               </CardContent>
             </Card>
 
-            {/* Store Location */}
-            <Card className="shadow-sm border-0 bg-white">
-              <CardHeader className="pb-6">
-                <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-                  <ShoppingCart className="h-5 w-5 mr-3 text-secondary" />
-                  Store Location
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    Select pickup location
-                  </Label>
-                  <Select value={location} onValueChange={setLocation}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Choose a store location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {locations.map((loc) => (
-                        <SelectItem key={loc.id} value={loc.name}>
-                          {loc.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
+            
           </div>
 
           {/* Right Column - Order Summary & Payment - 30% */}
@@ -625,7 +585,11 @@ const CheckoutClient = () => {
                         process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID || ""
                       }
                       total={total}
-                      onPaymentSuccess={(token) => setPaymentToken(token)}
+                      onPaymentSuccess={(token) => {
+                        setPaymentToken(token);
+                        setLoading(true);
+                        placeOrder(token);
+                      }}
                       disabled={loading}
                       environment={
                         (process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT as
@@ -636,7 +600,7 @@ const CheckoutClient = () => {
 
                     <Button
                       className="w-full h-12 text-lg text-black font-semibold bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/80 hover:to-secondary shadow-lg transition-all duration-200 transform hover:scale-105"
-                      onClick={handlePlaceOrder}
+                      onClick={() => placeOrder()}
                       disabled={loading || !paymentToken}
                     >
                       {loading ? (

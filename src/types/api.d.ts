@@ -242,6 +242,7 @@ export interface Customer {
   lastName: string;
   email: string;
   phone: string;
+  shippingAddress: ShippingAddressData;
   // This is not the full customer model, only what's included in the order response.
   // Add other fields here if they are included in the `customer: true` payload.
 }
@@ -332,17 +333,4 @@ export type OrderDetails = Order & {
   paymentDetails: PaymentDetails | null;
   shippingAddress: ShippingAddress | null; // Fetched separately and added to the response
   refunds: Refund[];
-};
-
-/**
- * The type for an order summary object returned from `/api/orders`.
- * This is a plain TypeScript type with no external dependencies.
- */
-export type OrderSummary = Order & {
-  storeLocation: StoreLocation;
-  items: {
-    description: string;
-    quantity: number;
-  }[];
-  shippingAddress: ShippingAddress | null;
 };
