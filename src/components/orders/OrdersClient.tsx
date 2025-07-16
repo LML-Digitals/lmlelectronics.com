@@ -89,7 +89,7 @@ export default function OrdersClient() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className="bg-black text-white hover:bg-gray-800">
                 {loading ? "Loading..." : "Find Orders"}
               </Button>
             </div>
@@ -119,7 +119,7 @@ export default function OrdersClient() {
                       : "Enter your email address to view your orders."}
                   </p>
                   <Link href="/products">
-                    <Button>Start Shopping</Button>
+                    <Button className="bg-black text-white hover:bg-gray-800">Start Shopping</Button>
                   </Link>
                 </CardContent>
               </Card>

@@ -2,9 +2,10 @@ import { HeaderClient } from "./HeaderClient";
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "Products", href: "/products" },
+  { name: "Shop", href: "/shop" },
   { name: "Bundles", href: "/bundles" },
-  // { name: "Categories", href: "/products/categories" },
+  { name: "Cart", href: "/cart" },
+  { name: "Orders", href: "/orders" },
 ];
 
 export default function Header() {

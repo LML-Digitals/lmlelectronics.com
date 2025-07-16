@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import ProductCarousel from "@/components/products/ProductCarousel";
 import BundleGrid from "@/components/products/BundleGrid";
+import ProductsHeroBanner, {
+  ProductsPromoBanner,
+} from "@/components/products/ProductsHeroBanner";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import { InventoryItem } from "@/types/api";
 import { InventoryItemCategory } from "@/types/api";
@@ -50,11 +53,19 @@ const testimonials = [
 
 export default async function Home() {
   const { products, categories } = await getHomePageData();
+  const visibleProducts = products.filter(
+    (p) =>
+      p.isBundle === false &&
+      Array.isArray(p.variations) &&
+      p.variations.some((v) => v.visible === true) &&
+      // Exclude products with a category named 'Tickets'
+      !(Array.isArray(p.categories) && p.categories.some((cat) => cat.name === "Tickets"))
+  );
 
   return (
     <main className="flex min-h-screen flex-col">
       {/* Hero Section */}
-      <section className="bg-gray-50">
+      <section className="bg-white">
         <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-16 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             {/* Left Column (Text) */}
@@ -70,7 +81,7 @@ export default async function Home() {
               </p>
               <div className="mt-8 flex gap-4 justify-center md:justify-start">
                 <Link
-                  href="/products"
+                  href="/shop"
                   className="inline-block bg-secondary text-black px-8 py-3 rounded-lg text-lg font-semibold hover:bg-yellow-400 transition-colors shadow-lg hover:shadow-xl"
                 >
                   Shop Now
@@ -108,7 +119,7 @@ export default async function Home() {
               Discover our most popular repair kits and components
             </p>
           </div>
-          <ProductCarousel products={products} />
+          <ProductCarousel products={visibleProducts} />
         </div>
       </section>
 
@@ -135,10 +146,12 @@ export default async function Home() {
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {categories.map((category) => (
+            {categories
+              .filter((category) => category.visible === true && category.parentId == null && category.name !== "Tickets")
+              .map((category) => (
               <Link
                 key={category.id}
-                href={`/products/category/${category.name
+                href={`/shop/category/${category.name
                   .toLowerCase()
                   .replace(/\s+/g, "-")}`}
                 className="block"
@@ -265,38 +278,49 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="bg-primary">
-        <div className="max-w-4xl mx-auto text-center py-16 px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-black">
-            Get Repair Tips & Deals
-          </h2>
-          <p className="mt-4 text-lg leading-6 text-gray-800">
-            Subscribe to our newsletter and never miss an update on new products
-            and exclusive offers.
-          </p>
-          <form className="mt-8 sm:flex justify-center">
-            <label htmlFor="email-address" className="sr-only">
-              Email address
-            </label>
-            <input
-              id="email-address"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="w-full px-5 py-3 border border-transparent placeholder-gray-500 focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-400 focus:ring-white focus:outline-none rounded-md sm:max-w-xs"
-              placeholder="Enter your email"
-            />
-            <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0">
-              <button
-                type="submit"
-                className="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-400 focus:ring-black"
-              >
-                Subscribe
-              </button>
-            </div>
-          </form>
+      {/* End of Season Sale Banner */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <ProductsHeroBanner
+            label="Limited Time"
+            headline="End of Season Sale"
+            bigWord="SAVE"
+            buttonText="Shop Deals"
+            buttonHref="/shop"
+            imageSrc="/images/lml_box.webp"
+            imageAlt="Product"
+            descriptionLabel="Special Offer"
+            description="Up to 30% off select items."
+            small
+          />
+        </div>
+      </section>
+
+      {/* Extra Savings Promo Banner */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          {(() => {
+            const today = new Date();
+            const end = new Date();
+            end.setDate(today.getDate() + 14);
+            const format = (d: Date) =>
+              d.toLocaleString("en-US", { month: "short", day: "numeric" });
+            const dateRange = `${format(today)} to ${format(end)}`;
+            return (
+              <ProductsPromoBanner
+                leftLabel="Limited Time Offer"
+                leftBigText={`EXTRA\nSAVINGS`}
+                leftSubLabel={dateRange}
+                rightLabel="LML Electronics"
+                rightHeadline="Shop & Save Today!"
+                rightSubheadline="Discover deals on phones, parts, and accessories."
+                buttonText="Shop Now"
+                buttonHref="/shop"
+                imageSrc="/images/lml_box.webp"
+                imageAlt="Product"
+              />
+            );
+          })()}
         </div>
       </section>
     </main>
