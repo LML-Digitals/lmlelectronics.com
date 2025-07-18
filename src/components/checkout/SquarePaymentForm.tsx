@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -14,20 +14,24 @@ interface SquarePaymentFormProps {
   environment?: "sandbox" | "production";
 }
 
+export interface SquarePaymentFormRef {
+  handlePayment: () => Promise<void>;
+}
+
 declare global {
   interface Window {
     Square: any;
   }
 }
 
-const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
+const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProps>(({
   applicationId,
   locationId,
   total,
   onPaymentSuccess,
   disabled = false,
   environment = "sandbox",
-}) => {
+}, ref) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [sdkError, setSdkError] = useState<string | null>(null);
@@ -189,6 +193,7 @@ const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
     };
   }, [isSDKLoaded, applicationId, locationId]);
 
+  // Expose handlePayment function to parent component
   const handlePayment = async () => {
     if (!cardInstance.current || disabled) return;
 
@@ -227,6 +232,11 @@ const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
       setIsLoading(false);
     }
   };
+
+  // Expose handlePayment function to parent component
+  useImperativeHandle(ref, () => ({
+    handlePayment,
+  }), [handlePayment]);
 
   // Show error state
   if (sdkError) {
@@ -284,8 +294,8 @@ const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
         </div>
       )}
 
-      {/* Tokenize button */}
-      {!paymentToken && (
+      {/* Tokenize button - HIDDEN */}
+      {/* {!paymentToken && (
         <Button
           onClick={handlePayment}
           disabled={isLoading || disabled}
@@ -301,9 +311,9 @@ const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
             "Verify Payment Method"
           )}
         </Button>
-      )}
+      )} */}
     </div>
   );
-};
+});
 
 export default SquarePaymentForm;

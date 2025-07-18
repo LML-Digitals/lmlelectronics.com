@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +27,7 @@ import { StoreLocation } from "@/types/api";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import { calculateTax } from "@/lib/config/tax";
 import { calculateShipping } from "@/lib/config/shipping";
-import SquarePaymentForm from "./SquarePaymentForm";
+import SquarePaymentForm, { SquarePaymentFormRef } from "./SquarePaymentForm";
 import { sendOrderConfirmationEmail } from "@/lib/email/sendOrderConfirmation";
 
 interface CustomerFormData {
@@ -59,6 +59,7 @@ const CheckoutClient = () => {
   const [locations, setLocations] = useState<StoreLocation[]>([]);
   const [paymentToken, setPaymentToken] = useState<string | null>(null);
   const [orderCompleted, setOrderCompleted] = useState(false);
+  const paymentFormRef = useRef<SquarePaymentFormRef>(null);
 
   // Form states
   const [customerForm, setCustomerForm] = useState<CustomerFormData>({
@@ -148,6 +149,25 @@ const CheckoutClient = () => {
         ...customerForm,
         state: value,
       });
+    }
+  };
+
+  // Handle complete purchase process
+  const handleCompletePurchase = async () => {
+    if (!paymentToken) {
+      // If no payment token, verify payment first
+      if (paymentFormRef.current) {
+        try {
+          await paymentFormRef.current.handlePayment();
+          // The onPaymentSuccess callback will set the paymentToken and trigger placeOrder
+        } catch (error) {
+          console.error("Payment verification failed:", error);
+          return;
+        }
+      }
+    } else {
+      // If payment token exists, place order directly
+      await placeOrder();
     }
   };
 
@@ -578,6 +598,7 @@ const CheckoutClient = () => {
                     </h3>
 
                     <SquarePaymentForm
+                      ref={paymentFormRef}
                       applicationId={
                         process.env.NEXT_PUBLIC_SQUARE_APP_ID || ""
                       }
@@ -587,7 +608,7 @@ const CheckoutClient = () => {
                       total={total}
                       onPaymentSuccess={(token) => {
                         setPaymentToken(token);
-                        setLoading(true);
+                        // After payment is verified, place the order
                         placeOrder(token);
                       }}
                       disabled={loading}
@@ -600,8 +621,8 @@ const CheckoutClient = () => {
 
                     <Button
                       className="w-full h-12 text-lg text-black font-semibold bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/80 hover:to-secondary shadow-lg transition-all duration-200 transform hover:scale-105"
-                      onClick={() => placeOrder()}
-                      disabled={loading || !paymentToken}
+                      onClick={handleCompletePurchase}
+                      disabled={loading}
                     >
                       {loading ? (
                         <>
@@ -611,7 +632,7 @@ const CheckoutClient = () => {
                       ) : (
                         <>
                           <CheckCircle className="h-5 w-5 mr-2" />
-                          Complete Order • ${total.toFixed(2)}
+                          Complete Purchase Now • ${total.toFixed(2)}
                         </>
                       )}
                     </Button>
