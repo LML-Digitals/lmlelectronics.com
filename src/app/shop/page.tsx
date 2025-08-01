@@ -9,6 +9,8 @@ import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import PageHero from "@/components/PageHero";
 import ProductsClientPage from "./ProductsClientPage";
 import Script from "next/script";
+import { getInventoryCategories } from "@/components/dashboard/inventory/categories/services/itemCategoryCrud";
+
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = "https://lmlelectronics.com";
@@ -51,10 +53,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function fetchProductCategories() {
   try {
-    const response = await fetch(buildApiUrl("/api/inventory/categories"));
-    const categories: InventoryItemCategory[] = await handleApiResponse(
-      response
-    );
+    const response = await getInventoryCategories();
+    const categories = response.map(category => ({
+      ...category,
+      children: category.children || [],
+      items: []
+    }));
     return { categories, error: null };
   } catch (error) {
     console.error("Failed to fetch product categories:", error);
@@ -115,7 +119,11 @@ export default async function ProductsPage() {
                 <p className="text-red-500 text-lg">{error}</p>
               </div>
             ) : (
-              <CategoryGrid categories={categories.filter(category => category.visible === true && category.parentId == null && category.name !== "Tickets")} />
+              <CategoryGrid categories={categories.filter(category => category.visible === true && category.parentId == null && category.name !== "Tickets").map(category => ({
+                ...category,
+                children: [],
+                items: []
+              }))} />
             )}
           </div>
         </section>

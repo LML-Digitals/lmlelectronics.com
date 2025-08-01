@@ -20,6 +20,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import type { OrderDetails } from "@/types/api";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
+import { getOrderDetails } from "@/app/actions/orders";
 
 interface OrderDetailsClientProps {
   orderId: string;
@@ -51,14 +52,10 @@ export default function OrderDetailsClient({
   const fetchOrder = async () => {
     setLoading(true);
     try {
-      const response = await fetch(buildApiUrl(`/api/orders/${orderId}`));
-      const apiResponse = await handleApiResponse<{
-        success: boolean;
-        data: OrderDetails;
-      }>(response);
+      const result = await getOrderDetails(orderId);
 
       // Extract the actual order data from the API response
-      const orderData = apiResponse.data;
+      const orderData = result.data as unknown as OrderDetails;
 
       setOrder(orderData);
       setVerified(true);

@@ -4,6 +4,7 @@ import BundleDetails from "@/components/bundles/BundleDetails";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import { BundleDetailsProps } from "@/components/bundles/BundleDetails";
 import PageHero from "@/components/PageHero";
+import { getBundleById } from "@/components/dashboard/inventory/bundles/services/bundles";
 
 interface BundlePageProps {
   params: Promise<{
@@ -13,8 +14,8 @@ interface BundlePageProps {
 
 async function getBundleData(id: string) {
   try {
-    const result = await fetch(buildApiUrl(`/api/inventory/bundles/${id}`));
-    const data = await handleApiResponse<BundleDetailsProps>(result);
+    const result = await getBundleById(id);
+    const data = result;
     if (!data) {
       return null;
     }
