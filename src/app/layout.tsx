@@ -4,6 +4,9 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "sonner";
+import AuthProvider from "@/components/common/auth/AuthProvider";
+import { ConditionalHeader } from "@/components/ConditionalHeader";
+import { ConditionalFooter } from "@/components/ConditionalFooter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,10 +66,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
-        <Toaster position="top-right" />
+        <AuthProvider>
+          <ConditionalHeader />
+          <main className="min-h-screen">{children}</main>
+          <ConditionalFooter />
+          <Toaster position="top-right" />
+        </AuthProvider>
       </body>
     </html>
   );

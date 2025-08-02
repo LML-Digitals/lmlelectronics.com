@@ -29,6 +29,8 @@ import { calculateTax } from "@/lib/config/tax";
 import { calculateShipping } from "@/lib/config/shipping";
 import SquarePaymentForm, { SquarePaymentFormRef } from "./SquarePaymentForm";
 import { sendOrderConfirmationEmail } from "@/lib/email/sendOrderConfirmation";
+import { getStoreLocations } from "@/components/locations/services/storeLocationCrud";
+import { createOrderFromCheckout } from "@/app/actions/checkout";
 
 interface CustomerFormData {
   firstName: string;
@@ -125,11 +127,11 @@ const CheckoutClient = () => {
 
   // Load store locations
   useEffect(() => {
-    fetch(buildApiUrl("/api/location"))
-      .then((res) => handleApiResponse<StoreLocation[]>(res))
-      .then((data) => {
-        setLocations(data);
-      });
+    const fetchLocations = async () => {
+      const data = await getStoreLocations();
+      setLocations(data as unknown as StoreLocation[]);
+    };
+    fetchLocations();
   }, []);
 
   // Redirect if cart is empty (but not during order completion)
@@ -228,23 +230,21 @@ const CheckoutClient = () => {
         discountAmount: 0,
         isGuestCheckout: true,
       };
-      const orderResponse = await fetch(buildApiUrl("/api/checkout"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(checkoutData),
-      });
-      if (!orderResponse.ok) {
-        console.log(orderResponse);
-        throw new Error("Failed to create order");
-      }
-      const data = await handleApiResponse<{ orderId: string }>(orderResponse);
+
+      const checkoutDataWithPayment = {
+        ...checkoutData,
+        paymentMethod: "Square Card",
+      };
+
+      const result = await createOrderFromCheckout(checkoutDataWithPayment);
+      const data = result;
       toast.success(`Order #${data.orderId} has been created`);
 
       // Send order confirmation email
       try {
         await sendOrderConfirmationEmail({
           to: customerForm.email,
-          orderId: data.orderId,
+          orderId: data.orderId as string,
           customerName: `${customerForm.firstName} ${customerForm.lastName}`,
           orderDetailsHtml: `
             <ul style='padding-left:20px;'>

@@ -63,6 +63,7 @@ const FooterClient = () => {
     { id: 1, link: "Privacy Policy", href: "/privacy" },
     { id: 2, link: "Terms & Conditions", href: "/terms" },
     { id: 3, link: "Refund Policy", href: "/refunds" },
+    { id: 4, link: "Portal", href: "/auth/signin" },
   ];
 
   return (
@@ -80,76 +81,6 @@ const FooterClient = () => {
           </Link>
           <NewsletterComp />
         </div>
-
-        {/* Hidden middle section with links */}
-        {/* <div className="flex mt-10 justify-center md:items-start md:justify-center lg:mt-0 md:flex-row gap-10 md:gap-14 w-full">
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col justify-center gap-3 h-3/4">
-              <h1 className="font-bold">Quick Links</h1>
-              <ul className="flex flex-col gap-3">
-                {QuickLinks.map((link) => (
-                  <Link
-                    key={link.id}
-                    href={link.href}
-                    className="hover:text-secondary"
-                  >
-                    <li className="text-sm text-gray-400 hover:text-secondary">
-                      {link.link}
-                    </li>
-                  </Link>
-                ))}
-              </ul>
-            </div>
-            <div className="flex flex-col justify-center gap-3 h-3/4">
-              <h1 className="font-bold">Categories</h1>
-              <ul className="flex flex-col gap-3">
-                {Categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={category.href}
-                    className="hover:text-secondary"
-                  >
-                    <li className="text-sm text-gray-400 hover:text-secondary">
-                      {category.link}
-                    </li>
-                  </Link>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-center gap-3 h-3/4">
-            <h1 className="font-bold">Support</h1>
-            <ul className="flex flex-col gap-3">
-              {Support.map((support) => (
-                <Link
-                  key={support.id}
-                  href={support.href}
-                  className="hover:text-secondary"
-                >
-                  <li className="text-sm text-gray-400 hover:text-secondary">
-                    {support.link}
-                  </li>
-                </Link>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex flex-col justify-center gap-3 h-3/4">
-            <h1 className="font-bold">Contact</h1>
-            <ul className="flex flex-col gap-3">
-              <li className="text-sm text-gray-400">
-                support@lmlelectronics.com
-              </li>
-              <li className="text-sm text-gray-400">
-                1-800-LML-ELECTRONICS
-              </li>
-              <li className="text-sm text-gray-400">
-                Mon-Fri: 9AM-6PM EST
-              </li>
-            </ul>
-          </div>
-        </div> */}
 
         <div className="flex flex-col items-center mt-10 gap-3 md:mt-10 lg:mt-0 w-full">
           <h1 className="font-bold text-center">

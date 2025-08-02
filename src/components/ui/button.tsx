@@ -47,13 +47,19 @@ function Button({
   }) {
   const Comp = asChild ? Slot : "button"
 
+  const textColor = className?.includes("text-white") ? "" : "text-black";
+
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        buttonVariants({ variant, size}),
+        textColor,
+        className
+      )}
       {...props}
     />
-  )
+  );
 }
 
 export { Button, buttonVariants }

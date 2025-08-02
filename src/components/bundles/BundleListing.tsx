@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/lib/stores/useCartStore";
 import { toast } from "sonner";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
+import { getBundles } from "@/components/dashboard/inventory/bundles/services/bundles";
 
 interface BundleItem {
   id: string;
@@ -46,11 +47,13 @@ export default function BundleListing() {
     const fetchBundles = async () => {
       try {
         setLoading(true);
-        const result = await fetch(buildApiUrl("/api/inventory/bundles"));
-        if (!result.ok) {
-          throw new Error("Failed to fetch bundles");
-        }
-        const data = await handleApiResponse<BundleItem[]>(result);
+       const bundles = await getBundles()
+
+       // Filter for bundles that are visible and have stock.
+       const visibleBundles = bundles.bundles?.filter((bundle) =>
+         bundle.variations.some((v) => v.visible)
+       );
+        const data = visibleBundles;
 
         if (data) {
           // Filter only bundles with stock and valid pricing

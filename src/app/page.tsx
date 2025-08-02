@@ -10,18 +10,32 @@ import { InventoryItem } from "@/types/api";
 import { InventoryItemCategory } from "@/types/api";
 import { Product } from "@/components/products/ProductCarousel";
 import { Star, User } from "lucide-react";
+import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
+import { getInventoryCategories } from "@/components/dashboard/inventory/categories/services/itemCategoryCrud";
 
 async function getHomePageData() {
   try {
     const [productsResponse, categoriesResponse] = await Promise.all([
-      fetch(buildApiUrl("/api/inventory/items")),
-      fetch(buildApiUrl("/api/inventory/categories")),
+      getInventoryItems(),
+      getInventoryCategories(),
     ]);
 
-    const products = await handleApiResponse<Product[]>(productsResponse);
-    const categories = await handleApiResponse<InventoryItemCategory[]>(
-      categoriesResponse
-    );
+    const visibleItems = productsResponse
+      .map((item) => {
+        const variations = item.variations.filter(
+          (v) => v.visible && v.stockLevels.some((sl) => sl.stock > 0)
+        );
+
+        if (variations.length > 0 || item.isBundle) {
+          // Always include bundles regardless of stock
+          return { ...item, variations };
+        }
+        return null;
+      })
+      .filter((item) => item !== null);
+
+    const products = visibleItems;
+    const categories = categoriesResponse;
 
     return { products, categories };
   } catch (error) {
@@ -59,7 +73,10 @@ export default async function Home() {
       Array.isArray(p.variations) &&
       p.variations.some((v) => v.visible === true) &&
       // Exclude products with a category named 'Tickets'
-      !(Array.isArray(p.categories) && p.categories.some((cat) => cat.name === "Tickets"))
+      !(
+        Array.isArray(p.categories) &&
+        p.categories.some((cat) => cat.name === "Tickets")
+      )
   );
 
   return (
@@ -119,7 +136,7 @@ export default async function Home() {
               Discover our most popular repair kits and components
             </p>
           </div>
-          <ProductCarousel products={visibleProducts} />
+          <ProductCarousel products={visibleProducts as Product[]} />
         </div>
       </section>
 
@@ -147,35 +164,42 @@ export default async function Home() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {categories
-              .filter((category) => category.visible === true && category.parentId == null && category.name !== "Tickets")
+              .filter(
+                (category) =>
+                  category.visible === true &&
+                  category.parentId == null &&
+                  category.name !== "Tickets"
+              )
               .map((category) => (
-              <Link
-                key={category.id}
-                href={`/shop/category/${category.name
-                  .toLowerCase()
-                  .replace(/\s+/g, "-")}`}
-                className="block"
-              >
-                <div className="bg-white rounded-[20px] p-0 flex flex-col h-full hover:shadow-lg transition-shadow">
-                  <div className="flex items-center justify-center bg-[#f5f6fa] rounded-[20px] h-[150px] w-full mt-0 mb-0 overflow-hidden">
-                    <Image
-                      src={category.image || "/images/product-placeholder.jpg"}
-                      alt={category.name}
-                      width={120}
-                      height={120}
-                      className="object-contain max-h-[120px] max-w-[90%]"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <div className="px-4 py-3">
-                      <h3 className="text-[#3b5b7c] text-base font-normal text-center hover:underline cursor-pointer capitalize">
-                        {category.name}
-                      </h3>
+                <Link
+                  key={category.id}
+                  href={`/shop/category/${category.name
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`}
+                  className="block"
+                >
+                  <div className="bg-white rounded-[20px] p-0 flex flex-col h-full hover:shadow-lg transition-shadow">
+                    <div className="flex items-center justify-center bg-[#f5f6fa] rounded-[20px] h-[150px] w-full mt-0 mb-0 overflow-hidden">
+                      <Image
+                        src={
+                          category.image || "/images/product-placeholder.jpg"
+                        }
+                        alt={category.name}
+                        width={120}
+                        height={120}
+                        className="object-contain max-h-[120px] max-w-[90%]"
+                      />
+                    </div>
+                    <div className="w-full">
+                      <div className="px-4 py-3">
+                        <h3 className="text-[#3b5b7c] text-base font-normal text-center hover:underline cursor-pointer capitalize">
+                          {category.name}
+                        </h3>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
           </div>
         </div>
       </section>

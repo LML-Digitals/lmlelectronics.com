@@ -5,6 +5,7 @@ import { Search } from "lucide-react";
 import ProductCard from "./ProductCard";
 import type { InventoryItem } from "@/types/api";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
+import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
 
 interface ProductListingProps {
   filters?: any;
@@ -12,12 +13,23 @@ interface ProductListingProps {
   setResultsCount?: (count: number) => void;
 }
 
-function sortProducts(products: InventoryItem[], sort: string): InventoryItem[] {
+function sortProducts(
+  products: InventoryItem[],
+  sort: string
+): InventoryItem[] {
   switch (sort) {
     case "price_asc":
-      return [...products].sort((a, b) => (a.variations[0]?.sellingPrice ?? 0) - (b.variations[0]?.sellingPrice ?? 0));
+      return [...products].sort(
+        (a, b) =>
+          (a.variations[0]?.sellingPrice ?? 0) -
+          (b.variations[0]?.sellingPrice ?? 0)
+      );
     case "price_desc":
-      return [...products].sort((a, b) => (b.variations[0]?.sellingPrice ?? 0) - (a.variations[0]?.sellingPrice ?? 0));
+      return [...products].sort(
+        (a, b) =>
+          (b.variations[0]?.sellingPrice ?? 0) -
+          (a.variations[0]?.sellingPrice ?? 0)
+      );
     case "alpha_asc":
       return [...products].sort((a, b) => a.name.localeCompare(b.name));
     case "alpha_desc":
@@ -43,12 +55,24 @@ export default function ProductListing({
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        // Replace with your API endpoint
-        const response = await fetch(buildApiUrl("/api/inventory/items"));
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const items = await handleApiResponse<InventoryItem[]>(response);
+
+        const items = (await getInventoryItems()) as unknown as InventoryItem[];
+
+        // We should only return items that are visible and have stock.
+        const visibleItems = items
+          .map((item) => {
+            const variations = item.variations.filter(
+              (v) => v.visible && v.stockLevels.some((sl) => sl.stock > 0)
+            );
+
+            if (variations.length > 0 || item.isBundle) {
+              // Always include bundles regardless of stock
+              return { ...item, variations };
+            }
+            return null;
+          })
+          .filter((item) => item !== null);
+
         // Filter out items that should not appear in Featured Products
         const filteredItems = items.filter((item) => {
           const itemsToHide = [

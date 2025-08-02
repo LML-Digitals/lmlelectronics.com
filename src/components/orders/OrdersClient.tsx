@@ -11,6 +11,11 @@ import Link from "next/link";
 import { toast } from "sonner";
 import type { OrderDetails  } from "@/types/api";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
+import { NextRequest, NextResponse } from "next/server";
+import {
+  getCustomerOrders,
+  getOrdersByCustomerEmail,
+} from "@/app/actions/orders";
 
 export default function OrdersClient() {
   const [email, setEmail] = useState("");
@@ -41,20 +46,9 @@ export default function OrdersClient() {
 
     setLoading(true);
     try {
-      const response = await fetch(
-        buildApiUrl("/api/orders"), {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: email }),
-        }
-      );
-      const data = await handleApiResponse<{
-        success: boolean;
-        data: OrderDetails[];
-      }>(response);
-      setOrders(data.data);
+      const result = await getOrdersByCustomerEmail(email);
+      const data = result.data;
+      setOrders(data as unknown as OrderDetails[]);
     } catch (error) {
       console.error("Error fetching orders:", error);
       toast.error(

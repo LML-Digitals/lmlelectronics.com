@@ -6,10 +6,11 @@ import type { Metadata } from "next";
 import { formatSlug, decodeSlug } from "@/components/products/utils/formatSlug";
 import { truncate } from "@/components/products/utils/text";
 import { ChevronRight } from "lucide-react";
-import type { InventoryItemCategory } from "@/types/api";
+import type { InventoryItemCategory, InventoryVariation } from "@/types/api";
 import ProductCard from "@/components/products/ProductCard";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import PageHero from "@/components/PageHero";
+import { getInventoryCategoryBySlug } from "@/components/dashboard/inventory/categories/services/itemCategoryCrud";
 
 // Generate dynamic metadata
 export async function generateMetadata({
@@ -28,13 +29,7 @@ export async function generateMetadata({
 
 async function fetchCategoryWithItems(categoryName: string) {
   try {
-    const response = await fetch(
-      buildApiUrl(`/api/inventory/categories/${categoryName}`)
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch category");
-    }
-    const category = await handleApiResponse<InventoryItemCategory>(response);
+    const category = await getInventoryCategoryBySlug(categoryName);
     return { category, error: null };
   } catch (err) {
     console.error("Error fetching category:", err);
@@ -96,7 +91,10 @@ export default async function ProductCategoryPage({
         backgroundImage={category.image || "/images/lml_box.webp"}
         breadcrumbs={[
           { name: "Shop", href: "/shop" },
-          { name: category.name, href: `/shop/category/${formatSlug(category.name)}` },
+          {
+            name: category.name,
+            href: `/shop/category/${formatSlug(category.name)}`,
+          },
         ]}
       />
       <div className="max-w-7xl mx-auto">
@@ -153,7 +151,9 @@ export default async function ProductCategoryPage({
                       name: item.name,
                       description: item.description || undefined,
                       image: item.image,
-                      variations: item.variations.filter((v) => v.visible),
+                      variations: item.variations.filter(
+                        (v) => v.visible
+                      ) as InventoryVariation[],
                     }}
                   />
                 ))}
