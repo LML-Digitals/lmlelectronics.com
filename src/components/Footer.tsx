@@ -60,10 +60,8 @@ const FooterClient = () => {
   ];
 
   const bottomLinks = [
-    { id: 1, link: "Privacy Policy", href: "/privacy" },
-    { id: 2, link: "Terms & Conditions", href: "/terms" },
-    { id: 3, link: "Refund Policy", href: "/refunds" },
-    { id: 4, link: "Portal", href: "/auth/signin" },
+    { id: 1, link: "Terms & Conditions", href: "/terms" },
+    { id: 2, link: "Portal", href: "/auth/signin" },
   ];
 
   return (

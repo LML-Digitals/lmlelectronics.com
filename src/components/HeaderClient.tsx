@@ -96,10 +96,10 @@ export function HeaderClient({ navigation }: HeaderClientProps) {
       subLinks: [
         { title: "Contact Us", link: "/contact" },
         { title: "FAQs", link: "/faqs" },
+        { title: "My Orders", link: "/orders" },
         // { title: "Shipping Info", link: "/shipping" },
         // { title: "Returns", link: "/returns" },
         // { title: "Repair Guides", link: "/repair-guides" },
-        // { title: "Track Order", link: "/orders" },
       ],
     },
   ];
@@ -235,13 +235,6 @@ export function HeaderClient({ navigation }: HeaderClientProps) {
                 </div>
               )}
             </div>
-
-            {/* Account/Orders */}
-            <Link href="/orders" className="relative group">
-              <Button variant="ghost" size="sm" className="p-2">
-                <span className="text-sm font-medium text-gray-700 group-hover:text-secondary">Orders</span>
-              </Button>
-            </Link>
 
             {/* Cart */}
             <Link href="/cart" className="relative group">
