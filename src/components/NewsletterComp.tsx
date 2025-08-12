@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type Inputs = {
   email: string;
@@ -23,12 +24,28 @@ function NewsletterComp() {
   const onSubmit = async (data: Inputs) => {
     setIsPending(true);
     try {
-      // TODO: Implement newsletter signup logic
-      console.log("Newsletter signup:", data.email);
+      const response = await fetch("/api/newsletter-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to subscribe");
+      }
+
+      if (result.isExisting) {
+        toast.info("You're already subscribed to our newsletter!");
+      } else {
+        toast.success("Successfully subscribed! Check your email for your welcome gift.");
+      }
+      
       reset();
-      // You can add a toast notification here
     } catch (error) {
-      console.log(error);
+      console.error("Newsletter signup error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to subscribe. Please try again.");
     } finally {
       setIsPending(false);
     }
@@ -46,14 +63,14 @@ function NewsletterComp() {
       </div>
 
       <form
-        className="flex flex-col items-center md:items-start flex-wrap gap-4 text-black xl:w-4/5"
+        className="flex flex-col items-center md:items-start flex-wrap gap-4 xl:w-4/5"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="flex flex-col w-full">
           <Input
             type="email"
             placeholder="Enter your email*"
-            className={`py-2 ${errors.email ? "border-red-500" : ""}`}
+            className={`py-2 bg-white text-black ${errors.email ? "border-red-500" : ""}`}
             {...register("email", {
               required: "Email is required",
               pattern: {
@@ -63,7 +80,7 @@ function NewsletterComp() {
             })}
           />
           {errors.email && (
-            <span className="text-red-500 text-sm mt-1">
+            <span className="text-red-400 text-sm mt-1">
               {errors.email.message}
             </span>
           )}
