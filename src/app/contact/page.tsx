@@ -167,21 +167,6 @@ export default function ContactPage() {
             {isSubmitting ? "Sending..." : "Send Message"}
           </button>
         </form>
-        
-        <div className="mt-10 border-t pt-8 flex flex-col md:flex-row gap-8 items-center justify-between">
-          <div className="flex-1 text-center md:text-left">
-            <h2 className="text-lg font-semibold mb-2">Business Contact</h2>
-            <p className="text-gray-700">support@lmlelectronics.com</p>
-            <p className="text-gray-700">1-800-LML-ELECTRONICS</p>
-            <p className="text-gray-700">Mon-Fri: 9AM-6PM EST</p>
-          </div>
-          <div className="flex-1 flex items-center justify-center">
-            {/* Map Placeholder */}
-            <div className="w-full h-40 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
-              Map Placeholder
-            </div>
-          </div>
-        </div>
       </div>
     </main>
   );

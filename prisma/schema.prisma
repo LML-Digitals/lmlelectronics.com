@@ -273,8 +273,6 @@ model Customer {
   loyalty               LoyaltyProgram?
   loyaltyDiscounts      LoyaltyDiscount[]
   recyclingSubmissions  RecyclingSubmission[]
-
-  supportThreads SupportThread[]
   payments       Payment[]
 
   shippingAddress  ShippingAddress?
@@ -292,6 +290,9 @@ model Customer {
   phoneCalls         PhoneCall[]
   phoneSMS           PhoneSMS[]
   voicemails         Voicemail[]
+  
+  // Live Chat Relations
+  liveChatThreads    LiveChatThread[]
 }
 
 model CustomerGroup {
@@ -1452,8 +1453,6 @@ model Staff {
   CustomizationComment         CustomizationComment[]
   resources                    RepairGuide[]
   loyaltyPointRequestsReviewed LoyaltyPointRequest[]
-
-  supportThreads SupportThread[]
   payments       Payment[]
 
   registerSessions RegisterSession[]
@@ -1466,16 +1465,17 @@ model Staff {
   taskComments      TaskComment[]
   taskAttachments   TaskAttachment[]
 
-  // Workforce Management Relations
-  assignedShifts          AssignedShift[]  @relation("StaffAssignedShifts")
-  timePunches             TimePunch[]      @relation("StaffTimePunches")
-  editedTimePunches       TimePunch[]      @relation("EditedTimePunches")
-  absenceRequests         AbsenceRequest[] @relation("StaffAbsenceRequests")
-  reviewedAbsenceRequests AbsenceRequest[] @relation("ReviewedAbsenceRequests")
+  // Workforce Management Relations removed
 
-  phoneCalls PhoneCall[]
+    phoneCalls PhoneCall[]
   phoneSMS   PhoneSMS[]
-
+  
+  // Live Chat Relations
+  liveChatThreads LiveChatThread[]
+  
+  // Live chat availability
+  liveChatAvailability StaffAvailability[]
+  
   @@index([paymentType])
 }
 
@@ -2027,10 +2027,7 @@ model StoreLocation {
   orders               Order[]
   rentalDevicesHome    RentalDevice[]               @relation("RentalDeviceHomeLocation")
 
-  // Workforce Management Relations
-  shiftTemplates    ShiftTemplate[]
-  assignedShifts    AssignedShift[]     @relation("AssignedShiftLocation")
-  workforceSettings WorkforceSettings[] @relation("WorkforceSettingsLocation")
+  // Workforce Management Relations removed
 }
 
 model DiagnosticQuestion {
@@ -2467,34 +2464,6 @@ model RecyclingSubmission {
   @@index([customerId])
 }
 
-model SupportThread {
-  id          String           @id @default(cuid())
-  customerId  String
-  staffId     String?
-  isAIHandled Boolean          @default(false)
-  status      ChatStatus       @default(OPEN)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  customer    Customer         @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  staff       Staff?           @relation(fields: [staffId], references: [id])
-  messages    SupportMessage[]
-
-  @@index([customerId])
-  @@index([staffId])
-}
-
-model SupportMessage {
-  id         String        @id @default(cuid())
-  threadId   String
-  senderId   String
-  content    String        @db.Text
-  senderType SenderType
-  createdAt  DateTime      @default(now())
-  thread     SupportThread @relation(fields: [threadId], references: [id])
-
-  @@index([threadId])
-}
-
 model Tag {
   id          String   @id @default(cuid())
   name        String   @unique
@@ -2652,18 +2621,8 @@ enum NotificationType {
   POS
   OTHER
   REPAIR_STATUS
-  // Workforce-specific notification types
-  WORKFORCE_SCHEDULE
-  WORKFORCE_SHIFT_ASSIGNED
-  WORKFORCE_SHIFT_CANCELLED
-  WORKFORCE_SHIFT_REMINDER
-  WORKFORCE_TIME_TRACKING
-  WORKFORCE_ABSENCE_REQUEST
-  WORKFORCE_ABSENCE_APPROVED
-  WORKFORCE_ABSENCE_DENIED
-  WORKFORCE_LATE_ARRIVAL
-  WORKFORCE_MISSED_PUNCH
-  WORKFORCE_OVERTIME_ALERT
+  LIVE_CHAT
+  // Workforce-specific notification types removed
 }
 
 enum OrderPriority {
@@ -2967,14 +2926,6 @@ model ResourceAndCategory {
   @@map("_ResourceAndCategory")
 }
 
-model NewsletterSubscriber {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  discountCode String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
 // Keep the Tag model we created already
 
 model ReferralCode {
@@ -3187,45 +3138,7 @@ enum RentalStatus {
   CANCELLED
 }
 
-// Workforce Management Enums
-enum ShiftStatus {
-  SCHEDULED
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-  NO_SHOW
-}
-
-enum AbsenceType {
-  SICK_DAY
-  VACATION
-  PERSONAL
-  EMERGENCY
-  UNPAID
-  BEREAVEMENT
-  JURY_DUTY
-  OTHER
-}
-
-enum AbsenceRequestStatus {
-  PENDING
-  APPROVED
-  DENIED
-  CANCELLED
-}
-
-enum TimePunchType {
-  CLOCK_IN
-  CLOCK_OUT
-  BREAK_START
-  BREAK_END
-}
-
-enum TimePunchSource {
-  SELF_SERVICE
-  MANUAL_ENTRY
-  SYSTEM_AUTO
-}
+// Workforce Management Enums removed
 
 // Task Management Enums
 enum TaskPriority {
@@ -3415,128 +3328,7 @@ model TaskComment {
   @@index([authorId])
 }
 
-// Workforce Management Models
-
-model ShiftTemplate {
-  id            String   @id @default(cuid())
-  name          String // e.g., "Morning Shift", "Evening Shift"
-  startTime     String // Format: "HH:mm" (e.g., "08:00")
-  endTime       String // Format: "HH:mm" (e.g., "16:30")
-  breakDuration Int      @default(0) // Break duration in minutes
-  isActive      Boolean  @default(true)
-  locationId    Int? // Optional: specific to a location
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // Relations
-  location       StoreLocation?  @relation(fields: [locationId], references: [id])
-  assignedShifts AssignedShift[]
-
-  @@index([locationId])
-  @@index([isActive])
-}
-
-model AssignedShift {
-  id        String      @id @default(cuid())
-  shiftDate DateTime // The date this shift is assigned for
-  status    ShiftStatus @default(SCHEDULED)
-  notes     String?     @db.Text
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  // Relations
-  staffId         String
-  shiftTemplateId String
-  locationId      Int
-
-  staff         Staff         @relation("StaffAssignedShifts", fields: [staffId], references: [id], onDelete: Cascade)
-  shiftTemplate ShiftTemplate @relation(fields: [shiftTemplateId], references: [id], onDelete: Cascade)
-  location      StoreLocation @relation("AssignedShiftLocation", fields: [locationId], references: [id])
-
-  // Time punches for this shift
-  timePunches TimePunch[]
-
-  @@unique([staffId, shiftDate, shiftTemplateId]) // Prevent duplicate assignments
-  @@index([staffId])
-  @@index([shiftTemplateId])
-  @@index([locationId])
-  @@index([shiftDate])
-  @@index([status])
-}
-
-model TimePunch {
-  id                String          @id @default(cuid())
-  punchTime         DateTime // When the punch occurred
-  punchType         TimePunchType
-  source            TimePunchSource @default(SELF_SERVICE)
-  notes             String?         @db.Text // For manual entries, reason for edit
-  isEdited          Boolean         @default(false)
-  originalPunchTime DateTime? // Store original time if edited
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-
-  // Relations
-  staffId         String
-  assignedShiftId String? // Optional: link to specific shift
-  editedById      String? // Manager who made manual entry/edit
-
-  staff         Staff          @relation("StaffTimePunches", fields: [staffId], references: [id], onDelete: Cascade)
-  assignedShift AssignedShift? @relation(fields: [assignedShiftId], references: [id])
-  editedBy      Staff?         @relation("EditedTimePunches", fields: [editedById], references: [id])
-
-  @@index([staffId])
-  @@index([assignedShiftId])
-  @@index([punchTime])
-  @@index([punchType])
-  @@index([editedById])
-}
-
-model AbsenceRequest {
-  id           String               @id @default(cuid())
-  absenceType  AbsenceType
-  startDate    DateTime
-  endDate      DateTime
-  isPartialDay Boolean              @default(false)
-  startTime    String? // For partial days: "HH:mm"
-  endTime      String? // For partial days: "HH:mm"
-  reason       String?              @db.Text
-  status       AbsenceRequestStatus @default(PENDING)
-  reviewNotes  String?              @db.Text
-  submittedAt  DateTime             @default(now())
-  reviewedAt   DateTime?
-
-  // Relations
-  staffId      String
-  reviewedById String?
-
-  staff      Staff  @relation("StaffAbsenceRequests", fields: [staffId], references: [id], onDelete: Cascade)
-  reviewedBy Staff? @relation("ReviewedAbsenceRequests", fields: [reviewedById], references: [id])
-
-  @@index([staffId])
-  @@index([reviewedById])
-  @@index([status])
-  @@index([startDate])
-  @@index([endDate])
-}
-
-model WorkforceSettings {
-  id                    String   @id @default(cuid())
-  locationId            Int? // Global if null, location-specific if set
-  overtimeThreshold     Float    @default(40) // Hours per week before overtime
-  maxShiftLength        Float    @default(12) // Maximum shift length in hours
-  minBreakBetweenShifts Float    @default(8) // Minimum hours between shifts
-  autoClockOutAfter     Int      @default(24) // Auto clock-out after X hours
-  requireBreakPunch     Boolean  @default(false)
-  allowSelfScheduling   Boolean  @default(false)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-
-  // Relations
-  location StoreLocation? @relation("WorkforceSettingsLocation", fields: [locationId], references: [id])
-
-  @@unique([locationId]) // One setting per location (or global)
-  @@index([locationId])
-}
+// Workforce Management Models removed
 
 // Email System Models
 
@@ -4011,3 +3803,278 @@ model PlaidAccount {
   @@index([type])
   @@index([institutionId])
 }
+
+// Live Chat Models
+model LiveChatThread {
+  id          String         @id @default(uuid())
+  title       String?
+  status      LiveChatStatus @default(WAITING)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  
+  // Guest information
+  guestName   String?
+  guestEmail  String?
+  guestPhone  String?
+  
+  // Relations
+  customerId  String?
+  customer    Customer?      @relation(fields: [customerId], references: [id])
+  staffId     String?
+  staff       Staff?         @relation(fields: [staffId], references: [id])
+  
+  // Chat data
+  messages    LiveChatMessage[]
+  sessions    LiveChatSession[]
+  
+  // Assignment tracking
+  assignedAt  DateTime?
+  resolvedAt  DateTime?
+  
+  // Auto-resolution settings
+  lastActivityAt DateTime @default(now()) // Last message timestamp
+  autoResolveAfter Int @default(30) // Minutes of inactivity before auto-resolve
+  
+  @@index([status])
+  @@index([customerId])
+  @@index([staffId])
+  @@index([createdAt])
+  @@index([lastActivityAt])
+  
+  // Enable RLS for Supabase Realtime
+  @@map("LiveChatThread")
+}
+
+model LiveChatMessage {
+  id          String              @id @default(uuid())
+  content     String              @db.Text
+  messageType LiveChatMessageType @default(TEXT)
+  senderType  LiveChatSenderType  @default(CUSTOMER)
+  isRead      Boolean             @default(false)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  
+  // Relations
+  threadId    String
+  thread      LiveChatThread      @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  senderId    String?             // Can be customer ID or staff ID
+  senderName  String              // Display name for the sender
+  
+  // AI bot responses
+  isBotMessage Boolean            @default(false)
+  botResponseType LiveChatBotType? @default(GENERAL)
+  
+  // File attachments
+  fileUrl     String?
+  fileName    String?
+  fileSize    Int?
+  fileType    String?
+  
+  @@index([threadId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@index([isRead])
+  
+  // Enable RLS for Supabase Realtime
+  @@map("LiveChatMessage")
+}
+
+model LiveChatSession {
+  id          String   @id @default(uuid())
+  sessionId   String   @unique // Browser session ID
+  guestName   String?
+  guestEmail  String?
+  guestPhone  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  threadId    String?  @unique
+  thread      LiveChatThread? @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@index([createdAt])
+}
+
+// Live Chat Enums
+enum LiveChatStatus {
+  ACTIVE
+  WAITING
+  RESOLVED
+  ARCHIVED
+}
+
+enum LiveChatMessageType {
+  TEXT
+  IMAGE
+  FILE
+  SYSTEM
+  BOT
+}
+
+enum LiveChatSenderType {
+  CUSTOMER
+  STAFF
+  BOT
+  GUEST
+  SYSTEM
+}
+
+enum LiveChatBotType {
+  GREETING
+  FAQ
+  APPOINTMENT
+  PRICING
+  TECHNICAL_SUPPORT
+  ESCALATION
+  GENERAL
+}
+
+// LiveChatNotification table removed - using main Notification table instead
+
+// Staff availability tracking
+model StaffAvailability {
+  id          String   @id @default(uuid())
+  staffId     String
+  staff       Staff    @relation(fields: [staffId], references: [id])
+  isOnline    Boolean  @default(false)
+  isAvailable Boolean  @default(false)
+  currentChats Int     @default(0)
+  maxChats    Int      @default(5)
+  skills      String[]
+  rating      Float    @default(0)
+  lastActive  DateTime @default(now())
+  
+  @@index([staffId])
+  @@index([isOnline])
+  @@index([isAvailable])
+}
+
+// LiveChatNotificationType enum removed - using main NotificationType instead
+
+// Meta API Models for Unified Inbox
+model MetaAccount {
+  id                String   @id @default(cuid())
+  platform          MetaPlatform
+  accountId         String   // Facebook Page ID or Instagram User ID
+  accountName       String   // Page/Account name
+  accessToken       String?  // Encrypted access token
+  isActive          Boolean  @default(true)
+  lastSyncAt        DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  conversations     MetaConversation[]
+  messages          MetaMessage[]
+  comments          MetaComment[]
+
+  @@unique([platform, accountId])
+  @@index([platform])
+  @@index([accountId])
+}
+
+model MetaConversation {
+  id                String   @id @default(cuid())
+  platform          MetaPlatform
+  conversationId    String   // Unique conversation ID from Meta
+  participantId     String   // Customer/user ID
+  participantName   String?  // Customer name if available
+  participantAvatar String?  // Profile picture URL
+  lastMessageAt     DateTime
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  accountId         String
+  account           MetaAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  messages          MetaMessage[]
+
+  @@unique([platform, conversationId])
+  @@index([accountId])
+  @@index([participantId])
+  @@index([lastMessageAt])
+}
+
+model MetaMessage {
+  id              String       @id @default(cuid())
+  platform        MetaPlatform
+  messageId       String       // Unique message ID from Meta
+  conversationId  String
+  senderId        String       // Who sent the message
+  senderType      MetaSenderType
+  content         String?      // Text content
+  contentType     MetaMessageType
+  mediaUrl        String?      // For images, videos, etc.
+  mediaType       String?      // image, video, audio, file
+  isRead          Boolean      @default(false)
+  isReplied       Boolean      @default(false)
+  timestamp       DateTime
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  // Relations
+  conversation    MetaConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  accountId       String
+  account         MetaAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([platform, messageId])
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([timestamp])
+  @@index([isRead])
+}
+
+model MetaComment {
+  id              String       @id @default(cuid())
+  platform        MetaPlatform
+  commentId       String       // Unique comment ID from Meta
+  postId          String       // ID of the post this comment is on
+  authorId        String       // Who wrote the comment
+  authorName      String?      // Author's name
+  authorAvatar    String?      // Author's profile picture
+  content         String       // Comment text
+  isHidden        Boolean      @default(false)
+  isReplied       Boolean      @default(false)
+  timestamp       DateTime
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  // Relations
+  accountId       String
+  account         MetaAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([platform, commentId])
+  @@index([postId])
+  @@index([authorId])
+  @@index([timestamp])
+  @@index([isHidden])
+}
+
+// Meta API Enums
+enum MetaPlatform {
+  FACEBOOK
+  INSTAGRAM
+}
+
+enum MetaSenderType {
+  CUSTOMER
+  BUSINESS
+  SYSTEM
+}
+
+enum MetaMessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+  LOCATION
+  CONTACT
+  STICKER
+  QUICK_REPLY
+  BUTTON
+}
+
+
