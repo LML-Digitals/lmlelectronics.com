@@ -20,28 +20,48 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "LML Electronics - Find Your Fix",
+    default: "LML Electronics - Premium Device Repair Kits & Components | DIY Electronics Repair",
     template: "%s | LML Electronics",
   },
   description:
-    "Your trusted partner for DIY electronic repair solutions. High-quality repair kits, components, and tools for Apple, Samsung, Google devices and more.",
+    "Transform your device repairs with LML Electronics' premium repair kits and components. High-quality parts for phones, tablets, and laptops. Expert support, fast shipping, and 30-day warranty. Shop now for professional-grade repair solutions.",
   keywords:
-    "electronics repair, DIY repair kits, phone repair, tablet repair, Apple repair, Samsung repair, Google repair, electronic components",
+    "device repair kits, phone repair parts, tablet repair components, laptop repair tools, DIY electronics repair, Apple repair parts, Samsung repair kits, Google device repair, high-quality repair components, professional repair tools, electronics repair kits, mobile device repair, tablet screen replacement, phone battery replacement, repair tool sets",
   authors: [{ name: "LML Electronics" }],
   creator: "LML Electronics",
+  publisher: "LML Electronics",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://lmlelectronics.com"),
+  alternates: {
+    canonical: "https://lmlelectronics.com",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://lmlelectronics.com",
-    title: "LML Electronics - Find Your Fix",
-    description: "Your trusted partner for DIY electronic repair solutions.",
+    title: "LML Electronics - Premium Device Repair Kits & Components",
+    description: "Transform your device repairs with LML Electronics' premium repair kits and components. High-quality parts for phones, tablets, and laptops with expert support.",
     siteName: "LML Electronics",
+    images: [
+      {
+        url: "https://lmlelectronics.com/images/lml_box.webp",
+        width: 1200,
+        height: 630,
+        alt: "LML Electronics Premium Repair Kits and Components",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LML Electronics - Find Your Fix",
-    description: "Your trusted partner for DIY electronic repair solutions.",
+    title: "LML Electronics - Premium Device Repair Kits & Components",
+    description: "Transform your device repairs with LML Electronics' premium repair kits and components. High-quality parts for phones, tablets, and laptops.",
+    images: ["https://lmlelectronics.com/images/lml_box.webp"],
     creator: "@lmlelectronics",
+    site: "@lmlelectronics",
   },
   robots: {
     index: true,
@@ -53,6 +73,11 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
+  },
+  verification: {
+    google: "your-google-verification-code",
+    yandex: "your-yandex-verification-code",
+    yahoo: "your-yahoo-verification-code",
   },
 };
 

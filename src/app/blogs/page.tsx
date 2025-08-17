@@ -9,10 +9,59 @@ import { Button } from "@/components/ui/button";
 import { Grid3X3 } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = "https://lmlelectronics.com";
+  
   return {
-    title: "Blog | Device Repair Tips & Tech Insights",
-    description: "Stay informed with LML Repair's expert blog. Discover device repair tips, tech insights, and maintenance guides. Learn about iPhone repairs, Samsung fixes, and more from our certified technicians.",
-    keywords: "device repair blog, tech repair tips, iPhone repair guide, Samsung repair tips, device maintenance, repair tutorials, tech insights, repair advice, device care, repair knowledge base",
+    title: "Blog | Device Repair Tips, Tech Insights & DIY Guides | LML Electronics",
+    description: "Stay informed with LML Electronics' expert blog. Discover device repair tips, tech insights, maintenance guides, and DIY tutorials. Learn about iPhone repairs, Samsung fixes, and more from our certified technicians.",
+    keywords: "device repair blog, tech repair tips, iPhone repair guide, Samsung repair tips, device maintenance, repair tutorials, tech insights, repair advice, device care, repair knowledge base, DIY repair guides, electronics repair blog, mobile device repair tips, tablet repair tutorials, laptop repair guides, repair how-to articles",
+    authors: [{ name: "LML Electronics" }],
+    creator: "LML Electronics",
+    publisher: "LML Electronics",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    metadataBase: new URL(baseUrl),
+    alternates: {
+      canonical: `${baseUrl}/blogs`,
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: `${baseUrl}/blogs`,
+      title: "Blog | Device Repair Tips & Tech Insights | LML Electronics",
+      description: "Stay informed with LML Electronics' expert blog. Discover device repair tips, tech insights, and maintenance guides.",
+      siteName: "LML Electronics",
+      images: [
+        {
+          url: `${baseUrl}/images/lml_box.webp`,
+          width: 1200,
+          height: 630,
+          alt: "LML Electronics Blog - Device Repair Tips and Tech Insights",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Blog | Device Repair Tips & Tech Insights | LML Electronics",
+      description: "Stay informed with LML Electronics' expert blog. Discover device repair tips, tech insights, and maintenance guides.",
+      images: [`${baseUrl}/images/lml_box.webp`],
+      creator: "@lmlelectronics",
+      site: "@lmlelectronics",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
   };
 }
 
@@ -75,20 +124,38 @@ export default async function BlogPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Blog",
-            "name": "LML Repair Blog",
+            "name": "LML Electronics Blog",
             "description": "Expert device repair tips, tech insights, and maintenance guides from certified technicians.",
-            "url": "https://lmlrepair.com/blogs",
+            "url": "https://lmlelectronics.com/blogs",
             "publisher": {
               "@type": "Organization",
-              "name": "LML Repair",
+              "name": "LML Electronics",
+              "url": "https://lmlelectronics.com",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://lmlrepair.com/logo.png"
+                "url": "https://lmlelectronics.com/logo.png"
               }
             },
             "mainEntityOfPage": {
               "@type": "WebPage",
-              "@id": "https://lmlrepair.com/blogs"
+              "@id": "https://lmlelectronics.com/blogs"
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://lmlelectronics.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Blog",
+                  "item": "https://lmlelectronics.com/blogs"
+                }
+              ]
             }
           })
         }}
