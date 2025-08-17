@@ -6,12 +6,59 @@ import BundleListing from "@/components/bundles/BundleListing";
 import PageHero from "@/components/PageHero";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = "https://lmlelectronics.com";
+  
   return {
-    title: "Bundles - Complete Repair Kits & Product Bundles",
-    description:
-      "Shop LML Repair's expertly curated bundles and repair kits. Get everything you need for device repairs in one convenient package with savings on complete sets.",
-    keywords:
-      "repair bundles, repair kits, device bundles, complete repair sets, phone repair kits, tablet repair bundles, repair tool sets, bundle deals, repair packages",
+    title: "Repair Bundles & Complete Kits | LML Electronics - Save on Device Repair Solutions",
+    description: "Shop LML Electronics' expertly curated repair bundles and complete kits. Get everything you need for device repairs in one convenient package. Save money with our comprehensive repair solutions for phones, tablets, and laptops.",
+    keywords: "repair bundles, complete repair kits, device repair packages, phone repair bundles, tablet repair kits, laptop repair sets, repair tool bundles, bundle deals, complete repair solutions, repair kit packages, DIY repair bundles, professional repair kits, device maintenance bundles, repair accessories bundles",
+    authors: [{ name: "LML Electronics" }],
+    creator: "LML Electronics",
+    publisher: "LML Electronics",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    metadataBase: new URL(baseUrl),
+    alternates: {
+      canonical: `${baseUrl}/bundles`,
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: `${baseUrl}/bundles`,
+      title: "Repair Bundles & Complete Kits | LML Electronics",
+      description: "Shop LML Electronics' expertly curated repair bundles and complete kits. Get everything you need for device repairs in one convenient package.",
+      siteName: "LML Electronics",
+      images: [
+        {
+          url: `${baseUrl}/images/lml_box.webp`,
+          width: 1200,
+          height: 630,
+          alt: "LML Electronics Repair Bundles and Complete Kits",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Repair Bundles & Complete Kits | LML Electronics",
+      description: "Shop LML Electronics' expertly curated repair bundles and complete kits. Get everything you need for device repairs in one convenient package.",
+      images: [`${baseUrl}/images/lml_box.webp`],
+      creator: "@lmlelectronics",
+      site: "@lmlelectronics",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
   };
 }
 
@@ -32,20 +79,41 @@ export default async function BundlesPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: "LML Repair Bundles",
-            description:
-              "Shop LML Repair's expertly curated bundles and repair kits",
-            publisher: {
+            "name": "LML Electronics Repair Bundles",
+            "description": "Shop LML Electronics' expertly curated bundles and repair kits for complete device repair solutions",
+            "url": "https://lmlelectronics.com/bundles",
+            "publisher": {
               "@type": "Organization",
-              name: "LML Repair",
-              url: "https://lmlrepair.com",
+              "name": "LML Electronics",
+              "url": "https://lmlelectronics.com",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://lmlelectronics.com/logo.png"
+              }
             },
-            mainEntity: {
+            "mainEntity": {
               "@type": "ItemList",
-              name: "Repair Bundles & Kits",
-              description:
-                "Complete repair solutions bundled for convenience and savings",
+              "name": "Repair Bundles & Kits",
+              "description": "Complete repair solutions bundled for convenience and savings",
+              "numberOfItems": "Multiple repair bundles available"
             },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://lmlelectronics.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Repair Bundles",
+                  "item": "https://lmlelectronics.com/bundles"
+                }
+              ]
+            }
           }),
         }}
       />

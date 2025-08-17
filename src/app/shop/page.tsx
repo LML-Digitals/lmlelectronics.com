@@ -83,15 +83,35 @@ export default async function ProductsPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: "Shop - LML Electronics",
-            description:
-              "Shop our extensive collection of high-quality device parts, accessories, and replacement components.",
-            url: "https://lmlelectronics.com/shop",
-            publisher: {
+            "name": "Shop - LML Electronics",
+            "description": "Shop our extensive collection of high-quality device parts, accessories, and replacement components.",
+            "url": "https://lmlelectronics.com/shop",
+            "publisher": {
               "@type": "Organization",
-              name: "LML Electronics",
-              url: "https://lmlelectronics.com",
+              "name": "LML Electronics",
+              "url": "https://lmlelectronics.com",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://lmlelectronics.com/logo.png"
+              }
             },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://lmlelectronics.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Shop",
+                  "item": "https://lmlelectronics.com/shop"
+                }
+              ]
+            }
           }),
         }}
       />
