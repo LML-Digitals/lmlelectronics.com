@@ -13,8 +13,8 @@ const nextConfig: NextConfig = {
   },
   // Build optimizations
   experimental: {
-    // Enable static generation for better performance
-    staticGenerationAsyncStorage: true,
+    // Enable modern build features
+    optimizePackageImports: ['lucide-react'],
   },
   // Handle build-time errors more gracefully
   onDemandEntries: {
@@ -23,8 +23,6 @@ const nextConfig: NextConfig = {
     // Number of pages that should be kept simultaneously without being disposed
     pagesBufferLength: 2,
   },
-  // Optimize build process
-  swcMinify: true,
   // Handle database connection issues during build
   async headers() {
     return [
