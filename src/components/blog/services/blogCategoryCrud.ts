@@ -19,6 +19,12 @@ export const getBlogCategories = async (): Promise<BlogCategory[]> => {
     return categories;
   } catch (error) {
     console.error("Error fetching blog categories:", error);
+    // During build time, return empty array instead of throwing
+    // This prevents build failures when database is not available
+    if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV) {
+      console.warn("Database not available during build, returning empty categories array");
+      return [];
+    }
     throw new Error("Failed to fetch blog categories");
   }
 };
@@ -33,6 +39,11 @@ export const getBlogCategoryByName = async (
     return category;
   } catch (error) {
     console.error("Error fetching blog category by name:", error);
+    // During build time, return null instead of throwing
+    if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV) {
+      console.warn("Database not available during build, returning null for category:", name);
+      return null;
+    }
     throw new Error("Failed to fetch blog category by name");
   }
 };
