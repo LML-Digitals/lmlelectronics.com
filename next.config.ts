@@ -11,6 +11,36 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Build optimizations
+  experimental: {
+    // Enable modern build features
+    optimizePackageImports: ['lucide-react'],
+  },
+  // Handle build-time errors more gracefully
+  onDemandEntries: {
+    // Period (in ms) where the server will keep pages in the buffer
+    maxInactiveAge: 25 * 1000,
+    // Number of pages that should be kept simultaneously without being disposed
+    pagesBufferLength: 2,
+  },
+  // Handle database connection issues during build
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

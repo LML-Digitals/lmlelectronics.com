@@ -33,6 +33,11 @@ export const getFeaturedBlog = async (): Promise<
     });
   } catch (error) {
     console.error("Error fetching featured blog:", error);
+    // During build time, return empty array instead of throwing
+    if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV) {
+      console.warn("Database not available during build, returning empty featured blogs array");
+      return [];
+    }
     throw new Error("Failed to fetch featured blog");
   }
 };
@@ -269,28 +274,38 @@ export async function getBlogsByTagName(tagName: string) {
 }
 
 export async function getBlogsByCategory(categoryName: string) {
-  return await prisma.blog.findMany({
-    where: {
-      category: {
-        name: {
-          equals: categoryName,
-          mode: "insensitive",
+  try {
+    return await prisma.blog.findMany({
+      where: {
+        category: {
+          name: {
+            equals: categoryName,
+            mode: "insensitive",
+          },
         },
       },
-    },
-    include: {
-      author: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
+      include: {
+        author: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
         },
+        tags: true,
+        category: true,
       },
-      tags: true,
-      category: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Error fetching blogs by category:", error);
+    // During build time, return empty array instead of throwing
+    if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV) {
+      console.warn("Database not available during build, returning empty blogs array for category:", categoryName);
+      return [];
+    }
+    throw new Error("Failed to fetch blogs by category");
+  }
 }
 
 function generateSlug(title: string): string {

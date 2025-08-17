@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Metadata } from "next";
+import Script from "next/script";
 import ProductCarousel from "@/components/products/ProductCarousel";
 import BundleGrid from "@/components/products/BundleGrid";
 import ProductsHeroBanner, {
@@ -12,6 +14,68 @@ import { Product } from "@/components/products/ProductCarousel";
 import { Star, User } from "lucide-react";
 import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
 import { getInventoryCategories } from "@/components/dashboard/inventory/categories/services/itemCategoryCrud";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = "https://lmlelectronics.com";
+  
+  return {
+    title: "LML Electronics - Premium Device Repair Kits & Components | DIY Electronics Repair",
+    description: "Transform your device repairs with LML Electronics' premium repair kits and components. High-quality parts for phones, tablets, and laptops. Expert support, fast shipping, and 30-day warranty. Shop now for professional-grade repair solutions.",
+    keywords: "device repair kits, phone repair parts, tablet repair components, laptop repair tools, DIY electronics repair, Apple repair parts, Samsung repair kits, Google device repair, high-quality repair components, professional repair tools, electronics repair kits, mobile device repair, tablet screen replacement, phone battery replacement, repair tool sets",
+    authors: [{ name: "LML Electronics" }],
+    creator: "LML Electronics",
+    publisher: "LML Electronics",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    metadataBase: new URL(baseUrl),
+    alternates: {
+      canonical: baseUrl,
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: baseUrl,
+      title: "LML Electronics - Premium Device Repair Kits & Components",
+      description: "Transform your device repairs with LML Electronics' premium repair kits and components. High-quality parts for phones, tablets, and laptops with expert support.",
+      siteName: "LML Electronics",
+      images: [
+        {
+          url: `${baseUrl}/images/lml_box.webp`,
+          width: 1200,
+          height: 630,
+          alt: "LML Electronics Premium Repair Kits and Components",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "LML Electronics - Premium Device Repair Kits & Components",
+      description: "Transform your device repairs with LML Electronics' premium repair kits and components. High-quality parts for phones, tablets, and laptops.",
+      images: [`${baseUrl}/images/lml_box.webp`],
+      creator: "@lmlelectronics",
+      site: "@lmlelectronics",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+    verification: {
+      google: "your-google-verification-code",
+      yandex: "your-yandex-verification-code",
+      yahoo: "your-yahoo-verification-code",
+    },
+  };
+}
 
 async function getHomePageData() {
   try {
@@ -80,7 +144,101 @@ export default async function Home() {
   );
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <>
+      <Script
+        id="homepage-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "LML Electronics",
+            "url": "https://lmlelectronics.com",
+            "description": "Premium device repair kits and components for DIY electronics repair",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://lmlelectronics.com/shop?search={search_term_string}",
+              "query-input": "required name=search_term_string"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "LML Electronics",
+              "url": "https://lmlelectronics.com",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://lmlelectronics.com/logo.png"
+              }
+            }
+          })
+        }}
+      />
+      
+      <Script
+        id="homepage-organization-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "LML Electronics",
+            "url": "https://lmlelectronics.com",
+            "logo": "https://lmlelectronics.com/logo.png",
+            "description": "Premium device repair kits and components for DIY electronics repair",
+            "address": {
+              "@type": "PostalAddress",
+              "addressCountry": "US"
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer service",
+              "email": "support@lmlelectronics.com"
+            },
+            "sameAs": [
+              "https://twitter.com/lmlelectronics",
+              "https://facebook.com/lmlelectronics"
+            ]
+          })
+        }}
+      />
+
+      <Script
+        id="homepage-faq-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What types of device repair kits does LML Electronics offer?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "LML Electronics offers comprehensive repair kits for phones, tablets, and laptops including screen replacements, battery replacements, and complete repair tool sets for Apple, Samsung, Google, and other popular devices."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Are LML Electronics repair parts genuine and high-quality?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, all our repair parts are genuine, high-quality components that meet or exceed OEM standards. We offer a 30-day warranty on all products and provide expert support for all repairs."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How long does shipping take for repair kits?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Standard shipping typically takes 3-5 business days within the continental US. We also offer expedited shipping options for faster delivery. International shipping times vary by location."
+                }
+              }
+            ]
+          })
+        }}
+      />
+
+      <main className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <section className="bg-white">
         <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-16 lg:px-8">
@@ -348,5 +506,6 @@ export default async function Home() {
         </div>
       </section>
     </main>
+    </>
   );
 }

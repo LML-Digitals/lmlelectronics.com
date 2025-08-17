@@ -16,21 +16,59 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static routes
   const staticRoutes = [
-    '',
-    'shop',
-    'bundles',
-    'cart',
-    'checkout',
-    'orders',
-    'contact',
-    'faqs',
-  ];
-  for (const path of staticRoutes) {
-    routes.push({
-      url: `${baseUrl}/${path}`.replace(/\/$/, ''),
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
+    {
+      path: '',
+      priority: 1.0,
+      changeFrequency: 'daily' as const,
+    },
+    {
+      path: 'shop',
+      priority: 0.9,
+      changeFrequency: 'daily' as const,
+    },
+    {
+      path: 'bundles',
       priority: 0.8,
+      changeFrequency: 'weekly' as const,
+    },
+    {
+      path: 'blogs',
+      priority: 0.8,
+      changeFrequency: 'weekly' as const,
+    },
+    {
+      path: 'contact',
+      priority: 0.6,
+      changeFrequency: 'monthly' as const,
+    },
+    {
+      path: 'faqs',
+      priority: 0.7,
+      changeFrequency: 'monthly' as const,
+    },
+    {
+      path: 'cart',
+      priority: 0.3,
+      changeFrequency: 'weekly' as const,
+    },
+    {
+      path: 'checkout',
+      priority: 0.3,
+      changeFrequency: 'weekly' as const,
+    },
+    {
+      path: 'orders',
+      priority: 0.4,
+      changeFrequency: 'weekly' as const,
+    },
+  ];
+  
+  for (const route of staticRoutes) {
+    routes.push({
+      url: `${baseUrl}/${route.path}`.replace(/\/$/, ''),
+      lastModified: new Date(),
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
     });
   }
 
