@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import ProductCard from './ProductCard';
 import type { InventoryItem } from '@/types/api';

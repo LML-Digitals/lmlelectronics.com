@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/config/authOptions';
 import prisma from '@/lib/prisma';
 import { updateCustomer } from '@/components/dashboard/customers/services/customerCrud';
 import { adjustStockLevel } from '@/components/dashboard/inventory/items/services/itemsCrud';
+import { DiscountType } from '@prisma/client';
 
 // Type for cart items
 export type CartItem = {
@@ -84,12 +85,12 @@ export async function processCheckout (cartData: CartData): Promise<{
         storeLocationId: parseInt(cartData.location),
         status: 'completed',
         discountAmount: cartData.discountAmount ?? 0,
-        discountType: cartData.discountType ? (cartData.discountType as any) : null,
+        discountType: cartData.discountType ? (cartData.discountType as DiscountType) : null,
         items: {
           create: cartData.items.map((item: CartItem) => ({
-            itemType: item.type || 'product',
+            itemType: item.type ?? 'product',
             sourceId: item.id,
-            description: item.name || item.description || 'Unknown item',
+            description: item.name ?? item.description ?? 'Unknown item',
             price: item.price,
             quantity: item.quantity,
           })),
@@ -108,8 +109,6 @@ export async function processCheckout (cartData: CartData): Promise<{
       orderId: order.id,
     };
   } catch (error) {
-    console.error('Error processing checkout:', error);
-
     return {
       success: false,
       message:

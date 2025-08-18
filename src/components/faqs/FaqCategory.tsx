@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import AccordionItem from './AccordionItem';
 import { FAQ } from '@prisma/client';
 

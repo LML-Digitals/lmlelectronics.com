@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { submitFAQQuestion } from './services/faqService';
 import {
   Dialog,

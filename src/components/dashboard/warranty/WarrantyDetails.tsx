@@ -36,6 +36,8 @@ import {
   Package,
   AlertTriangle,
   Clock,
+  Check,
+  X,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import Link from 'next/link';
@@ -82,7 +84,6 @@ import {
 } from '@/components/ui/table';
 import { WarrantyClaim } from '@prisma/client';
 import { cn } from '@/lib/utils';
-import { Check, X } from 'lucide-react';
 
 interface WarrantyDetailsProps {
   warrantyId: string;

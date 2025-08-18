@@ -243,7 +243,7 @@ const CheckoutClient = () => {
         paymentMethod: 'Square Card',
       };
 
-              const result = await processCheckout(checkoutDataWithPayment);
+      const result = await processCheckout(checkoutDataWithPayment);
       const data = result;
 
       toast.success(`Order #${data.orderId} has been created`);

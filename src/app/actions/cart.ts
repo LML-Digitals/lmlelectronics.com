@@ -40,8 +40,8 @@ export async function removeFromCart (itemId: string) {
 
       cookieStore.set('cart', JSON.stringify(updatedCart));
       revalidatePath('/cart');
-    } catch (error) {
-      console.error('Error removing item from cart:', error);
+    } catch (_error) {
+      // Error removing item from cart
     }
   }
 }
@@ -60,8 +60,8 @@ export async function updateCartItemQuantity (
 
       cookieStore.set('cart', JSON.stringify(updatedCart));
       revalidatePath('/cart');
-    } catch (error) {
-      console.error('Error updating cart item quantity:', error);
+    } catch (_error) {
+      // Error updating cart item quantity
     }
   }
 }

@@ -64,9 +64,7 @@ export async function registerUser (data: RegisterData): Promise<RegisterResult>
             message: 'reCAPTCHA verification failed. Please try again.',
           };
         }
-      } catch (error) {
-        console.error('reCAPTCHA verification error:', error);
-
+      } catch (_error) {
         return {
           success: false,
           message: 'Failed to verify reCAPTCHA. Please try again later.',
@@ -101,9 +99,7 @@ export async function registerUser (data: RegisterData): Promise<RegisterResult>
       message: 'Account created successfully',
       userId: newCustomer.id,
     };
-  } catch (error) {
-    console.error('Error creating user account:', error);
-
+  } catch (_error) {
     return {
       success: false,
       message: 'Failed to create account. Please try again.',
@@ -202,9 +198,7 @@ export async function updateShippingAddress (
       success: true,
       message: 'Shipping address updated successfully',
     };
-  } catch (error) {
-    console.error('Error updating shipping address:', error);
-
+  } catch (_error) {
     return {
       success: false,
       message: 'Failed to update shipping address',
@@ -244,9 +238,7 @@ export async function getCustomerProfile (customerId: string) {
       success: true,
       data: customer,
     };
-  } catch (error) {
-    console.error('Error fetching customer profile:', error);
-
+  } catch (_error) {
     return {
       success: false,
       message: 'Failed to fetch customer profile',
@@ -302,9 +294,7 @@ export async function updateCustomerProfile (
       success: true,
       message: 'Profile updated successfully',
     };
-  } catch (error) {
-    console.error('Error updating customer profile:', error);
-
+  } catch (_error) {
     return {
       success: false,
       message: 'Failed to update profile',

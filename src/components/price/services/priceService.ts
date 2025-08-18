@@ -6,7 +6,6 @@ import {
   PriceSearchResult,
 } from '../types/priceTypes';
 import prisma from '@/lib/prisma';
-import { RepairOption } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
 export type VendorAndItsInventoryItems = Prisma.VendorGetPayload<{

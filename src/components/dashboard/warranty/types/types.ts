@@ -1,6 +1,4 @@
-import prisma from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
-import { Warranty, WarrantyClaim, WarrantyType } from '@prisma/client';
 
 export type WarrantyProps = Prisma.WarrantyGetPayload<{
   include: {

@@ -24,9 +24,7 @@ export async function getStoreLocations (): Promise<LocationsResult> {
       success: true,
       locations,
     };
-  } catch (error) {
-    console.error('Error fetching locations:', error);
-
+  } catch (_error) {
     return {
       success: false,
       message: 'Failed to fetch locations',

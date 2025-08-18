@@ -9,7 +9,7 @@ import {
   CreditCard,
   Filter,
 } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
@@ -132,7 +132,7 @@ export default function LocationsTable ({ locations }: LocationsTableProps) {
     }
 
     const envValue
-      = process.env[location.squareLocationEnvKey as keyof NodeJS.ProcessEnv];
+      = process.env[location.squareLocationEnvKey as keyof typeof process.env];
     const friendlyNames: Record<string, string> = {
       SQUARE_WEST_SEATTLE_LOCATION_ID: 'West Seattle',
       SQUARE_SEATTLE_LOCATION_ID: 'Seattle',

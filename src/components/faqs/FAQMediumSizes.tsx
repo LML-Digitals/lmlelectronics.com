@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
 import { motion, Variants } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import { useState } from 'react';
 
 interface AccordionItemProps {
   title: string;

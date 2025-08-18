@@ -35,9 +35,7 @@ export async function getActiveLocations (): Promise<LocationLink[]> {
       name: location.name,
       slug: location.slug as string,
     }));
-  } catch (error) {
-    console.error('Error fetching locations:', error);
-
+  } catch (_error) {
     return [];
   }
 }

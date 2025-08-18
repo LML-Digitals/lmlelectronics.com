@@ -47,9 +47,7 @@ export async function getOrderDetails (orderId: string, customerId?: string) {
     }
 
     return { success: true, data: order };
-  } catch (error) {
-    console.error('Error fetching order details:', error);
-
+  } catch (_error) {
     return { success: false, message: 'Failed to fetch order details' };
   }
 }
@@ -83,9 +81,7 @@ export async function getCustomerOrders (customerId: string) {
     });
 
     return { success: true, data: orders };
-  } catch (error) {
-    console.error('Error fetching customer orders:', error);
-
+  } catch (_error) {
     return { success: false, message: 'Failed to fetch orders', data: [] };
   }
 }
@@ -124,9 +120,7 @@ export async function getOrdersByCustomerEmail (email: string) {
     });
 
     return { success: true, data: orders };
-  } catch (error) {
-    console.error('Error fetching orders by email:', error);
-
+  } catch (_error) {
     return { success: false, message: 'Failed to fetch orders', data: [] };
   }
 }
