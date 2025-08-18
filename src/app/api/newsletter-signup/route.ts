@@ -55,7 +55,19 @@ export async function POST (req: NextRequest) {
     }
 
     // Generate a unique discount code
-    const discountCode = `WELCOME${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const generateDiscountCode = () => {
+      const randomString = Math.random().toString(36);
+      const substring = randomString.substring(2, 8);
+      const randomSuffix = substring.toUpperCase();
+
+      const prefix = 'WELCOME';
+
+      const result = prefix + randomSuffix;
+
+      return result;
+    };
+
+    const discountCode = generateDiscountCode();
 
     // Create a random password for new customer
     const plainPassword = uuidv4().substring(0, 8);
@@ -75,10 +87,12 @@ export async function POST (req: NextRequest) {
 
     // Send welcome email with discount code
     try {
+      const emailSubject = 'Welcome to LML Electronics!';
+
       await resend.emails.send({
         from: 'LML Electronics <noreply@lmlelectronics.com>',
         to: [email],
-        subject: 'Welcome to LML Electronics Newsletter! 🎉',
+        subject: emailSubject,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h1 style="color: #333; text-align: center;">
@@ -94,7 +108,12 @@ export async function POST (req: NextRequest) {
               <li>⚡ Flash sales and promotions</li>
             </ul>
             
-            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <div style="
+              background-color: #f8f9fa; 
+              padding: 20px; 
+              border-radius: 8px; 
+              margin: 20px 0;
+            ">
               <h2 style="color: #28a745; margin-top: 0;">🎁 Your Welcome Gift</h2>
               <p>Use this exclusive discount code on your first order:</p>
               <div 
@@ -121,22 +140,21 @@ export async function POST (req: NextRequest) {
           </div>
         `,
       });
-    } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
+    } catch (_emailError) {
       // Don't fail the request if email fails
     }
+
+    const successMessage = 'Successfully subscribed to newsletter!';
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Successfully subscribed to newsletter!',
+        message: successMessage,
         customerId: customer.id,
       },
       { status: 201 },
     );
   } catch (error) {
-    console.error('Error processing newsletter signup:', error);
-
     return NextResponse.json(
       {
         error: 'Failed to process newsletter signup',
