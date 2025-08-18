@@ -1,13 +1,13 @@
 'use server';
 
 import { PrismaClient, TermVersion } from '@prisma/client';
-import { TermWithVersions } from '@/lib/types';
+import { _TermWithVersions } from '@/lib/types';
 import { fetchSession } from '@/lib/session';
 
 const prisma = new PrismaClient();
 
 // Generate a slug from a title
-function generateSlug(title: string): string {
+function generateSlug (title: string): string {
   return title
     .toLowerCase()
     .replace(/[^\w\s-]/g, '')
@@ -101,14 +101,14 @@ export const getTermsBySlug = async (slug: string) => {
 
 // Get all versions of a term
 export const getTermVersions = async (
-  termId: number
+  termId: number,
 ): Promise<TermVersion[]> => {
   try {
     const term = await prisma.terms.findUnique({
       where: { id: termId },
       include: { versions: true },
     });
-    return term?.versions || [];
+    return term?.versions ?? [];
   } catch (error) {
     console.error('Error fetching term versions:', error);
     throw new Error('Failed to fetch term versions');
@@ -187,7 +187,7 @@ export const addTermVersion = async (
     content: string;
     version: string;
     effectiveAt: Date;
-  }
+  },
 ) => {
   try {
     // Check if the version already exists for the given termId

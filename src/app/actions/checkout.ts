@@ -22,11 +22,14 @@ export type CartData = {
 /**
  * Server action to process checkout and create order
  */
-export async function processCheckout(
-  cartData: CartData,
-): Promise<{ success: boolean; message: string; orderId?: string }> {
+export async function processCheckout (cartData: CartData): Promise<{
+  success: boolean;
+  message: string;
+  orderId?: string;
+}> {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user) {
       return {
         success: false,

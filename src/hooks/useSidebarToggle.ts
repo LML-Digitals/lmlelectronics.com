@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { useEffect, useState } from "react";
+import { create } from 'zustand';
+import { useEffect, useState } from 'react';
 
 interface SidebarToggle {
   toggleCollapse: boolean;
@@ -38,6 +38,7 @@ export const useResponsiveSidebar = () => {
   useEffect(() => {
     const checkScreenSize = () => {
       const isMobileScreen = window.innerWidth < 768;
+
       setIsMobile(isMobileScreen);
 
       // Close mobile menu when switching to desktop
@@ -51,16 +52,16 @@ export const useResponsiveSidebar = () => {
     checkScreenSize();
 
     // Add resize listener with debouncing for better performance
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     const debouncedResize = () => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(checkScreenSize, 100);
     };
 
-    window.addEventListener("resize", debouncedResize);
+    window.addEventListener('resize', debouncedResize);
 
     return () => {
-      window.removeEventListener("resize", debouncedResize);
+      window.removeEventListener('resize', debouncedResize);
       clearTimeout(timeoutId);
     };
   }, [isMobileMenuOpen, closeMobileMenu, setIsMobile]);

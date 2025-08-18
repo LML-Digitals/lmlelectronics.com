@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 
 interface TermCardProps {
@@ -13,9 +14,10 @@ interface TermCardProps {
 }
 
 const TermCard: React.FC<TermCardProps> = ({ term, className }) => {
-  function cn(...classes: (string | undefined)[]): string {
+  function cn (...classes: (string | undefined)[]): string {
     return classes.filter(Boolean).join(' ');
   }
+
   return (
     <div className={cn('border rounded-xl max-w-7xl mx-auto flex my-5 flex-col bg-card shadow-sm', className)}>
       <Link href={`/terms/${term.slug}`} >

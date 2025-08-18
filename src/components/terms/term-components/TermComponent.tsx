@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import ReactMarkdown from "react-markdown";
-import { Calendar, Printer } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import { Calendar, Printer } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 interface TermComponentProps {
   term: {
@@ -26,7 +27,7 @@ const TermComponent: React.FC<TermComponentProps> = ({ term }) => {
       <Card className="shadow-md print:shadow-none">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start">
-            <h1 className="text-3xl font-bold text-secondary tracking-tight">
+            <h1 className='text-3xl font-bold text-secondary tracking-tight'>
               {term.title}
             </h1>
             <Button
@@ -47,12 +48,12 @@ const TermComponent: React.FC<TermComponentProps> = ({ term }) => {
               <span className="font-medium">Effective:</span>
               <time
                 dateTime={term.effectiveAt.toISOString()}
-                className="tabular-nums"
+                className='tabular-nums'
               >
-                {term.effectiveAt.toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
+                {term.effectiveAt.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
                 })}
               </time>
             </div>
@@ -64,12 +65,12 @@ const TermComponent: React.FC<TermComponentProps> = ({ term }) => {
               <span className="font-medium">Last Updated:</span>
               <time
                 dateTime={term.lastUpdated.toISOString()}
-                className="tabular-nums"
+                className='tabular-nums'
               >
-                {term.lastUpdated.toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
+                {term.lastUpdated.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
                 })}
               </time>
             </div>

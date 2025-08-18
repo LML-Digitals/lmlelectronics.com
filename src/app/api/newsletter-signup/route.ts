@@ -20,6 +20,7 @@ export async function POST (req: NextRequest) {
 
     // Validate email format
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
@@ -40,10 +41,13 @@ export async function POST (req: NextRequest) {
           data: { newsletterSubscribed: true },
         });
       }
+
+      const message = 'You\'re already subscribed to our newsletter!';
+
       return NextResponse.json(
         {
           success: true,
-          message: 'You\'re already subscribed to our newsletter!',
+          message,
           isExisting: true,
         },
         { status: 200 },
@@ -77,8 +81,12 @@ export async function POST (req: NextRequest) {
         subject: 'Welcome to LML Electronics Newsletter! 🎉',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #333; text-align: center;">Welcome to LML Electronics!</h1>
-            <p>Thank you for subscribing to our newsletter! You'll be the first to know about:</p>
+            <h1 style="color: #333; text-align: center;">
+              Welcome to LML Electronics!
+            </h1>
+            <p>
+              Thank you for subscribing to our newsletter! You'll be the first to know about:
+            </p>
             <ul>
               <li>🎯 Exclusive deals and discounts</li>
               <li>🔧 DIY repair tips and guides</li>
@@ -89,7 +97,18 @@ export async function POST (req: NextRequest) {
             <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
               <h2 style="color: #28a745; margin-top: 0;">🎁 Your Welcome Gift</h2>
               <p>Use this exclusive discount code on your first order:</p>
-              <div style="background-color: #28a745; color: white; padding: 15px; border-radius: 5px; text-align: center; font-size: 18px; font-weight: bold; letter-spacing: 2px;">
+              <div 
+                style="
+                  background-color: #28a745; 
+                  color: white; 
+                  padding: 15px; 
+                  border-radius: 5px; 
+                  text-align: center; 
+                  font-size: 18px; 
+                  font-weight: bold; 
+                  letter-spacing: 2px;
+                "
+              >
                 ${discountCode}
               </div>
               <p style="font-size: 14px; color: #666; margin-top: 10px;">

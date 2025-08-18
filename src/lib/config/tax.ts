@@ -1,26 +1,28 @@
-import { buildApiUrl } from "./api";
+import { _buildApiUrl } from './api';
 import {
-  calculateTotalTaxRate,
+  _calculateTotalTaxRate,
   getActiveTaxRates,
-  getTaxDueOverview,
-  getTaxSummary,
-} from "@/components/dashboard/tax/services/taxService";
-import { TaxCategory } from "@prisma/client";
+  _getTaxDueOverview,
+  _getTaxSummary,
+} from '@/components/dashboard/tax/services/taxService';
+import { _TaxCategory } from '@prisma/client';
 
-export async function calculateTax(amount: number): Promise<number> {
+export async function calculateTax (amount: number): Promise<number> {
   try {
     // Get active tax rates
     const activeTaxRatesResult = await getActiveTaxRates();
+
     if (!activeTaxRatesResult.success) {
-      throw new Error(activeTaxRatesResult.error || "Failed to get active tax rates");
+      throw new Error(activeTaxRatesResult.error ?? 'Failed to get active tax rates');
     }
 
     // Filter by category if specified
-    let applicableTaxRates = activeTaxRatesResult.taxRates;
+    const applicableTaxRates = activeTaxRatesResult.taxRates;
 
     // Calculate tax amounts
     const taxCalculations = applicableTaxRates?.map((rate) => {
       const taxAmount = amount * (rate.rate / 100);
+
       return {
         taxRateId: rate.id,
         taxRateName: rate.name,
@@ -32,11 +34,11 @@ export async function calculateTax(amount: number): Promise<number> {
       };
     });
 
-    const totalTaxAmount =
-      taxCalculations?.reduce((sum, calc) => sum + calc.taxAmount, 0) || 0;
+    const totalTaxAmount
+      = taxCalculations?.reduce((sum, calc) => sum + calc.taxAmount, 0) ?? 0;
 
-    const totalTaxRate =
-      applicableTaxRates?.reduce((sum, rate) => sum + rate.rate, 0) || 0;
+    const totalTaxRate
+      = applicableTaxRates?.reduce((sum, rate) => sum + rate.rate, 0) ?? 0;
 
     const responseData = {
       taxableAmount: amount,
@@ -56,7 +58,7 @@ export async function calculateTax(amount: number): Promise<number> {
 
     return tax;
   } catch (error) {
-    console.error("Error calculating tax:", error);
+    console.error('Error calculating tax:', error);
     throw error;
   }
 }

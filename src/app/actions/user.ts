@@ -31,13 +31,12 @@ type RegisterResult = {
   userId?: string;
 };
 
-export async function registerUser(
-  data: RegisterData,
-): Promise<RegisterResult> {
+export async function registerUser (data: RegisterData): Promise<RegisterResult> {
   try {
     // Verify reCAPTCHA token if provided
     if (data.captcha) {
       const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+
       if (!secretKey) {
         return {
           success: false,
@@ -60,6 +59,7 @@ export async function registerUser(
         }
 
         const captchaData = await captchaResponse.json();
+
         if (!captchaData.success || captchaData.score < 0.5) {
           return {
             success: false,
@@ -144,6 +144,7 @@ export async function updateShippingAddress (
 ): Promise<{ success: boolean; message: string }> {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user) {
       return {
         success: false,
@@ -216,6 +217,7 @@ export async function updateShippingAddress (
 export async function getCustomerProfile (customerId: string) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user) {
       return {
         success: false,
@@ -265,6 +267,7 @@ export async function updateCustomerProfile (
 ): Promise<{ success: boolean; message: string }> {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user) {
       return {
         success: false,

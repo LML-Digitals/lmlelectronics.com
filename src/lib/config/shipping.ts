@@ -1,20 +1,20 @@
-import { buildApiUrl } from "./api";
+import { _buildApiUrl } from './api';
 import {
   calculateShippingCost,
-  getShippingRateByState,
-} from "@/components/dashboard/shipping/services/shippingService";
+  _getShippingRateByState,
+} from '@/components/dashboard/shipping/services/shippingService';
 
-export async function calculateShipping(state: string): Promise<number> {
+export async function calculateShipping (state: string): Promise<number> {
   try {
     const data = await calculateShippingCost(state);
 
     if (data.success) {
-      return data.shippingCost || 0;
+      return data.shippingCost ?? 0;
     }
 
-    throw new Error(data.error || "Failed to get shipping rate");
+    throw new Error(data.error ?? 'Failed to get shipping rate');
   } catch (error) {
-    console.error("Error calculating shipping:", error);
+    console.error('Error calculating shipping:', error);
     throw error;
   }
 }

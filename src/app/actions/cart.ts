@@ -68,6 +68,7 @@ export async function updateCartItemQuantity (
 
 export async function clearCart () {
   const cookieStore = await cookies();
+
   cookieStore.delete('cart');
   revalidatePath('/cart');
 }

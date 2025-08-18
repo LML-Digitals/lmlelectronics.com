@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { CheckCircle, Clock, ChevronDown, ChevronUp, CircleDashed } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { _Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
@@ -10,24 +10,24 @@ import VersionActivation from '@/components/dashboard/terms/VersionActivation';
 import { TermVersion } from '@prisma/client';
 import { cn } from '@/lib/utils';
 
-export default function VersionItem({ version, isLast, termId }: { 
-  version: TermVersion; 
-  isLast: boolean; 
-  termId: number; 
+export default function VersionItem ({ version, isLast, termId }: {
+  version: TermVersion;
+  isLast: boolean;
+  termId: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isContentLoading, setIsContentLoading] = useState(false);
+  const [_isContentLoading, _setIsContentLoading] = useState(false);
 
   return (
     <div className="relative pl-6 group">
       {/* Timeline indicator */}
       <div
         className={cn(
-          "absolute left-0 top-4 h-[calc(100%-2rem)] w-px bg-gradient-to-b",
+          'absolute left-0 top-4 h-[calc(100%-2rem)] w-px bg-gradient-to-b',
           version.isActive
-            ? "from-primary to-primary/30"
-            : "from-muted-foreground/20 to-transparent",
-          isLast ? "h-8" : "h-full"
+            ? 'from-primary to-primary/30'
+            : 'from-muted-foreground/20 to-transparent',
+          isLast ? 'h-8' : 'h-full',
         )}
       >
         <div className="absolute -left-[3px] top-0 w-2 h-2 rounded-full bg-primary border-2 border-background" />
@@ -76,12 +76,12 @@ export default function VersionItem({ version, isLast, termId }: {
                 <span className="font-medium">Effective Date:</span>
                 <time
                   dateTime={version.effectiveAt.toISOString()}
-                  className="font-mono text-sm"
+                  className='font-mono text-sm'
                 >
-                  {version.effectiveAt.toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
+                  {version.effectiveAt.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
                   })}
                 </time>
               </div>
@@ -89,12 +89,12 @@ export default function VersionItem({ version, isLast, termId }: {
                 <span className="font-medium">Last Updated:</span>
                 <time
                   dateTime={version.lastUpdated.toISOString()}
-                  className="font-mono text-sm"
+                  className='font-mono text-sm'
                 >
-                  {version.lastUpdated.toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
+                  {version.lastUpdated.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
                   })}
                 </time>
               </div>
@@ -114,7 +114,7 @@ export default function VersionItem({ version, isLast, termId }: {
         {isOpen && (
           <div className="ml-4 mb-4 border-l-2 border-primary/20 pl-4">
             <div className="rounded-lg bg-background p-6 shadow-sm transition-opacity">
-              {isContentLoading ? (
+              {_isContentLoading ? (
                 <div className="space-y-3">
                   <CircleDashed className="h-4 w-4 animate-spin" />
                 </div>

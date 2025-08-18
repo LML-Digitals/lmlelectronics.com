@@ -7,24 +7,25 @@ import TermCard from './TermCard';
 import { TermVersion } from '@prisma/client';
 import { cn } from '@/lib/utils';
 
-export default function SearchableTerms({ initialTerms }: { 
-  initialTerms: (TermVersion & { terms: { id: number; title: string; slug: string } })[]
+export default function SearchableTerms ({ initialTerms }: {
+  initialTerms: (TermVersion & { terms: { id: number; title: string; slug: string } })[];
 }) {
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const filteredTerms = useMemo(() => {
-    if (!searchQuery) return initialTerms;
-    
+    if (!searchQuery) {
+      return initialTerms;
+    }
+
     const query = searchQuery.toLowerCase();
-    return initialTerms.filter(term => 
-      term.terms.title.toLowerCase().includes(query) ||
-      term.content.toLowerCase().includes(query) ||
-      term.version.toLowerCase().includes(query)
-    );
+
+    return initialTerms.filter((term) => term.terms.title.toLowerCase().includes(query)
+        || term.content.toLowerCase().includes(query)
+        || term.version.toLowerCase().includes(query));
   }, [initialTerms, searchQuery]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 mt-10 mb-64 ">
+    <div className="max-w-7xl mx-auto px-4 mt-10 mb-64">
       {/* Search Bar */}
       <div className="relative mb-10 group max-w-2xl mx-auto">
         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -56,7 +57,7 @@ export default function SearchableTerms({ initialTerms }: {
 
       {/* Terms Grid */}
       <div className="grid gap-6">
-        {filteredTerms.map((term, index) => (
+        {filteredTerms.map((term) => (
           <TermCard
             key={term.id}
             term={{
@@ -69,11 +70,11 @@ export default function SearchableTerms({ initialTerms }: {
             }}
             className={cn(
               'animate-fade-in transition-opacity',
-              searchQuery ? 'opacity-100' : 'opacity-90 hover:opacity-100'
+              searchQuery ? 'opacity-100' : 'opacity-90 hover:opacity-100',
             )}
           />
         ))}
-        
+
         {filteredTerms.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
             <p className="text-lg">No terms found matching your search</p>

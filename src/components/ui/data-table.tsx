@@ -59,9 +59,9 @@ export function DataTable<TData, TValue> ({
           value={
             (table.getColumn('variationName')?.getFilterValue() as string) ?? '',
           }
-          onChange={(event) =>
-            table.getColumn('variationName')?.setFilterValue(event.target.value),
-          }
+          onChange={(event) => {
+            table.getColumn('variationName')?.setFilterValue(event.target.value);
+          }}
           className='max-w-sm'
         />
       </div>
@@ -86,7 +86,7 @@ export function DataTable<TData, TValue> ({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
