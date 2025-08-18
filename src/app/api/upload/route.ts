@@ -1,40 +1,41 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/config/authOptions";
-import { revalidatePath } from "next/cache";
-import supabase from "@/lib/supabase";
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
 
-export async function POST(request: Request): Promise<NextResponse> {
+import { authOptions } from '@/lib/config/authOptions';
+import { revalidatePath } from 'next/cache';
+import supabase from '@/lib/supabase';
+
+export async function POST (request: Request): Promise<NextResponse> {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const filename = searchParams.get("filename");
-    const size = searchParams.get("size")
-      ? parseInt(searchParams.get("size") as string, 10)
+    const filename = searchParams.get('filename');
+    const size = searchParams.get('size')
+      ? parseInt(searchParams.get('size') as string, 10)
       : null;
-    const mimeType = searchParams.get("mimeType") || "";
+    const mimeType = searchParams.get('mimeType') || '';
 
     if (!filename || !request.body) {
       return NextResponse.json(
-        { message: "Filename or request body is missing" },
-        { status: 400 }
+        { message: 'Filename or request body is missing' },
+        { status: 400 },
       );
     }
 
     // Check if an image with the same filename already exists in storage
     const { data: existingFiles } = await supabase.storage
-      .from("lml-repair")
-      .list("", { search: filename });
+      .from('lml-repair')
+      .list('', { search: filename });
 
     if (existingFiles && existingFiles.some((file) => file.name === filename)) {
       // If image exists, return its public URL without uploading again
       const { data: publicUrlData } = await supabase.storage
-        .from("lml-repair")
+        .from('lml-repair')
         .getPublicUrl(filename);
 
       return NextResponse.json({
@@ -51,19 +52,19 @@ export async function POST(request: Request): Promise<NextResponse> {
     const fileData = await request.arrayBuffer();
 
     // Upload to Supabase Storage
-    const bucketName = "lml-repair";
+    const bucketName = 'lml-repair';
     const { data, error } = await supabase.storage
       .from(bucketName)
       .upload(filename, fileData, {
         contentType: mimeType,
-        cacheControl: "3600",
+        cacheControl: '3600',
       });
 
     if (error) {
-      console.error("Supabase storage upload error:", error);
+      console.error('Supabase storage upload error:', error);
       return NextResponse.json(
-        { message: "Failed to upload image to storage" },
-        { status: 500 }
+        { message: 'Failed to upload image to storage' },
+        { status: 500 },
       );
     }
 
@@ -73,17 +74,17 @@ export async function POST(request: Request): Promise<NextResponse> {
       .getPublicUrl(filename);
 
     if (!publicUrlData) {
-      console.error("Failed to generate public URL");
+      console.error('Failed to generate public URL');
       return NextResponse.json(
-        { message: "Failed to generate public URL" },
-        { status: 500 }
+        { message: 'Failed to generate public URL' },
+        { status: 500 },
       );
     }
 
     const fileUrl = publicUrlData.publicUrl;
 
     // Revalidate the image library page
-    revalidatePath("/dashboard/image-library");
+    revalidatePath('/dashboard/image-library');
 
     // Create response with CORS headers
     const response = NextResponse.json({
@@ -95,15 +96,15 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
 
     // Add CORS headers to the response
-    response.headers.set("Access-Control-Allow-Origin", "*");
-    response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
     return response;
   } catch (error) {
-    console.error("Error uploading image:", error);
+    console.error('Upload error:', error);
     return NextResponse.json(
-      { message: "Failed to upload image" },
-      { status: 500 }
+      { message: 'Internal server error' },
+      { status: 500 },
     );
   }
 }

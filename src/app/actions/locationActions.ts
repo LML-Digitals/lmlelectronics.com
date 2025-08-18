@@ -11,7 +11,7 @@ export type LocationLink = {
 /**
  * Fetches active store locations for the footer links
  */
-export async function getActiveLocations(): Promise<LocationLink[]> {
+export async function getActiveLocations (): Promise<LocationLink[]> {
   try {
     const locations = await prisma.storeLocation.findMany({
       where: {
@@ -37,6 +37,7 @@ export async function getActiveLocations(): Promise<LocationLink[]> {
     }));
   } catch (error) {
     console.error('Error fetching locations:', error);
+
     return [];
   }
 }

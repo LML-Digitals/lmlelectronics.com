@@ -1,75 +1,73 @@
-"use server";
+'use server';
 
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/config/authOptions";
-import prisma from "@/lib/prisma";
-import { updateCustomer } from "@/components/dashboard/customers/services/customerCrud";
+import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { CartItem } from '@/types/cartTypes';
 
-// Type for the cart data coming from the client
-export type CartData = {
-  items: any[];
-  paymentMethod?: string;
-  location: string;
-  customerId?: string | null;
-  discountAmount?: number;
-  discountType?: string;
-  subtotal: number;
-  taxAmount: number;
-  total: number;
-};
+export async function addToCart (item: CartItem) {
+  const cookieStore = await cookies();
+  const cartCookie = cookieStore.get('cart');
+  let cart: CartItem[] = [];
 
-/**
- * Server action to update customer preferences based on cart data
- * This does NOT create orders - that happens only at checkout completion
- */
-export async function updateCustomerFromCart(
-  cartData: Pick<CartData, "location" | "customerId">
-): Promise<{ success: boolean; message: string }> {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return {
-        success: false,
-        message: "Authentication required",
-      };
+  if (cartCookie) {
+    try {
+      cart = JSON.parse(cartCookie.value);
+    } catch {
+      cart = [];
     }
-
-    const customerId = cartData.customerId || session.user.id;
-
-    if (!customerId) {
-      return {
-        success: false,
-        message: "Customer ID is required",
-      };
-    }
-
-    // Get customer to update their preferences
-    const customer = await prisma.customer.findUnique({
-      where: { id: customerId },
-    });
-
-    if (!customer) {
-      return {
-        success: false,
-        message: "Customer not found",
-      };
-    }
-
-    // Update customer with latest location preference
-    await updateCustomer(customer.id, {
-      location: cartData.location,
-    });
-
-    return {
-      success: true,
-      message: "Customer preferences updated",
-    };
-  } catch (error) {
-    console.error("Error updating customer from cart:", error);
-    return {
-      success: false,
-      message:
-        error instanceof Error ? error.message : "Failed to update customer",
-    };
   }
+
+  const existingItemIndex = cart.findIndex((cartItem) => cartItem.id === item.id);
+
+  if (existingItemIndex > -1) {
+    cart[existingItemIndex].quantity += item.quantity ?? 1;
+  } else {
+    cart.push(item);
+  }
+
+  cookieStore.set('cart', JSON.stringify(cart));
+  revalidatePath('/cart');
+}
+
+export async function removeFromCart (itemId: string) {
+  const cookieStore = await cookies();
+  const cartCookie = cookieStore.get('cart');
+
+  if (cartCookie) {
+    try {
+      const cart: CartItem[] = JSON.parse(cartCookie.value);
+      const updatedCart = cart.filter((item) => item.id !== itemId);
+
+      cookieStore.set('cart', JSON.stringify(updatedCart));
+      revalidatePath('/cart');
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+    }
+  }
+}
+
+export async function updateCartItemQuantity (
+  itemId: string,
+  quantity: number,
+) {
+  const cookieStore = await cookies();
+  const cartCookie = cookieStore.get('cart');
+
+  if (cartCookie) {
+    try {
+      const cart: CartItem[] = JSON.parse(cartCookie.value);
+      const updatedCart = cart.map((item) => item.id === itemId ? { ...item, quantity } : item);
+
+      cookieStore.set('cart', JSON.stringify(updatedCart));
+      revalidatePath('/cart');
+    } catch (error) {
+      console.error('Error updating cart item quantity:', error);
+    }
+  }
+}
+
+export async function clearCart () {
+  const cookieStore = await cookies();
+  cookieStore.delete('cart');
+  revalidatePath('/cart');
 }

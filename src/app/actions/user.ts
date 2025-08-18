@@ -1,8 +1,8 @@
 'use server';
 
-import { hash } from 'bcryptjs';
+import { _hash } from 'bcryptjs';
 import prisma from '@/lib/prisma';
-import { randomUUID } from 'crypto';
+import { _randomUUID } from 'crypto';
 import { createCustomer } from '@/components/dashboard/customers/services/customerCrud';
 import { z } from 'zod';
 import { getServerSession } from 'next-auth/next';
@@ -10,7 +10,7 @@ import { authOptions } from '@/lib/config/authOptions';
 import { revalidatePath } from 'next/cache';
 
 // Define validation schema
-const registerSchema = z.object({
+const _registerSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
   email: z.string().email('Please enter a valid email address'),
@@ -32,7 +32,7 @@ type RegisterResult = {
 };
 
 export async function registerUser(
-  data: RegisterData
+  data: RegisterData,
 ): Promise<RegisterResult> {
   try {
     // Verify reCAPTCHA token if provided
@@ -68,6 +68,7 @@ export async function registerUser(
         }
       } catch (error) {
         console.error('reCAPTCHA verification error:', error);
+
         return {
           success: false,
           message: 'Failed to verify reCAPTCHA. Please try again later.',
@@ -99,206 +100,213 @@ export async function registerUser(
 
     return {
       success: true,
+      message: 'Account created successfully',
       userId: newCustomer.id,
     };
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('Error creating user account:', error);
+
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'Registration failed',
+      message: 'Failed to create account. Please try again.',
     };
   }
 }
 
-// Define shipping address schema
-const shippingAddressSchema = z.object({
-  fullName: z.string().min(2, 'Full name is required'),
-  addressLine1: z.string().min(5, 'Address is required'),
+// Define shipping address validation schema
+const _shippingAddressSchema = z.object({
+  fullName: z.string().min(2, 'Full name must be at least 2 characters'),
+  addressLine1: z.string().min(5, 'Address must be at least 5 characters'),
   addressLine2: z.string().optional(),
-  city: z.string().min(2, 'City is required'),
-  state: z.string().min(2, 'State is required'),
-  zipCode: z.string().min(5, 'Valid ZIP code is required'),
-  phone: z.string().min(10, 'Valid phone number is required'),
+  city: z.string().min(2, 'City must be at least 2 characters'),
+  state: z.string().min(2, 'State must be at least 2 characters'),
+  zipCode: z.string().min(5, 'ZIP code must be at least 5 characters'),
+  phone: z.string().min(10, 'Phone number must be at least 10 characters'),
+  shippingMethod: z.string().min(1, 'Shipping method is required'),
+  shippingRate: z.number().min(0, 'Shipping rate must be non-negative'),
 });
 
-type ShippingAddressInput = z.infer<typeof shippingAddressSchema>;
-
-type ShippingAddressResult = {
-  success: boolean;
-  message?: string;
-  data?: any;
+type ShippingAddressData = {
+  fullName: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  phone: string;
+  shippingMethod: string;
+  shippingRate: number;
 };
 
-/**
- * Server action to get a customer's shipping address
- */
-export async function getShippingAddress(
-  customerId: string
-): Promise<ShippingAddressResult> {
-  try {
-    // Verify the user is authenticated and authorized
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return { success: false, message: 'Not authenticated' };
-    }
-
-    // Ensure users can only access their own data
-    if (session.user.id !== customerId) {
-      return { success: false, message: 'Unauthorized access' };
-    }
-
-    // Fetch the shipping address
-    const shippingAddress = await prisma.shippingAddress.findUnique({
-      where: {
-        customerId: customerId,
-      },
-    });
-
-    if (!shippingAddress) {
-      return { success: false, message: 'No shipping address found' };
-    }
-
-    return { success: true, data: shippingAddress };
-  } catch (error) {
-    console.error('Error fetching shipping address:', error);
-    return {
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Failed to fetch shipping address',
-    };
-  }
-}
-
-/**
- * Server action to create a new shipping address
- */
-export async function createShippingAddress(
+export async function updateShippingAddress (
   customerId: string,
-  address: ShippingAddressInput
-): Promise<ShippingAddressResult> {
+  addressData: ShippingAddressData,
+): Promise<{ success: boolean; message: string }> {
   try {
-    // Verify the user is authenticated and authorized
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return { success: false, message: 'Not authenticated' };
-    }
-
-    // Ensure users can only access their own data
-    if (session.user.id !== customerId) {
-      return { success: false, message: 'Unauthorized access' };
-    }
-
-    // Check if the address already exists
-    const existingAddress = await prisma.shippingAddress.findUnique({
-      where: {
-        customerId: customerId,
-      },
-    });
-
-    if (existingAddress) {
       return {
         success: false,
-        message:
-          'Shipping address already exists. Use updateShippingAddress instead.',
+        message: 'Authentication required',
       };
     }
 
-    // Create the shipping address with required fields from the schema
-    const shippingAddress = await prisma.shippingAddress.create({
-      data: {
-        customer: { connect: { id: customerId } },
-        fullName: address.fullName,
-        addressLine1: address.addressLine1,
-        addressLine2: address.addressLine2 || null,
-        city: address.city,
-        state: address.state,
-        zipCode: address.zipCode,
-        phone: address.phone,
-        shippingMethod: 'Standard', // Default shipping method
-        shippingRate: 0, // Default shipping rate
-      },
-    });
-
-    // Revalidate relevant paths
-    revalidatePath('/checkout');
-
-    return { success: true, data: shippingAddress };
-  } catch (error) {
-    console.error('Error creating shipping address:', error);
-    return {
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Failed to create shipping address',
-    };
-  }
-}
-
-/**
- * Server action to update an existing shipping address
- */
-export async function updateShippingAddress(
-  customerId: string,
-  address: ShippingAddressInput
-): Promise<ShippingAddressResult> {
-  try {
-    // Verify the user is authenticated and authorized
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return { success: false, message: 'Not authenticated' };
-    }
-
-    // Ensure users can only access their own data
-    if (session.user.id !== customerId) {
-      return { success: false, message: 'Unauthorized access' };
-    }
-
-    // Check if the address exists
-    const existingAddress = await prisma.shippingAddress.findUnique({
+    // Check if customer exists and belongs to the authenticated user
+    const customer = await prisma.customer.findFirst({
       where: {
-        customerId: customerId,
+        id: customerId,
+        email: session.user.email,
       },
     });
 
-    if (!existingAddress) {
+    if (!customer) {
       return {
         success: false,
-        message:
-          'Shipping address not found. Use createShippingAddress instead.',
+        message: 'Customer not found or access denied',
       };
     }
 
-    // Update the shipping address
-    const updatedAddress = await prisma.shippingAddress.update({
+    // Update or create shipping address
+    await prisma.shippingAddress.upsert({
       where: {
-        customerId: customerId,
+        customerId: customer.id,
       },
-      data: {
-        fullName: address.fullName,
-        addressLine1: address.addressLine1,
-        addressLine2: address.addressLine2 || null,
-        city: address.city,
-        state: address.state,
-        zipCode: address.zipCode,
-        phone: address.phone,
+      update: {
+        fullName: addressData.fullName,
+        addressLine1: addressData.addressLine1,
+        addressLine2: addressData.addressLine2,
+        city: addressData.city,
+        state: addressData.state,
+        zipCode: addressData.zipCode,
+        phone: addressData.phone,
+        shippingMethod: addressData.shippingMethod,
+        shippingRate: addressData.shippingRate,
+      },
+      create: {
+        customerId: customer.id,
+        fullName: addressData.fullName,
+        addressLine1: addressData.addressLine1,
+        addressLine2: addressData.addressLine2,
+        city: addressData.city,
+        state: addressData.state,
+        zipCode: addressData.zipCode,
+        phone: addressData.phone,
+        shippingMethod: addressData.shippingMethod,
+        shippingRate: addressData.shippingRate,
       },
     });
 
-    // Revalidate relevant paths
+    revalidatePath('/profile');
     revalidatePath('/checkout');
 
-    return { success: true, data: updatedAddress };
+    return {
+      success: true,
+      message: 'Shipping address updated successfully',
+    };
   } catch (error) {
     console.error('Error updating shipping address:', error);
+
     return {
       success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : 'Failed to update shipping address',
+      message: 'Failed to update shipping address',
+    };
+  }
+}
+
+export async function getCustomerProfile (customerId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return {
+        success: false,
+        message: 'Authentication required',
+      };
+    }
+
+    const customer = await prisma.customer.findFirst({
+      where: {
+        id: customerId,
+        email: session.user.email,
+      },
+      include: {
+        shippingAddress: true,
+      },
+    });
+
+    if (!customer) {
+      return {
+        success: false,
+        message: 'Customer not found or access denied',
+      };
+    }
+
+    return {
+      success: true,
+      data: customer,
+    };
+  } catch (error) {
+    console.error('Error fetching customer profile:', error);
+
+    return {
+      success: false,
+      message: 'Failed to fetch customer profile',
+    };
+  }
+}
+
+export async function updateCustomerProfile (
+  customerId: string,
+  updateData: {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    location?: string;
+  },
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return {
+        success: false,
+        message: 'Authentication required',
+      };
+    }
+
+    // Check if customer exists and belongs to the authenticated user
+    const customer = await prisma.customer.findFirst({
+      where: {
+        id: customerId,
+        email: session.user.email,
+      },
+    });
+
+    if (!customer) {
+      return {
+        success: false,
+        message: 'Customer not found or access denied',
+      };
+    }
+
+    // Update customer profile
+    await prisma.customer.update({
+      where: {
+        id: customer.id,
+      },
+      data: updateData,
+    });
+
+    revalidatePath('/profile');
+
+    return {
+      success: true,
+      message: 'Profile updated successfully',
+    };
+  } catch (error) {
+    console.error('Error updating customer profile:', error);
+
+    return {
+      success: false,
+      message: 'Failed to update profile',
     };
   }
 }

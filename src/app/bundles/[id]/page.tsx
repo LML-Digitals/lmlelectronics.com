@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import BundleDetails from "@/components/bundles/BundleDetails";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import { BundleDetailsProps } from "@/components/bundles/BundleDetails";
-import PageHero from "@/components/PageHero";
-import { getBundleById } from "@/components/dashboard/inventory/bundles/services/bundles";
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+
+import BundleDetails from '@/components/bundles/BundleDetails';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import { BundleDetailsProps } from '@/components/bundles/BundleDetails';
+import PageHero from '@/components/PageHero';
+import { getBundleById } from '@/components/dashboard/inventory/bundles/services/bundles';
 
 interface BundlePageProps {
   params: Promise<{
@@ -12,7 +13,7 @@ interface BundlePageProps {
   }>;
 }
 
-async function getBundleData(id: string) {
+async function getBundleData (id: string) {
   try {
     const result = await getBundleById(id);
     const data = result;
@@ -21,12 +22,12 @@ async function getBundleData(id: string) {
     }
     return data.bundle;
   } catch (error) {
-    console.error("Error fetching bundle:", error);
+    console.error('Error fetching bundle:', error);
     return null;
   }
 }
 
-export async function generateMetadata({
+export async function generateMetadata ({
   params,
 }: BundlePageProps): Promise<Metadata> {
   const { id } = await params;
@@ -34,8 +35,8 @@ export async function generateMetadata({
 
   if (!bundle) {
     return {
-      title: "Bundle Not Found",
-      description: "The requested bundle could not be found.",
+      title: 'Bundle Not Found',
+      description: 'The requested bundle could not be found.',
     };
   }
 
@@ -60,12 +61,12 @@ export async function generateMetadata({
     //       bundle.bundleComponents?.length || 0
     //     } components`,
     //   images: bundle.image ? [{ url: bundle.image, alt: bundle.name }] : [],
-    //   type: "product",
+    //   type: 'product',
     // },
   };
 }
 
-export default async function BundlePage({ params }: BundlePageProps) {
+export default async function BundlePage ({ params }: BundlePageProps) {
   const { id } = await params;
   const bundle = await getBundleData(id);
 
@@ -75,26 +76,24 @@ export default async function BundlePage({ params }: BundlePageProps) {
 
   return (
     <>
-    <PageHero
+      <PageHero
         title={bundle.name}
-        subtitle={bundle.description || "Shop our expertly curated repair bundles and kits to get everything you need in one convenient package."}
-        backgroundImage={bundle.image || "/images/lml_box.webp"}
+        subtitle={bundle.description || 'Shop our expertly curated repair bundles and kits to get everything you need in one convenient package.'}
+        backgroundImage={bundle.image || '/images/lml_box.webp'}
         breadcrumbs={[
-          { name: "Repair Bundles", href: "/bundles" },
+          { name: 'Repair Bundles', href: '/bundles' },
           { name: bundle.name, href: `/bundles/${bundle.id}` },
         ]}
       />
-    <div className="max-w-7xl mx-auto">
-      
-
-      {/* Hero Section - Client Component */}
-      {/* <BundlesHero /> */}
-      {/* <PageHero
-        description={bundle.description || ""}
-        image={bundle.image || "/iphone-broken.png"}
-      /> */}
-      <BundleDetails bundle={bundle} />
-    </div>
+      <div className='max-w-7xl mx-auto'>
+        {/* Hero Section - Client Component */}
+        {/* <BundlesHero /> */}
+        {/* <PageHero
+          description={bundle.description || ''}
+          image={bundle.image || '/iphone-broken.png'}
+        /> */}
+        <BundleDetails bundle={bundle} />
+      </div>
     </>
   );
 }

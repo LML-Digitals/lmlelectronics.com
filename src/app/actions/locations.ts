@@ -9,7 +9,7 @@ export type LocationsResult = {
   message?: string;
 };
 
-export async function getStoreLocations(): Promise<LocationsResult> {
+export async function getStoreLocations (): Promise<LocationsResult> {
   try {
     const locations = await prisma.storeLocation.findMany({
       where: {
@@ -26,6 +26,7 @@ export async function getStoreLocations(): Promise<LocationsResult> {
     };
   } catch (error) {
     console.error('Error fetching locations:', error);
+
     return {
       success: false,
       message: 'Failed to fetch locations',

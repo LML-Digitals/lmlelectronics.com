@@ -1,19 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { Resend } from "resend";
-import bcrypt from "bcryptjs";
-import { v4 as uuidv4 } from "uuid";
+import { NextRequest, NextResponse } from 'next/server';
+
+import prisma from '@/lib/prisma';
+import { Resend } from 'resend';
+import bcrypt from 'bcryptjs';
+import { v4 as uuidv4 } from 'uuid';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(req: NextRequest) {
+export async function POST (req: NextRequest) {
   try {
     const { email } = await req.json();
 
     if (!email) {
       return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
+        { error: 'Email is required' },
+        { status: 400 },
       );
     }
 
@@ -21,8 +22,8 @@ export async function POST(req: NextRequest) {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: "Invalid email format" },
-        { status: 400 }
+        { error: 'Invalid email format' },
+        { status: 400 },
       );
     }
 
@@ -40,18 +41,18 @@ export async function POST(req: NextRequest) {
         });
       }
       return NextResponse.json(
-        { 
-          success: true, 
-          message: "You're already subscribed to our newsletter!",
-          isExisting: true
+        {
+          success: true,
+          message: 'You\'re already subscribed to our newsletter!',
+          isExisting: true,
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
     // Generate a unique discount code
     const discountCode = `WELCOME${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-    
+
     // Create a random password for new customer
     const plainPassword = uuidv4().substring(0, 8);
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
@@ -60,8 +61,8 @@ export async function POST(req: NextRequest) {
     const customer = await prisma.customer.create({
       data: {
         email,
-        firstName: "",
-        lastName: "",
+        firstName: '',
+        lastName: '',
         password: hashedPassword,
         newsletterSubscribed: true,
         isActive: true,
@@ -71,9 +72,9 @@ export async function POST(req: NextRequest) {
     // Send welcome email with discount code
     try {
       await resend.emails.send({
-        from: "LML Electronics <noreply@lmlelectronics.com>",
+        from: 'LML Electronics <noreply@lmlelectronics.com>',
         to: [email],
-        subject: "Welcome to LML Electronics Newsletter! 🎉",
+        subject: 'Welcome to LML Electronics Newsletter! 🎉',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h1 style="color: #333; text-align: center;">Welcome to LML Electronics!</h1>
@@ -98,33 +99,31 @@ export async function POST(req: NextRequest) {
             
             <p>Happy repairing!</p>
             <p><strong>The LML Electronics Team</strong></p>
-            
-            <hr style="margin: 30px 0;">
-            <p style="font-size: 12px; color: #666; text-align: center;">
-              You can unsubscribe at any time by clicking the link in our emails.
-            </p>
           </div>
         `,
       });
     } catch (emailError) {
-      console.error("Failed to send welcome email:", emailError);
+      console.error('Failed to send welcome email:', emailError);
       // Don't fail the request if email fails
     }
 
     return NextResponse.json(
-      { 
-        success: true, 
-        message: "Successfully subscribed to newsletter!",
-        discountCode: discountCode,
-        customerId: customer.id
+      {
+        success: true,
+        message: 'Successfully subscribed to newsletter!',
+        customerId: customer.id,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error("Newsletter signup error:", error);
+    console.error('Error processing newsletter signup:', error);
+
     return NextResponse.json(
-      { error: "Failed to sign up for newsletter" },
-      { status: 500 }
+      {
+        error: 'Failed to process newsletter signup',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 },
     );
   }
 }

@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { Resend } from "resend";
+import { NextRequest, NextResponse } from 'next/server';
+
+import prisma from '@/lib/prisma';
+import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(req: NextRequest) {
+export async function POST (req: NextRequest) {
   try {
     const data = await req.json();
     const { firstName, lastName, email, subject, message } = data;
@@ -12,8 +13,8 @@ export async function POST(req: NextRequest) {
     // Basic validation
     if (!firstName || !lastName || !email || !subject || !message) {
       return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
+        { error: 'All fields are required' },
+        { status: 400 },
       );
     }
 
@@ -21,8 +22,8 @@ export async function POST(req: NextRequest) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: "Invalid email format" },
-        { status: 400 }
+        { error: 'Invalid email format' },
+        { status: 400 },
       );
     }
 
@@ -34,15 +35,15 @@ export async function POST(req: NextRequest) {
         email,
         subject,
         message,
-        status: "UNREAD",
+        status: 'UNREAD',
       },
     });
 
     // Send email notification
     try {
       await resend.emails.send({
-        from: "LML Electronics <noreply@lmlelectronics.com>",
-        to: ["support@lmlelectronics.com"],
+        from: 'LML Electronics <noreply@lmlelectronics.com>',
+        to: ['support@lmlelectronics.com'],
         subject: `New Contact Form Submission: ${subject}`,
         html: `
           <h2>New Contact Form Submission</h2>
@@ -56,26 +57,27 @@ export async function POST(req: NextRequest) {
         `,
       });
     } catch (emailError) {
-      console.error("Failed to send email notification:", emailError);
+      console.error('Failed to send email notification:', emailError);
       // Don't fail the request if email fails
     }
 
     return NextResponse.json(
-      { 
+      {
         success: true,
-        message: "Contact form submitted successfully",
-        submissionId: submission.id
+        message: 'Contact form submitted successfully',
+        submissionId: submission.id,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error("Error processing contact form:", error);
+    console.error('Error processing contact form:', error);
+
     return NextResponse.json(
-      { 
-        error: "Failed to process contact form",
-        details: error instanceof Error ? error.message : "Unknown error"
+      {
+        error: 'Failed to process contact form',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
