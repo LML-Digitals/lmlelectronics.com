@@ -1,7 +1,7 @@
-"use server";
+'use server';
 
-import { getInventoryItems } from "../items/services/itemsCrud";
-import { InventoryItemWithRelations } from "../items/types/ItemType";
+import { getInventoryItems } from '../items/services/itemsCrud';
+import { InventoryItemWithRelations } from '../items/types/ItemType';
 
 // Types for chart data
 export type BarChartData = {
@@ -20,9 +20,9 @@ export interface ChartDataResponse<T = any> {
 /**
  * Get data for inventory value by category bar chart
  */
-export async function getInventoryValueByCategory(): Promise<
+export async function getInventoryValueByCategory (): Promise<
   ChartDataResponse<BarChartData>
-> {
+  > {
   try {
     const items = await getInventoryItems();
 
@@ -36,19 +36,22 @@ export async function getInventoryValueByCategory(): Promise<
 
         variation.stockLevels?.forEach((level) => {
           const stockValue = level.stock * (level.purchaseCost || 0);
+
           itemTotalValue += stockValue;
         });
 
         // Add the item value to each of its categories
         item.categories.forEach((category) => {
           const currentValue = categoryValueMap.get(category.name) || 0;
+
           categoryValueMap.set(category.name, currentValue + itemTotalValue);
         });
 
         // If item has no categories, add to "Uncategorized"
         if (item.categories.length === 0) {
-          const currentValue = categoryValueMap.get("Uncategorized") || 0;
-          categoryValueMap.set("Uncategorized", currentValue + itemTotalValue);
+          const currentValue = categoryValueMap.get('Uncategorized') || 0;
+
+          categoryValueMap.set('Uncategorized', currentValue + itemTotalValue);
         }
       });
     });
@@ -66,10 +69,11 @@ export async function getInventoryValueByCategory(): Promise<
       data: chartData,
     };
   } catch (error) {
-    console.error("Error fetching inventory value by category:", error);
+    console.error('Error fetching inventory value by category:', error);
+
     return {
       success: false,
-      error: "Failed to fetch inventory value by category data",
+      error: 'Failed to fetch inventory value by category data',
     };
   }
 }
@@ -77,9 +81,9 @@ export async function getInventoryValueByCategory(): Promise<
 /**
  * Get data for inventory quantity by location bar chart
  */
-export async function getInventoryQuantityByLocation(): Promise<
+export async function getInventoryQuantityByLocation (): Promise<
   ChartDataResponse<BarChartData>
-> {
+  > {
   try {
     const items = await getInventoryItems();
 
@@ -91,6 +95,7 @@ export async function getInventoryQuantityByLocation(): Promise<
         variation.stockLevels?.forEach((level) => {
           const locationName = level.location.name;
           const currentQuantity = locationQuantityMap.get(locationName) || 0;
+
           locationQuantityMap.set(locationName, currentQuantity + level.stock);
         });
       });
@@ -109,10 +114,11 @@ export async function getInventoryQuantityByLocation(): Promise<
       data: chartData,
     };
   } catch (error) {
-    console.error("Error fetching inventory quantity by location:", error);
+    console.error('Error fetching inventory quantity by location:', error);
+
     return {
       success: false,
-      error: "Failed to fetch inventory quantity by location data",
+      error: 'Failed to fetch inventory quantity by location data',
     };
   }
 }
@@ -121,9 +127,7 @@ export async function getInventoryQuantityByLocation(): Promise<
  * Get data for low stock items bar chart
  * Shows items with stock below a certain threshold
  */
-export async function getLowStockItems(
-  threshold: number = 5
-): Promise<ChartDataResponse<BarChartData>> {
+export async function getLowStockItems (threshold = 5): Promise<ChartDataResponse<BarChartData>> {
   try {
     const items = await getInventoryItems();
 
@@ -135,10 +139,11 @@ export async function getLowStockItems(
         variation.stockLevels?.forEach((level) => {
           if (level.stock <= threshold) {
             const itemName = `${item.name} (${variation.name})`;
+
             lowStockItems.push({
               name: itemName,
               value: level.stock,
-              color: level.stock === 0 ? "#ef4444" : "#f97316", // Red for out of stock, orange for low stock
+              color: level.stock === 0 ? '#ef4444' : '#f97316', // Red for out of stock, orange for low stock
             });
           }
         });
@@ -155,10 +160,11 @@ export async function getLowStockItems(
       data: sortedData,
     };
   } catch (error) {
-    console.error("Error fetching low stock items:", error);
+    console.error('Error fetching low stock items:', error);
+
     return {
       success: false,
-      error: "Failed to fetch low stock items data",
+      error: 'Failed to fetch low stock items data',
     };
   }
 }
@@ -166,9 +172,9 @@ export async function getLowStockItems(
 /**
  * Get data for top selling items
  */
-export async function getTopSellingItems(): Promise<
+export async function getTopSellingItems (): Promise<
   ChartDataResponse<BarChartData>
-> {
+  > {
   // In a real implementation, you would fetch sales data and calculate top items
   // For now, we'll return sample data
   try {
@@ -189,10 +195,11 @@ export async function getTopSellingItems(): Promise<
       data: sampleData,
     };
   } catch (error) {
-    console.error("Error creating sample top selling items data:", error);
+    console.error('Error creating sample top selling items data:', error);
+
     return {
       success: false,
-      error: "Failed to create top selling items data",
+      error: 'Failed to create top selling items data',
     };
   }
 }
@@ -209,9 +216,9 @@ export interface InventoryMetrics {
   outOfStockCount: number;
 }
 
-export async function getInventoryMetrics(): Promise<
+export async function getInventoryMetrics (): Promise<
   ChartDataResponse<InventoryMetrics>
-> {
+  > {
   try {
     const items = await getInventoryItems();
 
@@ -256,10 +263,11 @@ export async function getInventoryMetrics(): Promise<
       },
     };
   } catch (error) {
-    console.error("Error calculating inventory metrics:", error);
+    console.error('Error calculating inventory metrics:', error);
+
     return {
       success: false,
-      error: "Failed to calculate inventory metrics",
+      error: 'Failed to calculate inventory metrics',
     };
   }
 }

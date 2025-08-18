@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Search, Package, ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useCartStore } from "@/lib/stores/useCartStore";
-import { toast } from "sonner";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import { getBundles } from "@/components/dashboard/inventory/bundles/services/bundles";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Search, Package, ShoppingCart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useCartStore } from '@/lib/stores/useCartStore';
+import { toast } from 'sonner';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import { getBundles } from '@/components/dashboard/inventory/bundles/services/bundles';
 
 interface BundleItem {
   id: string;
@@ -35,10 +35,10 @@ interface BundleItem {
   calculatedStock: any;
 }
 
-export default function BundleListing() {
+export default function BundleListing () {
   const [bundles, setBundles] = useState<BundleItem[]>([]);
   const [filteredBundles, setFilteredBundles] = useState<BundleItem[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addItem } = useCartStore();
@@ -47,30 +47,26 @@ export default function BundleListing() {
     const fetchBundles = async () => {
       try {
         setLoading(true);
-       const bundles = await getBundles()
+        const bundles = await getBundles();
 
-       // Filter for bundles that are visible and have stock.
-       const visibleBundles = bundles.bundles?.filter((bundle) =>
-         bundle.variations.some((v) => v.visible)
-       );
+        // Filter for bundles that are visible and have stock.
+        const visibleBundles = bundles.bundles?.filter((bundle) => bundle.variations.some((v) => v.visible));
         const data = visibleBundles;
 
         if (data) {
           // Filter only bundles with stock and valid pricing
-          const availableBundles =
-            data?.filter((bundle) => {
-              const hasStock =
-                typeof bundle.calculatedStock === "number"
+          const availableBundles
+            = data?.filter((bundle) => {
+              const hasStock
+                = typeof bundle.calculatedStock === 'number'
                   ? bundle.calculatedStock > 0
                   : Array.isArray(bundle.calculatedStock)
-                  ? bundle.calculatedStock.some(
-                      (stock: any) => stock.availableStock > 0
-                    )
-                  : false;
+                    ? bundle.calculatedStock.some((stock: any) => stock.availableStock > 0)
+                    : false;
 
-              const hasPrice =
-                bundle.variations.length > 0 &&
-                bundle.variations[0].sellingPrice > 0;
+              const hasPrice
+                = bundle.variations.length > 0
+                && bundle.variations[0].sellingPrice > 0;
 
               return hasStock && hasPrice;
             }) || [];
@@ -80,8 +76,8 @@ export default function BundleListing() {
         }
         setError(null);
       } catch (err) {
-        console.error("Error fetching bundles:", err);
-        setError("Failed to load bundles. Please try again later.");
+        console.error('Error fetching bundles:', err);
+        setError('Failed to load bundles. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -92,19 +88,15 @@ export default function BundleListing() {
 
   // Filter bundles based on search term
   useEffect(() => {
-    if (searchTerm.trim() === "") {
+    if (searchTerm.trim() === '') {
       setFilteredBundles(bundles);
     } else {
-      const filtered = bundles.filter(
-        (bundle) =>
-          bundle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          bundle.description
+      const filtered = bundles.filter((bundle) => bundle.name.toLowerCase().includes(searchTerm.toLowerCase())
+          || bundle.description
             ?.toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          bundle.variations.some((v) =>
-            v.sku.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-      );
+            .includes(searchTerm.toLowerCase())
+          || bundle.variations.some((v) => v.sku.toLowerCase().includes(searchTerm.toLowerCase())));
+
       setFilteredBundles(filtered);
     }
   }, [searchTerm, bundles]);
@@ -117,25 +109,26 @@ export default function BundleListing() {
     const bundlePrice = bundle.variations[0]?.sellingPrice || 0;
     const componentTotal = bundle.bundleComponents.reduce(
       (sum, comp) => sum + comp.componentVariation.sellingPrice * comp.quantity,
-      0
+      0,
     );
     const savings = componentTotal - bundlePrice;
-    const savingsPercent =
-      componentTotal > 0 ? (savings / componentTotal) * 100 : 0;
+    const savingsPercent
+      = componentTotal > 0 ? (savings / componentTotal) * 100 : 0;
 
     return { savings, savingsPercent, componentTotal };
   };
 
   const getStockInfo = (bundle: BundleItem) => {
-    if (typeof bundle.calculatedStock === "number") {
+    if (typeof bundle.calculatedStock === 'number') {
       return bundle.calculatedStock;
     }
     if (Array.isArray(bundle.calculatedStock)) {
       return bundle.calculatedStock.reduce(
         (total: number, stock: any) => total + stock.availableStock,
-        0
+        0,
       );
     }
+
     return 0;
   };
 
@@ -148,22 +141,23 @@ export default function BundleListing() {
 
     if (stock === 0) {
       toast.error(`${bundle.name} is currently out of stock.`);
+
       return;
     }
 
     addItem({
       id: mainVariation.id,
       name: bundle.name,
-      type: "bundle",
+      type: 'bundle',
       description:
-        bundle.description ||
-        `Bundle with ${bundle.bundleComponents.length} components`,
+        bundle.description
+        || `Bundle with ${bundle.bundleComponents.length} components`,
       price: mainVariation.sellingPrice,
       profit: 0,
       discount: 0,
       shipping: 0,
       tax: 0,
-      image: bundle.image || "",
+      image: bundle.image || '',
     });
 
     toast.success(`${bundle.name} has been added to your cart.`);
@@ -172,7 +166,7 @@ export default function BundleListing() {
   if (loading) {
     return (
       <div className="py-16 text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
         <p className="mt-4 text-gray-600">Loading bundles...</p>
       </div>
     );
@@ -221,16 +215,16 @@ export default function BundleListing() {
             </h3>
             <p className="text-gray-500">
               {searchTerm
-                ? "Try adjusting your search terms."
-                : "Check back soon for new bundle offerings."}
+                ? 'Try adjusting your search terms.'
+                : 'Check back soon for new bundle offerings.'}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredBundles.map((bundle, index) => {
               const mainVariation = bundle.variations[0];
-              const { savings, savingsPercent, componentTotal } =
-                calculateSavings(bundle);
+              const { savings, savingsPercent, componentTotal }
+                = calculateSavings(bundle);
               const stock = getStockInfo(bundle);
 
               return (
@@ -293,7 +287,7 @@ export default function BundleListing() {
                       onClick={(e) => handleAddToCart(e, bundle)}
                     >
                       <ShoppingCart size={16} className="mr-2" />
-                      {stock > 0 ? "Add to Cart" : "Out of Stock"}
+                      {stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                     </Button>
                   </motion.div>
                 </Link>

@@ -48,7 +48,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 
   return (
     <motion.div
-      className={`w-90 dark:bg-gray-800' my-4 h-full cursor-pointer select-none overflow-hidden rounded-lg border  dark:border-gray-700`}
+      className={'w-90 dark:bg-gray-800\' my-4 h-full cursor-pointer select-none overflow-hidden rounded-lg border  dark:border-gray-700'}
       variants={cardVariants}
       initial="collapsed"
       animate={isExpanded ? 'expanded' : 'collapsed'}

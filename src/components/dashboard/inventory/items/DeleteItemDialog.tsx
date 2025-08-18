@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,12 +8,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
-import { InventoryItemWithRelations } from "./types/ItemType";
-import { AlertTriangle, CircleDashed } from "lucide-react";
-import { deleteInventoryItem } from "./services/itemsCrud";
+} from '@/components/ui/dialog';
+import { useToast } from '@/components/ui/use-toast';
+import { useState } from 'react';
+import { InventoryItemWithRelations } from './types/ItemType';
+import { AlertTriangle, CircleDashed } from 'lucide-react';
+import { deleteInventoryItem } from './services/itemsCrud';
 
 interface DeleteItemDialogProps {
   item: InventoryItemWithRelations;
@@ -22,7 +22,7 @@ interface DeleteItemDialogProps {
   onDeleted: () => void;
 }
 
-export function DeleteItemDialog({
+export function DeleteItemDialog ({
   item,
   open,
   onOpenChange,
@@ -37,16 +37,16 @@ export function DeleteItemDialog({
       await deleteInventoryItem(item.id);
 
       toast({
-        title: "Item deleted",
+        title: 'Item deleted',
         description: `${item.name} has been successfully deleted.`,
       });
       onDeleted();
     } catch (error) {
-      console.error("Error deleting item:", error);
+      console.error('Error deleting item:', error);
       toast({
-        variant: "destructive",
-        title: "Delete failed",
-        description: "There was an error deleting the item. Please try again.",
+        variant: 'destructive',
+        title: 'Delete failed',
+        description: 'There was an error deleting the item. Please try again.',
       });
     } finally {
       setIsLoading(false);

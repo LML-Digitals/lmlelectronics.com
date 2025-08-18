@@ -1,5 +1,5 @@
-import Image from "next/image";
-import React from "react";
+import Image from 'next/image';
+import React from 'react';
 
 interface RepairPageHero {
   title?: string;
@@ -7,7 +7,7 @@ interface RepairPageHero {
   image?: string;
 }
 
-export default function RepairPageHero({
+export default function RepairPageHero ({
   title,
   description,
   image,
@@ -21,15 +21,15 @@ export default function RepairPageHero({
       <div className="flex flex-col lg:flex-row-reverse items-center gap-5 md:gap-20 bg-[#e6e7e8] min-h-[200px] p-4 rounded-3xl">
         <div className="lg:w-1/3 flex justify-center p-2 relative">
           <Image
-            src={image || "/smillingGuy.png"} 
+            src={image || '/smillingGuy.png'}
             alt="hero image"
             width={300}
             height={400}
             className="hidden lg:block object-contain rounded-2xl p-2 absolute -bottom-24"
             priority
           />
-          <Image 
-            src={image || "/smillingGuy.png"}
+          <Image
+            src={image || '/smillingGuy.png'}
             alt="hero image mobile"
             width={200}
             height={300}

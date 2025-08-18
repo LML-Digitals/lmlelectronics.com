@@ -37,13 +37,14 @@ export const getVariationOnLocation = async (): Promise<
     const currentDate = new Date();
 
     return VariationOnLocation.map((item) => {
-      const daysDifference =
-        (currentDate.getTime() - new Date(item.date).getTime()) /
-        (1000 * 3600 * 24);
-      const percentageDecrease =
-        (((item.stock / 100) * daysDifference) / item.stock) * 100;
+      const daysDifference
+        = (currentDate.getTime() - new Date(item.date).getTime())
+        / (1000 * 3600 * 24);
+      const percentageDecrease
+        = (((item.stock / 100) * daysDifference) / item.stock) * 100;
 
       let movement: string;
+
       if (percentageDecrease >= 20) {
         movement = 'fast';
       } else if (percentageDecrease >= 10) {
@@ -57,10 +58,10 @@ export const getVariationOnLocation = async (): Promise<
         variationId: item.variationId,
         locationId: item.locationId,
         stock: item.stock,
-        date: format(new Date(item.date), "MMM do yyyy"),
+        date: format(new Date(item.date), 'MMM do yyyy'),
         variationName: item.variation.name,
         locationName: item.location.name,
-        stockStatus: item.stock < 4 ? "Low in stock" : "Normal",
+        stockStatus: item.stock < 4 ? 'Low in stock' : 'Normal',
         movement,
       };
     });
@@ -71,7 +72,7 @@ export const getVariationOnLocation = async (): Promise<
 };
 export const updateVariationOnLocationStock = async (
   variationId: string,
-  value: number
+  value: number,
 ) => {
   try {
     // Decrement the stock by 1

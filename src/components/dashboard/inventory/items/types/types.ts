@@ -106,16 +106,18 @@ export interface VariationUpdateInput {
 }
 
 // Helper function to find a category by ID in the tree structure
-export function findCategoryById(
+export function findCategoryById (
   categories: CategoryWithChildren[],
-  id: string
+  id: string,
 ): CategoryWithChildren | null {
   for (const category of categories) {
-    if (category.id === id) return category;
+    if (category.id === id) { return category; }
     if (category.children.length > 0) {
       const found = findCategoryById(category.children, id);
-      if (found) return found;
+
+      if (found) { return found; }
     }
   }
+
   return null;
 }

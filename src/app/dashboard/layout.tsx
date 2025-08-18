@@ -1,20 +1,18 @@
-import { ReactNode } from "react";
-import type { Metadata } from "next";
-import { SideBar } from "@/components/dashboard/sidebar/Sidebar";
-import Header from "@/components/common/header/Header";
-import PageWrapper from "@/components/common/page-wrapper/PageWrapper";
-import ThemeProvider from "@/components/common/ThemeProvider";
-import ErrorBoundary from "@/components/common/ErrorBoundary";
-import "@/app/globals.css";
-
-
+import { ReactNode } from 'react';
+import type { Metadata } from 'next';
+import { SideBar } from '@/components/dashboard/sidebar/Sidebar';
+import Header from '@/components/common/header/Header';
+import PageWrapper from '@/components/common/page-wrapper/PageWrapper';
+import ThemeProvider from '@/components/common/ThemeProvider';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
+import '@/app/globals.css';
 
 export const revalidate = 0;
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 // Dashboard layout component
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default function DashboardLayout ({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider>
       <ErrorBoundary>

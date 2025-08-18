@@ -2,20 +2,20 @@
  * Type definitions for settings
  */
 export enum SettingCategory {
-  GENERAL = "GENERAL",
-  CUSTOMER = "CUSTOMER",
-  STAFF = "STAFF",
-  APPEARANCE = "APPEARANCE",
-  PAYMENT = "PAYMENT",
-  SECURITY = "SECURITY",
-  SYSTEM = "SYSTEM",
-  INVENTORY = "INVENTORY",
-  BOOKING = "BOOKING",
-  POS = "POS",
-  PHONE = "PHONE",
+  GENERAL = 'GENERAL',
+  CUSTOMER = 'CUSTOMER',
+  STAFF = 'STAFF',
+  APPEARANCE = 'APPEARANCE',
+  PAYMENT = 'PAYMENT',
+  SECURITY = 'SECURITY',
+  SYSTEM = 'SYSTEM',
+  INVENTORY = 'INVENTORY',
+  BOOKING = 'BOOKING',
+  POS = 'POS',
+  PHONE = 'PHONE',
 }
 
-export type SettingScope = "system" | "staff" | "customer" | "location";
+export type SettingScope = 'system' | 'staff' | 'customer' | 'location';
 export type SettingValue = string | number | boolean | object | null;
 
 /**
@@ -25,13 +25,13 @@ export type SettingValue = string | number | boolean | object | null;
 /**
  * Converts a setting value from string to its appropriate type based on content
  */
-export function parseSettingValue(value: string | null): SettingValue {
-  if (value === null) return null;
+export function parseSettingValue (value: string | null): SettingValue {
+  if (value === null) { return null; }
 
   // Try to parse as JSON for objects and arrays
   if (
-    (value.startsWith("{") && value.endsWith("}")) ||
-    (value.startsWith("[") && value.endsWith("]"))
+    (value.startsWith('{') && value.endsWith('}'))
+    || (value.startsWith('[') && value.endsWith(']'))
   ) {
     try {
       return JSON.parse(value);
@@ -41,11 +41,11 @@ export function parseSettingValue(value: string | null): SettingValue {
   }
 
   // Parse booleans
-  if (value.toLowerCase() === "true") return true;
-  if (value.toLowerCase() === "false") return false;
+  if (value.toLowerCase() === 'true') { return true; }
+  if (value.toLowerCase() === 'false') { return false; }
 
   // Parse numbers
-  if (!isNaN(Number(value)) && value.trim() !== "") {
+  if (!isNaN(Number(value)) && value.trim() !== '') {
     return Number(value);
   }
 
@@ -56,9 +56,10 @@ export function parseSettingValue(value: string | null): SettingValue {
 /**
  * Converts any value to string for storage
  */
-export function stringifySettingValue(value: SettingValue): string {
-  if (value === null) return "";
-  if (typeof value === "object") return JSON.stringify(value);
+export function stringifySettingValue (value: SettingValue): string {
+  if (value === null) { return ''; }
+  if (typeof value === 'object') { return JSON.stringify(value); }
+
   return String(value);
 }
 

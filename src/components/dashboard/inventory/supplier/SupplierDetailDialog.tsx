@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,11 +8,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Card, CardContent } from "@/components/ui/card";
-import { Star, Globe, Mail, Phone, MapPin, Clock, Box } from "lucide-react";
-import { SupplierProps } from "./services/types";
-import { EditSupplierDialog } from "./EditSupplierDialog";
+} from '@/components/ui/dialog';
+import { Card, CardContent } from '@/components/ui/card';
+import { Star, Globe, Mail, Phone, MapPin, Clock, Box } from 'lucide-react';
+import { SupplierProps } from './services/types';
+import { EditSupplierDialog } from './EditSupplierDialog';
 
 interface SupplierDetailDialogProps {
   supplier: SupplierProps;
@@ -20,7 +20,7 @@ interface SupplierDetailDialogProps {
   onClose: () => void;
 }
 
-export function SupplierDetailDialog({
+export function SupplierDetailDialog ({
   supplier,
   isOpen,
   onClose,
@@ -32,28 +32,24 @@ export function SupplierDetailDialog({
 
     // Add filled stars
     for (let i = 0; i < roundedRating; i++) {
-      stars.push(
-        <Star
-          key={`filled-${i}`}
-          size={16}
-          fill="#EAB308"
-          color="#EAB308"
-          className="inline-block"
-        />
-      );
+      stars.push(<Star
+        key={`filled-${i}`}
+        size={16}
+        fill="#EAB308"
+        color="#EAB308"
+        className="inline-block"
+      />);
     }
 
     // Add empty stars
     for (let i = roundedRating; i < 5; i++) {
-      stars.push(
-        <Star
-          key={`empty-${i}`}
-          size={16}
-          fill="transparent"
-          color="#EAB308"
-          className="inline-block"
-        />
-      );
+      stars.push(<Star
+        key={`empty-${i}`}
+        size={16}
+        fill="transparent"
+        color="#EAB308"
+        className="inline-block"
+      />);
     }
 
     return stars;
@@ -121,30 +117,30 @@ export function SupplierDetailDialog({
                 <div>
                   <p className="text-sm text-gray-500">Rating</p>
                   <div className="flex items-center gap-0.5">
-                    {supplier.rating !== null &&
-                    supplier.rating !== undefined ? (
-                      renderStars(supplier.rating)
-                    ) : (
-                      <span className="text-muted-foreground italic">
+                    {supplier.rating !== null
+                    && supplier.rating !== undefined ? (
+                        renderStars(supplier.rating)
+                      ) : (
+                        <span className="text-muted-foreground italic">
                         No rating
-                      </span>
-                    )}
+                        </span>
+                      )}
                   </div>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-500">Lead Time</p>
-                  {supplier.leadTime !== null &&
-                  supplier.leadTime !== undefined ? (
-                    <div className="flex items-center gap-1">
-                      <Clock size={16} className="text-gray-500" />
-                      <span>{supplier.leadTime} days</span>
-                    </div>
-                  ) : (
-                    <span className="text-muted-foreground italic">
+                  {supplier.leadTime !== null
+                  && supplier.leadTime !== undefined ? (
+                      <div className="flex items-center gap-1">
+                        <Clock size={16} className="text-gray-500" />
+                        <span>{supplier.leadTime} days</span>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground italic">
                       Not specified
-                    </span>
-                  )}
+                      </span>
+                    )}
                 </div>
 
                 <div>

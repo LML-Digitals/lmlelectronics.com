@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Select,
@@ -6,9 +6,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface FAQFilterProps {
   filters: {
@@ -21,7 +21,7 @@ interface FAQFilterProps {
   onSearch: () => void;
 }
 
-export default function FAQFilter({
+export default function FAQFilter ({
   filters,
   setFilters,
   categories,
@@ -38,11 +38,11 @@ export default function FAQFilter({
           />
 
           <Select
-            value={filters.category || "all"}
+            value={filters.category || 'all'}
             onValueChange={(value) => {
               setFilters({
                 ...filters,
-                category: value === "all" ? "" : value,
+                category: value === 'all' ? '' : value,
               });
             }}
           >
@@ -57,7 +57,7 @@ export default function FAQFilter({
                 </SelectItem>
               ) : (
                 categories
-                  .filter((category) => category && category.trim() !== "")
+                  .filter((category) => category && category.trim() !== '')
                   .map((category) => (
                     <SelectItem key={category} value={category} className="text-sm sm:text-base">
                       {category}
@@ -70,13 +70,13 @@ export default function FAQFilter({
           <Select
             value={
               filters.isPublished === undefined
-                ? "all"
+                ? 'all'
                 : filters.isPublished.toString()
             }
             onValueChange={(value) => {
               setFilters({
                 ...filters,
-                isPublished: value === "all" ? undefined : value === "true",
+                isPublished: value === 'all' ? undefined : value === 'true',
               });
             }}
           >

@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Package,
   Search,
@@ -28,9 +28,9 @@ import {
   Filter,
   Package2,
   AlertCircle,
-} from "lucide-react";
-import { getBundles } from "@/components/dashboard/inventory/bundles/services/bundles";
-import { toast } from "@/components/ui/use-toast";
+} from 'lucide-react';
+import { getBundles } from '@/components/dashboard/inventory/bundles/services/bundles';
+import { toast } from '@/components/ui/use-toast';
 
 interface BundleStock {
   locationId: number;
@@ -93,15 +93,13 @@ interface BundleListProps {
   locations: Array<{ id: number; name: string }>;
 }
 
-export default function BundleList({ locations }: BundleListProps) {
+export default function BundleList ({ locations }: BundleListProps) {
   const router = useRouter();
   const [bundles, setBundles] = useState<Bundle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState<number | "all">(
-    "all"
-  );
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<number | 'all'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   useEffect(() => {
     loadBundles();
@@ -110,22 +108,22 @@ export default function BundleList({ locations }: BundleListProps) {
   const loadBundles = async () => {
     setIsLoading(true);
     try {
-      const locationId =
-        selectedLocation === "all" ? undefined : selectedLocation;
+      const locationId
+        = selectedLocation === 'all' ? undefined : selectedLocation;
       const result = await getBundles(locationId);
 
       if (result.success) {
         setBundles(result.bundles || []);
       } else {
         toast({
-          title: "Error",
+          title: 'Error',
           description: result.error,
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to load bundles",
+        title: 'Error',
+        description: 'Failed to load bundles',
       });
     } finally {
       setIsLoading(false);
@@ -133,57 +131,55 @@ export default function BundleList({ locations }: BundleListProps) {
   };
 
   const filteredBundles = bundles.filter((bundle) => {
-    const matchesSearch =
-      bundle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      bundle.variations.some((v) =>
-        v.sku.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+    const matchesSearch
+      = bundle.name.toLowerCase().includes(searchTerm.toLowerCase())
+      || bundle.variations.some((v) => v.sku.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const matchesCategory =
-      categoryFilter === "all" ||
-      bundle.categories.some((cat) => cat.id === categoryFilter);
+    const matchesCategory
+      = categoryFilter === 'all'
+      || bundle.categories.some((cat) => cat.id === categoryFilter);
 
     return matchesSearch && matchesCategory;
   });
 
-  const allCategories = Array.from(
-    new Set(bundles.flatMap((bundle) => bundle.categories.map((cat) => cat.id)))
-  )
+  const allCategories = Array.from(new Set(bundles.flatMap((bundle) => bundle.categories.map((cat) => cat.id))))
     .map((id) => {
       const category = bundles
         .find((b) => b.categories.some((c) => c.id === id))
         ?.categories.find((c) => c.id === id);
+
       return category ? { id, name: category.name } : null;
     })
     .filter(Boolean) as Array<{ id: string; name: string }>;
 
   const getTotalStock = (bundle: Bundle) => {
-    if (selectedLocation === "all") {
+    if (selectedLocation === 'all') {
       if (Array.isArray(bundle.calculatedStock)) {
         return bundle.calculatedStock.reduce(
           (sum, stock) => sum + stock.availableStock,
-          0
+          0,
         );
       }
+
       return 0;
     } else {
-      return typeof bundle.calculatedStock === "number"
+      return typeof bundle.calculatedStock === 'number'
         ? bundle.calculatedStock
         : 0;
     }
   };
 
   const getStockStatus = (stock: number) => {
-    if (stock === 0)
-      return { variant: "destructive" as const, text: "Out of Stock" };
-    if (stock < 5) return { variant: "secondary" as const, text: "Low Stock" };
-    return { variant: "default" as const, text: "In Stock" };
+    if (stock === 0) { return { variant: 'destructive' as const, text: 'Out of Stock' }; }
+    if (stock < 5) { return { variant: 'secondary' as const, text: 'Low Stock' }; }
+
+    return { variant: 'default' as const, text: 'In Stock' };
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
       </div>
     );
   }
@@ -198,7 +194,7 @@ export default function BundleList({ locations }: BundleListProps) {
             Manage your product bundles and repair kits
           </p>
         </div>
-        <Button onClick={() => router.push("/dashboard/inventory/bundles/new")}>
+        <Button onClick={() => router.push('/dashboard/inventory/bundles/new')}>
           <Plus className="h-4 w-4 mr-2" />
           Create Bundle
         </Button>
@@ -223,8 +219,7 @@ export default function BundleList({ locations }: BundleListProps) {
             <div className="flex gap-2">
               <Select
                 value={selectedLocation.toString()}
-                onValueChange={(value) =>
-                  setSelectedLocation(value === "all" ? "all" : parseInt(value))
+                onValueChange={(value) => setSelectedLocation(value === 'all' ? 'all' : parseInt(value))
                 }
               >
                 <SelectTrigger className="w-48">
@@ -271,12 +266,11 @@ export default function BundleList({ locations }: BundleListProps) {
               <p className="text-gray-500 mb-4">
                 {bundles.length === 0
                   ? "You haven't created any bundles yet."
-                  : "No bundles match your current filters."}
+                  : 'No bundles match your current filters.'}
               </p>
               {bundles.length === 0 && (
                 <Button
-                  onClick={() =>
-                    router.push("/dashboard/inventory/bundles/new")
+                  onClick={() => router.push('/dashboard/inventory/bundles/new')
                   }
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -318,7 +312,7 @@ export default function BundleList({ locations }: BundleListProps) {
                     <div>
                       <CardTitle className="text-lg">{bundle.name}</CardTitle>
                       <CardDescription className="line-clamp-2">
-                        {bundle.description || "No description"}
+                        {bundle.description || 'No description'}
                       </CardDescription>
                     </div>
                   </div>
@@ -392,23 +386,23 @@ export default function BundleList({ locations }: BundleListProps) {
                         {totalStock}
                       </span>
                     </div>
-                    {selectedLocation === "all" &&
-                      Array.isArray(bundle.calculatedStock) &&
-                      bundle.calculatedStock.length > 0 && (
-                        <div className="mt-2 space-y-1">
-                          {(bundle.calculatedStock as BundleStock[])
-                            .slice(0, 3)
-                            .map((stock) => (
-                              <div
-                                key={stock.locationId}
-                                className="flex justify-between text-xs text-gray-500"
-                              >
-                                <span>{stock.locationName}</span>
-                                <span>{stock.availableStock}</span>
-                              </div>
-                            ))}
-                        </div>
-                      )}
+                    {selectedLocation === 'all'
+                      && Array.isArray(bundle.calculatedStock)
+                      && bundle.calculatedStock.length > 0 && (
+                      <div className="mt-2 space-y-1">
+                        {(bundle.calculatedStock)
+                          .slice(0, 3)
+                          .map((stock) => (
+                            <div
+                              key={stock.locationId}
+                              className="flex justify-between text-xs text-gray-500"
+                            >
+                              <span>{stock.locationName}</span>
+                              <span>{stock.availableStock}</span>
+                            </div>
+                          ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Categories */}
@@ -432,8 +426,7 @@ export default function BundleList({ locations }: BundleListProps) {
                       variant="outline"
                       size="sm"
                       className="flex-1"
-                      onClick={() =>
-                        router.push(`/dashboard/inventory/bundles/${bundle.id}`)
+                      onClick={() => router.push(`/dashboard/inventory/bundles/${bundle.id}`)
                       }
                     >
                       <Eye className="h-4 w-4 mr-2" />
@@ -443,10 +436,7 @@ export default function BundleList({ locations }: BundleListProps) {
                       variant="outline"
                       size="sm"
                       className="flex-1"
-                      onClick={() =>
-                        router.push(
-                          `/dashboard/inventory/bundles/${bundle.id}/edit`
-                        )
+                      onClick={() => router.push(`/dashboard/inventory/bundles/${bundle.id}/edit`)
                       }
                     >
                       <Edit className="h-4 w-4 mr-2" />

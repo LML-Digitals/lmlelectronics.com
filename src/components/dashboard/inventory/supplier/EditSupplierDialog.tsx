@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { Edit } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { Edit } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
   DialogTitle,
   DialogHeader,
-} from "@/components/ui/dialog";
-import { useTransition, useState, startTransition } from "react";
-import {SupplierForm} from "./SupplierForm";
-import { SupplierProps } from "./services/types";
+} from '@/components/ui/dialog';
+import { useTransition, useState, startTransition } from 'react';
+import { SupplierForm } from './SupplierForm';
+import { SupplierProps } from './services/types';
 
-export function EditSupplierDialog({ supplier }: { supplier: SupplierProps }) {
+export function EditSupplierDialog ({ supplier }: { supplier: SupplierProps }) {
   const [open, setOpen] = useState(false);
 
   return (

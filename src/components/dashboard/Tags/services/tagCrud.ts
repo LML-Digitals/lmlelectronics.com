@@ -1,7 +1,7 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 // Types
 export type Tag = {
@@ -20,13 +20,11 @@ export type TagFormData = {
 };
 
 // Create a new tag
-export async function createTag(
-  formData: TagFormData
-): Promise<{ success: boolean; message: string; tag?: Tag }> {
+export async function createTag (formData: TagFormData): Promise<{ success: boolean; message: string; tag?: Tag }> {
   try {
     // Validate input
-    if (!formData.name || formData.name.trim() === "") {
-      return { success: false, message: "Tag name is required" };
+    if (!formData.name || formData.name.trim() === '') {
+      return { success: false, message: 'Tag name is required' };
     }
 
     // Check if tag with same name already exists
@@ -35,7 +33,7 @@ export async function createTag(
     });
 
     if (existingTag) {
-      return { success: false, message: "A tag with this name already exists" };
+      return { success: false, message: 'A tag with this name already exists' };
     }
 
     // Create the tag
@@ -47,16 +45,18 @@ export async function createTag(
       },
     });
 
-    revalidatePath("/dashboard/tags");
-    return { success: true, message: "Tag created successfully", tag };
+    revalidatePath('/dashboard/tags');
+
+    return { success: true, message: 'Tag created successfully', tag };
   } catch (error) {
-    console.error("Error creating tag:", error);
-    return { success: false, message: "Failed to create tag" };
+    console.error('Error creating tag:', error);
+
+    return { success: false, message: 'Failed to create tag' };
   }
 }
 
 // Get all tags with pagination and optional filters
-export async function getTags(options?: {
+export async function getTags (options?: {
   page?: number;
   limit?: number;
   search?: string;
@@ -64,22 +64,22 @@ export async function getTags(options?: {
   const page = options?.page || 1;
   const limit = options?.limit || 10;
   const skip = (page - 1) * limit;
-  const search = options?.search || "";
+  const search = options?.search || '';
 
   try {
     const where = search
       ? {
-          OR: [
-            { name: { contains: search } },
-            { description: { contains: search } },
-          ],
-        }
+        OR: [
+          { name: { contains: search } },
+          { description: { contains: search } },
+        ],
+      }
       : {};
 
     const [tags, totalCount] = await Promise.all([
       prisma.tag.findMany({
         where,
-        orderBy: { name: "asc" },
+        orderBy: { name: 'asc' },
         skip,
         take: limit,
       }),
@@ -90,33 +90,36 @@ export async function getTags(options?: {
 
     return { tags, totalCount, totalPages };
   } catch (error) {
-    console.error("Error fetching tags:", error);
+    console.error('Error fetching tags:', error);
+
     return { tags: [], totalCount: 0, totalPages: 0 };
   }
 }
 
 // Get a single tag by ID
-export async function getTagById(tagId: string): Promise<Tag | null> {
+export async function getTagById (tagId: string): Promise<Tag | null> {
   try {
     const tag = await prisma.tag.findUnique({
       where: { id: tagId },
     });
+
     return tag;
   } catch (error) {
-    console.error("Error fetching tag:", error);
+    console.error('Error fetching tag:', error);
+
     return null;
   }
 }
 
 // Update a tag
-export async function updateTag(
+export async function updateTag (
   tagId: string,
-  formData: TagFormData
+  formData: TagFormData,
 ): Promise<{ success: boolean; message: string; tag?: Tag }> {
   try {
     // Validate input
-    if (!formData.name || formData.name.trim() === "") {
-      return { success: false, message: "Tag name is required" };
+    if (!formData.name || formData.name.trim() === '') {
+      return { success: false, message: 'Tag name is required' };
     }
 
     // Check if tag with same name already exists (excluding current tag)
@@ -128,7 +131,7 @@ export async function updateTag(
     });
 
     if (existingTag) {
-      return { success: false, message: "A tag with this name already exists" };
+      return { success: false, message: 'A tag with this name already exists' };
     }
 
     // Update the tag
@@ -142,18 +145,18 @@ export async function updateTag(
       },
     });
 
-    revalidatePath("/dashboard/tags");
-    return { success: true, message: "Tag updated successfully", tag };
+    revalidatePath('/dashboard/tags');
+
+    return { success: true, message: 'Tag updated successfully', tag };
   } catch (error) {
-    console.error("Error updating tag:", error);
-    return { success: false, message: "Failed to update tag" };
+    console.error('Error updating tag:', error);
+
+    return { success: false, message: 'Failed to update tag' };
   }
 }
 
 // Delete a tag
-export async function deleteTag(
-  tagId: string
-): Promise<{ success: boolean; message: string }> {
+export async function deleteTag (tagId: string): Promise<{ success: boolean; message: string }> {
   try {
     // Check if tag is used by any related entities
     const [
@@ -196,10 +199,10 @@ export async function deleteTag(
       // }),
     ]);
 
-    const totalUsages =
-      blogsCount +
-      inventoryItemsCount +
-      repairGuidesCount
+    const totalUsages
+      = blogsCount
+      + inventoryItemsCount
+      + repairGuidesCount;
       // uploadedImagesCount;
 
     if (totalUsages > 0) {
@@ -214,16 +217,18 @@ export async function deleteTag(
       where: { id: tagId },
     });
 
-    revalidatePath("/dashboard/tags");
-    return { success: true, message: "Tag deleted successfully" };
+    revalidatePath('/dashboard/tags');
+
+    return { success: true, message: 'Tag deleted successfully' };
   } catch (error) {
-    console.error("Error deleting tag:", error);
-    return { success: false, message: "Failed to delete tag" };
+    console.error('Error deleting tag:', error);
+
+    return { success: false, message: 'Failed to delete tag' };
   }
 }
 
 // Get tag usage statistics
-export async function getTagUsageStats(tagId: string): Promise<{
+export async function getTagUsageStats (tagId: string): Promise<{
   blogsCount: number;
   inventoryItemsCount: number;
   repairGuidesCount: number;
@@ -271,10 +276,10 @@ export async function getTagUsageStats(tagId: string): Promise<{
     //   }),
     ]);
 
-    const totalUsages =
-      blogsCount +
-      inventoryItemsCount +
-      repairGuidesCount
+    const totalUsages
+      = blogsCount
+      + inventoryItemsCount
+      + repairGuidesCount;
       // uploadedImagesCount;
 
     return {
@@ -285,7 +290,8 @@ export async function getTagUsageStats(tagId: string): Promise<{
       totalUsages,
     };
   } catch (error) {
-    console.error("Error getting tag usage stats:", error);
+    console.error('Error getting tag usage stats:', error);
+
     return {
       blogsCount: 0,
       inventoryItemsCount: 0,

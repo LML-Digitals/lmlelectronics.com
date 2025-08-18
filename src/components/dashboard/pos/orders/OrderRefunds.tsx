@@ -4,17 +4,17 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-import { RefreshCw } from "lucide-react";
-import type { Refund } from "@prisma/client";
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import { RefreshCw } from 'lucide-react';
+import type { Refund } from '@prisma/client';
 
 interface OrderRefundsProps {
   refunds: Refund[];
 }
 
-export function OrderRefunds({ refunds }: OrderRefundsProps) {
+export function OrderRefunds ({ refunds }: OrderRefundsProps) {
   if (refunds.length === 0) {
     return null;
   }
@@ -29,8 +29,8 @@ export function OrderRefunds({ refunds }: OrderRefundsProps) {
           Refunds
         </CardTitle>
         <CardDescription>
-          {refunds.length} refund{refunds.length !== 1 ? "s" : ""} totaling $
-          {totalRefunded.toLocaleString("en-US", {
+          {refunds.length} refund{refunds.length !== 1 ? 's' : ''} totaling $
+          {totalRefunded.toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
@@ -51,7 +51,7 @@ export function OrderRefunds({ refunds }: OrderRefundsProps) {
                   <span className="text-sm text-muted-foreground">
                     {format(
                       new Date(refund.createdAt),
-                      "MMM d, yyyy 'at' h:mm a"
+                      "MMM d, yyyy 'at' h:mm a",
                     )}
                   </span>
                 </div>
@@ -64,7 +64,7 @@ export function OrderRefunds({ refunds }: OrderRefundsProps) {
               <div className="text-right">
                 <p className="font-medium text-destructive">
                   -$
-                  {refund.amount.toLocaleString("en-US", {
+                  {refund.amount.toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}

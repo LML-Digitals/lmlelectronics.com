@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 export const SideBarLogo = () => {
   const { theme } = useTheme();
+
   return (
     <Image
       width={35}

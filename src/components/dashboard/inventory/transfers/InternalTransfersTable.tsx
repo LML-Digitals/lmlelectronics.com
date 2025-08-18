@@ -73,13 +73,13 @@ export type TransferProps = {
   transfers: ExtendedInventoryTransfer[];
 };
 
-function InternalTransfersTable({ transfers }: TransferProps) {
+function InternalTransfersTable ({ transfers }: TransferProps) {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const { toast } = useToast();
   const [isPending, startTranisition] = useTransition();
-  const [selectedTransfer, setSelectedTransfer] =
-    useState<ExtendedInventoryTransfer | null>(null);
+  const [selectedTransfer, setSelectedTransfer]
+    = useState<ExtendedInventoryTransfer | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
 
   // Location filtering
@@ -94,6 +94,7 @@ function InternalTransfersTable({ transfers }: TransferProps) {
       try {
         setIsLoadingLocations(true);
         const locationsData = await getItemStoreLocations();
+
         setLocations(locationsData);
       } catch (error) {
         toast({
@@ -111,21 +112,22 @@ function InternalTransfersTable({ transfers }: TransferProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
     setSearch(inputValue);
   };
 
   const filteredTransferedItems = transfers.filter((transfer) => {
-    const matchesSearch =
-      search.toLowerCase() === '' ||
-      transfer.inventoryItem.name.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch
+      = search.toLowerCase() === ''
+      || transfer.inventoryItem.name.toLowerCase().includes(search.toLowerCase());
 
-    const matchesFromLocation =
-      fromLocationFilter === 'all' ||
-      String(transfer.fromLocationId) === fromLocationFilter;
+    const matchesFromLocation
+      = fromLocationFilter === 'all'
+      || String(transfer.fromLocationId) === fromLocationFilter;
 
-    const matchesToLocation =
-      toLocationFilter === 'all' ||
-      String(transfer.toLocationId) === toLocationFilter;
+    const matchesToLocation
+      = toLocationFilter === 'all'
+      || String(transfer.toLocationId) === toLocationFilter;
 
     return matchesSearch && matchesFromLocation && matchesToLocation;
   });
@@ -159,26 +161,26 @@ function InternalTransfersTable({ transfers }: TransferProps) {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'Pending':
-        return (
-          <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+    case 'Pending':
+      return (
+        <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
             Pending
-          </Badge>
-        );
-      case 'In Transit':
-        return (
-          <Badge variant="outline" className="bg-blue-100 text-blue-800">
+        </Badge>
+      );
+    case 'In Transit':
+      return (
+        <Badge variant="outline" className="bg-blue-100 text-blue-800">
             In Transit
-          </Badge>
-        );
-      case 'Completed':
-        return (
-          <Badge variant="outline" className="bg-green-100 text-green-800">
+        </Badge>
+      );
+    case 'Completed':
+      return (
+        <Badge variant="outline" className="bg-green-100 text-green-800">
             Completed
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline">Unknown</Badge>;
+        </Badge>
+      );
+    default:
+      return <Badge variant="outline">Unknown</Badge>;
     }
   };
 
@@ -270,9 +272,9 @@ function InternalTransfersTable({ transfers }: TransferProps) {
             </div>
 
             {/* Clear Filters Button - only show if filters are applied */}
-            {(fromLocationFilter !== 'all' ||
-              toLocationFilter !== 'all' ||
-              search !== '') && (
+            {(fromLocationFilter !== 'all'
+              || toLocationFilter !== 'all'
+              || search !== '') && (
               <Button
                 variant="outline"
                 size="sm"
@@ -322,11 +324,10 @@ function InternalTransfersTable({ transfers }: TransferProps) {
                           size={18}
                           className={
                             isPending
-                              ? `text-red-600 cursor-pointer animate-pulse`
-                              : `text-red-600 cursor-pointer`
+                              ? 'text-red-600 cursor-pointer animate-pulse'
+                              : 'text-red-600 cursor-pointer'
                           }
-                          onClick={() =>
-                            handleDeleteInternalTransfer(transfer.id)
+                          onClick={() => handleDeleteInternalTransfer(transfer.id)
                           }
                         />
                       </div>

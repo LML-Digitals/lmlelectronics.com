@@ -1,13 +1,13 @@
-"use client";
-import { z } from "zod";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { generateHashKey } from "../services/staffCrud";
-import { useRouter } from "next/navigation";
-import { createStaff } from "../services/staffCrud";
+'use client';
+import { z } from 'zod';
+import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { generateHashKey } from '../services/staffCrud';
+import { useRouter } from 'next/navigation';
+import { createStaff } from '../services/staffCrud';
 import {
   Dialog,
   DialogContent,
@@ -15,14 +15,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/common/top-dialog/TopDialog";
+} from '@/components/common/top-dialog/TopDialog';
 import {
   Form,
   FormField,
   FormItem,
   FormLabel,
   FormControl,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -31,18 +31,18 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { CircleDashed } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+} from '@/components/ui/select';
+import { CircleDashed } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 const schema = z.object({
-  email: z.string().min(1, "Staff email is required"),
-  role: z.string().min(1, "Staff role is required"),
+  email: z.string().min(1, 'Staff email is required'),
+  role: z.string().min(1, 'Staff role is required'),
 });
 
 type FormData = z.infer<typeof schema>;
 
-export default function GenerateHashKey() {
+export default function GenerateHashKey () {
   const router = useRouter();
   // const [loading, setLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -58,7 +58,7 @@ export default function GenerateHashKey() {
     formState: { errors },
   } = methods;
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit (formData: FormData) {
     startTransition(async () => {
       try {
         await generateHashKey({
@@ -67,17 +67,17 @@ export default function GenerateHashKey() {
         });
         setOpenDialog(false);
         toast({
-          variant: "default",
-          title: "Hash key generated successfully",
-          description: "Hash key generated successfully",
+          variant: 'default',
+          title: 'Hash key generated successfully',
+          description: 'Hash key generated successfully',
         });
         router.refresh();
       } catch (error) {
-        console.error("An error occurred:", error);
+        console.error('An error occurred:', error);
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "An error occurred while generating hash key",
+          variant: 'destructive',
+          title: 'Error',
+          description: 'An error occurred while generating hash key',
         });
       }
     });
@@ -142,7 +142,7 @@ export default function GenerateHashKey() {
                 {isPending ? (
                   <CircleDashed className="animate-spin transition-all" />
                 ) : (
-                  "Generate Key"
+                  'Generate Key'
                 )}
               </Button>
             </DialogFooter>

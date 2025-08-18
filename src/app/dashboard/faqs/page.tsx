@@ -1,8 +1,8 @@
-import FAQManagement from "@/components/dashboard/faqs/FAQManagement";
-import AIEnhancedFAQSubmissions from "@/components/dashboard/faqs/AIEnhancedFAQSubmissions";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import FAQManagement from '@/components/dashboard/faqs/FAQManagement';
+import AIEnhancedFAQSubmissions from '@/components/dashboard/faqs/AIEnhancedFAQSubmissions';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function FAQAdminPage() {
+export default function FAQAdminPage () {
   return (
     <div className="p-3 sm:p-6">
       <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">FAQ Management</h1>

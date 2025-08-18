@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Overview } from "@/components/dashboard/inventory/overview/Overview";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RealTimeInventoryDashboard } from "@/components/dashboard/inventory/Inventory-dashboard/RealTimeInventoryDashboard";
-import { SupplierPerformance } from "../Inventory-dashboard/SupplierPerformance";
-import { InventoryReports } from "../Inventory-dashboard/InventoryReports";
-import { LowStockItems } from "./LowStockItems";
+import { useState } from 'react';
+import { Overview } from '@/components/dashboard/inventory/overview/Overview';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RealTimeInventoryDashboard } from '@/components/dashboard/inventory/Inventory-dashboard/RealTimeInventoryDashboard';
+import { SupplierPerformance } from '../Inventory-dashboard/SupplierPerformance';
+import { InventoryReports } from '../Inventory-dashboard/InventoryReports';
+import { LowStockItems } from './LowStockItems';
 
-function InventoryOverviewBody() {
-  const [activeTab, setActiveTab] = useState("overview");
+function InventoryOverviewBody () {
+  const [activeTab, setActiveTab] = useState('overview');
 
   return (
     <div className="space-y-6">

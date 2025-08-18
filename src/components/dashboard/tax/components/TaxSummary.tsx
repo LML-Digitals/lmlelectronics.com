@@ -49,7 +49,7 @@ const COLORS = [
   '#82ca9d',
 ];
 
-export default function TaxSummary() {
+export default function TaxSummary () {
   const { toast } = useToast();
   const [currentTab, setCurrentTab] = useState('quarter');
   const [summary, setSummary] = useState<TaxSummaryType | null>(null);
@@ -62,25 +62,25 @@ export default function TaxSummary() {
       const now = new Date();
 
       switch (period) {
-        case 'quarter':
-          from = startOfQuarter(now);
-          to = endOfQuarter(now);
-          break;
-        case 'year':
-          from = startOfYear(now);
-          to = endOfYear(now);
-          break;
-        case 'previousQuarter':
-          from = startOfQuarter(subQuarters(now, 1));
-          to = endOfQuarter(subQuarters(now, 1));
-          break;
-        case 'previousYear':
-          from = startOfYear(subYears(now, 1));
-          to = endOfYear(subYears(now, 1));
-          break;
-        default:
-          from = startOfQuarter(now);
-          to = endOfQuarter(now);
+      case 'quarter':
+        from = startOfQuarter(now);
+        to = endOfQuarter(now);
+        break;
+      case 'year':
+        from = startOfYear(now);
+        to = endOfYear(now);
+        break;
+      case 'previousQuarter':
+        from = startOfQuarter(subQuarters(now, 1));
+        to = endOfQuarter(subQuarters(now, 1));
+        break;
+      case 'previousYear':
+        from = startOfYear(subYears(now, 1));
+        to = endOfYear(subYears(now, 1));
+        break;
+      default:
+        from = startOfQuarter(now);
+        to = endOfQuarter(now);
       }
 
       const result = await getTaxSummary({ from, to });
@@ -130,26 +130,28 @@ export default function TaxSummary() {
 
   const getPeriodLabel = () => {
     const now = new Date();
+
     switch (currentTab) {
-      case 'quarter':
-        return `Q${Math.floor(now.getMonth() / 3) + 1} ${now.getFullYear()}`;
-      case 'year':
-        return now.getFullYear().toString();
-      case 'previousQuarter':
-        const prevQuarter = subQuarters(now, 1);
-        return `Q${
-          Math.floor(prevQuarter.getMonth() / 3) + 1
-        } ${prevQuarter.getFullYear()}`;
-      case 'previousYear':
-        return (now.getFullYear() - 1).toString();
-      default:
-        return '';
+    case 'quarter':
+      return `Q${Math.floor(now.getMonth() / 3) + 1} ${now.getFullYear()}`;
+    case 'year':
+      return now.getFullYear().toString();
+    case 'previousQuarter':
+      const prevQuarter = subQuarters(now, 1);
+
+      return `Q${
+        Math.floor(prevQuarter.getMonth() / 3) + 1
+      } ${prevQuarter.getFullYear()}`;
+    case 'previousYear':
+      return (now.getFullYear() - 1).toString();
+    default:
+      return '';
     }
   };
 
   // Prepare pie chart data
-  const pieChartData =
-    summary?.byCategoryBreakdown.map((item) => ({
+  const pieChartData
+    = summary?.byCategoryBreakdown.map((item) => ({
       name: formatCategory(item.category),
       value: item.taxDue,
     })) || [];
@@ -233,8 +235,7 @@ export default function TaxSummary() {
                               outerRadius={60}
                               fill="#8884d8"
                               dataKey="value"
-                              label={({ name, percent }) =>
-                                `${name}: ${(percent || 0 * 100).toFixed(0)}%`
+                              label={({ name, percent }) => `${name}: ${(percent || 0 * 100).toFixed(0)}%`
                               }
                             >
                               {pieChartData.map((entry, index) => (
@@ -245,8 +246,7 @@ export default function TaxSummary() {
                               ))}
                             </Pie>
                             <Tooltip
-                              formatter={(value) =>
-                                formatCurrency(Number(value))
+                              formatter={(value) => formatCurrency(Number(value))
                               }
                             />
                           </PieChart>
@@ -270,24 +270,22 @@ export default function TaxSummary() {
                               </tr>
                             </thead>
                             <tbody>
-                              {summary.byCategoryBreakdown.map(
-                                (item, index) => (
-                                  <tr
-                                    key={index}
-                                    className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                                  >
-                                    <td className="p-2 sm:p-4 align-middle text-xs sm:text-sm">
-                                      {formatCategory(item.category)}
-                                    </td>
-                                    <td className="p-2 sm:p-4 align-middle text-right text-xs sm:text-sm">
-                                      {formatCurrency(item.taxable)}
-                                    </td>
-                                    <td className="p-2 sm:p-4 align-middle text-right text-xs sm:text-sm">
-                                      {formatCurrency(item.taxDue)}
-                                    </td>
-                                  </tr>
-                                )
-                              )}
+                              {summary.byCategoryBreakdown.map((item, index) => (
+                                <tr
+                                  key={index}
+                                  className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                                >
+                                  <td className="p-2 sm:p-4 align-middle text-xs sm:text-sm">
+                                    {formatCategory(item.category)}
+                                  </td>
+                                  <td className="p-2 sm:p-4 align-middle text-right text-xs sm:text-sm">
+                                    {formatCurrency(item.taxable)}
+                                  </td>
+                                  <td className="p-2 sm:p-4 align-middle text-right text-xs sm:text-sm">
+                                    {formatCurrency(item.taxDue)}
+                                  </td>
+                                </tr>
+                              ))}
                             </tbody>
                             <tfoot>
                               <tr className="border-t">

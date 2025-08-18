@@ -1,5 +1,5 @@
-import SuppliersTable from "@/components/dashboard/inventory/supplier/VendorsTable";
-import { fetchSuppliers } from "@/components/dashboard/inventory/supplier/utils/fetchSuppliers";
+import SuppliersTable from '@/components/dashboard/inventory/supplier/VendorsTable';
+import { fetchSuppliers } from '@/components/dashboard/inventory/supplier/utils/fetchSuppliers';
 
 const Locations = async () => {
   const { suppliers, error } = await fetchSuppliers();

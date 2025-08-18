@@ -109,7 +109,7 @@ const reportFormSchema = z.object({
 
 type ReportFormValues = z.infer<typeof reportFormSchema>;
 
-export function InventoryReports() {
+export function InventoryReports () {
   const [isLoading, setIsLoading] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [reportPreview, setReportPreview] = useState<any[]>([]);
@@ -143,11 +143,12 @@ export function InventoryReports() {
 
   // Fetch form data on component mount
   useEffect(() => {
-    async function fetchFilterData() {
+    async function fetchFilterData () {
       setIsDataLoading(true);
       try {
         // Fetch locations
         const locationsResult = await getLocationsForReports();
+
         if (locationsResult.success && locationsResult.data) {
           setLocations(locationsResult.data);
         } else {
@@ -160,6 +161,7 @@ export function InventoryReports() {
 
         // Fetch categories
         const categoriesResult = await getCategoriesForReports();
+
         if (categoriesResult.success && categoriesResult.data) {
           setCategories(categoriesResult.data);
         } else {
@@ -172,6 +174,7 @@ export function InventoryReports() {
 
         // Fetch suppliers
         const suppliersResult = await getSuppliersForReports();
+
         if (suppliersResult.success && suppliersResult.data) {
           setSuppliers(suppliersResult.data);
         } else {
@@ -196,7 +199,7 @@ export function InventoryReports() {
     fetchFilterData();
   }, []);
 
-  async function onSubmit(data: ReportFormValues) {
+  async function onSubmit (data: ReportFormValues) {
     setIsLoading(true);
 
     // Create base filters for any report type
@@ -213,21 +216,22 @@ export function InventoryReports() {
     // Generate the report based on type
     try {
       let result;
+
       switch (data.reportType) {
-        case 'inventory':
-          result = await generateInventoryStockReport(filters);
-          break;
-        case 'value':
-          result = await generateInventoryStockReport(filters);
-          break;
-        case 'lowStock':
-          result = await generateLowStockReport(filters, 5);
-          break;
-        case 'supplier':
-          result = await generateSupplierReport(filters);
-          break;
-        default:
-          result = await generateInventoryStockReport(filters);
+      case 'inventory':
+        result = await generateInventoryStockReport(filters);
+        break;
+      case 'value':
+        result = await generateInventoryStockReport(filters);
+        break;
+      case 'lowStock':
+        result = await generateLowStockReport(filters, 5);
+        break;
+      case 'supplier':
+        result = await generateSupplierReport(filters);
+        break;
+      default:
+        result = await generateInventoryStockReport(filters);
       }
 
       if (result.success && result.data) {
@@ -285,6 +289,7 @@ export function InventoryReports() {
 
         // Create a temporary link and trigger download
         const link = document.createElement('a');
+
         link.href = url;
         link.download = result.data.fileName;
         document.body.appendChild(link);
@@ -410,7 +415,7 @@ export function InventoryReports() {
                                 variant={'outline'}
                                 className={cn(
                                   'w-full pl-3 text-left font-normal',
-                                  !field.value && 'text-muted-foreground'
+                                  !field.value && 'text-muted-foreground',
                                 )}
                               >
                                 {field.value?.from ? (
@@ -473,21 +478,14 @@ export function InventoryReports() {
                                       >
                                         <FormControl>
                                           <Checkbox
-                                            checked={field.value?.includes(
-                                              location.id
-                                            )}
+                                            checked={field.value?.includes(location.id)}
                                             onCheckedChange={(checked) => {
                                               return checked
                                                 ? field.onChange([
-                                                    ...(field.value || []),
-                                                    location.id,
-                                                  ])
-                                                : field.onChange(
-                                                    field.value?.filter(
-                                                      (value) =>
-                                                        value !== location.id
-                                                    )
-                                                  );
+                                                  ...(field.value || []),
+                                                  location.id,
+                                                ])
+                                                : field.onChange(field.value?.filter((value) => value !== location.id));
                                             }}
                                           />
                                         </FormControl>
@@ -528,21 +526,14 @@ export function InventoryReports() {
                                       >
                                         <FormControl>
                                           <Checkbox
-                                            checked={field.value?.includes(
-                                              category.id
-                                            )}
+                                            checked={field.value?.includes(category.id)}
                                             onCheckedChange={(checked) => {
                                               return checked
                                                 ? field.onChange([
-                                                    ...(field.value || []),
-                                                    category.id,
-                                                  ])
-                                                : field.onChange(
-                                                    field.value?.filter(
-                                                      (value) =>
-                                                        value !== category.id
-                                                    )
-                                                  );
+                                                  ...(field.value || []),
+                                                  category.id,
+                                                ])
+                                                : field.onChange(field.value?.filter((value) => value !== category.id));
                                             }}
                                           />
                                         </FormControl>
@@ -585,21 +576,14 @@ export function InventoryReports() {
                                       >
                                         <FormControl>
                                           <Checkbox
-                                            checked={field.value?.includes(
-                                              supplier.id
-                                            )}
+                                            checked={field.value?.includes(supplier.id)}
                                             onCheckedChange={(checked) => {
                                               return checked
                                                 ? field.onChange([
-                                                    ...(field.value || []),
-                                                    supplier.id, // supplier.id is already a number
-                                                  ])
-                                                : field.onChange(
-                                                    field.value?.filter(
-                                                      (value) =>
-                                                        value !== supplier.id
-                                                    )
-                                                  );
+                                                  ...(field.value || []),
+                                                  supplier.id, // supplier.id is already a number
+                                                ])
+                                                : field.onChange(field.value?.filter((value) => value !== supplier.id));
                                             }}
                                           />
                                         </FormControl>

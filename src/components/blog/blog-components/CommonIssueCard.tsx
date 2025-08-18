@@ -9,13 +9,13 @@ type CommonIssueCardProps = {
   blog: BlogWithOnlyTagsType;
 };
 
-function CommonIssueCard({ blog }: CommonIssueCardProps) {
+function CommonIssueCard ({ blog }: CommonIssueCardProps) {
   const encodedSlug = encodeURIComponent(blog.slug || '');
 
   const maxDescriptionLength = 100;
   const truncatedDescription = blog.description
     ? blog.description.length > maxDescriptionLength
-      ? blog.description.substring(0, maxDescriptionLength) + '...'
+      ? `${blog.description.substring(0, maxDescriptionLength)}...`
       : blog.description
     : '';
 
@@ -24,12 +24,12 @@ function CommonIssueCard({ blog }: CommonIssueCardProps) {
       <div className="absolute top-2 right-2 text-secondary">
         <Wrench size={20} />
       </div>
-      
+
       <Link href={`/blogs/${encodedSlug}`} className="group">
         <h2 className="text-lg font-bold mb-2 line-clamp-2 h-14">
           {blog.title}
         </h2>
-        
+
         {blog.image && (
           <div className="relative h-32 w-full mb-3 rounded-lg overflow-hidden">
             <Image

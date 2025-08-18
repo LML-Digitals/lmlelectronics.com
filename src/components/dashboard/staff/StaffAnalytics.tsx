@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Card } from "@/components/ui/card";
+import { Card } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   PieChart,
   Pie,
@@ -21,25 +21,25 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
-import { Badge } from "@/components/ui/badge";
+} from 'recharts';
+import { Badge } from '@/components/ui/badge';
 
 // Colors for the charts
 const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884d8",
-  "#82ca9d",
+  '#0088FE',
+  '#00C49F',
+  '#FFBB28',
+  '#FF8042',
+  '#8884d8',
+  '#82ca9d',
 ];
 
 // Helper function to capitalize first letter of each word
 const capitalizeWords = (str: string) => {
   return str
-    .split(" ")
+    .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
+    .join(' ');
 };
 
 // TypeScript interfaces for analytics data
@@ -113,7 +113,7 @@ interface ChartDataItem {
   value: number;
 }
 
-export default function StaffAnalytics({
+export default function StaffAnalytics ({
   analytics,
 }: {
   analytics: StaffAnalyticsData;
@@ -132,45 +132,42 @@ export default function StaffAnalytics({
   }));
 
   // Format data for availability chart
-  const availabilityData: ChartDataItem[] =
-    analytics.availabilityDistribution?.map((item) => ({
-      name: capitalizeWords(item.availability || ""),
+  const availabilityData: ChartDataItem[]
+    = analytics.availabilityDistribution?.map((item) => ({
+      name: capitalizeWords(item.availability || ''),
       value: item._count || 0,
     })) || [
-      { name: "Full-time", value: 0 },
-      { name: "Part-time", value: 0 },
-      { name: "Contract", value: 0 },
+      { name: 'Full-time', value: 0 },
+      { name: 'Part-time', value: 0 },
+      { name: 'Contract', value: 0 },
     ];
 
   // Format data for activity timeline
-  const activityData =
-    analytics.activityTimeline?.map((staff) => ({
+  const activityData
+    = analytics.activityTimeline?.map((staff) => ({
       name: staff.name,
       lastActive: staff.lastActive,
       activeTickets: staff.activeTickets,
     })) || [];
 
   // Format data for experience distribution
-  const experienceData =
-    analytics.experienceMetrics?.map((staff) => ({
+  const experienceData
+    = analytics.experienceMetrics?.map((staff) => ({
       name: staff.name,
       experience: staff.experienceYears,
       notesCreated: staff.notesCount,
     })) || [];
 
   // Format data for payment type distribution
-  const paymentTypeData: ChartDataItem[] =
-    analytics.paymentTypeDistribution?.map((item) => ({
-      name: capitalizeWords(item.paymentType || ""),
+  const paymentTypeData: ChartDataItem[]
+    = analytics.paymentTypeDistribution?.map((item) => ({
+      name: capitalizeWords(item.paymentType || ''),
       value: item._count.paymentType || 0,
     })) || [];
 
   // Filter commission data for commission performance chart
   const commissionData = analytics.salaryMetrics
-    .filter(
-      (staff) =>
-        staff.paymentType === "COMMISSION" && staff.recentCommission > 0
-    )
+    .filter((staff) => staff.paymentType === 'COMMISSION' && staff.recentCommission > 0)
     .map((staff) => ({
       name: staff.name,
       recentCommission: staff.recentCommission,
@@ -180,24 +177,23 @@ export default function StaffAnalytics({
   // Calculate total tickets and comments for summary cards
   const totalTickets = analytics.performanceMetrics.reduce(
     (acc, curr) => acc + curr.ticketsHandled,
-    0
+    0,
   );
 
   const totalComments = analytics.performanceMetrics.reduce(
     (acc, curr) => acc + curr.comments,
-    0
+    0,
   );
 
   // Calculate average ticket completion rate
-  const avgCompletionRate =
-    analytics.performanceMetrics.length > 0
+  const avgCompletionRate
+    = analytics.performanceMetrics.length > 0
       ? (analytics.performanceMetrics.reduce(
-          (acc, curr) =>
-            acc + curr.ticketsCompleted / (curr.ticketsHandled || 1),
-          0
-        ) /
-          analytics.performanceMetrics.length) *
-        100
+        (acc, curr) => acc + curr.ticketsCompleted / (curr.ticketsHandled || 1),
+        0,
+      )
+          / analytics.performanceMetrics.length)
+        * 100
       : 0;
 
   return (
@@ -262,8 +258,7 @@ export default function StaffAnalytics({
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) =>
-                    `${name} (${((percent || 0) * 100).toFixed(0)}%)`
+                  label={({ name, percent }) => `${name} (${((percent || 0) * 100).toFixed(0)}%)`
                   }
                   outerRadius={80}
                   fill="#8884d8"
@@ -276,7 +271,7 @@ export default function StaffAnalytics({
                     />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => [value, "Staff Count"]} />
+                <Tooltip formatter={(value) => [value, 'Staff Count']} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -314,8 +309,7 @@ export default function StaffAnalytics({
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }: any) =>
-                    `${name} (${((percent || 0) * 100).toFixed(0)}%)`
+                  label={({ name, percent }: any) => `${name} (${((percent || 0) * 100).toFixed(0)}%)`
                   }
                   outerRadius={80}
                   fill="#8884d8"
@@ -329,7 +323,7 @@ export default function StaffAnalytics({
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number) => [value, "Staff Count"]}
+                  formatter={(value: number) => [value, 'Staff Count']}
                 />
                 <Legend />
               </PieChart>
@@ -379,8 +373,7 @@ export default function StaffAnalytics({
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }: any) =>
-                    `${name} (${((percent || 0) * 100).toFixed(0)}%)`
+                  label={({ name, percent }: any) => `${name} (${((percent || 0) * 100).toFixed(0)}%)`
                   }
                   outerRadius={80}
                   fill="#8884d8"
@@ -393,7 +386,7 @@ export default function StaffAnalytics({
                     />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => [value, "Staff Count"]} />
+                <Tooltip formatter={(value) => [value, 'Staff Count']} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -412,7 +405,7 @@ export default function StaffAnalytics({
                   <Tooltip
                     formatter={(value: number) => {
                       // Using type assertion to handle ReCharts ValueType
-                      return [`$${(value as number).toFixed(2)}`, "Amount"];
+                      return [`$${(value).toFixed(2)}`, 'Amount'];
                     }}
                   />
                   <Legend />
@@ -460,9 +453,9 @@ export default function StaffAnalytics({
                   </TableCell>
                   <TableCell>${staff.baseSalary.toFixed(2)}</TableCell>
                   <TableCell>
-                    {staff.paymentType === "COMMISSION"
+                    {staff.paymentType === 'COMMISSION'
                       ? `${staff.commissionRate}%`
-                      : "N/A"}
+                      : 'N/A'}
                   </TableCell>
                   <TableCell>${staff.recentEarnings.toFixed(2)}</TableCell>
                 </TableRow>
@@ -494,16 +487,16 @@ export default function StaffAnalytics({
                   <TableCell>
                     <span
                       className={`px-2 py-1 rounded-full text-sm ${
-                        new Date(staff.lastActive) >
-                        new Date(Date.now() - 24 * 60 * 60 * 1000)
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
+                        new Date(staff.lastActive)
+                        > new Date(Date.now() - 24 * 60 * 60 * 1000)
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'
                       }`}
                     >
-                      {new Date(staff.lastActive) >
-                      new Date(Date.now() - 24 * 60 * 60 * 1000)
-                        ? "Active Today"
-                        : "Inactive"}
+                      {new Date(staff.lastActive)
+                      > new Date(Date.now() - 24 * 60 * 60 * 1000)
+                        ? 'Active Today'
+                        : 'Inactive'}
                     </span>
                   </TableCell>
                 </TableRow>
@@ -543,10 +536,10 @@ export default function StaffAnalytics({
                   <TableCell>
                     {staff.ticketsHandled > 0
                       ? `${(
-                          (staff.comments / staff.ticketsHandled) *
-                          100
-                        ).toFixed(1)}%`
-                      : "N/A"}
+                        (staff.comments / staff.ticketsHandled)
+                          * 100
+                      ).toFixed(1)}%`
+                      : 'N/A'}
                   </TableCell>
                 </TableRow>
               ))}

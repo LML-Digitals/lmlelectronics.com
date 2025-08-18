@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { PriceItem } from "../types/priceTypes";
+import { PriceItem } from '../types/priceTypes';
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 import {
   CheckCircle,
   Tag,
@@ -28,8 +28,8 @@ import {
   Percent,
   Copy,
   ExternalLink,
-} from "lucide-react";
-import Image from "next/image";
+} from 'lucide-react';
+import Image from 'next/image';
 
 interface PriceItemAccordionProps {
   items: PriceItem[];
@@ -65,24 +65,23 @@ export const PriceItemAccordion: React.FC<PriceItemAccordionProps> = ({
           let cost = 0;
           let profit = 0;
 
-          if (item.type === "repair") {
+          if (item.type === 'repair') {
             if (item.variation) {
               totalCost = item.basePrice || 0;
             }
-          } else if (item.type === "product") {
-            const raw = item.raw || 0
-            const tax = item.tax || 0
-            const shipping = item.shipping || 0
-            const markup = item.markup || 0
+          } else if (item.type === 'product') {
+            const raw = item.raw || 0;
+            const tax = item.tax || 0;
+            const shipping = item.shipping || 0;
+            const markup = item.markup || 0;
 
             cost = raw + raw * (tax / 100) + shipping;
             totalCost = cost + cost * (markup / 100);
             profit = totalCost - cost;
-
           }
 
           // Labor cost for repairs
-          const laborCost = item.type === "repair" ? Number(item.labour || 0) : 0;
+          const laborCost = item.type === 'repair' ? Number(item.labour || 0) : 0;
 
           return (
             <AccordionItem
@@ -114,7 +113,7 @@ export const PriceItemAccordion: React.FC<PriceItemAccordionProps> = ({
                       <div className="flex items-center mt-1 gap-1.5">
                         <Badge
                           variant={
-                            item.type === "repair" ? "secondary" : "default"
+                            item.type === 'repair' ? 'secondary' : 'default'
                           }
                           className="text-xs px-1.5 py-0"
                         >
@@ -148,7 +147,7 @@ export const PriceItemAccordion: React.FC<PriceItemAccordionProps> = ({
 
                   {/* Simplified pricing information - only showing the required fields */}
                   <div className="grid grid-cols-3 gap-x-4 gap-y-2 text-sm">
-                    {item.type === "product" ? (
+                    {item.type === 'product' ? (
                       // For products: cost, markup, total price
                       <>
                         {/* Cost */}
@@ -302,9 +301,9 @@ export const PriceItemAccordion: React.FC<PriceItemAccordionProps> = ({
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>
-                          {isCalculator 
-                            ? "Add this item to the price calculator" 
-                            : "Copy price information to clipboard"
+                          {isCalculator
+                            ? 'Add this item to the price calculator'
+                            : 'Copy price information to clipboard'
                           }
                         </p>
                       </TooltipContent>
@@ -316,12 +315,11 @@ export const PriceItemAccordion: React.FC<PriceItemAccordionProps> = ({
                           variant="outline"
                           size="sm"
                           className="flex-1"
-                          onClick={() =>
-                            onViewDetails({
-                              ...item,
-                              // Override any existing finalPrice with our calculation
-                              // finalPrice: calculatedFinalPrice,
-                            })
+                          onClick={() => onViewDetails({
+                            ...item,
+                            // Override any existing finalPrice with our calculation
+                            // finalPrice: calculatedFinalPrice,
+                          })
                           }
                         >
                           <ExternalLink className="h-4 w-4 mr-2" />

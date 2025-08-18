@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { Loader2, X } from "lucide-react";
-import Image from "next/image";
-import { useDropzone } from "react-dropzone";
-import type { UploadResponse } from "@/lib/types/upload";
+import { useState, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import { Loader2, X } from 'lucide-react';
+import Image from 'next/image';
+import { useDropzone } from 'react-dropzone';
+import type { UploadResponse } from '@/lib/types/upload';
 
 interface ImageUploadProps {
   value: string[];
@@ -15,7 +15,7 @@ interface ImageUploadProps {
   onRemove: (url: string) => void;
 }
 
-export function ImageUpload({
+export function ImageUpload ({
   value,
   disabled,
   onChange,
@@ -30,47 +30,47 @@ export function ImageUpload({
       try {
         const uploadPromises = acceptedFiles.map(async (file) => {
           const response = await fetch(`/api/upload?filename=${file.name}`, {
-            method: "POST",
+            method: 'POST',
             body: file,
           });
 
           if (!response.ok) {
-            throw new Error(
-              "Failed to upload image" +
-                response.statusText
-            );
+            throw new Error(`Failed to upload image${
+              response.statusText}`);
           }
 
           const result = (await response.json()) as UploadResponse;
+
           return result.url;
         });
 
         const urls = await Promise.all(uploadPromises);
+
         onChange(urls.filter((url): url is string => url !== null));
         console.log(
-          "urls",
-          urls.filter((url): url is string => url !== null)
+          'urls',
+          urls.filter((url): url is string => url !== null),
         );
       } catch (error) {
-        console.error("Error uploading images:", error);
+        console.error('Error uploading images:', error);
         toast({
-          title: "Error",
-          description: "Failed to upload images.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to upload images.',
+          variant: 'destructive',
         });
       } finally {
         setIsUploading(false);
       }
     },
-    [onChange]
+    [onChange],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "image/jpeg": [],
-      "image/png": [],
-      "image/webp": [],
+      'image/jpeg': [],
+      'image/png': [],
+      'image/webp': [],
     },
     disabled,
     maxFiles: 5,
@@ -82,11 +82,11 @@ export function ImageUpload({
         {...getRootProps()}
         className={`border-2 border-dashed p-4 rounded-md cursor-pointer transition-colors text-center pb-2
           ${
-            isDragActive
-              ? "border-primary bg-primary/5"
-              : "border-gray-300 hover:border-primary"
-          }
-          ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+    isDragActive
+      ? 'border-primary bg-primary/5'
+      : 'border-gray-300 hover:border-primary'
+    }
+          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         `}
       >
         <input {...getInputProps()} />
@@ -99,8 +99,8 @@ export function ImageUpload({
           <div className="flex flex-col items-center justify-center">
             <p className="text-sm text-muted-foreground">
               {isDragActive
-                ? "Drop the files here..."
-                : "Drag & drop images here, or click to select files"}
+                ? 'Drop the files here...'
+                : 'Drag & drop images here, or click to select files'}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
               (Up to 5 files, max 5MB each)

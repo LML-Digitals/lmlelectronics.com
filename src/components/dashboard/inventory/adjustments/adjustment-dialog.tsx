@@ -112,7 +112,7 @@ export const AddAdjustmentDialog = ({
       form.setValue('inventoryItemId', adjustment.inventoryItem.id.toString());
       form.setValue(
         'inventoryVariationId',
-        adjustment.inventoryVariation.id.toString()
+        adjustment.inventoryVariation.id.toString(),
       );
       form.setValue('changeAmount', adjustment.changeAmount.toString());
       form.setValue('reason', adjustment.reason);
@@ -123,9 +123,8 @@ export const AddAdjustmentDialog = ({
   // Update variations when selected item changes
   useEffect(() => {
     if (selectedItemId) {
-      const item = inventoryItems.find(
-        (item) => item.id.toString() === selectedItemId
-      );
+      const item = inventoryItems.find((item) => item.id.toString() === selectedItemId);
+
       if (item && item.variations) {
         setVariations(item.variations);
       } else {
@@ -150,6 +149,7 @@ export const AddAdjustmentDialog = ({
         variant: 'destructive',
       });
       setIsloading(false);
+
       return;
     }
 
@@ -161,14 +161,13 @@ export const AddAdjustmentDialog = ({
       stockBefore:
         variations
           .find((v) => v.id.toString() === values.inventoryVariationId)
-          ?.stockLevels.find(
-            (sl) => sl.locationId === parseInt(values.locationId)
-          )?.stock || 0,
+          ?.stockLevels.find((sl) => sl.locationId === parseInt(values.locationId))?.stock || 0,
       reason: values.reason,
       adjustedById: currentUser.id,
     };
 
     let result;
+
     if (isEditMode && adjustment) {
       result = await updateInventoryAdjustment(adjustment.id, {
         inventoryItemId: values.inventoryItemId,
@@ -191,7 +190,7 @@ export const AddAdjustmentDialog = ({
       form.reset();
       setOpen(false);
       router.refresh();
-      if (onSuccess) onSuccess();
+      if (onSuccess) { onSuccess(); }
     } else {
       toast({
         title: 'Error',

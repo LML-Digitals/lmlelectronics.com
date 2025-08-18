@@ -11,7 +11,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { getTaxDueOverview } from '../services/taxService';
 
-export default function TaxOverview() {
+export default function TaxOverview () {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [taxData, setTaxData] = useState({
@@ -25,6 +25,7 @@ export default function TaxOverview() {
       setIsLoading(true);
       try {
         const result = await getTaxDueOverview();
+
         if (result.success) {
           setTaxData({
             monthly: result.monthly,

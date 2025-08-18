@@ -19,6 +19,7 @@ const SideBarMenuGroup = ({ menuGroup }: { menuGroup: SideNavItemGroup }) => {
     const fetchData = async () => {
       try {
         const userInSession: any = await fetchSession();
+
         setUser(userInSession.user);
       } catch (error) {
         console.error('Error fetching session:', error);
@@ -32,7 +33,7 @@ const SideBarMenuGroup = ({ menuGroup }: { menuGroup: SideNavItemGroup }) => {
     'py-3 px-2 tracking-[.1rem] font-semibold uppercase text-xs text-muted-foreground flex items-center cursor-pointer hover:text-foreground transition-colors duration-200 rounded-md hover:bg-muted/50',
     {
       'text-center justify-center': toggleCollapse,
-    }
+    },
   );
 
   // Filter and sort menu items by user role and character length

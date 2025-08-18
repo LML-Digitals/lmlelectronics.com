@@ -1,20 +1,20 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { getOrderById } from "@/components/dashboard/pos/orders/services/pos-orders";
-import { OrderActions } from "@/components/dashboard/pos/orders/OrderActions";
-import { OrderRefunds } from "@/components/dashboard/pos/orders/OrderRefunds";
-import { ArrowLeft, MapPin, User, Calendar, CreditCard } from "lucide-react";
-import { format } from "date-fns";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { getOrderById } from '@/components/dashboard/pos/orders/services/pos-orders';
+import { OrderActions } from '@/components/dashboard/pos/orders/OrderActions';
+import { OrderRefunds } from '@/components/dashboard/pos/orders/OrderRefunds';
+import { ArrowLeft, MapPin, User, Calendar, CreditCard } from 'lucide-react';
+import { format } from 'date-fns';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 interface PageProps {
   params: Promise<{
@@ -22,7 +22,7 @@ interface PageProps {
   }>;
 }
 
-export default async function OrderDetailPage({ params }: PageProps) {
+export default async function OrderDetailPage ({ params }: PageProps) {
   const { id } = await params;
   const result = await getOrderById(id);
 
@@ -33,7 +33,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
   const order = result.data;
   const totalRefunded = order.refunds.reduce(
     (sum, refund) => sum + refund.amount,
-    0
+    0,
   );
 
   return (
@@ -53,7 +53,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <p className="text-muted-foreground">
             {format(
               new Date(order.createdAt),
-              "EEEE, MMMM d, yyyy 'at' h:mm a"
+              "EEEE, MMMM d, yyyy 'at' h:mm a",
             )}
           </p>
         </div>
@@ -67,7 +67,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
             <CardHeader>
               <CardTitle>Order Items</CardTitle>
               <CardDescription>
-                {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+                {order.items.length} item{order.items.length !== 1 ? 's' : ''}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -94,7 +94,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     <div className="text-right">
                       <p className="font-medium">
                         $
-                        {item.price.toLocaleString("en-US", {
+                        {item.price.toLocaleString('en-US', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
@@ -136,7 +136,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                   <span className="text-muted-foreground">Subtotal</span>
                   <span>
                     $
-                    {order.subtotal.toLocaleString("en-US", {
+                    {order.subtotal.toLocaleString('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
@@ -148,7 +148,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     <span className="text-muted-foreground">Tax</span>
                     <span>
                       $
-                      {order.taxAmount.toLocaleString("en-US", {
+                      {order.taxAmount.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -161,7 +161,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     <span className="text-muted-foreground">Discount</span>
                     <span className="text-green-600">
                       -$
-                      {order.discountAmount.toLocaleString("en-US", {
+                      {order.discountAmount.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -174,7 +174,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     <span className="text-muted-foreground">Tip</span>
                     <span>
                       $
-                      {order.tipAmount.toLocaleString("en-US", {
+                      {order.tipAmount.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -189,7 +189,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     </span>
                     <span>
                       $
-                      {order.serviceChargeTotal.toLocaleString("en-US", {
+                      {order.serviceChargeTotal.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -197,17 +197,17 @@ export default async function OrderDetailPage({ params }: PageProps) {
                   </div>
                 )}
 
-                {order.paymentMethod === "Square Card" && (
+                {order.paymentMethod === 'Square Card' && (
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Shipping</span>
                     <span>
                       $
                       {order.customer?.shippingAddress?.shippingRate.toLocaleString(
-                        "en-US",
+                        'en-US',
                         {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
-                        }
+                        },
                       )}
                     </span>
                   </div>
@@ -220,7 +220,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                 <span>Total</span>
                 <span>
                   $
-                  {order.total.toLocaleString("en-US", {
+                  {order.total.toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
@@ -233,7 +233,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     <span>Total Refunded</span>
                     <span>
                       -$
-                      {totalRefunded.toLocaleString("en-US", {
+                      {totalRefunded.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -243,7 +243,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                     <span>Net Amount</span>
                     <span>
                       $
-                      {(order.total - totalRefunded).toLocaleString("en-US", {
+                      {(order.total - totalRefunded).toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -276,7 +276,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                   </p>
                 )}
               </div>
-              {order.paymentMethod === "Square Card" && (
+              {order.paymentMethod === 'Square Card' && (
                 <div className="flex flex-col gap-1">
                   <h1 className="text-lg font-medium mb-2">Shipping Address</h1>
                   <p className="text-sm text-muted-foreground">
@@ -308,7 +308,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
               <div className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">
-                  {order.paymentMethod || "Unknown"}
+                  {order.paymentMethod || 'Unknown'}
                 </span>
               </div>
 
@@ -336,7 +336,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
               <div>
                 <p className="text-xs text-muted-foreground">Staff Member</p>
                 <p className="text-sm">
-                  {order.staff ? `${order.staff.firstName} ${order.staff.lastName}` : "From Online Store"}
+                  {order.staff ? `${order.staff.firstName} ${order.staff.lastName}` : 'From Online Store'}
                 </p>
               </div>
             </CardContent>
@@ -347,19 +347,19 @@ export default async function OrderDetailPage({ params }: PageProps) {
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge ({ status }: { status: string }) {
   const getStatusConfig = (status: string) => {
     switch (status) {
-      case "PAID":
-        return { variant: "default" as const, label: "Paid" };
-      case "INVOICED":
-        return { variant: "secondary" as const, label: "Invoiced" };
-      case "REFUNDED":
-        return { variant: "destructive" as const, label: "Refunded" };
-      case "PARTIALLY_REFUNDED":
-        return { variant: "outline" as const, label: "Partially Refunded" };
-      default:
-        return { variant: "outline" as const, label: status };
+    case 'PAID':
+      return { variant: 'default' as const, label: 'Paid' };
+    case 'INVOICED':
+      return { variant: 'secondary' as const, label: 'Invoiced' };
+    case 'REFUNDED':
+      return { variant: 'destructive' as const, label: 'Refunded' };
+    case 'PARTIALLY_REFUNDED':
+      return { variant: 'outline' as const, label: 'Partially Refunded' };
+    default:
+      return { variant: 'outline' as const, label: status };
     }
   };
 

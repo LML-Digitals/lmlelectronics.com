@@ -23,9 +23,9 @@ export interface DataResponse<T> {
   error?: string;
 }
 
-export async function getLocationsForReports(): Promise<
+export async function getLocationsForReports (): Promise<
   DataResponse<LocationData[]>
-> {
+  > {
   try {
     const locations = await prisma.storeLocation.findMany({
       select: {
@@ -46,13 +46,14 @@ export async function getLocationsForReports(): Promise<
     };
   } catch (error) {
     console.error('Error fetching locations:', error);
+
     return { success: false, error: 'Failed to fetch locations' };
   }
 }
 
-export async function getCategoriesForReports(): Promise<
+export async function getCategoriesForReports (): Promise<
   DataResponse<CategoryData[]>
-> {
+  > {
   try {
     const categories = await prisma.inventoryItemCategory.findMany({
       select: {
@@ -73,13 +74,14 @@ export async function getCategoriesForReports(): Promise<
     };
   } catch (error) {
     console.error('Error fetching categories:', error);
+
     return { success: false, error: 'Failed to fetch categories' };
   }
 }
 
-export async function getSuppliersForReports(): Promise<
+export async function getSuppliersForReports (): Promise<
   DataResponse<SupplierData[]>
-> {
+  > {
   try {
     const suppliers = await prisma.vendor.findMany({
       select: {
@@ -100,18 +102,19 @@ export async function getSuppliersForReports(): Promise<
     };
   } catch (error) {
     console.error('Error fetching suppliers:', error);
+
     return { success: false, error: 'Failed to fetch suppliers' };
   }
 }
 
 // Helper function to fetch all data needed for the form at once
-export async function getAllReportFormData(): Promise<{
+export async function getAllReportFormData (): Promise<{
   locations: DataResponse<LocationData[]>;
   categories: DataResponse<CategoryData[]>;
   suppliers: DataResponse<SupplierData[]>;
 }> {
-  const [locationsResult, categoriesResult, suppliersResult] =
-    await Promise.all([
+  const [locationsResult, categoriesResult, suppliersResult]
+    = await Promise.all([
       getLocationsForReports(),
       getCategoriesForReports(),
       getSuppliersForReports(),

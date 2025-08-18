@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
-import Script from "next/script";
+import type { Metadata } from 'next';
+import Script from 'next/script';
 
-
-import BundleListing from "@/components/bundles/BundleListing";
-import PageHero from "@/components/PageHero";
+import BundleListing from '@/components/bundles/BundleListing';
+import PageHero from '@/components/PageHero';
 
 export async function generateMetadata (): Promise<Metadata> {
   const baseUrl = 'https://lmlelectronics.com';
@@ -117,7 +116,6 @@ export default async function BundlesPage () {
             }),
           }}
         />
-
 
         {/* Bundle Listing with Pagination - Client Component */}
         <BundleListing />

@@ -1,26 +1,26 @@
-import { Clock, DollarSign, Package, Shield } from "lucide-react";
+import { Clock, DollarSign, Package, Shield } from 'lucide-react';
 
-export default function BundleBenefits() {
+export default function BundleBenefits () {
   const benefits = [
     {
       icon: DollarSign,
-      title: "Save Up to 25%",
-      description: "Bundle multiple repairs for maximum savings",
+      title: 'Save Up to 25%',
+      description: 'Bundle multiple repairs for maximum savings',
     },
     {
       icon: Clock,
-      title: "Time Efficient",
-      description: "Get all repairs done in one service appointment",
+      title: 'Time Efficient',
+      description: 'Get all repairs done in one service appointment',
     },
     {
       icon: Shield,
-      title: "Extended Warranty",
-      description: "Additional warranty coverage on bundled services",
+      title: 'Extended Warranty',
+      description: 'Additional warranty coverage on bundled services',
     },
     {
       icon: Package,
-      title: "Customizable",
-      description: "Create your own bundle based on your needs",
+      title: 'Customizable',
+      description: 'Create your own bundle based on your needs',
     },
   ];
 

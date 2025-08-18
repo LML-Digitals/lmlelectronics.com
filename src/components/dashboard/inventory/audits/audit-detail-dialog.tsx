@@ -68,7 +68,7 @@ export const AuditDetailDialog = ({
 
   const handleResolve = async () => {
     setLoading(true);
-    if (!audit) return;
+    if (!audit) { return; }
 
     if (!currentUser?.id) {
       toast({
@@ -77,6 +77,7 @@ export const AuditDetailDialog = ({
         variant: 'destructive',
       });
       setLoading(false);
+
       return;
     }
 
@@ -100,7 +101,7 @@ export const AuditDetailDialog = ({
     }
   };
 
-  if (!audit) return null;
+  if (!audit) { return null; }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -116,7 +117,7 @@ export const AuditDetailDialog = ({
                 'px-3 py-1 text-xs sm:text-sm',
                 audit.status === 'Resolved'
                   ? 'bg-green-100 text-green-800'
-                  : 'border-amber-500 text-amber-600'
+                  : 'border-amber-500 text-amber-600',
               )}
             >
               {audit.status === 'Resolved' ? (
@@ -148,8 +149,8 @@ export const AuditDetailDialog = ({
               <div>
                 <h4 className="text-xs font-medium">Variation</h4>
                 <p className="font-medium text-sm">
-                  {audit.inventoryVariation.name ||
-                    audit.inventoryVariation.sku}
+                  {audit.inventoryVariation.name
+                    || audit.inventoryVariation.sku}
                 </p>
               </div>
               <div>
@@ -199,7 +200,7 @@ export const AuditDetailDialog = ({
                   'p-3 rounded-md border',
                   audit.discrepancy >= 0
                     ? 'bg-green-50 border-green-200'
-                    : 'bg-red-50 border-red-200'
+                    : 'bg-red-50 border-red-200',
                 )}
               >
                 <h4 className="text-xs font-medium text-gray-500">
@@ -208,7 +209,7 @@ export const AuditDetailDialog = ({
                 <p
                   className={cn(
                     'font-semibold text-base sm:text-lg flex items-center',
-                    audit.discrepancy >= 0 ? 'text-green-600' : 'text-red-600'
+                    audit.discrepancy >= 0 ? 'text-green-600' : 'text-red-600',
                   )}
                 >
                   {audit.discrepancy >= 0 ? (
@@ -248,16 +249,16 @@ export const AuditDetailDialog = ({
         </div>
 
         <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-between pt-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
             className="w-full sm:w-auto"
           >
             Close
           </Button>
           {audit.status !== 'Resolved' && (
-            <Button 
-              onClick={handleResolve} 
+            <Button
+              onClick={handleResolve}
               className="flex items-center w-full sm:w-auto"
             >
               {loading ? (

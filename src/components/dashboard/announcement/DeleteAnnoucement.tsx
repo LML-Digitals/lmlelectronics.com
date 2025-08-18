@@ -20,7 +20,7 @@ const DeleteAnnouncement = ({ announcementId }: { announcementId: number }) => {
   const router = useRouter();
   const { toast } = useToast();
 
-  async function onSubmit() {
+  async function onSubmit () {
     try {
       setLoading(true);
       await deleteAnnouncement(announcementId);

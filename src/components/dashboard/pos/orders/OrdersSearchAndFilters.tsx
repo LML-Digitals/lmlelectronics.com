@@ -1,77 +1,70 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
+} from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { CalendarIcon, Search, X } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/popover';
+import { CalendarIcon, Search, X } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
-export function OrdersSearchAndFilters() {
+export function OrdersSearchAndFilters () {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [search, setSearch] = useState(searchParams.get("search") || "");
-  const [status, setStatus] = useState(searchParams.get("status") || "all");
-  const [paymentMethod, setPaymentMethod] = useState(
-    searchParams.get("paymentMethod") || "all"
-  );
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(
-    searchParams.get("dateFrom")
-      ? new Date(searchParams.get("dateFrom")!)
-      : undefined
-  );
-  const [dateTo, setDateTo] = useState<Date | undefined>(
-    searchParams.get("dateTo")
-      ? new Date(searchParams.get("dateTo")!)
-      : undefined
-  );
+  const [search, setSearch] = useState(searchParams.get('search') || '');
+  const [status, setStatus] = useState(searchParams.get('status') || 'all');
+  const [paymentMethod, setPaymentMethod] = useState(searchParams.get('paymentMethod') || 'all');
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(searchParams.get('dateFrom')
+    ? new Date(searchParams.get('dateFrom')!)
+    : undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(searchParams.get('dateTo')
+    ? new Date(searchParams.get('dateTo')!)
+    : undefined);
 
   const updateURL = () => {
     const params = new URLSearchParams();
 
-    if (search) params.set("search", search);
-    if (status && status !== "all") params.set("status", status);
-    if (paymentMethod && paymentMethod !== "all")
-      params.set("paymentMethod", paymentMethod);
-    if (dateFrom) params.set("dateFrom", format(dateFrom, "yyyy-MM-dd"));
-    if (dateTo) params.set("dateTo", format(dateTo, "yyyy-MM-dd"));
+    if (search) { params.set('search', search); }
+    if (status && status !== 'all') { params.set('status', status); }
+    if (paymentMethod && paymentMethod !== 'all') { params.set('paymentMethod', paymentMethod); }
+    if (dateFrom) { params.set('dateFrom', format(dateFrom, 'yyyy-MM-dd')); }
+    if (dateTo) { params.set('dateTo', format(dateTo, 'yyyy-MM-dd')); }
 
     // Reset to page 1 when filters change
-    params.set("page", "1");
+    params.set('page', '1');
 
     router.push(`/dashboard/pos/orders?${params.toString()}`);
   };
 
   const clearFilters = () => {
-    setSearch("");
-    setStatus("all");
-    setPaymentMethod("all");
+    setSearch('');
+    setStatus('all');
+    setPaymentMethod('all');
     setDateFrom(undefined);
     setDateTo(undefined);
-    router.push("/dashboard/pos/orders");
+    router.push('/dashboard/pos/orders');
   };
 
-  const hasActiveFilters =
-    search ||
-    (status && status !== "all") ||
-    (paymentMethod && paymentMethod !== "all") ||
-    dateFrom ||
-    dateTo;
+  const hasActiveFilters
+    = search
+    || (status && status !== 'all')
+    || (paymentMethod && paymentMethod !== 'all')
+    || dateFrom
+    || dateTo;
 
   return (
     <div className="space-y-3 sm:space-y-4">
@@ -83,7 +76,7 @@ export function OrdersSearchAndFilters() {
             placeholder="Search by customer name, email, or order ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && updateURL()}
+            onKeyDown={(e) => e.key === 'Enter' && updateURL()}
             className="pl-10"
           />
         </div>
@@ -140,12 +133,12 @@ export function OrdersSearchAndFilters() {
             <Button
               variant="outline"
               className={cn(
-                "justify-start text-left font-normal w-full",
-                !dateFrom && "text-muted-foreground"
+                'justify-start text-left font-normal w-full',
+                !dateFrom && 'text-muted-foreground',
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateFrom ? format(dateFrom, "PPP") : "From date"}
+              {dateFrom ? format(dateFrom, 'PPP') : 'From date'}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
@@ -164,12 +157,12 @@ export function OrdersSearchAndFilters() {
             <Button
               variant="outline"
               className={cn(
-                "justify-start text-left font-normal w-full",
-                !dateTo && "text-muted-foreground"
+                'justify-start text-left font-normal w-full',
+                !dateTo && 'text-muted-foreground',
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateTo ? format(dateTo, "PPP") : "To date"}
+              {dateTo ? format(dateTo, 'PPP') : 'To date'}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">

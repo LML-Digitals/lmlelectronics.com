@@ -1,16 +1,16 @@
-"use client";
-import React, { useState, useEffect } from "react";
+'use client';
+import React, { useState, useEffect } from 'react';
 import {
   getWarrantyById,
   createWarrantyClaim,
   updateWarrantyClaim,
   deleteWarrantyClaim,
-} from "./services/warrantyCrud";
+} from './services/warrantyCrud';
 import {
   WarrantyProps,
   WarrantyClaimProps,
   WarrantyClaimInput,
-} from "./types/types";
+} from './types/types';
 import {
   Card,
   CardContent,
@@ -18,11 +18,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { format } from 'date-fns';
 import {
   ArrowLeft,
   Calendar,
@@ -36,10 +36,10 @@ import {
   Package,
   AlertTriangle,
   Clock,
-} from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+} from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -48,17 +48,17 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,10 +68,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Separator } from "@/components/ui/separator";
-import { WarrantyForm } from "./WarrantyForm";
-import { WarrantyClaimForm } from "./WarrantyClaimForm";
+} from '@/components/ui/alert-dialog';
+import { Separator } from '@/components/ui/separator';
+import { WarrantyForm } from './WarrantyForm';
+import { WarrantyClaimForm } from './WarrantyClaimForm';
 import {
   Table,
   TableBody,
@@ -79,30 +79,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { WarrantyClaim } from "@prisma/client";
-import { cn } from "@/lib/utils";
-import { Check, X } from "lucide-react";
+} from '@/components/ui/table';
+import { WarrantyClaim } from '@prisma/client';
+import { cn } from '@/lib/utils';
+import { Check, X } from 'lucide-react';
 
 interface WarrantyDetailsProps {
   warrantyId: string;
   isCustomer: boolean;
 }
 
-export default function WarrantyDetails({
+export default function WarrantyDetails ({
   warrantyId,
   isCustomer,
 }: WarrantyDetailsProps) {
   const [warranty, setWarranty] = useState<WarrantyProps | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedClaim, setSelectedClaim] = useState<WarrantyClaim | null>(
-    null
-  );
+  const [selectedClaim, setSelectedClaim] = useState<WarrantyClaim | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isClaimDialogOpen, setIsClaimDialogOpen] = useState(false);
   const [isResolutionDialogOpen, setIsResolutionDialogOpen] = useState(false);
-  const [resolution, setResolution] = useState("");
-  const [claimStatus, setClaimStatus] = useState("Approved");
+  const [resolution, setResolution] = useState('');
+  const [claimStatus, setClaimStatus] = useState('Approved');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const router = useRouter();
 
@@ -114,13 +112,14 @@ export default function WarrantyDetails({
     setIsLoading(true);
     try {
       const data = await getWarrantyById(warrantyId);
+
       setWarranty(data);
     } catch (error) {
-      console.error("Failed to fetch warranty details:", error);
+      console.error('Failed to fetch warranty details:', error);
       toast({
-        title: "Error",
-        description: "Failed to load warranty details. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load warranty details. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -128,7 +127,7 @@ export default function WarrantyDetails({
   };
 
   const handleUpdateClaimStatus = async () => {
-    if (!selectedClaim) return;
+    if (!selectedClaim) { return; }
 
     try {
       await updateWarrantyClaim(selectedClaim.id, {
@@ -136,56 +135,57 @@ export default function WarrantyDetails({
         resolution: resolution,
       });
       toast({
-        title: "Success",
+        title: 'Success',
         description: `Claim ${claimStatus.toLowerCase()} successfully`,
       });
       fetchWarrantyDetails();
       setIsResolutionDialogOpen(false);
     } catch (error) {
-      console.error("Failed to update claim status:", error);
+      console.error('Failed to update claim status:', error);
       toast({
-        title: "Error",
-        description: "Failed to update claim status. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to update claim status. Please try again.',
+        variant: 'destructive',
       });
     }
   };
 
   const handleDeleteClaim = async () => {
-    if (!selectedClaim) return;
+    if (!selectedClaim) { return; }
 
     try {
       await deleteWarrantyClaim(selectedClaim.id);
       toast({
-        title: "Success",
-        description: "Warranty claim deleted successfully",
+        title: 'Success',
+        description: 'Warranty claim deleted successfully',
       });
       fetchWarrantyDetails();
       setIsDeleteDialogOpen(false);
     } catch (error) {
-      console.error("Failed to delete warranty claim:", error);
+      console.error('Failed to delete warranty claim:', error);
       toast({
-        title: "Error",
-        description: "Failed to delete warranty claim. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to delete warranty claim. Please try again.',
+        variant: 'destructive',
       });
     }
   };
 
   const isWarrantyActive = () => {
-    if (!warranty) return false;
+    if (!warranty) { return false; }
+
     return warranty.endDate ? new Date(warranty.endDate) > new Date() : true; // Lifetime warranty is always active
   };
 
   // Coverage display helpers
   const coverageLabels = {
-    defects: "Manufacturing Defects",
-    parts: "Replacement Parts",
-    labor: "Labor",
-    accidental: "Accidental Damage",
-    water: "Water/Liquid Damage",
-    priority: "Priority Support",
-    replacements: "Full Replacements",
+    defects: 'Manufacturing Defects',
+    parts: 'Replacement Parts',
+    labor: 'Labor',
+    accidental: 'Accidental Damage',
+    water: 'Water/Liquid Damage',
+    priority: 'Priority Support',
+    replacements: 'Full Replacements',
   };
 
   const renderCoverageDetails = (coverage: any) => {
@@ -199,11 +199,13 @@ export default function WarrantyDetails({
 
     // Parse the coverage if it's a string
     let coverageObj = coverage;
-    if (typeof coverage === "string") {
+
+    if (typeof coverage === 'string') {
       try {
         coverageObj = JSON.parse(coverage);
       } catch (e) {
-        console.error("Error parsing coverage:", e);
+        console.error('Error parsing coverage:', e);
+
         return (
           <p className="text-muted-foreground italic">
             Coverage data format error
@@ -221,7 +223,7 @@ export default function WarrantyDetails({
             ) : (
               <X className="h-4 w-4 text-red-500 mr-2" />
             )}
-            <span className={cn(!value && "text-muted-foreground")}>
+            <span className={cn(!value && 'text-muted-foreground')}>
               {coverageLabels[key as keyof typeof coverageLabels] || key}
             </span>
           </div>
@@ -259,26 +261,26 @@ export default function WarrantyDetails({
 
   const getClaimStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
-      case "approved":
-        return (
-          <Badge variant="outline" className="bg-green-100 dark:bg-green-800">
+    case 'approved':
+      return (
+        <Badge variant="outline" className="bg-green-100 dark:bg-green-800">
             Approved
-          </Badge>
-        );
-      case "denied":
-        return <Badge variant="destructive">Denied</Badge>;
-      case "in review":
-        return (
-          <Badge variant="outline" className="bg-blue-100 dark:bg-blue-800">
+        </Badge>
+      );
+    case 'denied':
+      return <Badge variant="destructive">Denied</Badge>;
+    case 'in review':
+      return (
+        <Badge variant="outline" className="bg-blue-100 dark:bg-blue-800">
             In Review
-          </Badge>
-        );
-      default:
-        return (
-          <Badge variant="outline" className="bg-amber-100 dark:bg-amber-800">
+        </Badge>
+      );
+    default:
+      return (
+        <Badge variant="outline" className="bg-amber-100 dark:bg-amber-800">
             Pending
-          </Badge>
-        );
+        </Badge>
+      );
     }
   };
 
@@ -290,10 +292,10 @@ export default function WarrantyDetails({
           Back to Warranties
         </Button>
         <Badge
-          variant={isWarrantyActive() ? "outline" : "destructive"}
-          className={isWarrantyActive() ? "bg-green-100 dark:bg-green-800" : ""}
+          variant={isWarrantyActive() ? 'outline' : 'destructive'}
+          className={isWarrantyActive() ? 'bg-green-100 dark:bg-green-800' : ''}
         >
-          {isWarrantyActive() ? "Active" : "Expired"}
+          {isWarrantyActive() ? 'Active' : 'Expired'}
         </Badge>
       </div>
 
@@ -301,12 +303,12 @@ export default function WarrantyDetails({
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
             <CardTitle className="text-xl">
-              {warranty.warrantyType?.name || "Standard"} Warranty
+              {warranty.warrantyType?.name || 'Standard'} Warranty
             </CardTitle>
             <CardDescription>
-              {warranty.inventoryItem?.name ||
-                warranty.inventoryVariation?.name ||
-                "Unknown Product"}
+              {warranty.inventoryItem?.name
+                || warranty.inventoryVariation?.name
+                || 'Unknown Product'}
             </CardDescription>
           </div>
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -357,9 +359,9 @@ export default function WarrantyDetails({
                 <div className="flex space-x-3 items-center">
                   <Package className="h-5 w-5 text-muted-foreground" />
                   <span className="font-medium">
-                    {warranty.inventoryItem?.name ||
-                      warranty.inventoryVariation?.name ||
-                      "Unknown Product"}
+                    {warranty.inventoryItem?.name
+                      || warranty.inventoryVariation?.name
+                      || 'Unknown Product'}
                   </span>
                 </div>
                 {warranty.inventoryVariation?.sku && (
@@ -396,7 +398,7 @@ export default function WarrantyDetails({
               <div className="flex items-center">
                 <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                 <span>
-                  {format(new Date(warranty.startDate), "MMM d, yyyy")}
+                  {format(new Date(warranty.startDate), 'MMM d, yyyy')}
                 </span>
               </div>
             </div>
@@ -408,8 +410,8 @@ export default function WarrantyDetails({
                 <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                 <span>
                   {warranty.endDate
-                    ? format(new Date(warranty.endDate), "MMM d, yyyy")
-                    : "Lifetime Warranty"}
+                    ? format(new Date(warranty.endDate), 'MMM d, yyyy')
+                    : 'Lifetime Warranty'}
                 </span>
               </div>
             </div>
@@ -417,7 +419,7 @@ export default function WarrantyDetails({
               <h3 className="text-sm font-medium text-muted-foreground mb-2">
                 Warranty Type
               </h3>
-              <span>{warranty.warrantyType?.name || "Standard"}</span>
+              <span>{warranty.warrantyType?.name || 'Standard'}</span>
             </div>
           </div>
         </CardContent>
@@ -451,7 +453,7 @@ export default function WarrantyDetails({
                     <DialogTitle>Submit Warranty Claim</DialogTitle>
                     <DialogDescription>
                       Submit a new warranty claim for this product.
-                      {warranty.warrantyType?.name === "Lifetime Warranty" && (
+                      {warranty.warrantyType?.name === 'Lifetime Warranty' && (
                         <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm text-green-800 flex items-center">
                           <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
                           Defect claims on Lifetime warranties are automatically
@@ -468,7 +470,7 @@ export default function WarrantyDetails({
                       setIsClaimDialogOpen(false);
                     }}
                     isLifetimeWarranty={
-                      warranty.warrantyType?.name === "Lifetime Warranty"
+                      warranty.warrantyType?.name === 'Lifetime Warranty'
                     }
                   />
                 </DialogContent>
@@ -490,7 +492,7 @@ export default function WarrantyDetails({
                     {warranty.warrantyClaims.map((claim) => (
                       <TableRow key={claim.id}>
                         <TableCell>
-                          {format(new Date(claim.createdAt), "MMM d, yyyy")}
+                          {format(new Date(claim.createdAt), 'MMM d, yyyy')}
                         </TableCell>
                         <TableCell>{claim.issueType}</TableCell>
                         <TableCell>
@@ -506,20 +508,20 @@ export default function WarrantyDetails({
                               size="icon"
                               onClick={() => {
                                 setSelectedClaim(claim);
-                                setResolution(claim.resolution || "");
+                                setResolution(claim.resolution || '');
                                 setClaimStatus(claim.status);
                                 setIsResolutionDialogOpen(true);
                               }}
                             >
-                              {claim.status.toLowerCase() === "pending" ? (
+                              {claim.status.toLowerCase() === 'pending' ? (
                                 <Clock className="h-4 w-4" />
                               ) : (
                                 <FileText className="h-4 w-4" />
                               )}
                             </Button>
-                            {((claim.status.toLowerCase() === "pending" &&
-                              isCustomer) ||
-                              !isCustomer) && (
+                            {((claim.status.toLowerCase() === 'pending'
+                              && isCustomer)
+                              || !isCustomer) && (
                               <Button
                                 variant="outline"
                                 size="icon"
@@ -544,8 +546,8 @@ export default function WarrantyDetails({
                   <p className="text-lg font-medium">No claims yet</p>
                   <p className="text-muted-foreground mt-1">
                     {isWarrantyActive()
-                      ? "Submit a new claim using the button above"
-                      : "This warranty has expired and no longer accepts claims"}
+                      ? 'Submit a new claim using the button above'
+                      : 'This warranty has expired and no longer accepts claims'}
                   </p>
                 </div>
               )}
@@ -562,14 +564,14 @@ export default function WarrantyDetails({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {selectedClaim?.status.toLowerCase() === "pending"
-                ? "Respond to Warranty Claim"
-                : "Warranty Claim Details"}
+              {selectedClaim?.status.toLowerCase() === 'pending'
+                ? 'Respond to Warranty Claim'
+                : 'Warranty Claim Details'}
             </DialogTitle>
             <DialogDescription>
-              Claim submitted on{" "}
-              {selectedClaim &&
-                format(new Date(selectedClaim.createdAt), "MMMM d, yyyy")}
+              Claim submitted on{' '}
+              {selectedClaim
+                && format(new Date(selectedClaim.createdAt), 'MMMM d, yyyy')}
             </DialogDescription>
           </DialogHeader>
 

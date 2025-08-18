@@ -51,7 +51,7 @@ const calculatorSchema = z
 
 type CalculatorFormValues = z.infer<typeof calculatorSchema>;
 
-export default function TaxCalculator({
+export default function TaxCalculator ({
   onCalculationComplete,
 }: {
   onCalculationComplete?: () => void;
@@ -83,7 +83,7 @@ export default function TaxCalculator({
         toast({
           title: 'Tax calculation complete',
           description:
-            result.message || `Tax records have been successfully generated.`,
+            result.message || 'Tax records have been successfully generated.',
         });
         handleCalculationComplete();
       } else {
@@ -129,7 +129,7 @@ export default function TaxCalculator({
                             variant={'outline'}
                             className={cn(
                               'w-full pl-3 text-left font-normal text-xs sm:text-sm',
-                              !field.value && 'text-muted-foreground'
+                              !field.value && 'text-muted-foreground',
                             )}
                           >
                             {field.value ? (
@@ -167,7 +167,7 @@ export default function TaxCalculator({
                             variant={'outline'}
                             className={cn(
                               'w-full pl-3 text-left font-normal text-xs sm:text-sm',
-                              !field.value && 'text-muted-foreground'
+                              !field.value && 'text-muted-foreground',
                             )}
                           >
                             {field.value ? (

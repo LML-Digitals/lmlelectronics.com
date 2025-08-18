@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,15 +9,15 @@ import {
   DialogDescription,
   DialogFooter,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import CreateBlogForm from "./CreateBlogForm";
-import { PlusCircle } from "lucide-react";
-import { getTags } from "@/components/dashboard/Tags/services/tagCrud";
-import { BlogCategory, Tag } from "@prisma/client";
-import { getBlogCategories } from "../services/blogCategoryCrud";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import CreateBlogForm from './CreateBlogForm';
+import { PlusCircle } from 'lucide-react';
+import { getTags } from '@/components/dashboard/Tags/services/tagCrud';
+import { BlogCategory, Tag } from '@prisma/client';
+import { getBlogCategories } from '../services/blogCategoryCrud';
 
-export default function CreateBlogDialog() {
+export default function CreateBlogDialog () {
   const [open, setOpen] = useState(false);
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [allCategories, setAllCategories] = useState<BlogCategory[]>([]);
@@ -28,9 +28,10 @@ export default function CreateBlogDialog() {
       try {
         setIsLoading(true);
         const tags = await getTags();
+
         setAllTags(tags.tags);
       } catch (error) {
-        console.error("Error fetching tags:", error);
+        console.error('Error fetching tags:', error);
       } finally {
         setIsLoading(false);
       }
@@ -40,9 +41,10 @@ export default function CreateBlogDialog() {
       try {
         setIsLoading(true);
         const categories = await getBlogCategories();
+
         setAllCategories(categories);
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error('Error fetching categories:', error);
       } finally {
         setIsLoading(false);
       }

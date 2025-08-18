@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { CheckCircle, XCircle } from 'lucide-react';
 import {
   activateVersion,
   deactivateTermVersion,
-} from "@/components/terms/services/termsCrud";
-import { toast } from "@/components/ui/use-toast";
+} from '@/components/terms/services/termsCrud';
+import { toast } from '@/components/ui/use-toast';
 
-function VersionActivation({
+function VersionActivation ({
   versionId,
   isActive,
   termId,
@@ -24,16 +24,16 @@ function VersionActivation({
       // Deactivate the version
       await deactivateTermVersion(termId, version);
       toast({
-        title: "Version deactivated",
-        description: "The version has been deactivated",
+        title: 'Version deactivated',
+        description: 'The version has been deactivated',
       });
       window.location.reload();
     } else {
       // Activate the version
       await activateVersion(versionId);
       toast({
-        title: "Version activated",
-        description: "The version has been activated",
+        title: 'Version activated',
+        description: 'The version has been activated',
       });
       window.location.reload();
     }
@@ -51,8 +51,8 @@ function VersionActivation({
         variant="outline"
         className={`gap-2 transition-all cursor-pointer ${
           isActive
-            ? "bg-red-50 text-red-600"
-            : "bg-green-50 text-green-600"
+            ? 'bg-red-50 text-red-600'
+            : 'bg-green-50 text-green-600'
         }`}
       >
         {isActive ? (

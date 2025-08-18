@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -19,12 +19,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -32,18 +32,18 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 import {
   createInventoryAudit,
   updateInventoryAudit,
-} from "./services/inventory-audit";
-import { useSession } from "next-auth/react";
-import { useToast } from "@/components/ui/use-toast";
-import { InventoryItemWithRelations } from "../items/types/ItemType";
-import { StoreLocation } from "@prisma/client";
-import { Plus, Edit, Check, ChevronsUpDown } from "lucide-react";
-import { AuditProps } from "./types";
-import { cn } from "@/lib/utils";
+} from './services/inventory-audit';
+import { useSession } from 'next-auth/react';
+import { useToast } from '@/components/ui/use-toast';
+import { InventoryItemWithRelations } from '../items/types/ItemType';
+import { StoreLocation } from '@prisma/client';
+import { Plus, Edit, Check, ChevronsUpDown } from 'lucide-react';
+import { AuditProps } from './types';
+import { cn } from '@/lib/utils';
 
 export const AuditForm = ({
   inventoryItems,
@@ -74,11 +74,11 @@ export const AuditForm = ({
   const currentUser = session?.user;
 
   const [formData, setFormData] = useState({
-    inventoryItemId: "",
-    inventoryVariationId: "",
-    locationId: "",
+    inventoryItemId: '',
+    inventoryVariationId: '',
+    locationId: '',
     recordedStock: 0,
-    actualStock: "",
+    actualStock: '',
   });
 
   const [variations, setVariations] = useState<
@@ -106,11 +106,11 @@ export const AuditForm = ({
     } else if (open && !isEditMode) {
       // Reset form when opening in create mode
       setFormData({
-        inventoryItemId: "",
-        inventoryVariationId: "",
-        locationId: "",
+        inventoryItemId: '',
+        inventoryVariationId: '',
+        locationId: '',
         recordedStock: 0,
-        actualStock: "",
+        actualStock: '',
       });
     }
   }, [audit, isEditMode, open]);
@@ -118,27 +118,24 @@ export const AuditForm = ({
   // Update variations when item changes
   useEffect(() => {
     if (formData.inventoryItemId) {
-      const item = inventoryItems.find(
-        (item) => item.id === formData.inventoryItemId
-      );
+      const item = inventoryItems.find((item) => item.id === formData.inventoryItemId);
+
       if (item) {
-        setVariations(
-          item.variations.map((v) => ({
-            id: v.id,
-            sku: v.sku,
-            name: v.name,
-            stockLevels: v.stockLevels.map((sl) => ({
-              id: parseInt(sl.id),
-              locationId: sl.locationId,
-              stock: sl.stock,
-            })),
-          }))
-        );
+        setVariations(item.variations.map((v) => ({
+          id: v.id,
+          sku: v.sku,
+          name: v.name,
+          stockLevels: v.stockLevels.map((sl) => ({
+            id: parseInt(sl.id),
+            locationId: sl.locationId,
+            stock: sl.stock,
+          })),
+        })));
         if (!isEditMode) {
           setFormData((prev) => ({
             ...prev,
-            inventoryVariationId: "",
-            locationId: "",
+            inventoryVariationId: '',
+            locationId: '',
             recordedStock: 0,
           }));
         }
@@ -151,13 +148,11 @@ export const AuditForm = ({
   // Update recorded stock when variation and location changes
   useEffect(() => {
     if (formData.inventoryVariationId && formData.locationId && !isEditMode) {
-      const variation = variations.find(
-        (v) => v.id === formData.inventoryVariationId
-      );
+      const variation = variations.find((v) => v.id === formData.inventoryVariationId);
+
       if (variation) {
-        const stockLevel = variation.stockLevels.find(
-          (sl) => sl.locationId === parseInt(formData.locationId)
-        );
+        const stockLevel = variation.stockLevels.find((sl) => sl.locationId === parseInt(formData.locationId));
+
         setFormData((prev) => ({
           ...prev,
           recordedStock: stockLevel?.stock || 0,
@@ -173,6 +168,7 @@ export const AuditForm = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setFormData({
       ...formData,
       [name]: value,
@@ -190,8 +186,8 @@ export const AuditForm = ({
     setFormData((prev) => ({
       ...prev,
       inventoryItemId: itemId,
-      inventoryVariationId: "",
-      locationId: "",
+      inventoryVariationId: '',
+      locationId: '',
       recordedStock: 0,
     }));
     setItemPopoverOpen(false);
@@ -202,16 +198,18 @@ export const AuditForm = ({
 
     if (!currentUser?.id) {
       toast({
-        title: "Authentication error",
-        description: "You need to be logged in to perform this action",
-        variant: "destructive",
+        title: 'Authentication error',
+        description: 'You need to be logged in to perform this action',
+        variant: 'destructive',
       });
+
       return;
     }
 
     setLoading(true);
 
     let result;
+
     if (isEditMode && audit) {
       // Update existing audit
       result = await updateInventoryAudit(audit.id, {
@@ -234,31 +232,31 @@ export const AuditForm = ({
 
     if (result.success) {
       toast({
-        title: "Success",
+        title: 'Success',
         description: isEditMode
-          ? "Inventory audit updated successfully"
-          : "Inventory audit created successfully",
+          ? 'Inventory audit updated successfully'
+          : 'Inventory audit created successfully',
       });
       setOpen(false);
       router.refresh(); // Refresh the page data
     } else {
       toast({
-        title: "Error",
+        title: 'Error',
         description: isEditMode
-          ? "Failed to update inventory audit"
-          : "Failed to create inventory audit",
-        variant: "destructive",
+          ? 'Failed to update inventory audit'
+          : 'Failed to create inventory audit',
+        variant: 'destructive',
       });
     }
   };
 
   const dialogTitle = isEditMode
-    ? "Edit Inventory Audit"
-    : "Create Inventory Audit";
+    ? 'Edit Inventory Audit'
+    : 'Create Inventory Audit';
   const dialogDescription = isEditMode
-    ? "Update actual stock count for this inventory audit."
-    : "Record a new inventory audit by counting and comparing actual stock levels.";
-  const submitButtonText = isEditMode ? "Update Audit" : "Submit Audit";
+    ? 'Update actual stock count for this inventory audit.'
+    : 'Record a new inventory audit by counting and comparing actual stock levels.';
+  const submitButtonText = isEditMode ? 'Update Audit' : 'Submit Audit';
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -286,15 +284,13 @@ export const AuditForm = ({
                     role="combobox"
                     aria-expanded={itemPopoverOpen}
                     className={cn(
-                      "w-full justify-between h-10",
-                      isEditMode && "bg-gray-100 cursor-not-allowed"
+                      'w-full justify-between h-10',
+                      isEditMode && 'bg-gray-100 cursor-not-allowed',
                     )}
                   >
                     {formData.inventoryItemId
-                      ? inventoryItems.find(
-                          (item) => item.id === formData.inventoryItemId
-                        )?.name
-                      : "Select an item..."}
+                      ? inventoryItems.find((item) => item.id === formData.inventoryItemId)?.name
+                      : 'Select an item...'}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -309,19 +305,17 @@ export const AuditForm = ({
                             key={item.id}
                             value={item.id}
                             onSelect={(currentValue) => {
-                              handleItemSelect(
-                                currentValue === formData.inventoryItemId
-                                  ? ""
-                                  : currentValue
-                              );
+                              handleItemSelect(currentValue === formData.inventoryItemId
+                                ? ''
+                                : currentValue);
                             }}
                           >
                             <Check
                               className={cn(
-                                "mr-2 h-4 w-4",
+                                'mr-2 h-4 w-4',
                                 formData.inventoryItemId === item.id
-                                  ? "opacity-100"
-                                  : "opacity-0"
+                                  ? 'opacity-100'
+                                  : 'opacity-0',
                               )}
                             />
                             {item.name}
@@ -339,8 +333,7 @@ export const AuditForm = ({
                 <label htmlFor="inventoryVariationId" className="text-sm font-medium">Variation</label>
                 <Select
                   value={formData.inventoryVariationId}
-                  onValueChange={(value) =>
-                    handleSelectChange("inventoryVariationId", value)
+                  onValueChange={(value) => handleSelectChange('inventoryVariationId', value)
                   }
                   disabled={isEditMode}
                 >
@@ -365,8 +358,7 @@ export const AuditForm = ({
               <label htmlFor="locationId" className="text-sm font-medium">Location</label>
               <Select
                 value={formData.locationId}
-                onValueChange={(value) =>
-                  handleSelectChange("locationId", value)
+                onValueChange={(value) => handleSelectChange('locationId', value)
                 }
                 disabled={isEditMode}
               >
@@ -422,7 +414,7 @@ export const AuditForm = ({
               type="button"
               onClick={() => {
                 setOpen(false);
-                if (onClose) onClose();
+                if (onClose) { onClose(); }
               }}
               className="w-full sm:w-auto"
             >
@@ -431,14 +423,14 @@ export const AuditForm = ({
             <Button
               type="submit"
               disabled={
-                loading ||
-                (!isEditMode &&
-                  (!formData.inventoryVariationId || !formData.locationId)) ||
-                !formData.actualStock
+                loading
+                || (!isEditMode
+                  && (!formData.inventoryVariationId || !formData.locationId))
+                || !formData.actualStock
               }
               className="w-full sm:w-auto"
             >
-              {loading ? "Submitting..." : submitButtonText}
+              {loading ? 'Submitting...' : submitButtonText}
             </Button>
           </DialogFooter>
         </form>

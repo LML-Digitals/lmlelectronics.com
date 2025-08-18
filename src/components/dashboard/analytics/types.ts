@@ -1,23 +1,23 @@
 // Analytics Period Types
 export type AnalyticsPeriod =
-  | "weekly"
-  | "monthly"
-  | "quarterly"
-  | "yearly"
-  | "custom";
+  | 'weekly'
+  | 'monthly'
+  | 'quarterly'
+  | 'yearly'
+  | 'custom';
 
 // Report Types
 export type ReportType =
-  | "repairs"
-  | "inventory"
-  | "customers"
-  | "communications"
-  | "financial"
-  | "locations"
-  | "sales"
-  | "staff-performance"
-  | "ticket-summary"
-  | "call-metrics";
+  | 'repairs'
+  | 'inventory'
+  | 'customers'
+  | 'communications'
+  | 'financial'
+  | 'locations'
+  | 'sales'
+  | 'staff-performance'
+  | 'ticket-summary'
+  | 'call-metrics';
 
 // Repair Analytics Types - Cleaned up version
 export interface RepairAnalytics {

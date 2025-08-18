@@ -1,40 +1,38 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   PriceItem,
   PriceSearchParams,
   PriceSearchResult,
-} from "../types/priceTypes";
-import { searchPrices } from "../services/priceService";
-import PriceSearchBar from "./PriceSearchBar";
-import PriceItemAccordion from "./PriceItemAccordion";
-import { Loader2, Search, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { formatSlug } from "@/utils/formatSlug";
+} from '../types/priceTypes';
+import { searchPrices } from '../services/priceService';
+import PriceSearchBar from './PriceSearchBar';
+import PriceItemAccordion from './PriceItemAccordion';
+import { Loader2, Search, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { formatSlug } from '@/utils/formatSlug';
 
 interface PriceSearchGlobalProps {
   onSelectPrice?: (item: PriceItem) => void;
-  initialType?: "all" | "repair" | "product";
+  initialType?: 'all' | 'repair' | 'product';
   showTitle?: boolean;
   isPortal?: boolean;
 }
 
 export const PriceSearchGlobal: React.FC<PriceSearchGlobalProps> = ({
   onSelectPrice,
-  initialType = "all",
+  initialType = 'all',
   showTitle = true,
   isPortal,
 }) => {
   const router = useRouter();
   const [searchParams, setSearchParams] = useState<PriceSearchParams>({
-    query: "",
+    query: '',
     type: initialType,
   });
-  const [searchResults, setSearchResults] = useState<PriceSearchResult | null>(
-    null
-  );
+  const [searchResults, setSearchResults] = useState<PriceSearchResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -42,9 +40,10 @@ export const PriceSearchGlobal: React.FC<PriceSearchGlobalProps> = ({
   const performSearch = async (params: PriceSearchParams) => {
     setSearchError(null);
 
-    if (!params.query || params.query.trim() === "") {
+    if (!params.query || params.query.trim() === '') {
       setSearchResults(null);
       setHasSearched(false);
+
       return;
     }
 
@@ -53,9 +52,10 @@ export const PriceSearchGlobal: React.FC<PriceSearchGlobalProps> = ({
 
     try {
       const results = await searchPrices(params);
+
       setSearchResults(results);
     } catch (error) {
-      setSearchError("An error occurred while searching. Please try again.");
+      setSearchError('An error occurred while searching. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -141,28 +141,28 @@ export const PriceSearchGlobal: React.FC<PriceSearchGlobalProps> = ({
   // };
 
   const handleViewDetails = (item: PriceItem) => {
-    if (item.type === "repair") {
+    if (item.type === 'repair') {
       if (item.navigationInfo) {
-        const { brandName, seriesName, modelName, deviceTypeName } =
-          item.navigationInfo;
+        const { brandName, seriesName, modelName, deviceTypeName }
+          = item.navigationInfo;
 
         if (brandName && modelName && deviceTypeName) {
-          const series = seriesName || "All Series";
-          const url = `/dashboard/repairs/${formatSlug(deviceTypeName)}/${formatSlug(
-            brandName
-          )}/${formatSlug(series)}/${formatSlug(modelName)}`;
+          const series = seriesName || 'All Series';
+          const url = `/dashboard/repairs/${formatSlug(deviceTypeName)}/${formatSlug(brandName)}/${formatSlug(series)}/${formatSlug(modelName)}`;
+
           router.push(url);
+
           return;
         }
       }
 
-      router.push("/dashboard/repairs");
-    } else if (item.type === "product") {
+      router.push('/dashboard/repairs');
+    } else if (item.type === 'product') {
       try {
-        router.push("/dashboard/inventory/items");
+        router.push('/dashboard/inventory/items');
       } catch (error) {
-        console.error("Error navigating to inventory item:", error);
-        router.push("/dashboard/inventory/items");
+        console.error('Error navigating to inventory item:', error);
+        router.push('/dashboard/inventory/items');
       }
     }
   };

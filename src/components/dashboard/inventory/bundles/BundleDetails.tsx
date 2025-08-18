@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Table,
   TableBody,
@@ -29,7 +29,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -37,7 +37,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Edit,
   Save,
@@ -49,15 +49,15 @@ import {
   Eye,
   ShoppingCart,
   AlertCircle,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   getBundleById,
   updateBundle,
   addBundleComponents,
   removeBundleComponent,
   getBundleStock,
-} from "@/components/dashboard/inventory/bundles/services/bundles";
-import { toast } from "@/components/ui/use-toast";
+} from '@/components/dashboard/inventory/bundles/services/bundles';
+import { toast } from '@/components/ui/use-toast';
 
 interface BundleComponent {
   id: string;
@@ -135,7 +135,7 @@ interface BundleDetailsProps {
   }>;
 }
 
-export default function BundleDetails({
+export default function BundleDetails ({
   bundleId,
   locations,
 }: BundleDetailsProps) {
@@ -144,16 +144,14 @@ export default function BundleDetails({
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [editForm, setEditForm] = useState({
-    name: "",
-    description: "",
-    image: "",
+    name: '',
+    description: '',
+    image: '',
   });
   const [showAddComponent, setShowAddComponent] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<InventoryVariation[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<number>(
-    locations[0]?.id || 0
-  );
+  const [selectedLocation, setSelectedLocation] = useState<number>(locations[0]?.id || 0);
 
   useEffect(() => {
     loadBundle();
@@ -163,44 +161,44 @@ export default function BundleDetails({
     try {
       setIsLoading(true);
       const result = await getBundleById(bundleId);
+
       if (result.success && result.bundle) {
         setBundle(result.bundle);
         setEditForm({
           name: result.bundle.name,
-          description: result.bundle.description || "",
-          image: result.bundle.image || "",
+          description: result.bundle.description || '',
+          image: result.bundle.image || '',
         });
 
         // Load stock information
         const stockResult = await getBundleStock(bundleId, selectedLocation);
+
         if (stockResult.success && stockResult.availableStock !== undefined) {
-          setBundle((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  stockByLocation: [
-                    {
-                      locationId: selectedLocation,
-                      locationName:
+          setBundle((prev) => prev
+            ? {
+              ...prev,
+              stockByLocation: [
+                {
+                  locationId: selectedLocation,
+                  locationName:
                         locations.find((l) => l.id === selectedLocation)
-                          ?.name || "",
-                      availableStock: stockResult.availableStock || 0,
-                    },
-                  ],
-                }
-              : null
-          );
+                          ?.name || '',
+                  availableStock: stockResult.availableStock || 0,
+                },
+              ],
+            }
+            : null);
         }
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load bundle details",
+          title: 'Error',
+          description: 'Failed to load bundle details',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Error loading bundle",
+        title: 'Error',
+        description: 'Error loading bundle',
       });
     } finally {
       setIsLoading(false);
@@ -210,23 +208,24 @@ export default function BundleDetails({
   const handleSave = async () => {
     try {
       const result = await updateBundle(bundleId, editForm);
+
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Bundle updated successfully",
+          title: 'Success',
+          description: 'Bundle updated successfully',
         });
         setIsEditing(false);
         await loadBundle();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to update bundle",
+          title: 'Error',
+          description: result.error || 'Failed to update bundle',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Error updating bundle",
+        title: 'Error',
+        description: 'Error updating bundle',
       });
     }
   };
@@ -234,22 +233,23 @@ export default function BundleDetails({
   const handleRemoveComponent = async (componentId: string) => {
     try {
       const result = await removeBundleComponent(componentId);
+
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Component removed successfully",
+          title: 'Success',
+          description: 'Component removed successfully',
         });
         await loadBundle();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to remove component",
+          title: 'Error',
+          description: result.error || 'Failed to remove component',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Error removing component",
+        title: 'Error',
+        description: 'Error removing component',
       });
     }
   };
@@ -260,25 +260,26 @@ export default function BundleDetails({
         bundleItemId: bundleId,
         components: [{ componentVariationId: variationId, quantity }],
       });
+
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Component added successfully",
+          title: 'Success',
+          description: 'Component added successfully',
         });
         setShowAddComponent(false);
-        setSearchQuery("");
+        setSearchQuery('');
         setSearchResults([]);
         await loadBundle();
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to add component",
+          title: 'Error',
+          description: result.error || 'Failed to add component',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Error adding component",
+        title: 'Error',
+        description: 'Error adding component',
       });
     }
   };
@@ -286,35 +287,32 @@ export default function BundleDetails({
   const searchComponents = async (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
+
       return;
     }
 
     try {
       // This would need to be implemented in the bundle actions
       // For now, we'll create a simple search
-      const response = await fetch(
-        `/api/inventory/search?q=${encodeURIComponent(
-          query
-        )}&exclude_bundles=true`
-      );
+      const response = await fetch(`/api/inventory/search?q=${encodeURIComponent(query)}&exclude_bundles=true`);
+
       if (response.ok) {
         const data = await response.json();
+
         setSearchResults(data);
       }
     } catch (error) {
-      console.error("Search error:", error);
+      console.error('Search error:', error);
     }
   };
 
-  const currentLocationStock =
-    bundle?.stockByLocation?.find(
-      (stock) => stock.locationId === selectedLocation
-    )?.availableStock || 0;
+  const currentLocationStock
+    = bundle?.stockByLocation?.find((stock) => stock.locationId === selectedLocation)?.availableStock || 0;
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
       </div>
     );
   }
@@ -342,7 +340,7 @@ export default function BundleDetails({
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
-            onClick={() => router.push("/dashboard/inventory/bundles")}
+            onClick={() => router.push('/dashboard/inventory/bundles')}
           >
             <X className="h-4 w-4 mr-2" />
             Back to Bundles
@@ -387,8 +385,7 @@ export default function BundleDetails({
                     <Input
                       id="name"
                       value={editForm.name}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, name: e.target.value })
+                      onChange={(e) => setEditForm({ ...editForm, name: e.target.value })
                       }
                     />
                   ) : (
@@ -401,13 +398,12 @@ export default function BundleDetails({
                     <Input
                       id="image"
                       value={editForm.image}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, image: e.target.value })
+                      onChange={(e) => setEditForm({ ...editForm, image: e.target.value })
                       }
                     />
                   ) : (
                     <p className="text-sm text-gray-600">
-                      {bundle.image || "No image"}
+                      {bundle.image || 'No image'}
                     </p>
                   )}
                 </div>
@@ -418,14 +414,13 @@ export default function BundleDetails({
                   <Textarea
                     id="description"
                     value={editForm.description}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, description: e.target.value })
+                    onChange={(e) => setEditForm({ ...editForm, description: e.target.value })
                     }
                     rows={3}
                   />
                 ) : (
                   <p className="text-sm text-gray-600">
-                    {bundle.description || "No description"}
+                    {bundle.description || 'No description'}
                   </p>
                 )}
               </div>
@@ -533,8 +528,8 @@ export default function BundleDetails({
                       <TableCell>
                         $
                         {(
-                          component.componentVariation.sellingPrice *
-                          component.quantity
+                          component.componentVariation.sellingPrice
+                          * component.quantity
                         ).toFixed(2)}
                       </TableCell>
                       <TableCell>
@@ -562,8 +557,7 @@ export default function BundleDetails({
                 <Label htmlFor="location">Location:</Label>
                 <Select
                   value={selectedLocation.toString()}
-                  onValueChange={(value) =>
-                    setSelectedLocation(parseInt(value))
+                  onValueChange={(value) => setSelectedLocation(parseInt(value))
                   }
                 >
                   <SelectTrigger className="w-48">
@@ -597,13 +591,9 @@ export default function BundleDetails({
                 <div className="space-y-2">
                   <h4 className="font-medium">Component Stock Breakdown</h4>
                   {bundle.bundleComponents.map((component) => {
-                    const componentStock =
-                      component.componentVariation.stockLevels.find(
-                        (level) => level.location.id === selectedLocation
-                      )?.stock || 0;
-                    const possibleBundles = Math.floor(
-                      componentStock / component.quantity
-                    );
+                    const componentStock
+                      = component.componentVariation.stockLevels.find((level) => level.location.id === selectedLocation)?.stock || 0;
+                    const possibleBundles = Math.floor(componentStock / component.quantity);
 
                     return (
                       <div
@@ -615,7 +605,7 @@ export default function BundleDetails({
                             {component.componentVariation.name}
                           </p>
                           <p className="text-sm text-gray-600">
-                            Need {component.quantity} each, Have{" "}
+                            Need {component.quantity} each, Have{' '}
                             {componentStock}
                           </p>
                         </div>
@@ -626,13 +616,13 @@ export default function BundleDetails({
                           <Badge
                             variant={
                               possibleBundles === 0
-                                ? "destructive"
-                                : "secondary"
+                                ? 'destructive'
+                                : 'secondary'
                             }
                           >
                             {possibleBundles === 0
-                              ? "Out of Stock"
-                              : "In Stock"}
+                              ? 'Out of Stock'
+                              : 'In Stock'}
                           </Badge>
                         </div>
                       </div>
@@ -663,11 +653,10 @@ export default function BundleDetails({
                 <TableBody>
                   {bundle.variations.map((variation) => {
                     const componentTotal = bundle.bundleComponents.reduce(
-                      (total, component) =>
-                        total +
-                        component.componentVariation.sellingPrice *
-                          component.quantity,
-                      0
+                      (total, component) => total
+                        + component.componentVariation.sellingPrice
+                          * component.quantity,
+                      0,
                     );
                     const savings = componentTotal - variation.sellingPrice;
 

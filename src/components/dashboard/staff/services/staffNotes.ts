@@ -1,30 +1,31 @@
-"use server";
+'use server';
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/config/authOptions";
-import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/config/authOptions';
+import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
-async function checkAuthorization() {
+async function checkAuthorization () {
   const session = await getServerSession(authOptions);
+
   if (!session?.user) {
-    throw new Error("Unauthorized");
+    throw new Error('Unauthorized');
   }
 
   const currentStaff = await prisma.staff.findUnique({
     where: {
-      email: session.user.email!,
+      email: session.user.email,
     },
   });
 
-  if (!currentStaff || !["admin"].includes(currentStaff.role)) {
-    throw new Error("Unauthorized");
+  if (!currentStaff || !['admin'].includes(currentStaff.role)) {
+    throw new Error('Unauthorized');
   }
 
   return currentStaff;
 }
 
-export async function getStaffNotes(staffId: string) {
+export async function getStaffNotes (staffId: string) {
   try {
     // await checkAuthorization();
 
@@ -42,7 +43,7 @@ export async function getStaffNotes(staffId: string) {
         },
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
 
@@ -53,25 +54,25 @@ export async function getStaffNotes(staffId: string) {
         content: note.content,
         createdAt: note.createdAt,
         author: {
-          firstName: note.author?.firstName || "Unknown",
-          lastName: note.author?.lastName || "User",
+          firstName: note.author?.firstName || 'Unknown',
+          lastName: note.author?.lastName || 'User',
           profileImage: note.author?.profileImage || null,
         },
       })),
     };
   } catch (error) {
-    console.error("[GET_STAFF_NOTES]", error);
-    throw new Error("Failed to fetch staff notes");
+    console.error('[GET_STAFF_NOTES]', error);
+    throw new Error('Failed to fetch staff notes');
   }
 }
 
-export async function addStaffNote(staffId: string, content: string) {
+export async function addStaffNote (staffId: string, content: string) {
   try {
     const currentStaff = await checkAuthorization();
 
     const note = await prisma.note.create({
       data: {
-        title: "Staff Note",
+        title: 'Staff Note',
         content,
         staffId,
         authorId: currentStaff.id,
@@ -86,17 +87,17 @@ export async function addStaffNote(staffId: string, content: string) {
       },
     });
 
-    revalidatePath("/dashboard/staff/profile");
+    revalidatePath('/dashboard/staff/profile');
     revalidatePath(`/dashboard/staff/profile/${staffId}`);
 
     return { note };
   } catch (error) {
-    console.error("[ADD_STAFF_NOTE]", error);
-    throw new Error("Failed to add staff note");
+    console.error('[ADD_STAFF_NOTE]', error);
+    throw new Error('Failed to add staff note');
   }
 }
 
-export async function updateStaffNote(noteId: number, content: string) {
+export async function updateStaffNote (noteId: number, content: string) {
   try {
     await checkAuthorization();
 
@@ -117,17 +118,17 @@ export async function updateStaffNote(noteId: number, content: string) {
       },
     });
 
-    revalidatePath("/dashboard/staff/profile");
+    revalidatePath('/dashboard/staff/profile');
     revalidatePath(`/dashboard/staff/profile/${note.staffId}`);
 
     return { note };
   } catch (error) {
-    console.error("[UPDATE_STAFF_NOTE]", error);
-    throw new Error("Failed to update staff note");
+    console.error('[UPDATE_STAFF_NOTE]', error);
+    throw new Error('Failed to update staff note');
   }
 }
 
-export async function deleteStaffNote(noteId: number) {
+export async function deleteStaffNote (noteId: number) {
   try {
     await checkAuthorization();
 
@@ -137,12 +138,12 @@ export async function deleteStaffNote(noteId: number) {
       },
     });
 
-    revalidatePath("/dashboard/staff/profile");
+    revalidatePath('/dashboard/staff/profile');
     revalidatePath(`/dashboard/staff/profile/${note.staffId}`);
 
     return { success: true };
   } catch (error) {
-    console.error("[DELETE_STAFF_NOTE]", error);
-    throw new Error("Failed to delete staff note");
+    console.error('[DELETE_STAFF_NOTE]', error);
+    throw new Error('Failed to delete staff note');
   }
 }

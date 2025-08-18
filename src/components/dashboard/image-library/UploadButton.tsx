@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Loader2, Upload } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { uploadImage } from "./actions";
+import { useState, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Loader2, Upload } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { uploadImage } from './actions';
 
-export default function UploadButton({
+export default function UploadButton ({
   onUploadComplete,
 }: {
   onUploadComplete?: () => void;
@@ -17,7 +17,8 @@ export default function UploadButton({
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files || files.length === 0) return;
+
+    if (!files || files.length === 0) { return; }
 
     setIsUploading(true);
 
@@ -31,7 +32,8 @@ export default function UploadButton({
 
         try {
           const formData = new FormData();
-          formData.append("file", file);
+
+          formData.append('file', file);
 
           const result = await uploadImage(formData);
 
@@ -49,13 +51,13 @@ export default function UploadButton({
 
       if (successCount > 0) {
         toast({
-          title: "Success",
+          title: 'Success',
           description:
             files.length > 1
               ? `${successCount} images uploaded successfully${
-                  errorCount > 0 ? `, ${errorCount} failed` : ""
-                }`
-              : "Image uploaded successfully",
+                errorCount > 0 ? `, ${errorCount} failed` : ''
+              }`
+              : 'Image uploaded successfully',
         });
 
         // Call callback if provided
@@ -66,23 +68,23 @@ export default function UploadButton({
 
       if (errorCount > 0 && successCount === 0) {
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to upload images",
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to upload images',
         });
       }
     } catch (error) {
-      console.error("Error uploading images:", error);
+      console.error('Error uploading images:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to upload images",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to upload images',
       });
     } finally {
       setIsUploading(false);
       // Reset input
       if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+        fileInputRef.current.value = '';
       }
     }
   };

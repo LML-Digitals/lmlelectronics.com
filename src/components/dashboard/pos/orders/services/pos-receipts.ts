@@ -1,29 +1,27 @@
-"use server";
+'use server';
 
 // import { EmailService } from "@/services/emailServices/emailService";
 
 // const emailService = new EmailService();
-import { getOrderById } from "./pos-orders";
-import { revalidatePath } from "next/cache";
+import { getOrderById } from './pos-orders';
+import { revalidatePath } from 'next/cache';
 
-
-
-export async function emailReceipt(
+export async function emailReceipt (
   orderId: string,
-  customerEmail?: string
+  customerEmail?: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const result = await getOrderById(orderId);
 
     if (!result.success || !result.data) {
-      return { success: false, error: "Order not found" };
+      return { success: false, error: 'Order not found' };
     }
 
     const order = result.data;
     const emailTo = customerEmail || order.customer.email;
 
     if (!emailTo) {
-      return { success: false, error: "No email address provided" };
+      return { success: false, error: 'No email address provided' };
     }
 
     // Generate receipt HTML
@@ -46,19 +44,18 @@ export async function emailReceipt(
 
     return { success: true };
   } catch (error) {
-    console.error("Error sending email receipt:", error);
-    return { success: false, error: "Failed to send email receipt" };
+    console.error('Error sending email receipt:', error);
+
+    return { success: false, error: 'Failed to send email receipt' };
   }
 }
 
-export async function printReceipt(
-  orderId: string
-): Promise<{ success: boolean; error?: string; receiptData?: any }> {
+export async function printReceipt (orderId: string): Promise<{ success: boolean; error?: string; receiptData?: any }> {
   try {
     const result = await getOrderById(orderId);
 
     if (!result.success || !result.data) {
-      return { success: false, error: "Order not found" };
+      return { success: false, error: 'Order not found' };
     }
 
     const order = result.data;
@@ -76,15 +73,16 @@ export async function printReceipt(
       },
     };
   } catch (error) {
-    console.error("Error preparing receipt for printing:", error);
-    return { success: false, error: "Failed to prepare receipt for printing" };
+    console.error('Error preparing receipt for printing:', error);
+
+    return { success: false, error: 'Failed to prepare receipt for printing' };
   }
 }
 
-function generateReceiptHtml(order: any): string {
+function generateReceiptHtml (order: any): string {
   const totalRefunded = order.refunds.reduce(
     (sum: number, refund: any) => sum + refund.amount,
-    0
+    0,
   );
 
   return `
@@ -188,39 +186,33 @@ function generateReceiptHtml(order: any): string {
 
       <div class="order-info">
         <div><strong>Order #:</strong> ${order.id.slice(-8).toUpperCase()}</div>
-        <div><strong>Date:</strong> ${new Date(
-          order.createdAt
-        ).toLocaleString()}</div>
+        <div><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</div>
         <div><strong>Customer:</strong> ${order.customer.firstName} ${
-    order.customer.lastName
-  }</div>
+  order.customer.lastName
+}</div>
         <div><strong>Email:</strong> ${order.customer.email}</div>
         ${
-          order.customer.phone
-            ? `<div><strong>Phone:</strong> ${order.customer.phone}</div>`
-            : ""
-        }
+  order.customer.phone
+    ? `<div><strong>Phone:</strong> ${order.customer.phone}</div>`
+    : ''
+}
         <div><strong>Staff:</strong> ${order.staff.firstName} ${
-    order.staff.lastName
-  }</div>
+  order.staff.lastName
+}</div>
         <div><strong>Status:</strong> ${order.status}</div>
       </div>
 
       <div class="items">
         <div style="font-weight: bold; margin-bottom: 10px;">ITEMS:</div>
         ${order.items
-          .map(
-            (item: any) => `
+    .map((item: any) => `
           <div class="item">
             <div class="item-name">${item.description}</div>
             <div class="item-qty">x${item.quantity}</div>
-            <div class="item-price">$${(item.price * item.quantity).toFixed(
-              2
-            )}</div>
+            <div class="item-price">$${(item.price * item.quantity).toFixed(2)}</div>
           </div>
-        `
-          )
-          .join("")}
+        `)
+    .join('')}
       </div>
 
       <div class="totals">
@@ -229,45 +221,45 @@ function generateReceiptHtml(order: any): string {
           <span>$${order.subtotal.toFixed(2)}</span>
         </div>
         ${
-          order.taxAmount > 0
-            ? `
+  order.taxAmount > 0
+    ? `
           <div class="total-line">
             <span>Tax:</span>
             <span>$${order.taxAmount.toFixed(2)}</span>
           </div>
         `
-            : ""
-        }
+    : ''
+}
         ${
-          order.discountAmount > 0
-            ? `
+  order.discountAmount > 0
+    ? `
           <div class="total-line">
             <span>Discount:</span>
             <span>-$${order.discountAmount.toFixed(2)}</span>
           </div>
         `
-            : ""
-        }
+    : ''
+}
         ${
-          order.tipAmount > 0
-            ? `
+  order.tipAmount > 0
+    ? `
           <div class="total-line">
             <span>Tip:</span>
             <span>$${order.tipAmount.toFixed(2)}</span>
           </div>
         `
-            : ""
-        }
+    : ''
+}
         ${
-          order.serviceChargeTotal > 0
-            ? `
+  order.serviceChargeTotal > 0
+    ? `
           <div class="total-line">
             <span>Service Charges:</span>
             <span>$${order.serviceChargeTotal.toFixed(2)}</span>
           </div>
         `
-            : ""
-        }
+    : ''
+}
         <div class="total-line final-total">
           <span>TOTAL:</span>
           <span>$${order.total.toFixed(2)}</span>
@@ -276,40 +268,36 @@ function generateReceiptHtml(order: any): string {
 
       <div class="payment-info">
         <div><strong>Payment Method:</strong> ${
-          order.paymentMethod || "N/A"
-        }</div>
+  order.paymentMethod || 'N/A'
+}</div>
         ${
-          order.squareTxnId
-            ? `<div><strong>Transaction ID:</strong> ${order.squareTxnId}</div>`
-            : ""
-        }
+  order.squareTxnId
+    ? `<div><strong>Transaction ID:</strong> ${order.squareTxnId}</div>`
+    : ''
+}
       </div>
 
       ${
-        order.refunds.length > 0
-          ? `
+  order.refunds.length > 0
+    ? `
         <div class="refunds">
           <div style="font-weight: bold; margin-bottom: 5px;">REFUNDS:</div>
           ${order.refunds
-            .map(
-              (refund: any) => `
+    .map((refund: any) => `
             <div class="total-line">
               <span>${new Date(refund.createdAt).toLocaleDateString()}</span>
               <span>-$${refund.amount.toFixed(2)}</span>
             </div>
-          `
-            )
-            .join("")}
+          `)
+    .join('')}
           <div class="total-line" style="border-top: 1px solid #000; padding-top: 5px; margin-top: 5px;">
             <span><strong>Net Amount:</strong></span>
-            <span><strong>$${(order.total - totalRefunded).toFixed(
-              2
-            )}</strong></span>
+            <span><strong>$${(order.total - totalRefunded).toFixed(2)}</strong></span>
           </div>
         </div>
       `
-          : ""
-      }
+    : ''
+}
 
       <div class="footer">
         <div>Thank you for your business!</div>
@@ -321,10 +309,10 @@ function generateReceiptHtml(order: any): string {
   `;
 }
 
-function generateReceiptData(order: any) {
+function generateReceiptData (order: any) {
   const totalRefunded = order.refunds.reduce(
     (sum: number, refund: any) => sum + refund.amount,
-    0
+    0,
   );
 
   return {
@@ -364,21 +352,21 @@ function generateReceiptData(order: any) {
   };
 }
 
-function generateEscPosCommands(order: any): string {
+function generateEscPosCommands (order: any): string {
   // ESC/POS commands for thermal printers
-  const ESC = "\x1B";
-  const GS = "\x1D";
+  const ESC = '\x1B';
+  const GS = '\x1D';
 
-  let commands = "";
+  let commands = '';
 
   // Initialize printer
-  commands += ESC + "@";
+  commands += `${ESC}@`;
 
   // Center align and bold for header
-  commands += ESC + "a" + "\x01"; // Center align
-  commands += ESC + "E" + "\x01"; // Bold on
-  commands += "LML REPAIR\n";
-  commands += ESC + "E" + "\x00"; // Bold off
+  commands += `${ESC}a` + '\x01'; // Center align
+  commands += `${ESC}E` + '\x01'; // Bold on
+  commands += 'LML REPAIR\n';
+  commands += `${ESC}E` + '\x00'; // Bold off
 
   // Location info
   commands += `${order.storeLocation.name}\n`;
@@ -386,17 +374,17 @@ function generateEscPosCommands(order: any): string {
   commands += `${order.storeLocation.phone}\n`;
 
   // Separator
-  commands += "================================\n";
+  commands += '================================\n';
 
   // Left align for content
-  commands += ESC + "a" + "\x00"; // Left align
+  commands += `${ESC}a` + '\x00'; // Left align
 
   // Order info
   commands += `Order #: ${order.id.slice(-8).toUpperCase()}\n`;
   commands += `Date: ${new Date(order.createdAt).toLocaleString()}\n`;
   commands += `Customer: ${order.customer.firstName} ${order.customer.lastName}\n`;
   commands += `Staff: ${order.staff.firstName} ${order.staff.lastName}\n`;
-  commands += "--------------------------------\n";
+  commands += '--------------------------------\n';
 
   // Items
   order.items.forEach((item: any) => {
@@ -406,7 +394,7 @@ function generateEscPosCommands(order: any): string {
     ).toFixed(2)}\n`;
   });
 
-  commands += "--------------------------------\n";
+  commands += '--------------------------------\n';
 
   // Totals
   commands += `Subtotal:        $${order.subtotal.toFixed(2)}\n`;
@@ -423,27 +411,27 @@ function generateEscPosCommands(order: any): string {
     commands += `Service Charges: $${order.serviceChargeTotal.toFixed(2)}\n`;
   }
 
-  commands += "================================\n";
-  commands += ESC + "E" + "\x01"; // Bold on
+  commands += '================================\n';
+  commands += `${ESC}E` + '\x01'; // Bold on
   commands += `TOTAL:           $${order.total.toFixed(2)}\n`;
-  commands += ESC + "E" + "\x00"; // Bold off
-  commands += "================================\n";
+  commands += `${ESC}E` + '\x00'; // Bold off
+  commands += '================================\n';
 
   // Payment info
-  commands += `Payment: ${order.paymentMethod || "N/A"}\n`;
+  commands += `Payment: ${order.paymentMethod || 'N/A'}\n`;
   if (order.squareTxnId) {
     commands += `Transaction ID: ${order.squareTxnId}\n`;
   }
 
   // Footer
-  commands += "\n";
-  commands += ESC + "a" + "\x01"; // Center align
-  commands += "Thank you for your business!\n";
-  commands += "Visit us at lmlrepair.com\n";
-  commands += "\n\n\n";
+  commands += '\n';
+  commands += `${ESC}a` + '\x01'; // Center align
+  commands += 'Thank you for your business!\n';
+  commands += 'Visit us at lmlrepair.com\n';
+  commands += '\n\n\n';
 
   // Cut paper
-  commands += GS + "V" + "\x42" + "\x00";
+  commands += `${GS}V` + '\x42' + '\x00';
 
   return commands;
 }

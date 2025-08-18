@@ -31,7 +31,7 @@ interface StaffTableProps {
   staffs: (Staff & { commissionRate: CommissionRate | null })[];
 }
 
-export default function StaffTable({ staffs }: StaffTableProps) {
+export default function StaffTable ({ staffs }: StaffTableProps) {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
@@ -39,18 +39,19 @@ export default function StaffTable({ staffs }: StaffTableProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
     setSearch(inputValue);
   };
 
   const filteredStaffs = staffs.filter((staff) => {
-    const matchesSearch = search.toLowerCase() === '' || 
-      (staff.firstName && staff.firstName.toLowerCase().includes(search.toLowerCase())) ||
-      (staff.lastName && staff.lastName.toLowerCase().includes(search.toLowerCase())) ||
-      (staff.email && staff.email.toLowerCase().includes(search.toLowerCase()));
-    
+    const matchesSearch = search.toLowerCase() === ''
+      || (staff.firstName && staff.firstName.toLowerCase().includes(search.toLowerCase()))
+      || (staff.lastName && staff.lastName.toLowerCase().includes(search.toLowerCase()))
+      || (staff.email && staff.email.toLowerCase().includes(search.toLowerCase()));
+
     const matchesRole = roleFilter === 'all' || staff.role === roleFilter;
     const matchesStatus = statusFilter === 'all' || staff.status === statusFilter;
-    
+
     return matchesSearch && matchesRole && matchesStatus;
   });
 
@@ -145,8 +146,8 @@ export default function StaffTable({ staffs }: StaffTableProps) {
                       <p className="text-base sm:text-lg font-medium">No staff found</p>
                       <p className="text-muted-foreground mt-1 text-sm sm:text-base">
                         {staffs.length === 0
-                          ? "Start by adding your first staff member"
-                          : "No results matching your search or filters"}
+                          ? 'Start by adding your first staff member'
+                          : 'No results matching your search or filters'}
                       </p>
                     </div>
                   </div>
@@ -172,8 +173,8 @@ export default function StaffTable({ staffs }: StaffTableProps) {
                   </TableCell>
                   <TableCell className="text-xs sm:text-sm">{staff.role}</TableCell>
                   <TableCell>
-                    <Badge 
-                      variant={staff.status === 'active' ? 'default' : 'secondary'} 
+                    <Badge
+                      variant={staff.status === 'active' ? 'default' : 'secondary'}
                       className="text-xs"
                     >
                       {staff.status}

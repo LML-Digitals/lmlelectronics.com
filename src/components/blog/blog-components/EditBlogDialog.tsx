@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,21 +8,21 @@ import {
   DialogTitle,
   DialogDescription,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import EditBlogForm from "./EditBlogForm";
-import { Edit } from "lucide-react";
-import { getTags } from "@/components/dashboard/Tags/services/tagCrud";
-import { BlogCategory, Tag } from "@prisma/client";
-import { getBlogCategories } from "../services/blogCategoryCrud";
-import { BlogWithDetailsType } from "../types/blogTypes";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import EditBlogForm from './EditBlogForm';
+import { Edit } from 'lucide-react';
+import { getTags } from '@/components/dashboard/Tags/services/tagCrud';
+import { BlogCategory, Tag } from '@prisma/client';
+import { getBlogCategories } from '../services/blogCategoryCrud';
+import { BlogWithDetailsType } from '../types/blogTypes';
+import { useRouter } from 'next/navigation';
 
 type EditBlogProps = {
   blog: BlogWithDetailsType;
 };
 
-export default function EditBlogDialog({ blog }: EditBlogProps) {
+export default function EditBlogDialog ({ blog }: EditBlogProps) {
   const [open, setOpen] = useState(false);
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [allCategories, setAllCategories] = useState<BlogCategory[]>([]);
@@ -34,9 +34,10 @@ export default function EditBlogDialog({ blog }: EditBlogProps) {
       try {
         setIsLoading(true);
         const tags = await getTags();
+
         setAllTags(tags.tags);
       } catch (error) {
-        console.error("Error fetching tags:", error);
+        console.error('Error fetching tags:', error);
       } finally {
         setIsLoading(false);
       }
@@ -46,9 +47,10 @@ export default function EditBlogDialog({ blog }: EditBlogProps) {
       try {
         setIsLoading(true);
         const categories = await getBlogCategories();
+
         setAllCategories(categories);
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error('Error fetching categories:', error);
       } finally {
         setIsLoading(false);
       }

@@ -1,14 +1,14 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { ChartDataResponse } from "./chartDataServices";
+import prisma from '@/lib/prisma';
+import { ChartDataResponse } from './chartDataServices';
 import {
   format,
   subDays,
   subMonths,
   eachDayOfInterval,
   parseISO,
-} from "date-fns";
+} from 'date-fns';
 
 // Define the TrendData type
 export interface TrendData {
@@ -20,29 +20,27 @@ export interface TrendData {
 }
 
 // Fetch real trend data from database
-export async function getInventoryTrends(
-  timeRange: string
-): Promise<ChartDataResponse<TrendData[]>> {
+export async function getInventoryTrends (timeRange: string): Promise<ChartDataResponse<TrendData[]>> {
   try {
     // Calculate date range based on time range selection
     const today = new Date();
     let startDate: Date;
 
     switch (timeRange) {
-      case "7days":
-        startDate = subDays(today, 7);
-        break;
-      case "30days":
-        startDate = subDays(today, 30);
-        break;
-      case "90days":
-        startDate = subDays(today, 90);
-        break;
-      case "12months":
-        startDate = subMonths(today, 12);
-        break;
-      default:
-        startDate = subDays(today, 7); // Default to 7 days
+    case '7days':
+      startDate = subDays(today, 7);
+      break;
+    case '30days':
+      startDate = subDays(today, 30);
+      break;
+    case '90days':
+      startDate = subDays(today, 90);
+      break;
+    case '12months':
+      startDate = subMonths(today, 12);
+      break;
+    default:
+      startDate = subDays(today, 7); // Default to 7 days
     }
 
     // Generate array of dates for the time range
@@ -51,22 +49,23 @@ export async function getInventoryTrends(
     // Format dates for display
     const formattedDates = dateInterval.map((date) => {
       // For shorter ranges (7 days), show day/month
-      if (timeRange === "7days") {
-        return format(date, "MM/dd");
+      if (timeRange === '7days') {
+        return format(date, 'MM/dd');
       }
       // For 30 days, show only few dates
-      else if (timeRange === "30days" && date.getDate() % 5 === 0) {
-        return format(date, "MM/dd");
+      else if (timeRange === '30days' && date.getDate() % 5 === 0) {
+        return format(date, 'MM/dd');
       }
       // For 90 days and 12 months, show first of each month
       else if (
-        (timeRange === "90days" || timeRange === "12months") &&
-        date.getDate() === 1
+        (timeRange === '90days' || timeRange === '12months')
+        && date.getDate() === 1
       ) {
-        return format(date, "MMM");
+        return format(date, 'MMM');
       }
+
       // For other dates in longer ranges, return empty string (won't show in chart)
-      return "";
+      return '';
     });
 
     // Fetch inventory adjustments for stock changes
@@ -85,7 +84,7 @@ export async function getInventoryTrends(
         },
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: 'asc',
       },
     });
 
@@ -101,7 +100,7 @@ export async function getInventoryTrends(
         items: true,
       },
       orderBy: {
-        orderDate: "asc",
+        orderDate: 'asc',
       },
     });
 
@@ -114,7 +113,7 @@ export async function getInventoryTrends(
         },
       },
       orderBy: {
-        transferDate: "asc",
+        transferDate: 'asc',
       },
     });
 
@@ -137,7 +136,7 @@ export async function getInventoryTrends(
     // Initialize data points with the dates
     const trendData: TrendData[] = dateInterval.map((date, index) => {
       return {
-        date: formattedDates[index] || format(date, "MM/dd"),
+        date: formattedDates[index] || format(date, 'MM/dd'),
         stock: 0, // Will be populated below
         value: 0, // Will be populated below
         received: 0,
@@ -153,21 +152,22 @@ export async function getInventoryTrends(
     // Process data in reverse (from latest date backward)
     for (let i = trendData.length - 1; i >= 0; i--) {
       const currentDate = dateInterval[i];
-      const nextDayDate =
-        i < trendData.length - 1 ? dateInterval[i + 1] : new Date();
+      const nextDayDate
+        = i < trendData.length - 1 ? dateInterval[i + 1] : new Date();
 
       // Calculate received items for this day
       const dayReceivedItems = purchaseOrders
         .filter((po) => {
           const orderDate = new Date(po.orderDate);
+
           return orderDate >= currentDate && orderDate < nextDayDate;
         })
         .reduce((sum, po) => {
           return (
-            sum +
-            po.items.reduce(
+            sum
+            + po.items.reduce(
               (itemSum, item) => itemSum + item.receivedQuantity,
-              0
+              0,
             )
           );
         }, 0);
@@ -176,6 +176,7 @@ export async function getInventoryTrends(
       const dayShippedItems = transfers
         .filter((transfer) => {
           const transferDate = new Date(transfer.transferDate);
+
           return transferDate >= currentDate && transferDate < nextDayDate;
         })
         .reduce((sum, transfer) => sum + transfer.quantity, 0);
@@ -184,17 +185,19 @@ export async function getInventoryTrends(
       const dayAdjustments = adjustments
         .filter((adj) => {
           const adjDate = new Date(adj.createdAt);
+
           return adjDate >= currentDate && adjDate < nextDayDate;
         })
         .reduce((sum, adj) => sum + adj.changeAmount, 0);
 
       // Update running totals (moving backward in time)
-      runningStock =
-        runningStock - dayAdjustments - dayReceivedItems + dayShippedItems;
+      runningStock
+        = runningStock - dayAdjustments - dayReceivedItems + dayShippedItems;
 
       // Estimate value change (this is simplified - real implementation would be more accurate)
-      const avgItemValue =
-        totalCurrentStock > 0 ? totalCurrentValue / totalCurrentStock : 0;
+      const avgItemValue
+        = totalCurrentStock > 0 ? totalCurrentValue / totalCurrentStock : 0;
+
       runningValue = runningStock * avgItemValue;
 
       // Store the calculated values
@@ -217,17 +220,18 @@ export async function getInventoryTrends(
       data: trendData,
     };
   } catch (error) {
-    console.error("Error fetching inventory trends:", error);
+    console.error('Error fetching inventory trends:', error);
+
     return {
       success: false,
-      error: "Failed to fetch inventory trend data",
+      error: 'Failed to fetch inventory trend data',
     };
   }
 }
 
 // Helper function to enhance sparse data with realistic patterns
-function enhanceWithRealisticPatterns(data: TrendData[]): void {
-  if (data.length === 0) return;
+function enhanceWithRealisticPatterns (data: TrendData[]): void {
+  if (data.length === 0) { return; }
 
   // Use the first data point as baseline if available
   const baseStock = data[0].stock || 1000;
@@ -242,20 +246,17 @@ function enhanceWithRealisticPatterns(data: TrendData[]): void {
       // Stock tends to decrease during week and get replenished on weekends
       const weekProgress = dayOfWeek < 5 ? dayOfWeek / 4 : 0;
       const stockFluctuation = Math.sin(i / 5) * 50;
+
       data[i].stock = Math.max(
         0,
-        Math.round(
-          baseStock * (0.9 + 0.2 * Math.random() - 0.1 * weekProgress) +
-            stockFluctuation
-        )
+        Math.round(baseStock * (0.9 + 0.2 * Math.random() - 0.1 * weekProgress)
+            + stockFluctuation),
       );
     }
 
     if (data[i].value === 0) {
       // Value should roughly correlate with stock
-      data[i].value = Math.round(
-        data[i].stock * (baseValue / baseStock) * (0.9 + 0.2 * Math.random())
-      );
+      data[i].value = Math.round(data[i].stock * (baseValue / baseStock) * (0.9 + 0.2 * Math.random()));
     }
 
     // Ensure we have some activity for received/shipped

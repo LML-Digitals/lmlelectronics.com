@@ -1,14 +1,14 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 import {
   Customer,
   CustomerGroup,
   CustomerGroupMembership,
   Prisma,
-} from "@prisma/client";
+} from '@prisma/client';
 
-export type FilterOperator = "greaterThan" | "lessThan" | "between" | "equalTo";
+export type FilterOperator = 'greaterThan' | 'lessThan' | 'between' | 'equalTo';
 
 export type FilterCriterion = {
   field: string;
@@ -19,7 +19,7 @@ export type FilterCriterion = {
 
 export type SmartGroupFilters = {
   criteria: FilterCriterion[];
-  conjunction: "AND" | "OR";
+  conjunction: 'AND' | 'OR';
 };
 
 export const createGroup = async (data: {
@@ -56,8 +56,8 @@ export const createGroup = async (data: {
 
     return group;
   } catch (error) {
-    console.error("Error creating group:", error);
-    throw new Error("Failed to create group");
+    console.error('Error creating group:', error);
+    throw new Error('Failed to create group');
   }
 };
 
@@ -69,7 +69,7 @@ export const updateGroup = async (
     color?: string;
     isSmartGroup?: boolean;
     filterCriteria?: SmartGroupFilters;
-  }
+  },
 ) => {
   try {
     const group = await prisma.customerGroup.update({
@@ -91,8 +91,8 @@ export const updateGroup = async (
 
     return group;
   } catch (error) {
-    console.error("Error updating group:", error);
-    throw new Error("Failed to update group");
+    console.error('Error updating group:', error);
+    throw new Error('Failed to update group');
   }
 };
 
@@ -102,8 +102,8 @@ export const deleteGroup = async (id: string) => {
       where: { id },
     });
   } catch (error) {
-    console.error("Error deleting group:", error);
-    throw new Error("Failed to delete group");
+    console.error('Error deleting group:', error);
+    throw new Error('Failed to delete group');
   }
 };
 
@@ -120,22 +120,23 @@ export const getGroups = async () => {
     });
 
     if (!groups) {
-      throw new Error("No groups found");
+      throw new Error('No groups found');
     }
 
     return groups;
   } catch (error) {
-    console.error("Error fetching groups:", error);
-    throw new Error("Failed to fetch groups");
+    console.error('Error fetching groups:', error);
+    throw new Error('Failed to fetch groups');
   }
 };
 
 export const addCustomersToGroup = async (
   groupIds: string[],
-  customerIds: string[]
+  customerIds: string[],
 ) => {
   try {
     const data = [];
+
     for (const groupId of groupIds) {
       // Check if the group is a smart group
       const group = await prisma.customerGroup.findUnique({
@@ -144,7 +145,7 @@ export const addCustomersToGroup = async (
       });
 
       if (group?.isSmartGroup) {
-        console.warn("Cannot manually add customers to a smart group");
+        console.warn('Cannot manually add customers to a smart group');
         continue;
       }
 
@@ -160,14 +161,14 @@ export const addCustomersToGroup = async (
       });
     }
   } catch (error) {
-    console.error("Error adding customers to group:", error);
-    throw new Error("Failed to add customers to group");
+    console.error('Error adding customers to group:', error);
+    throw new Error('Failed to add customers to group');
   }
 };
 
 export const removeCustomersFromGroup = async (
   groupId: string,
-  customerIds: string[]
+  customerIds: string[],
 ) => {
   try {
     // Check if the group is a smart group
@@ -177,7 +178,7 @@ export const removeCustomersFromGroup = async (
     });
 
     if (group?.isSmartGroup) {
-      throw new Error("Cannot manually remove customers from a smart group");
+      throw new Error('Cannot manually remove customers from a smart group');
     }
 
     await prisma.customerGroupMembership.deleteMany({
@@ -189,8 +190,8 @@ export const removeCustomersFromGroup = async (
       },
     });
   } catch (error) {
-    console.error("Error removing customers from group:", error);
-    throw new Error("Failed to remove customers from group");
+    console.error('Error removing customers from group:', error);
+    throw new Error('Failed to remove customers from group');
   }
 };
 
@@ -206,8 +207,8 @@ export const getGroupMembers = async (groupId: string) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching group members:", error);
-    throw new Error("Failed to fetch group members");
+    console.error('Error fetching group members:', error);
+    throw new Error('Failed to fetch group members');
   }
 };
 
@@ -230,14 +231,14 @@ export const getCustomerGroups = async (customerId: string) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching customer groups:", error);
-    throw new Error("Failed to fetch customer groups");
+    console.error('Error fetching customer groups:', error);
+    throw new Error('Failed to fetch customer groups');
   }
 };
 
 export const removeCustomerFromGroup = async (
   groupId: string,
-  customerId: string
+  customerId: string,
 ) => {
   try {
     // Check if the group is a smart group
@@ -247,7 +248,7 @@ export const removeCustomerFromGroup = async (
     });
 
     if (group?.isSmartGroup) {
-      throw new Error("Cannot manually remove customers from a smart group");
+      throw new Error('Cannot manually remove customers from a smart group');
     }
 
     await prisma.customerGroupMembership.delete({
@@ -259,8 +260,8 @@ export const removeCustomerFromGroup = async (
       },
     });
   } catch (error) {
-    console.error("Error removing customer from group:", error);
-    throw new Error("Failed to remove customer from group");
+    console.error('Error removing customer from group:', error);
+    throw new Error('Failed to remove customer from group');
   }
 };
 
@@ -271,34 +272,33 @@ const buildFilterQuery = (filters: SmartGroupFilters) => {
 
     // Map the field to the appropriate database field
     let dbField = field;
-    if (field === "totalSpent") dbField = "totalSpent";
-    else if (field === "transactionCount") dbField = "transactionCount";
-    else if (field === "lastVisit") dbField = "lastVisit";
-    else if (field === "firstVisit") dbField = "createdAt";
+
+    if (field === 'totalSpent') { dbField = 'totalSpent'; } else if (field === 'transactionCount') { dbField = 'transactionCount'; } else if (field === 'lastVisit') { dbField = 'lastVisit'; } else if (field === 'firstVisit') { dbField = 'createdAt'; }
 
     switch (operator) {
-      case "greaterThan":
-        return { [dbField]: { gt: value } };
-      case "lessThan":
-        return { [dbField]: { lt: value } };
-      case "equalTo":
-        return { [dbField]: value };
-      case "between":
-        return {
-          AND: [
-            { [dbField]: { gte: value } },
-            { [dbField]: { lte: valueEnd } },
-          ],
-        };
-      default:
-        return {};
+    case 'greaterThan':
+      return { [dbField]: { gt: value } };
+    case 'lessThan':
+      return { [dbField]: { lt: value } };
+    case 'equalTo':
+      return { [dbField]: value };
+    case 'between':
+      return {
+        AND: [
+          { [dbField]: { gte: value } },
+          { [dbField]: { lte: valueEnd } },
+        ],
+      };
+    default:
+      return {};
     }
   });
 
   // Combine conditions with AND or OR
-  if (filters.conjunction === "OR") {
+  if (filters.conjunction === 'OR') {
     return { OR: conditions };
   }
+
   return { AND: conditions };
 };
 
@@ -311,7 +311,7 @@ export const updateSmartGroupMembers = async (groupId: string) => {
     });
 
     if (!group || !group.isSmartGroup || !group.filterCriteria) {
-      throw new Error("Not a valid smart group or missing filter criteria");
+      throw new Error('Not a valid smart group or missing filter criteria');
     }
 
     // Parse the filter criteria
@@ -348,8 +348,8 @@ export const updateSmartGroupMembers = async (groupId: string) => {
 
     return customerIds.length;
   } catch (error) {
-    console.error("Error updating smart group members:", error);
-    throw new Error("Failed to update smart group members");
+    console.error('Error updating smart group members:', error);
+    throw new Error('Failed to update smart group members');
   }
 };
 
@@ -367,8 +367,8 @@ export const updateAllSmartGroups = async () => {
 
     return smartGroups.length;
   } catch (error) {
-    console.error("Error updating all smart groups:", error);
-    throw new Error("Failed to update all smart groups");
+    console.error('Error updating all smart groups:', error);
+    throw new Error('Failed to update all smart groups');
   }
 };
 
@@ -390,12 +390,12 @@ export const getGroupsWithMembers = async () => {
     });
 
     if (!groupsWithMembers) {
-      throw new Error("No groups found");
+      throw new Error('No groups found');
     }
 
     return groupsWithMembers;
   } catch (error) {
-    console.error("Error fetching groups with members:", error);
-    throw new Error("Failed to fetch groups with members");
+    console.error('Error fetching groups with members:', error);
+    throw new Error('Failed to fetch groups with members');
   }
 };

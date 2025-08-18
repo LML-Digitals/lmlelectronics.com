@@ -1,48 +1,48 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { TaxCategory, TaxRecord, TaxRate } from "@prisma/client";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from 'react';
+import { TaxCategory, TaxRecord, TaxRate } from '@prisma/client';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/ui/form";
-import { Calendar } from "@/components/ui/calendar";
+} from '@/components/ui/form';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon, Download, Plus } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { Checkbox } from "@/components/ui/checkbox";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon, Download, Plus } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { Checkbox } from '@/components/ui/checkbox';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
   getTaxRecords,
   markTaxAsPaid,
   TaxReportFilters,
-} from "../services/taxService";
+} from '../services/taxService';
 import {
   Table,
   TableBody,
@@ -51,7 +51,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
 // Type for tax records with relations
 type TaxRecordWithRelations = TaxRecord & {
@@ -73,14 +73,14 @@ const filtersSchema = z.object({
   to: z.date().optional(),
   category: z
     .nativeEnum(TaxCategory)
-    .or(z.enum(["all"]))
+    .or(z.enum(['all']))
     .optional(),
   isPaid: z.boolean().optional(),
 });
 
 type FiltersFormValues = z.infer<typeof filtersSchema>;
 
-export default function TaxReports() {
+export default function TaxReports () {
   const { toast } = useToast();
   const [taxRecords, setTaxRecords] = useState<TaxRecordWithRelations[]>([]);
   const [selectedRecords, setSelectedRecords] = useState<string[]>([]);
@@ -91,49 +91,47 @@ export default function TaxReports() {
     resolver: zodResolver(filtersSchema),
     defaultValues: {
       isPaid: false,
-      category: "all",
+      category: 'all',
     },
   });
 
-  const loadTaxRecords = async (
-    filters: TaxReportFilters | FiltersFormValues = {}
-  ) => {
+  const loadTaxRecords = async (filters: TaxReportFilters | FiltersFormValues = {}) => {
     setIsLoading(true);
     try {
       // Create a properly typed object
       const apiFilters: TaxReportFilters = {};
 
       // Only copy properties that match TaxReportFilters type
-      if ("from" in filters && filters.from) apiFilters.from = filters.from;
-      if ("to" in filters && filters.to) apiFilters.to = filters.to;
-      if ("isPaid" in filters && filters.isPaid !== undefined)
-        apiFilters.isPaid = filters.isPaid;
+      if ('from' in filters && filters.from) { apiFilters.from = filters.from; }
+      if ('to' in filters && filters.to) { apiFilters.to = filters.to; }
+      if ('isPaid' in filters && filters.isPaid !== undefined) { apiFilters.isPaid = filters.isPaid; }
 
       // Only add category if it's not 'all' and is a valid TaxCategory
       if (
-        "category" in filters &&
-        filters.category !== undefined &&
-        filters.category !== "all"
+        'category' in filters
+        && filters.category !== undefined
+        && filters.category !== 'all'
       ) {
-        apiFilters.category = filters.category as TaxCategory;
+        apiFilters.category = filters.category;
       }
 
       const result = await getTaxRecords(apiFilters);
+
       if (result.success && result.taxRecords) {
         setTaxRecords(result.taxRecords as TaxRecordWithRelations[]);
       } else {
         toast({
-          title: "Error",
-          description: "Failed to load tax records",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load tax records',
+          variant: 'destructive',
         });
       }
     } catch (error) {
-      console.error("Error loading tax records:", error);
+      console.error('Error loading tax records:', error);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred while loading tax records",
-        variant: "destructive",
+        title: 'Error',
+        description: 'An unexpected error occurred while loading tax records',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -158,18 +156,17 @@ export default function TaxReports() {
   };
 
   const toggleRecordSelection = (id: string) => {
-    setSelectedRecords((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    setSelectedRecords((prev) => prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]);
   };
 
   const handleMarkAsPaid = async () => {
     if (selectedRecords.length === 0) {
       toast({
-        title: "No records selected",
-        description: "Please select at least one tax record to mark as paid",
-        variant: "destructive",
+        title: 'No records selected',
+        description: 'Please select at least one tax record to mark as paid',
+        variant: 'destructive',
       });
+
       return;
     }
 
@@ -179,7 +176,7 @@ export default function TaxReports() {
 
       if (result.success) {
         toast({
-          title: "Tax records updated",
+          title: 'Tax records updated',
           description: `Successfully marked ${result.count} tax records as paid.`,
         });
 
@@ -190,16 +187,16 @@ export default function TaxReports() {
         setSelectedRecords([]);
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to update tax records",
-          variant: "destructive",
+          title: 'Error',
+          description: result.error || 'Failed to update tax records',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred while updating tax records",
-        variant: "destructive",
+        title: 'Error',
+        description: 'An unexpected error occurred while updating tax records',
+        variant: 'destructive',
       });
     } finally {
       setIsProcessing(false);
@@ -209,51 +206,53 @@ export default function TaxReports() {
   const exportToCSV = () => {
     if (taxRecords.length === 0) {
       toast({
-        title: "No data to export",
-        description: "There are no tax records to export",
+        title: 'No data to export',
+        description: 'There are no tax records to export',
       });
+
       return;
     }
 
     // Create CSV content
     const headers = [
-      "ID",
-      "Transaction ID",
-      "Category",
-      "Tax Rate",
-      "Taxable Amount",
-      "Tax Amount",
-      "Period Start",
-      "Period End",
-      "Status",
-      "Date Created",
+      'ID',
+      'Transaction ID',
+      'Category',
+      'Tax Rate',
+      'Taxable Amount',
+      'Tax Amount',
+      'Period Start',
+      'Period End',
+      'Status',
+      'Date Created',
     ];
     const rows = taxRecords.map((record) => [
       record.id,
-      record.order?.id || record.registerSession?.id || "N/A",
+      record.order?.id || record.registerSession?.id || 'N/A',
       record.taxRate.category,
       `${record.taxRate.name} (${record.taxRate.rate}%)`,
       record.taxableAmount.toFixed(2),
       record.taxAmount.toFixed(2),
-      format(new Date(record.periodStart), "yyyy-MM-dd"),
-      format(new Date(record.periodEnd), "yyyy-MM-dd"),
-      record.isPaid ? "Paid" : "Unpaid",
-      format(new Date(record.createdAt), "yyyy-MM-dd"),
+      format(new Date(record.periodStart), 'yyyy-MM-dd'),
+      format(new Date(record.periodEnd), 'yyyy-MM-dd'),
+      record.isPaid ? 'Paid' : 'Unpaid',
+      format(new Date(record.createdAt), 'yyyy-MM-dd'),
     ]);
 
     const csvContent = [
-      headers.join(","),
-      ...rows.map((row) => row.join(",")),
-    ].join("\n");
+      headers.join(','),
+      ...rows.map((row) => row.join(',')),
+    ].join('\n');
 
     // Create and download the file
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
+
     link.href = url;
     link.setAttribute(
-      "download",
-      `tax_report_${format(new Date(), "yyyy-MM-dd")}.csv`
+      'download',
+      `tax_report_${format(new Date(), 'yyyy-MM-dd')}.csv`,
     );
     document.body.appendChild(link);
     link.click();
@@ -262,7 +261,7 @@ export default function TaxReports() {
 
   const formatCategory = (category: TaxCategory) => {
     return category
-      .replace("_", " ")
+      .replace('_', ' ')
       .toLowerCase()
       .replace(/\b\w/g, (l) => l.toUpperCase());
   };
@@ -321,14 +320,14 @@ export default function TaxReports() {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
+                          variant={'outline'}
                           className={cn(
-                            "w-full pl-3 text-left font-normal text-xs sm:text-sm",
-                            !field.value && "text-muted-foreground"
+                            'w-full pl-3 text-left font-normal text-xs sm:text-sm',
+                            !field.value && 'text-muted-foreground',
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, 'PPP')
                           ) : (
                             <span>Any date</span>
                           )}
@@ -358,14 +357,14 @@ export default function TaxReports() {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
+                          variant={'outline'}
                           className={cn(
-                            "w-full pl-3 text-left font-normal text-xs sm:text-sm",
-                            !field.value && "text-muted-foreground"
+                            'w-full pl-3 text-left font-normal text-xs sm:text-sm',
+                            !field.value && 'text-muted-foreground',
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, 'PPP')
                           ) : (
                             <span>Any date</span>
                           )}
@@ -420,7 +419,7 @@ export default function TaxReports() {
                 <FormItem className="flex flex-col">
                   <FormLabel className="text-sm sm:text-base">Payment Status</FormLabel>
                   <Select
-                    onValueChange={(value) => field.onChange(value === "true")}
+                    onValueChange={(value) => field.onChange(value === 'true')}
                     value={String(field.value)}
                   >
                     <FormControl>
@@ -463,8 +462,8 @@ export default function TaxReports() {
                 <TableHead className="w-12">
                   <Checkbox
                     checked={
-                      selectedRecords.length === taxRecords.length &&
-                      taxRecords.length > 0
+                      selectedRecords.length === taxRecords.length
+                      && taxRecords.length > 0
                     }
                     onCheckedChange={handleSelectAll}
                     aria-label="Select all"
@@ -508,15 +507,13 @@ export default function TaxReports() {
                       />
                     </TableCell>
                     <TableCell className="font-medium text-sm sm:text-base">
-                      {record.order?.id || record.registerSession?.id || "N/A"}
+                      {record.order?.id || record.registerSession?.id || 'N/A'}
                       <div className="text-xs text-muted-foreground">
                         {format(
-                          new Date(
-                            record.order?.createdAt ||
-                              record.registerSession?.createdAt ||
-                              record.createdAt
-                          ),
-                          "MMM d, yyyy"
+                          new Date(record.order?.createdAt
+                              || record.registerSession?.createdAt
+                              || record.createdAt),
+                          'MMM d, yyyy',
                         )}
                       </div>
                     </TableCell>
@@ -531,18 +528,18 @@ export default function TaxReports() {
                       ${record.taxAmount.toFixed(2)}
                     </TableCell>
                     <TableCell className="hidden md:table-cell text-sm">
-                      {format(new Date(record.periodStart), "MMM d")} -{" "}
-                      {format(new Date(record.periodEnd), "MMM d, yyyy")}
+                      {format(new Date(record.periodStart), 'MMM d')} -{' '}
+                      {format(new Date(record.periodEnd), 'MMM d, yyyy')}
                     </TableCell>
                     <TableCell>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           record.isPaid
-                            ? "bg-green-100 text-green-800"
-                            : "bg-amber-100 text-amber-800"
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-amber-100 text-amber-800'
                         }`}
                       >
-                        {record.isPaid ? "Paid" : "Unpaid"}
+                        {record.isPaid ? 'Paid' : 'Unpaid'}
                       </span>
                     </TableCell>
                   </TableRow>

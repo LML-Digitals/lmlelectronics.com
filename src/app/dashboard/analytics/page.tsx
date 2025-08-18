@@ -1,6 +1,6 @@
-import Analytics from "@/components/dashboard/analytics";
+import Analytics from '@/components/dashboard/analytics';
 
-export default function AnalyticsPage() {
+export default function AnalyticsPage () {
   return (
     <Analytics />
   );

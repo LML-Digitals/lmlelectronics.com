@@ -1,7 +1,7 @@
-import { BlogWithFullTagsType } from "../types/blogTypes";
-import CommonIssueCard from "./CommonIssueCard";
+import { BlogWithFullTagsType } from '../types/blogTypes';
+import CommonIssueCard from './CommonIssueCard';
 
-export function CommonIssuesSection({
+export function CommonIssuesSection ({
   blogs,
 }: {
   blogs: BlogWithFullTagsType[];
@@ -16,7 +16,7 @@ export function CommonIssuesSection({
           <div
             key={blog.id}
             className="flex-shrink-0 pr-4"
-            style={{ minWidth: "280px" }}
+            style={{ minWidth: '280px' }}
           >
             <CommonIssueCard blog={blog} />
           </div>

@@ -1,17 +1,17 @@
-import Image from "next/image";
-import Link from "next/link";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Image from 'next/image';
+import Link from 'next/link';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
-import ProductCarousel from "@/components/products/ProductCarousel";
-import type { Metadata } from "next";
-import type { InventoryItem } from "@/types/api";
-import ProductVariationSelector from "@/components/products/ProductVariationSelector";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import { formatSlug } from "@/components/products/utils/formatSlug";
-import { getInventoryItem, getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
+import ProductCarousel from '@/components/products/ProductCarousel';
+import type { Metadata } from 'next';
+import type { InventoryItem } from '@/types/api';
+import ProductVariationSelector from '@/components/products/ProductVariationSelector';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import { formatSlug } from '@/components/products/utils/formatSlug';
+import { getInventoryItem, getInventoryItems } from '@/components/dashboard/inventory/items/services/itemsCrud';
 
-export async function generateMetadata({
+export async function generateMetadata ({
   params,
 }: {
   params: Promise<{ productId: string }>;
@@ -19,9 +19,7 @@ export async function generateMetadata({
   const { productId } = await params;
   const item = await getInventoryItem(productId);
 
-  const variations = item.variations.filter(
-    (v) => v.visible && v.stockLevels.some((sl) => sl.stock > 0)
-  );
+  const variations = item.variations.filter((v) => v.visible && v.stockLevels.some((sl) => sl.stock > 0));
 
   const product: InventoryItem = {
     ...item,
@@ -29,9 +27,9 @@ export async function generateMetadata({
     updatedAt: item.updatedAt.toISOString(),
     warrantyType: item.warrantyType
       ? {
-          ...item.warrantyType,
-          createdAt: item.warrantyType.createdAt.toISOString(),
-        }
+        ...item.warrantyType,
+        createdAt: item.warrantyType.createdAt.toISOString(),
+      }
       : null,
     tags: item.tags.map((t) => ({
       ...t,
@@ -47,10 +45,10 @@ export async function generateMetadata({
     })),
     supplier: item.supplier
       ? {
-          ...item.supplier,
-          createdAt: item.supplier.createdAt.toISOString(),
-          updatedAt: item.supplier.updatedAt.toISOString(),
-        }
+        ...item.supplier,
+        createdAt: item.supplier.createdAt.toISOString(),
+        updatedAt: item.supplier.updatedAt.toISOString(),
+      }
       : null,
     variations: variations.map((v) => ({
       ...v,
@@ -73,7 +71,7 @@ export async function generateMetadata({
   };
   const defaultVariation = product.variations[0];
   const price = defaultVariation?.sellingPrice || 0;
-  const sku = defaultVariation?.sku || "";
+  const sku = defaultVariation?.sku || '';
 
   return {
     title: `${product.name} - High-Quality Device Parts & Accessories`,
@@ -84,11 +82,11 @@ export async function generateMetadata({
       product.name
     }, device parts, replacement parts, ${product.categories
       ?.map((c) => c.name)
-      .join(", ")}, repair parts, genuine parts`,
+      .join(', ')}, repair parts, genuine parts`,
   };
 }
 
-export default async function ProductPage({
+export default async function ProductPage ({
   params,
 }: {
   params: Promise<{ productId: string }>;
@@ -96,9 +94,7 @@ export default async function ProductPage({
   const { productId } = await params;
   const item = await getInventoryItem(productId);
 
-  const variations = item.variations.filter(
-    (v) => v.visible && v.stockLevels.some((sl) => sl.stock > 0)
-  );
+  const variations = item.variations.filter((v) => v.visible && v.stockLevels.some((sl) => sl.stock > 0));
 
   const product: InventoryItem = {
     ...item,
@@ -106,9 +102,9 @@ export default async function ProductPage({
     updatedAt: item.updatedAt.toISOString(),
     warrantyType: item.warrantyType
       ? {
-          ...item.warrantyType,
-          createdAt: item.warrantyType.createdAt.toISOString(),
-        }
+        ...item.warrantyType,
+        createdAt: item.warrantyType.createdAt.toISOString(),
+      }
       : null,
     tags: item.tags.map((t) => ({
       ...t,
@@ -124,10 +120,10 @@ export default async function ProductPage({
     })),
     supplier: item.supplier
       ? {
-          ...item.supplier,
-          createdAt: item.supplier.createdAt.toISOString(),
-          updatedAt: item.supplier.updatedAt.toISOString(),
-        }
+        ...item.supplier,
+        createdAt: item.supplier.createdAt.toISOString(),
+        updatedAt: item.supplier.updatedAt.toISOString(),
+      }
       : null,
     variations: variations.map((v) => ({
       ...v,
@@ -148,6 +144,7 @@ export default async function ProductPage({
       })),
     })),
   };
+
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto">
@@ -170,54 +167,52 @@ export default async function ProductPage({
 
   // Get related products based on categories
   const relatedProducts = await getInventoryItems();
-    // const relatedResponse = await fetch(
-    //   buildApiUrl(
-    //     `/api/inventory/items?category=${product.categories[0]?.id}&limit=5&exclude=${product.id}`
-    //   )
-    // );
-    // const relatedProducts: InventoryItem[] = relatedResponse.ok
-    //   ? await handleApiResponse(relatedResponse)
-    //   : [];
+  // const relatedResponse = await fetch(
+  //   buildApiUrl(
+  //     `/api/inventory/items?category=${product.categories[0]?.id}&limit=5&exclude=${product.id}`
+  //   )
+  // );
+  // const relatedProducts: InventoryItem[] = relatedResponse.ok
+  //   ? await handleApiResponse(relatedResponse)
+  //   : [];
 
   return (
-    <>
-      <div className="max-w-7xl mx-auto">
-        <div className="container mx-auto px-4 py-8">
-          {/* Product with Variation Selector (Client Component) */}
-          <ProductVariationSelector
-            product={{
-              id: product.id,
-              name: product.name,
-              description: product.description || undefined,
-              image: product.image,
-              variations: product.variations
-                .filter((v) => v.visible)
-                .map((variation) => ({
-                  ...variation,
-                  shipping: variation.shipping || undefined,
-                  tax: variation.tax || undefined,
-                })),
-            }}
-          />
+    <div className="max-w-7xl mx-auto">
+      <div className="container mx-auto px-4 py-8">
+        {/* Product with Variation Selector (Client Component) */}
+        <ProductVariationSelector
+          product={{
+            id: product.id,
+            name: product.name,
+            description: product.description || undefined,
+            image: product.image,
+            variations: product.variations
+              .filter((v) => v.visible)
+              .map((variation) => ({
+                ...variation,
+                shipping: variation.shipping || undefined,
+                tax: variation.tax || undefined,
+              })),
+          }}
+        />
 
-          {/* You May Also Like Section */}
-          {relatedProducts.length > 0 && (
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>
-              <ProductCarousel
-                products={relatedProducts.map((product) => ({
-                  id: product.id,
-                  name: product.name,
-                  description: product.description || undefined,
-                  image: product.image,
-                  variations: product.variations.filter((v) => v.visible),
-                }))}
-                title=""
-              />
-            </section>
-          )}
-        </div>
+        {/* You May Also Like Section */}
+        {relatedProducts.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>
+            <ProductCarousel
+              products={relatedProducts.map((product) => ({
+                id: product.id,
+                name: product.name,
+                description: product.description || undefined,
+                image: product.image,
+                variations: product.variations.filter((v) => v.visible),
+              }))}
+              title=""
+            />
+          </section>
+        )}
       </div>
-    </>
+    </div>
   );
 }

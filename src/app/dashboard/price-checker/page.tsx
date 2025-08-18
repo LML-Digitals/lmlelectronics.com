@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   DollarSign,
   Search,
@@ -12,42 +12,43 @@ import {
   Clock,
   Copy,
   CheckCircle,
-} from "lucide-react";
-import { PriceItem } from "@/components/price/types/priceTypes";
-import { useToast } from "@/components/ui/use-toast";
-import { PriceSearchGlobal } from "@/components/price/price-components/PriceSearchGlobal";
+} from 'lucide-react';
+import { PriceItem } from '@/components/price/types/priceTypes';
+import { useToast } from '@/components/ui/use-toast';
+import { PriceSearchGlobal } from '@/components/price/price-components/PriceSearchGlobal';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { getDeviceHierarchy } from "@/components/booking/services/bookingCrud";
+} from '@/components/ui/tooltip';
+import { getDeviceHierarchy } from '@/components/booking/services/bookingCrud';
 
-export default function PriceCheckerPage() {
+export default function PriceCheckerPage () {
   const { toast } = useToast();
   const [allDeviceData, setAllDeviceData] = useState<any[]>([]);
   const [isLoadingAllData, setIsLoadingAllData] = useState(true);
 
   // State for selections
-  const [selectedDeviceType, setSelectedDeviceType] = useState<string>("");
+  const [selectedDeviceType, setSelectedDeviceType] = useState<string>('');
   const [selectedBrand, setSelectedBrand] = useState<number | null>(null);
   const [selectedSeries, setSelectedSeries] = useState<number | null>(null);
   const [selectedModel, setSelectedModel] = useState<number | null>(null);
 
   // Fetch all device hierarchy data on mount
   useEffect(() => {
-    async function fetchAllData() {
+    async function fetchAllData () {
       setIsLoadingAllData(true);
       try {
         const hierarchy = await getDeviceHierarchy();
+
         setAllDeviceData(hierarchy);
       } catch (error) {
-        console.error("Error fetching device hierarchy:", error);
+        console.error('Error fetching device hierarchy:', error);
         toast({
-          title: "Error",
-          description: "Failed to load device options. Please try refreshing.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load device options. Please try refreshing.',
+          variant: 'destructive',
         });
       } finally {
         setIsLoadingAllData(false);
@@ -60,34 +61,30 @@ export default function PriceCheckerPage() {
   const derivedDeviceTypes = useMemo(() => allDeviceData, [allDeviceData]);
 
   const derivedBrands = useMemo(() => {
-    if (!selectedDeviceType || !allDeviceData) return [];
-    const selectedType = allDeviceData.find(
-      (dt: any) => dt.id === selectedDeviceType
-    );
+    if (!selectedDeviceType || !allDeviceData) { return []; }
+    const selectedType = allDeviceData.find((dt: any) => dt.id === selectedDeviceType);
+
     return selectedType?.brands || [];
   }, [selectedDeviceType, allDeviceData]);
 
   const derivedSeries = useMemo(() => {
-    if (!selectedBrand || derivedBrands.length === 0) return [];
-    const selectedBrandObj = derivedBrands.find(
-      (b: any) => b.id === selectedBrand
-    );
+    if (!selectedBrand || derivedBrands.length === 0) { return []; }
+    const selectedBrandObj = derivedBrands.find((b: any) => b.id === selectedBrand);
+
     return selectedBrandObj?.series || [];
   }, [selectedBrand, derivedBrands]);
 
   const derivedModels = useMemo(() => {
-    if (!selectedSeries || derivedSeries.length === 0) return [];
-    const selectedSeriesObj = derivedSeries.find(
-      (s: any) => s.id === selectedSeries
-    );
+    if (!selectedSeries || derivedSeries.length === 0) { return []; }
+    const selectedSeriesObj = derivedSeries.find((s: any) => s.id === selectedSeries);
+
     return selectedSeriesObj?.models || [];
   }, [selectedSeries, derivedSeries]);
 
   const derivedRepairOptions = useMemo(() => {
-    if (!selectedModel || derivedModels.length === 0) return [];
-    const selectedModelObj = derivedModels.find(
-      (m: any) => m.id === selectedModel
-    );
+    if (!selectedModel || derivedModels.length === 0) { return []; }
+    const selectedModelObj = derivedModels.find((m: any) => m.id === selectedModel);
+
     return selectedModelObj?.repairOptions || [];
   }, [selectedModel, derivedModels]);
 
@@ -101,6 +98,7 @@ export default function PriceCheckerPage() {
 
   const handleBrandSelect = (brandIdString: string) => {
     const brandId = parseInt(brandIdString, 10);
+
     setSelectedBrand(brandId);
     setSelectedSeries(null);
     setSelectedModel(null);
@@ -108,12 +106,14 @@ export default function PriceCheckerPage() {
 
   const handleSeriesSelect = (seriesIdString: string) => {
     const seriesId = parseInt(seriesIdString, 10);
+
     setSelectedSeries(seriesId);
     setSelectedModel(null);
   };
 
   const handleModelSelect = (modelIdString: string) => {
     const modelId = parseInt(modelIdString, 10);
+
     setSelectedModel(modelId);
   };
 
@@ -146,7 +146,7 @@ export default function PriceCheckerPage() {
           <label className="block text-sm font-medium mb-1">Brand</label>
           <select
             className="w-full border rounded p-2"
-            value={selectedBrand?.toString() || ""}
+            value={selectedBrand?.toString() || ''}
             onChange={(e) => handleBrandSelect(e.target.value)}
             disabled={!derivedBrands.length}
           >
@@ -162,7 +162,7 @@ export default function PriceCheckerPage() {
           <label className="block text-sm font-medium mb-1">Series</label>
           <select
             className="w-full border rounded p-2"
-            value={selectedSeries?.toString() || ""}
+            value={selectedSeries?.toString() || ''}
             onChange={(e) => handleSeriesSelect(e.target.value)}
             disabled={!derivedSeries.length}
           >
@@ -178,7 +178,7 @@ export default function PriceCheckerPage() {
           <label className="block text-sm font-medium mb-1">Model</label>
           <select
             className="w-full border rounded p-2"
-            value={selectedModel?.toString() || ""}
+            value={selectedModel?.toString() || ''}
             onChange={(e) => handleModelSelect(e.target.value)}
             disabled={!derivedModels.length}
           >
@@ -213,7 +213,7 @@ export default function PriceCheckerPage() {
                   {derivedRepairOptions.map((opt: any, idx: number) => (
                     <tr
                       key={opt.id}
-                      className={`transition-colors ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"} hover:bg-yellow-50 dark:hover:bg-yellow-900`}
+                      className={`transition-colors ${idx % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'} hover:bg-yellow-50 dark:hover:bg-yellow-900`}
                     >
                       <td className="py-3 px-4 text-black dark:text-gray-100">
                         {opt.name}
@@ -224,7 +224,7 @@ export default function PriceCheckerPage() {
                           ? opt.price.toFixed(2)
                           : opt.variation?.price
                             ? opt.variation.price.toFixed(2)
-                            : "N/A"}
+                            : 'N/A'}
                       </td>
                     </tr>
                   ))}

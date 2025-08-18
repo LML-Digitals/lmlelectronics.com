@@ -1,4 +1,4 @@
-import Calculator from "../../../components/dashboard/calculator/Calculator";
+import Calculator from '../../../components/dashboard/calculator/Calculator';
 
 const CalculatorPage = () => {
   return (

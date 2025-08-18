@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
-import { StoreLocation } from "@prisma/client";
+import { useState, useRef, useEffect } from 'react';
+import { StoreLocation } from '@prisma/client';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/components/ui/use-toast";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Edit2,
   Trash,
@@ -23,51 +23,51 @@ import {
   Loader2,
   Trash2,
   CreditCard,
-} from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
+} from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import LocationMap from "./LocationMap";
-import ListingsManager from "./ListingsManager";
-import SocialMediaManager from "./SocialMediaManager";
+} from '@/components/ui/select';
+import LocationMap from './LocationMap';
+import ListingsManager from './ListingsManager';
+import SocialMediaManager from './SocialMediaManager';
 import {
   DayHours,
   WeeklyHours,
   ImageUpload,
   Listing,
   SocialMediaLink,
-} from "./types/types";
-import { updateStoreLocation } from "./services/storeLocationCrud";
+} from './types/types';
+import { updateStoreLocation } from './services/storeLocationCrud';
 
 const locationSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  streetAddress: z.string().min(1, "Street address is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State is required"),
-  zip: z.string().min(1, "ZIP code is required"),
-  countryCode: z.string().min(1, "Country code is required"),
-  phone: z.string().min(1, "Phone is required"),
-  email: z.string().email("Invalid email address"),
+  name: z.string().min(1, 'Name is required'),
+  streetAddress: z.string().min(1, 'Street address is required'),
+  city: z.string().min(1, 'City is required'),
+  state: z.string().min(1, 'State is required'),
+  zip: z.string().min(1, 'ZIP code is required'),
+  countryCode: z.string().min(1, 'Country code is required'),
+  phone: z.string().min(1, 'Phone is required'),
+  email: z.string().email('Invalid email address'),
   squareLocationEnvKey: z.string().optional(),
   isActive: z.boolean(),
 });
@@ -77,7 +77,7 @@ interface EditLocationDialogProps {
   onSuccess?: () => void;
 }
 
-export function EditLocationDialog({
+export function EditLocationDialog ({
   location,
   onSuccess,
 }: EditLocationDialogProps) {
@@ -86,24 +86,24 @@ export function EditLocationDialog({
   const [isMapLoading, setIsMapLoading] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const { toast } = useToast();
-  const [addressError, setAddressError] = useState("");
+  const [addressError, setAddressError] = useState('');
   const mapRef = useRef<HTMLIFrameElement>(null);
   const [images, setImages] = useState<ImageUpload[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [fullAddress, setFullAddress] = useState(location.address || "");
+  const [fullAddress, setFullAddress] = useState(location.address || '');
 
   // Square location environment key options
   const squareLocationOptions = [
-    { value: "none", label: "Not configured" },
-    { value: "SQUARE_LOCATION_ID", label: "Default Location" },
+    { value: 'none', label: 'Not configured' },
+    { value: 'SQUARE_LOCATION_ID', label: 'Default Location' },
     {
-      value: "SQUARE_WEST_SEATTLE_LOCATION_ID",
-      label: "West Seattle",
+      value: 'SQUARE_WEST_SEATTLE_LOCATION_ID',
+      label: 'West Seattle',
     },
-    { value: "SQUARE_SEATTLE_LOCATION_ID", label: "Seattle" },
+    { value: 'SQUARE_SEATTLE_LOCATION_ID', label: 'Seattle' },
     {
-      value: "SQUARE_NORTH_SEATTLE_LOCATION_ID",
-      label: "North Seattle",
+      value: 'SQUARE_NORTH_SEATTLE_LOCATION_ID',
+      label: 'North Seattle',
     },
   ];
 
@@ -111,72 +111,69 @@ export function EditLocationDialog({
     resolver: zodResolver(locationSchema),
     defaultValues: {
       name: location.name,
-      streetAddress: location.streetAddress || "",
-      city: location.city || "",
-      state: location.state || "",
-      zip: location.zip || "",
-      countryCode: location.countryCode || "US",
-      phone: location.phone!,
-      email: location.email!,
-      squareLocationEnvKey: location.squareLocationEnvKey || "none",
+      streetAddress: location.streetAddress || '',
+      city: location.city || '',
+      state: location.state || '',
+      zip: location.zip || '',
+      countryCode: location.countryCode || 'US',
+      phone: location.phone,
+      email: location.email,
+      squareLocationEnvKey: location.squareLocationEnvKey || 'none',
       isActive: location.isActive,
     },
   });
 
   // Initialize form data from existing location
   const [formData, setFormData] = useState<Partial<StoreLocation>>(location);
-  const [weeklyHours, setWeeklyHours] = useState<WeeklyHours>(
-    typeof location.hours === "string"
-      ? JSON.parse(location.hours)
-      : location.hours
-  );
+  const [weeklyHours, setWeeklyHours] = useState<WeeklyHours>(typeof location.hours === 'string'
+    ? JSON.parse(location.hours)
+    : location.hours);
   const [socialLinks, setSocialLinks] = useState<SocialMediaLink[]>(() => {
     try {
-      const data =
-        typeof location.socialMedia === "string"
+      const data
+        = typeof location.socialMedia === 'string'
           ? JSON.parse(location.socialMedia)
           : location.socialMedia;
+
       return Array.isArray(data) ? data : [];
     } catch (e) {
-      console.error("Error parsing social media:", e);
+      console.error('Error parsing social media:', e);
+
       return [];
     }
   });
   const [listings, setListings] = useState<Listing[]>(() => {
     try {
-      const listingsData =
-        typeof location.listings === "string"
+      const listingsData
+        = typeof location.listings === 'string'
           ? JSON.parse(location.listings)
           : location.listings;
+
       return Array.isArray(listingsData)
         ? listingsData.map((item) => ({
-            name: item.name || "",
-            link: item.link || "",
-            icon: item.icon || "/logo.png",
-          }))
+          name: item.name || '',
+          link: item.link || '',
+          icon: item.icon || '/logo.png',
+        }))
         : [];
     } catch (e) {
-      console.error("Error parsing listings:", e);
+      console.error('Error parsing listings:', e);
+
       return [];
     }
   });
-  const [entranceSteps, setEntranceSteps] = useState(
-    location.entranceSteps || ""
-  );
+  const [entranceSteps, setEntranceSteps] = useState(location.entranceSteps || '');
 
   // Generate full address from address components
-  const generateFullAddress = (
-    data: Partial<z.infer<typeof locationSchema>>
-  ) => {
+  const generateFullAddress = (data: Partial<z.infer<typeof locationSchema>>) => {
     const { streetAddress, city, state, zip, countryCode } = data;
-    let fullAddress = "";
+    let fullAddress = '';
 
-    if (streetAddress) fullAddress += streetAddress;
-    if (city) fullAddress += fullAddress ? `, ${city}` : city;
-    if (state) fullAddress += fullAddress ? `, ${state}` : state;
-    if (zip) fullAddress += fullAddress ? ` ${zip}` : zip;
-    if (countryCode)
-      fullAddress += fullAddress ? `, ${countryCode}` : countryCode;
+    if (streetAddress) { fullAddress += streetAddress; }
+    if (city) { fullAddress += fullAddress ? `, ${city}` : city; }
+    if (state) { fullAddress += fullAddress ? `, ${state}` : state; }
+    if (zip) { fullAddress += fullAddress ? ` ${zip}` : zip; }
+    if (countryCode) { fullAddress += fullAddress ? `, ${countryCode}` : countryCode; }
 
     return fullAddress;
   };
@@ -186,6 +183,7 @@ export function EditLocationDialog({
     const subscription = form.watch((value) => {
       setFullAddress(generateFullAddress(value));
     });
+
     return () => subscription.unsubscribe();
   }, [form.watch]);
 
@@ -194,18 +192,18 @@ export function EditLocationDialog({
     if (isOpen) {
       form.reset({
         name: location.name,
-        streetAddress: location.streetAddress || "",
-        city: location.city || "",
-        state: location.state || "",
-        zip: location.zip || "",
-        countryCode: location.countryCode || "US",
-        phone: location.phone!,
-        email: location.email!,
-        squareLocationEnvKey: location.squareLocationEnvKey || "none",
+        streetAddress: location.streetAddress || '',
+        city: location.city || '',
+        state: location.state || '',
+        zip: location.zip || '',
+        countryCode: location.countryCode || 'US',
+        phone: location.phone,
+        email: location.email,
+        squareLocationEnvKey: location.squareLocationEnvKey || 'none',
         isActive: location.isActive,
       });
-      setAddressError("");
-      setFullAddress(location.address || "");
+      setAddressError('');
+      setFullAddress(location.address || '');
     }
   }, [isOpen, location, form]);
 
@@ -215,15 +213,14 @@ export function EditLocationDialog({
       try {
         const locationImages = Array.isArray(location.images)
           ? location.images
-          : JSON.parse((location.images as string) || "[]");
-        setImages(
-          locationImages.map((url: any) => ({
-            url: String(url),
-            isNew: false,
-          }))
-        );
+          : JSON.parse((location.images as string) || '[]');
+
+        setImages(locationImages.map((url: any) => ({
+          url: String(url),
+          isNew: false,
+        })));
       } catch (error) {
-        console.error("Error parsing images:", error);
+        console.error('Error parsing images:', error);
         setImages([]);
       }
     }
@@ -232,7 +229,7 @@ export function EditLocationDialog({
   const handleHoursChange = (
     day: string,
     field: keyof DayHours,
-    value: string | boolean
+    value: string | boolean,
   ) => {
     setWeeklyHours((prev) => ({
       ...prev,
@@ -243,22 +240,23 @@ export function EditLocationDialog({
   const uploadImage = async (file: File): Promise<string> => {
     try {
       const response = await fetch(`/api/upload?filename=${file.name}`, {
-        method: "POST",
+        method: 'POST',
         body: file,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to upload file.");
+        throw new Error('Failed to upload file.');
       }
 
       const newBlob = await response.json();
+
       return newBlob.url;
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error('Error uploading image:', error);
       toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to upload image',
+        variant: 'destructive',
       });
       throw error;
     }
@@ -273,13 +271,14 @@ export function EditLocationDialog({
         file,
         isNew: true,
       }));
+
       setImages([...images, ...newImages]);
     } catch (error) {
-      console.error("Error handling image upload:", error);
+      console.error('Error handling image upload:', error);
       toast({
-        title: "Error",
-        description: "Failed to process images",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to process images',
+        variant: 'destructive',
       });
     } finally {
       setIsImageUploading(false);
@@ -305,14 +304,15 @@ export function EditLocationDialog({
       // const data = await response.json();
       // return data.url;
       const url = await uploadImage(file);
+
       // console.log("url", url);
       return url;
     } catch (error) {
-      console.error("Error uploading icon:", error);
+      console.error('Error uploading icon:', error);
       toast({
-        title: "Error",
-        description: "Failed to upload icon",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to upload icon',
+        variant: 'destructive',
       });
       throw error;
     }
@@ -323,14 +323,13 @@ export function EditLocationDialog({
 
     try {
       // Upload new images first
-      const uploadedImages = await Promise.all(
-        images
-          .filter((img) => img.isNew && img.file)
-          .map(async (img) => {
-            const url = await uploadImage(img.file!);
-            return url;
-          })
-      );
+      const uploadedImages = await Promise.all(images
+        .filter((img) => img.isNew && img.file)
+        .map(async (img) => {
+          const url = await uploadImage(img.file!);
+
+          return url;
+        }));
 
       // Combine existing and new image URLs
       const allImageUrls = [
@@ -345,7 +344,7 @@ export function EditLocationDialog({
       const submitData = {
         ...data,
         // Convert "none" back to empty string for database storage
-        squareLocationEnvKey: data.squareLocationEnvKey === "none" ? "" : data.squareLocationEnvKey,
+        squareLocationEnvKey: data.squareLocationEnvKey === 'none' ? '' : data.squareLocationEnvKey,
         address: computedFullAddress, // Set the full address
         hours: JSON.stringify(weeklyHours), // Serialize WeeklyHours
         socialMedia: JSON.stringify(socialLinks), // Serialize SocialMediaLink[]
@@ -359,17 +358,17 @@ export function EditLocationDialog({
       const result = await updateStoreLocation(location.id, submitData);
 
       toast({
-        title: "Success",
-        description: "Location updated successfully",
+        title: 'Success',
+        description: 'Location updated successfully',
       });
 
       setIsOpen(false);
       onSuccess?.();
     } catch (error) {
-      console.error("Error updating location:", error);
+      console.error('Error updating location:', error);
       toast({
-        description: "Failed to update location",
-        variant: "destructive",
+        description: 'Failed to update location',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -402,13 +401,14 @@ export function EditLocationDialog({
         file,
         isNew: true,
       }));
+
       setImages([...images, ...newImages]);
     } catch (error) {
-      console.error("Error handling dropped images:", error);
+      console.error('Error handling dropped images:', error);
       toast({
-        title: "Error",
-        description: "Failed to process dropped images",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to process dropped images',
+        variant: 'destructive',
       });
     } finally {
       setIsImageUploading(false);
@@ -449,7 +449,7 @@ export function EditLocationDialog({
                     <Input
                       id="name"
                       placeholder="e.g., Downtown Store"
-                      {...form.register("name")}
+                      {...form.register('name')}
                       required
                       className="text-sm sm:text-base min-h-[44px]"
                     />
@@ -461,7 +461,7 @@ export function EditLocationDialog({
                       <Input
                         id="streetAddress"
                         placeholder="123 Main St"
-                        {...form.register("streetAddress")}
+                        {...form.register('streetAddress')}
                         required
                         className="text-sm sm:text-base min-h-[44px]"
                       />
@@ -473,7 +473,7 @@ export function EditLocationDialog({
                         <Input
                           id="city"
                           placeholder="New York"
-                          {...form.register("city")}
+                          {...form.register('city')}
                           required
                           className="text-sm sm:text-base min-h-[44px]"
                         />
@@ -483,7 +483,7 @@ export function EditLocationDialog({
                         <Input
                           id="state"
                           placeholder="NY"
-                          {...form.register("state")}
+                          {...form.register('state')}
                           required
                           className="text-sm sm:text-base min-h-[44px]"
                         />
@@ -496,7 +496,7 @@ export function EditLocationDialog({
                         <Input
                           id="zip"
                           placeholder="10001"
-                          {...form.register("zip")}
+                          {...form.register('zip')}
                           required
                           className="text-sm sm:text-base min-h-[44px]"
                         />
@@ -506,7 +506,7 @@ export function EditLocationDialog({
                         <Input
                           id="countryCode"
                           placeholder="US"
-                          {...form.register("countryCode")}
+                          {...form.register('countryCode')}
                           required
                           className="text-sm sm:text-base min-h-[44px]"
                         />
@@ -519,7 +519,7 @@ export function EditLocationDialog({
                         id="fullAddress"
                         value={fullAddress}
                         disabled
-                        className={cn(addressError && "border-red-500", "text-sm sm:text-base min-h-[44px")}
+                        className={cn(addressError && 'border-red-500', 'text-sm sm:text-base min-h-[44px')}
                       />
                       {addressError && (
                         <p className="text-xs sm:text-sm text-red-500">{addressError}</p>
@@ -543,7 +543,7 @@ export function EditLocationDialog({
                       id="phone"
                       type="tel"
                       placeholder="(555) 555-5555"
-                      {...form.register("phone")}
+                      {...form.register('phone')}
                       required
                       className="text-sm sm:text-base min-h-[44px]"
                     />
@@ -555,7 +555,7 @@ export function EditLocationDialog({
                       id="email"
                       type="email"
                       placeholder="store@example.com"
-                      {...form.register("email")}
+                      {...form.register('email')}
                       required
                       className="text-sm sm:text-base min-h-[44px]"
                     />
@@ -566,9 +566,8 @@ export function EditLocationDialog({
                       Square Location
                     </Label>
                     <Select
-                      value={form.watch("squareLocationEnvKey")}
-                      onValueChange={(value) =>
-                        form.setValue("squareLocationEnvKey", value)
+                      value={form.watch('squareLocationEnvKey')}
+                      onValueChange={(value) => form.setValue('squareLocationEnvKey', value)
                       }
                     >
                       <SelectTrigger className="text-sm sm:text-base min-h-[44px]">
@@ -587,9 +586,8 @@ export function EditLocationDialog({
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="isActive"
-                      checked={form.watch("isActive")}
-                      onCheckedChange={(checked) =>
-                        form.setValue("isActive", checked)
+                      checked={form.watch('isActive')}
+                      onCheckedChange={(checked) => form.setValue('isActive', checked)
                       }
                     />
                     <Label htmlFor="isActive" className="text-sm sm:text-base">Active Location</Label>
@@ -613,15 +611,14 @@ export function EditLocationDialog({
                   <Card>
                     <CardContent className="pt-6">
                       <div className="space-y-4">
-                        {weeklyHours &&
-                          Object.entries(weeklyHours).map(([day, hours]) => (
+                        {weeklyHours
+                          && Object.entries(weeklyHours).map(([day, hours]) => (
                             <div key={day} className="space-y-2">
                               <div className="flex items-center justify-between">
                                 <Label className="capitalize text-sm sm:text-base">{day}</Label>
                                 <Switch
                                   checked={!hours.isClosed}
-                                  onCheckedChange={(checked) =>
-                                    handleHoursChange(day, "isClosed", !checked)
+                                  onCheckedChange={(checked) => handleHoursChange(day, 'isClosed', !checked)
                                   }
                                 />
                               </div>
@@ -633,12 +630,11 @@ export function EditLocationDialog({
                                       id={`${day}-open`}
                                       type="time"
                                       value={hours.open}
-                                      onChange={(e) =>
-                                        handleHoursChange(
-                                          day,
-                                          "open",
-                                          e.target.value
-                                        )
+                                      onChange={(e) => handleHoursChange(
+                                        day,
+                                        'open',
+                                        e.target.value,
+                                      )
                                       }
                                       className="text-sm sm:text-base min-h-[44px]"
                                     />
@@ -651,12 +647,11 @@ export function EditLocationDialog({
                                       id={`${day}-close`}
                                       type="time"
                                       value={hours.close}
-                                      onChange={(e) =>
-                                        handleHoursChange(
-                                          day,
-                                          "close",
-                                          e.target.value
-                                        )
+                                      onChange={(e) => handleHoursChange(
+                                        day,
+                                        'close',
+                                        e.target.value,
+                                      )
                                       }
                                       className="text-sm sm:text-base min-h-[44px]"
                                     />
@@ -678,10 +673,10 @@ export function EditLocationDialog({
                           <Label
                             htmlFor="images"
                             className={cn(
-                              "relative flex flex-col items-center justify-center w-full h-24 sm:h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200",
+                              'relative flex flex-col items-center justify-center w-full h-24 sm:h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200',
                               isDragging
-                                ? "border-primary bg-primary/10"
-                                : "hover:bg-muted border-muted-foreground/25"
+                                ? 'border-primary bg-primary/10'
+                                : 'hover:bg-muted border-muted-foreground/25',
                             )}
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
@@ -695,18 +690,18 @@ export function EditLocationDialog({
                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
                               <Upload
                                 className={cn(
-                                  "h-6 w-6 sm:h-8 sm:w-8 mb-2 transition-colors duration-200",
+                                  'h-6 w-6 sm:h-8 sm:w-8 mb-2 transition-colors duration-200',
                                   isDragging
-                                    ? "text-primary"
-                                    : "text-muted-foreground"
+                                    ? 'text-primary'
+                                    : 'text-muted-foreground',
                                 )}
                               />
                               <p
                                 className={cn(
-                                  "text-xs sm:text-sm transition-colors duration-200",
+                                  'text-xs sm:text-sm transition-colors duration-200',
                                   isDragging
-                                    ? "text-primary"
-                                    : "text-muted-foreground"
+                                    ? 'text-primary'
+                                    : 'text-muted-foreground',
                                 )}
                               >
                                 Drag & drop images here, or click to select
@@ -801,7 +796,7 @@ export function EditLocationDialog({
                       Updating...
                     </>
                   ) : (
-                    "Update Location"
+                    'Update Location'
                   )}
                 </Button>
               </div>

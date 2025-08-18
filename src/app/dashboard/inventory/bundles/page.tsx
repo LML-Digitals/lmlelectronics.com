@@ -1,8 +1,8 @@
-import { Suspense } from "react";
-import prisma from "@/lib/prisma";
-import BundleManagement from "@/components/dashboard/inventory/bundles/BundleManagement";
+import { Suspense } from 'react';
+import prisma from '@/lib/prisma';
+import BundleManagement from '@/components/dashboard/inventory/bundles/BundleManagement';
 
-async function getBundlePageData() {
+async function getBundlePageData () {
   try {
     const [locations, categories, suppliers, variations] = await Promise.all([
       prisma.storeLocation.findMany({
@@ -11,7 +11,7 @@ async function getBundlePageData() {
           id: true,
           name: true,
         },
-        orderBy: { name: "asc" },
+        orderBy: { name: 'asc' },
       }),
       prisma.inventoryItemCategory.findMany({
         where: { visible: true },
@@ -19,14 +19,14 @@ async function getBundlePageData() {
           id: true,
           name: true,
         },
-        orderBy: { name: "asc" },
+        orderBy: { name: 'asc' },
       }),
       prisma.vendor.findMany({
         select: {
           id: true,
           name: true,
         },
-        orderBy: { name: "asc" },
+        orderBy: { name: 'asc' },
       }),
       prisma.inventoryVariation.findMany({
         where: {
@@ -59,7 +59,7 @@ async function getBundlePageData() {
             },
           },
         },
-        orderBy: { name: "asc" },
+        orderBy: { name: 'asc' },
         take: 100, // Limit for performance
       }),
     ]);
@@ -71,7 +71,8 @@ async function getBundlePageData() {
       variations,
     };
   } catch (error) {
-    console.error("Error fetching bundle page data:", error);
+    console.error('Error fetching bundle page data:', error);
+
     return {
       locations: [],
       categories: [],
@@ -81,22 +82,22 @@ async function getBundlePageData() {
   }
 }
 
-function LoadingSkeleton() {
+function LoadingSkeleton () {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
-          <div className="h-4 w-64 bg-gray-200 rounded animate-pulse mt-2"></div>
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+          <div className="h-4 w-64 bg-gray-200 rounded animate-pulse mt-2" />
         </div>
-        <div className="h-10 w-32 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
       </div>
 
       <div className="border rounded-lg">
         <div className="p-4 border-b">
           <div className="flex items-center space-x-4">
-            <div className="h-10 w-64 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-10 w-32 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-10 w-64 bg-gray-200 rounded animate-pulse" />
+            <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
           </div>
         </div>
         <div className="p-4">
@@ -106,13 +107,13 @@ function LoadingSkeleton() {
                 key={i}
                 className="flex items-center space-x-4 p-4 border rounded"
               >
-                <div className="h-12 w-12 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-12 w-12 bg-gray-200 rounded animate-pulse" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-3 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-48 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-3 w-32 bg-gray-200 rounded animate-pulse" />
                 </div>
-                <div className="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
-                <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-8 w-16 bg-gray-200 rounded animate-pulse" />
+                <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
               </div>
             ))}
           </div>
@@ -122,7 +123,7 @@ function LoadingSkeleton() {
   );
 }
 
-export default async function BundlesPage() {
+export default async function BundlesPage () {
   const data = await getBundlePageData();
 
   return (
@@ -140,6 +141,6 @@ export default async function BundlesPage() {
 }
 
 export const metadata = {
-  title: "Bundle Management",
-  description: "Create and manage product bundles for your repair shop",
+  title: 'Bundle Management',
+  description: 'Create and manage product bundles for your repair shop',
 };

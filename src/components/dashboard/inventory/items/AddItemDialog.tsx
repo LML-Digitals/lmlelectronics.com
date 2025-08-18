@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -15,29 +15,29 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Plus, ImagePlus, CircleDashed, Check } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { createInventoryItem, getWarrantyTypes } from "./services/itemsCrud";
-import Image from "next/image";
-import { createItemSchema } from "./schema/itemSchema";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Plus, ImagePlus, CircleDashed, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { createInventoryItem, getWarrantyTypes } from './services/itemsCrud';
+import Image from 'next/image';
+import { createItemSchema } from './schema/itemSchema';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { UploadResponse } from "@/lib/types/upload";
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { UploadResponse } from '@/lib/types/upload';
 import {
   CategoryWithChildren,
   Location,
@@ -46,10 +46,10 @@ import {
   findCategoryById,
   Variation,
   VariationFormData,
-} from "./types/types";
-import { CategorySelectionDialog } from "./CategoryComponents";
-import { VariationDialog } from "./VariationDialog";
-import { VariationTable } from "./VariationTable";
+} from './types/types';
+import { CategorySelectionDialog } from './CategoryComponents';
+import { VariationDialog } from './VariationDialog';
+import { VariationTable } from './VariationTable';
 import {
   Command,
   CommandEmpty,
@@ -57,14 +57,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { getTags } from "@/components/dashboard/Tags/services/tagCrud";
-import { Tag } from "@prisma/client";
+} from '@/components/ui/popover';
+import { getTags } from '@/components/dashboard/Tags/services/tagCrud';
+import { Tag } from '@prisma/client';
 
 interface CreateItemDialogProps {
   onRefresh: () => void;
@@ -78,7 +78,7 @@ interface CreateItemDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function AddItemDialog({
+export function AddItemDialog ({
   onRefresh,
   categories,
   suppliers,
@@ -109,20 +109,21 @@ export function AddItemDialog({
   >([]);
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [tagSearchOpen, setTagSearchOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
 
   // Add effect to fetch tags
   useEffect(() => {
     const fetchTags = async () => {
       try {
         const tags = await getTags();
+
         setAllTags(tags.tags);
       } catch (error) {
-        console.error("Error fetching tags:", error);
+        console.error('Error fetching tags:', error);
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load tags",
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to load tags',
         });
       }
     };
@@ -132,11 +133,11 @@ export function AddItemDialog({
 
   // Create the default variation with proper stock levels
   const createDefaultVariation = (sku: string | null) => {
-    if (!sku) return [];
+    if (!sku) { return []; }
 
     return [
       {
-        name: "Default",
+        name: 'Default',
         sku: sku,
         image: null,
         raw: 0,
@@ -157,7 +158,7 @@ export function AddItemDialog({
               purchaseCost: undefined,
             },
           }),
-          {}
+          {},
         ),
       },
     ];
@@ -167,9 +168,9 @@ export function AddItemDialog({
   const form = useForm<z.infer<typeof createItemSchema>>({
     resolver: zodResolver(createItemSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      image: "",
+      name: '',
+      description: '',
+      image: '',
       categoryIds: [],
       supplierId: null,
       warrantyTypeId: null,
@@ -183,9 +184,9 @@ export function AddItemDialog({
     onOpenChange(value);
     if (!value) {
       form.reset({
-        name: "",
-        description: "",
-        image: "",
+        name: '',
+        description: '',
+        image: '',
         categoryIds: [],
         supplierId: null,
         warrantyTypeId: null,
@@ -202,6 +203,7 @@ export function AddItemDialog({
     if (e.target.files) {
       setImage(e.target.files[0]);
       const previewURL = URL.createObjectURL(e.target.files[0]);
+
       setPreview(previewURL);
     }
   };
@@ -212,24 +214,25 @@ export function AddItemDialog({
   };
 
   const handleCategorySelect = (categoryId: string) => {
-    const currentIds = form.getValues("categoryIds");
+    const currentIds = form.getValues('categoryIds');
+
     if (currentIds.includes(categoryId)) {
       form.setValue(
-        "categoryIds",
-        currentIds.filter((id) => id !== categoryId)
+        'categoryIds',
+        currentIds.filter((id) => id !== categoryId),
       );
     } else {
-      form.setValue("categoryIds", [...currentIds, categoryId]);
+      form.setValue('categoryIds', [...currentIds, categoryId]);
     }
   };
 
   // Modified to handle variation image from dialog
   const handleAddVariation = (variation: VariationFormData) => {
-    const currentVariations = form.getValues("variations") || [];
+    const currentVariations = form.getValues('variations') || [];
     const newIndex = currentVariations.length;
 
     // Add the variation to the form
-    form.setValue("variations", [
+    form.setValue('variations', [
       ...currentVariations,
       {
         name: variation.name,
@@ -253,18 +256,20 @@ export function AddItemDialog({
     if (variation.imageFile) {
       setVariationImages((prev) => {
         const newImages = [...prev];
+
         newImages[newIndex] = {
           file: variation.imageFile || null,
           preview: variation.imagePreview || variation.image || null,
           index: newIndex,
         };
+
         return newImages;
       });
     }
   };
 
   const handleEditVariation = (variation: VariationFormData, index: number) => {
-    const currentVariations = form.getValues("variations");
+    const currentVariations = form.getValues('variations');
 
     // Create a new array with the updated variation
     const updatedVariations = currentVariations?.map((existingVar, i) => {
@@ -287,17 +292,19 @@ export function AddItemDialog({
           stockLevels: variation.stockLevels || {},
         };
       }
+
       // Return the existing variation for other indices
       return existingVar;
     });
 
     // Set the new array in the form state
-    form.setValue("variations", updatedVariations);
+    form.setValue('variations', updatedVariations);
 
     // Update image state if changed
     if (variation.imageChanged) {
       setVariationImages((prevImages) => {
         const newImages = [...prevImages];
+
         if (variation.imageFile) {
           // Image added or changed
           newImages[index] = {
@@ -308,11 +315,13 @@ export function AddItemDialog({
         } else {
           // Image removed
           const existingImage = newImages.find((img) => img?.index === index);
+
           if (existingImage) {
             existingImage.file = null;
             existingImage.preview = null;
           }
         }
+
         return newImages;
       });
     }
@@ -320,7 +329,8 @@ export function AddItemDialog({
 
   // Handle opening the edit dialog
   const handleOpenEditDialog = (index: number) => {
-    const variations = form.getValues("variations");
+    const variations = form.getValues('variations');
+
     setEditingVariation(variations?.[index] as Variation);
     setEditingIndex(index);
     setVariationDialogOpen(true);
@@ -328,14 +338,17 @@ export function AddItemDialog({
 
   // Handle deleting a variation
   const handleDeleteVariation = (index: number) => {
-    const variations = form.getValues("variations");
+    const variations = form.getValues('variations');
+
     variations?.splice(index, 1);
-    form.setValue("variations", [...variations || []]);
+    form.setValue('variations', [...variations || []]);
 
     // Also remove the image if any
     setVariationImages((prev) => {
       const newImages = [...prev];
+
       newImages.splice(index, 1);
+
       return newImages.map((img, i) => ({
         ...img,
         index: i,
@@ -345,78 +358,79 @@ export function AddItemDialog({
 
   // Handle tag selection
   const handleSelectTag = (tagId: string) => {
-    const currentTagIds = form.getValues("tagIds") || [];
+    const currentTagIds = form.getValues('tagIds') || [];
+
     if (currentTagIds.includes(tagId)) {
       form.setValue(
-        "tagIds",
-        currentTagIds.filter((id) => id !== tagId)
+        'tagIds',
+        currentTagIds.filter((id) => id !== tagId),
       );
     } else {
-      form.setValue("tagIds", [...currentTagIds, tagId]);
+      form.setValue('tagIds', [...currentTagIds, tagId]);
     }
   };
 
   // Filter tags based on search
   const filteredTags = searchValue
-    ? allTags.filter(
-        (tag) =>
-          tag.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-          (tag.description &&
-            tag.description.toLowerCase().includes(searchValue.toLowerCase()))
-      )
+    ? allTags.filter((tag) => tag.name.toLowerCase().includes(searchValue.toLowerCase())
+          || (tag.description
+            && tag.description.toLowerCase().includes(searchValue.toLowerCase())))
     : allTags;
 
   // Set initial SKU and barcode if provided
   useEffect(() => {
     if (initialSku) {
-      form.setValue("variations.0.sku" as any, initialSku);
+      form.setValue('variations.0.sku' as any, initialSku);
     }
     if (initialBarcode) {
       // Add a field for barcode in your variations if not already present
-      form.setValue("variations.0.barcode" as any, initialBarcode);
+      form.setValue('variations.0.barcode' as any, initialBarcode);
     }
   }, [initialSku, initialBarcode, form]);
 
   // Submit handler
   const onSubmit = async (values: z.infer<typeof createItemSchema>) => {
     let imageUrl: string | null = null;
+
     try {
       setIsSubmitting(true);
 
       // Upload the main image if it exists
       if (image && image instanceof File) {
         const response = await fetch(`/api/upload?filename=${image.name}`, {
-          method: "POST",
+          method: 'POST',
           body: image,
         });
+
         if (!response.ok) {
-          throw new Error("Failed to upload file.");
+          throw new Error('Failed to upload file.');
         }
         const newBlob = (await response.json()) as UploadResponse;
+
         imageUrl = newBlob.url;
       }
 
       // Upload variation images
-      const variationUploads = await Promise.all(
-        variationImages.map(async (varImage) => {
-          if (varImage?.file) {
-            const response = await fetch(
-              `/api/upload?filename=${varImage.file.name}`,
-              {
-                method: "POST",
-                body: varImage.file,
-              }
-            );
-            if (!response.ok)
-              throw new Error(
-                `Failed to upload variation image ${varImage.index}`
-              );
-            const blob = (await response.json()) as UploadResponse;
-            return { index: varImage.index, url: blob.url };
+      const variationUploads = await Promise.all(variationImages.map(async (varImage) => {
+        if (varImage?.file) {
+          const response = await fetch(
+            `/api/upload?filename=${varImage.file.name}`,
+            {
+              method: 'POST',
+              body: varImage.file,
+            },
+          );
+
+          if (!response.ok) {
+            throw new Error(`Failed to upload variation image ${varImage.index}`);
           }
-          return null;
-        })
-      );
+          const blob = (await response.json()) as UploadResponse;
+
+          return { index: varImage.index, url: blob.url };
+        }
+
+        return null;
+      }));
 
       // Format the stock levels properly and include price fields
       const formattedData = {
@@ -424,21 +438,19 @@ export function AddItemDialog({
         image: imageUrl,
         variations: values.variations?.map((variation, index) => {
           // Get the image URL for this variation if available
-          const varImageUrl =
-            variationUploads.find((upload) => upload?.index === index)?.url ||
-            variation.image ||
-            null;
+          const varImageUrl
+            = variationUploads.find((upload) => upload?.index === index)?.url
+            || variation.image
+            || null;
 
           // Format stockLevels as an array of objects expected by the API
-          const stockLevelsArray = Object.entries(variation.stockLevels).map(
-            ([locationId, stockInfo]) => ({
-              locationId: parseInt(locationId),
-              stock: Number(stockInfo.stock || 0),
-              purchaseCost: stockInfo.purchaseCost
-                ? Number(stockInfo.purchaseCost)
-                : undefined,
-            })
-          );
+          const stockLevelsArray = Object.entries(variation.stockLevels).map(([locationId, stockInfo]) => ({
+            locationId: parseInt(locationId),
+            stock: Number(stockInfo.stock || 0),
+            purchaseCost: stockInfo.purchaseCost
+              ? Number(stockInfo.purchaseCost)
+              : undefined,
+          }));
 
           return {
             // Keep existing variation fields (name, sku)
@@ -464,19 +476,19 @@ export function AddItemDialog({
       const result = await createInventoryItem(formattedData);
 
       toast({
-        title: "Success",
-        description: "Item created successfully",
+        title: 'Success',
+        description: 'Item created successfully',
       });
       onRefresh();
       handleOpen(false);
       form.reset();
     } catch (error) {
-      console.error("Error creating item:", error);
+      console.error('Error creating item:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
-          error instanceof Error ? error.message : "Failed to create item",
+          error instanceof Error ? error.message : 'Failed to create item',
       });
     } finally {
       setIsSubmitting(false);
@@ -488,13 +500,14 @@ export function AddItemDialog({
     const fetchWarrantyTypes = async () => {
       try {
         const types = await getWarrantyTypes();
+
         setWarrantyTypes(types);
       } catch (error) {
-        console.error("Error fetching warranty types:", error);
+        console.error('Error fetching warranty types:', error);
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load warranty types",
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to load warranty types',
         });
       }
     };
@@ -613,8 +626,9 @@ export function AddItemDialog({
                         {field.value.map((categoryId) => {
                           const category = findCategoryById(
                             categories,
-                            categoryId
+                            categoryId,
                           );
+
                           return category ? (
                             <Badge
                               key={category.id}
@@ -624,8 +638,7 @@ export function AddItemDialog({
                               {category.name}
                               <X
                                 className="h-3 w-3 cursor-pointer"
-                                onClick={() =>
-                                  handleCategorySelect(category.id)
+                                onClick={() => handleCategorySelect(category.id)
                                 }
                               />
                             </Badge>
@@ -636,7 +649,7 @@ export function AddItemDialog({
                         <Button
                           type="button"
                           variant="outline"
-                          size={"sm"}
+                          size={'sm'}
                           onClick={() => setCategoryDialogOpen(true)}
                           className="w-full text-sm h-10"
                         >
@@ -687,7 +700,7 @@ export function AddItemDialog({
                       <FormLabel className="text-sm font-medium">Warranty Type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value || ""}
+                        value={field.value || ''}
                       >
                         <FormControl>
                           <SelectTrigger className="h-10">
@@ -718,7 +731,9 @@ export function AddItemDialog({
                     <div className="flex flex-wrap gap-2 mb-2">
                       {field.value?.map((tagId) => {
                         const tag = allTags.find((t) => t.id === tagId);
-                        if (!tag) return null;
+
+                        if (!tag) { return null; }
+
                         return (
                           <Badge
                             key={tag.id}
@@ -726,7 +741,7 @@ export function AddItemDialog({
                             className="flex items-center gap-1"
                             style={{
                               backgroundColor: tag.color || undefined,
-                              color: tag.color ? "white" : undefined,
+                              color: tag.color ? 'white' : undefined,
                             }}
                           >
                             {tag.name}
@@ -771,7 +786,7 @@ export function AddItemDialog({
                                     value={tag.name}
                                     onSelect={() => {
                                       handleSelectTag(tag.id);
-                                      setSearchValue("");
+                                      setSearchValue('');
                                       setTagSearchOpen(false);
                                     }}
                                   >
@@ -780,7 +795,7 @@ export function AddItemDialog({
                                         className="w-3 h-3 rounded-full"
                                         style={{
                                           backgroundColor:
-                                            tag.color || "#cccccc",
+                                            tag.color || '#cccccc',
                                         }}
                                       />
                                       <span>{tag.name}</span>
@@ -824,7 +839,7 @@ export function AddItemDialog({
               </div>
 
               <VariationTable
-                variations={form.watch("variations") || []}
+                variations={form.watch('variations') || []}
                 variationImages={variationImages}
                 onEdit={handleOpenEditDialog}
                 onDelete={handleDeleteVariation}
@@ -855,7 +870,7 @@ export function AddItemDialog({
           open={categoryDialogOpen}
           onOpenChange={setCategoryDialogOpen}
           categories={categories}
-          selectedIds={form.watch("categoryIds")}
+          selectedIds={form.watch('categoryIds')}
           onSelect={handleCategorySelect}
         />
 
@@ -876,8 +891,8 @@ export function AddItemDialog({
           editIndex={editingIndex}
           variationImage={
             editingIndex >= 0
-              ? variationImages.find((img) => img.index === editingIndex) ||
-                null
+              ? variationImages.find((img) => img.index === editingIndex)
+                || null
               : null
           }
         />

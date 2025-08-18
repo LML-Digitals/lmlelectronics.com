@@ -1,15 +1,15 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 import {
   WarrantyInput,
   WarrantyClaimInput,
   WarrantyClaimUpdateInput,
-} from "../types/types";
+} from '../types/types';
 
 // Get all warranties
-export async function getAllWarranties() {
+export async function getAllWarranties () {
   try {
     const warranties = await prisma.warranty.findMany({
       include: {
@@ -39,19 +39,19 @@ export async function getAllWarranties() {
         warrantyClaims: true,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
 
     return warranties;
   } catch (error) {
-    console.error("Error fetching warranties:", error);
+    console.error('Error fetching warranties:', error);
     throw error;
   }
 }
 
 // Get warranties for a specific customerId - different from getCustomerWarranties by having different includes
-export async function getWarrantiesByCustomerId(customerId: string) {
+export async function getWarrantiesByCustomerId (customerId: string) {
   try {
     const warranties = await prisma.warranty.findMany({
       where: { customerId },
@@ -82,7 +82,7 @@ export async function getWarrantiesByCustomerId(customerId: string) {
         warrantyClaims: true,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
 
@@ -90,14 +90,14 @@ export async function getWarrantiesByCustomerId(customerId: string) {
   } catch (error) {
     console.error(
       `Error fetching warranties for customer ID ${customerId}:`,
-      error
+      error,
     );
     throw error;
   }
 }
 
 // Get warranty by ID with details
-export async function getWarrantyById(id: string) {
+export async function getWarrantyById (id: string) {
   try {
     const warranty = await prisma.warranty.findUnique({
       where: { id },
@@ -137,7 +137,7 @@ export async function getWarrantyById(id: string) {
 }
 
 // Get warranties for a specific customer
-export async function getCustomerWarranties(customerId: string) {
+export async function getCustomerWarranties (customerId: string) {
   try {
     const warranties = await prisma.warranty.findMany({
       where: { customerId },
@@ -152,7 +152,7 @@ export async function getCustomerWarranties(customerId: string) {
         warrantyClaims: true,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
 
@@ -160,14 +160,14 @@ export async function getCustomerWarranties(customerId: string) {
   } catch (error) {
     console.error(
       `Error fetching warranties for customer ${customerId}:`,
-      error
+      error,
     );
     throw error;
   }
 }
 
 // Create new warranty
-export async function createWarranty(data: WarrantyInput) {
+export async function createWarranty (data: WarrantyInput) {
   try {
     // Get the warranty type to determine end date if not provided
     const warrantyType = await prisma.warrantyType.findUnique({
@@ -176,8 +176,10 @@ export async function createWarranty(data: WarrantyInput) {
 
     // If no end date is provided and the warranty type has a duration, calculate the end date
     let endDate = data.endDate;
+
     if (!endDate && warrantyType && warrantyType.duration > 0) {
       const startDate = new Date(data.startDate);
+
       endDate = new Date(startDate);
       endDate.setMonth(endDate.getMonth() + warrantyType.duration);
     }
@@ -193,19 +195,20 @@ export async function createWarranty(data: WarrantyInput) {
       },
     });
 
-    revalidatePath("/dashboard/warranty");
+    revalidatePath('/dashboard/warranty');
+
     return warranty;
   } catch (error) {
-    console.error("Error creating warranty:", error);
+    console.error('Error creating warranty:', error);
     throw error;
   }
 }
 
 // Update warranty
-export async function updateWarranty(id: string, data: Partial<WarrantyInput>) {
+export async function updateWarranty (id: string, data: Partial<WarrantyInput>) {
   try {
     // If warrantyTypeId is changing, we might need to recalculate the end date
-    let updateData = { ...data };
+    const updateData = { ...data };
 
     if (data.warrantyTypeId) {
       const warrantyType = await prisma.warrantyType.findUnique({
@@ -221,9 +224,10 @@ export async function updateWarranty(id: string, data: Partial<WarrantyInput>) {
           select: { startDate: true },
         });
 
-        const startDate =
-          data.startDate || currentWarranty?.startDate || new Date();
+        const startDate
+          = data.startDate || currentWarranty?.startDate || new Date();
         const endDate = new Date(startDate);
+
         endDate.setMonth(endDate.getMonth() + warrantyType.duration);
 
         updateData.endDate = endDate;
@@ -236,7 +240,8 @@ export async function updateWarranty(id: string, data: Partial<WarrantyInput>) {
     });
 
     revalidatePath(`/dashboard/warranty/${id}`);
-    revalidatePath("/dashboard/warranty");
+    revalidatePath('/dashboard/warranty');
+
     return warranty;
   } catch (error) {
     console.error(`Error updating warranty with ID ${id}:`, error);
@@ -245,7 +250,7 @@ export async function updateWarranty(id: string, data: Partial<WarrantyInput>) {
 }
 
 // Delete warranty
-export async function deleteWarranty(id: string) {
+export async function deleteWarranty (id: string) {
   try {
     // First, delete all associated warranty claims
     await prisma.warrantyClaim.deleteMany({
@@ -257,7 +262,8 @@ export async function deleteWarranty(id: string) {
       where: { id },
     });
 
-    revalidatePath("/dashboard/warranty");
+    revalidatePath('/dashboard/warranty');
+
     return warranty;
   } catch (error) {
     console.error(`Error deleting warranty with ID ${id}:`, error);
@@ -266,7 +272,7 @@ export async function deleteWarranty(id: string) {
 }
 
 // Create warranty claim
-export async function createWarrantyClaim(data: WarrantyClaimInput) {
+export async function createWarrantyClaim (data: WarrantyClaimInput) {
   try {
     // First, fetch the warranty to check its type and coverage
     const warranty = await prisma.warranty.findUnique({
@@ -285,22 +291,23 @@ export async function createWarrantyClaim(data: WarrantyClaimInput) {
         description: data.description,
         issueType: data.issueType,
         photos: data.photos,
-        status: isAutoApproved ? "Approved" : "Pending",
+        status: isAutoApproved ? 'Approved' : 'Pending',
         warrantyId: data.warrantyId,
         customerId: data.customerId,
       },
     });
 
     revalidatePath(`/dashboard/warranty/${data.warrantyId}`);
+
     return claim;
   } catch (error) {
-    console.error("Error creating warranty claim:", error);
+    console.error('Error creating warranty claim:', error);
     throw error;
   }
 }
 
 // Get warranty claim by ID
-export async function getWarrantyClaimById(id: string) {
+export async function getWarrantyClaimById (id: string) {
   try {
     const claim = await prisma.warrantyClaim.findUnique({
       where: { id },
@@ -336,9 +343,9 @@ export async function getWarrantyClaimById(id: string) {
 }
 
 // Update warranty claim
-export async function updateWarrantyClaim(
+export async function updateWarrantyClaim (
   id: string,
-  data: WarrantyClaimUpdateInput
+  data: WarrantyClaimUpdateInput,
 ) {
   try {
     const claim = await prisma.warrantyClaim.update({
@@ -365,6 +372,7 @@ export async function updateWarrantyClaim(
 
     revalidatePath(`/dashboard/warranty/claims/${id}`);
     revalidatePath(`/dashboard/warranty/${warrantyId}`);
+
     return claim;
   } catch (error) {
     console.error(`Error updating warranty claim with ID ${id}:`, error);
@@ -373,13 +381,14 @@ export async function updateWarrantyClaim(
 }
 
 // Delete warranty claim
-export async function deleteWarrantyClaim(id: string) {
+export async function deleteWarrantyClaim (id: string) {
   try {
     const claim = await prisma.warrantyClaim.delete({
       where: { id },
     });
 
     revalidatePath(`/dashboard/warranty/${claim.warrantyId}`);
+
     return claim;
   } catch (error) {
     console.error(`Error deleting warranty claim with ID ${id}:`, error);
@@ -388,7 +397,7 @@ export async function deleteWarrantyClaim(id: string) {
 }
 
 // Get all warranty claims with optional status filter
-export async function getAllWarrantyClaims(status?: string) {
+export async function getAllWarrantyClaims (status?: string) {
   try {
     const where = status ? { status } : {};
 
@@ -417,13 +426,13 @@ export async function getAllWarrantyClaims(status?: string) {
         },
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
 
     return claims;
   } catch (error) {
-    console.error("Error fetching warranty claims:", error);
+    console.error('Error fetching warranty claims:', error);
     throw error;
   }
 }

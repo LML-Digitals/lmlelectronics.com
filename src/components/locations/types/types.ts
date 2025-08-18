@@ -26,4 +26,4 @@ export interface Listing {
   name: string;
   link: string;
   icon: string;
-} 
+}

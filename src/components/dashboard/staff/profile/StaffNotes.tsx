@@ -1,30 +1,30 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Plus, Pencil, Trash2, ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Plus, Pencil, Trash2, ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import {
   addStaffNote,
   updateStaffNote,
   deleteStaffNote,
-} from "@/components/dashboard/staff/services/staffNotes";
-import { toast } from "@/components/ui/use-toast";
+} from '@/components/dashboard/staff/services/staffNotes';
+import { toast } from '@/components/ui/use-toast';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,8 +34,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Note } from "@prisma/client";
+} from '@/components/ui/alert-dialog';
+import { Note } from '@prisma/client';
 type StaffNote = {
   id: number;
   content: string;
@@ -53,7 +53,7 @@ type StaffNotesProps = {
   isAdmin: boolean;
 };
 
-export default function StaffNotes({
+export default function StaffNotes ({
   staffId,
   notes,
   isAdmin,
@@ -61,32 +61,32 @@ export default function StaffNotes({
   const [isOpen, setIsOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [newNote, setNewNote] = useState("");
+  const [newNote, setNewNote] = useState('');
   const [editingNote, setEditingNote] = useState<StaffNote | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async () => {
-    if (!newNote.trim()) return;
+    if (!newNote.trim()) { return; }
 
     try {
       setIsSubmitting(true);
       await addStaffNote(staffId, newNote.trim());
-      setNewNote("");
+      setNewNote('');
       setIsOpen(false);
       toast({
-        title: "Note added successfully",
+        title: 'Note added successfully',
         description: "Your note has been added to the staff's notes.",
-        variant: "default",
+        variant: 'default',
       });
       router.refresh();
       window.location.reload();
     } catch (error) {
-      console.error("Error adding note:", error);
+      console.error('Error adding note:', error);
       toast({
-        title: "Failed to add note",
-        description: "Please try again.",
-        variant: "destructive",
+        title: 'Failed to add note',
+        description: 'Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -94,7 +94,7 @@ export default function StaffNotes({
   };
 
   const handleEdit = async () => {
-    if (!editingNote || !editingNote.content.trim()) return;
+    if (!editingNote?.content.trim()) { return; }
 
     try {
       setIsSubmitting(true);
@@ -102,17 +102,17 @@ export default function StaffNotes({
       setEditingNote(null);
       setIsEditOpen(false);
       toast({
-        title: "Note updated successfully",
-        description: "Your note has been updated.",
-        variant: "default",
+        title: 'Note updated successfully',
+        description: 'Your note has been updated.',
+        variant: 'default',
       });
       window.location.reload();
     } catch (error) {
-      console.error("Error updating note:", error);
+      console.error('Error updating note:', error);
       toast({
-        title: "Failed to update note",
-        description: "Please try again.",
-        variant: "destructive",
+        title: 'Failed to update note',
+        description: 'Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -120,7 +120,7 @@ export default function StaffNotes({
   };
 
   const handleDelete = async () => {
-    if (!editingNote) return;
+    if (!editingNote) { return; }
 
     try {
       setIsSubmitting(true);
@@ -128,17 +128,17 @@ export default function StaffNotes({
       setEditingNote(null);
       setIsDeleteOpen(false);
       toast({
-        title: "Note deleted successfully",
-        description: "The note has been removed.",
-        variant: "default",
+        title: 'Note deleted successfully',
+        description: 'The note has been removed.',
+        variant: 'default',
       });
       window.location.reload();
     } catch (error) {
-      console.error("Error deleting note:", error);
+      console.error('Error deleting note:', error);
       toast({
-        title: "Failed to delete note",
-        description: "Please try again.",
-        variant: "destructive",
+        title: 'Failed to delete note',
+        description: 'Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -202,7 +202,7 @@ export default function StaffNotes({
                     disabled={isSubmitting || !newNote.trim()}
                     className="min-w-[100px]"
                   >
-                    {isSubmitting ? "Saving..." : "Save Note"}
+                    {isSubmitting ? 'Saving...' : 'Save Note'}
                   </Button>
                 </div>
               </div>
@@ -254,10 +254,10 @@ export default function StaffNotes({
                         {new Date(note.createdAt).toLocaleDateString(
                           undefined,
                           {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          },
                         )}
                       </p>
                     </div>
@@ -317,13 +317,10 @@ export default function StaffNotes({
           <div className="space-y-4 py-4">
             <Textarea
               placeholder="Enter your note here..."
-              value={editingNote?.content || ""}
-              onChange={(e) =>
-                setEditingNote(
-                  editingNote
-                    ? { ...editingNote, content: e.target.value }
-                    : null
-                )
+              value={editingNote?.content || ''}
+              onChange={(e) => setEditingNote(editingNote
+                ? { ...editingNote, content: e.target.value }
+                : null)
               }
               className="min-h-[150px] resize-none focus:ring-2 focus:ring-primary/20"
               disabled={isSubmitting}
@@ -345,7 +342,7 @@ export default function StaffNotes({
                 disabled={isSubmitting || !editingNote?.content.trim()}
                 className="min-w-[100px]"
               >
-                {isSubmitting ? "Saving..." : "Save Changes"}
+                {isSubmitting ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>
           </div>
@@ -376,7 +373,7 @@ export default function StaffNotes({
               disabled={isSubmitting}
               className="bg-red-600 hover:bg-red-700 text-white min-w-[100px]"
             >
-              {isSubmitting ? "Deleting..." : "Delete Note"}
+              {isSubmitting ? 'Deleting...' : 'Delete Note'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

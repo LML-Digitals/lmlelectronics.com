@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { formatSlug } from "./utils/formatSlug";
-import type { InventoryItemCategory } from "@/types/api";
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { formatSlug } from './utils/formatSlug';
+import type { InventoryItemCategory } from '@/types/api';
 
-export default function CategoryGrid({
+export default function CategoryGrid ({
   categories,
 }: {
   categories: InventoryItemCategory[];
@@ -26,7 +26,7 @@ export default function CategoryGrid({
           >
             <div className="relative aspect-square mb-3 overflow-hidden rounded-md">
               <Image
-                src={category.image || "/placeholder.svg"}
+                src={category.image || '/placeholder.svg'}
                 alt={category.name}
                 fill
                 className="object-cover"

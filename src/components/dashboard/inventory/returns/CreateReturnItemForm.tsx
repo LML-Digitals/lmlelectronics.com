@@ -1,33 +1,33 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
-import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
-import { getItemStoreLocations } from "@/components/dashboard/inventory/location/services/itemLocationCrud";
-import { createReturnedItem } from "@/components/dashboard/inventory/returns/services/returnItemCrud";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { InventoryItemWithRelations } from "../items/types/ItemType";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
+import { getInventoryItems } from '@/components/dashboard/inventory/items/services/itemsCrud';
+import { getItemStoreLocations } from '@/components/dashboard/inventory/location/services/itemLocationCrud';
+import { createReturnedItem } from '@/components/dashboard/inventory/returns/services/returnItemCrud';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useTransition } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { InventoryItemWithRelations } from '../items/types/ItemType';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/tooltip';
+import { Separator } from '@/components/ui/separator';
 import {
   Dialog,
   DialogContent,
@@ -37,20 +37,20 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   InventoryItem,
   InventoryVariation,
   StoreLocation,
   Vendor as Supplier,
-} from "@prisma/client";
-import { Loader2, Plus, Trash2, Check, ChevronsUpDown } from "lucide-react";
-import { getSuppliers } from "@/components/dashboard/inventory/supplier/services/supplierCrud";
+} from '@prisma/client';
+import { Loader2, Plus, Trash2, Check, ChevronsUpDown } from 'lucide-react';
+import { getSuppliers } from '@/components/dashboard/inventory/supplier/services/supplierCrud';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -58,9 +58,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { getCustomers } from "@/components/dashboard/customers/services/customerCrud";
-import { Customer } from "@prisma/client";
+} from '@/components/ui/command';
+import { getCustomers } from '@/components/dashboard/customers/services/customerCrud';
+import { Customer } from '@prisma/client';
 
 type Variation = {
   variationId: number;
@@ -72,11 +72,11 @@ type Variation = {
 
 type FormData = {
   reason: string;
-  returningParty: "customer" | "shop";
+  returningParty: 'customer' | 'shop';
   returnedAt: Date;
   variationId: string;
-  request?: "refund" | "credit";
-  result?: "success" | "rejected";
+  request?: 'refund' | 'credit';
+  result?: 'success' | 'rejected';
   itemId: string;
   locationId: string;
   quantity: string;
@@ -90,7 +90,7 @@ type InventoryWithVariations = InventoryItem & {
   variations: InventoryVariation[];
 };
 
-function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
+function ReturnFormContent ({ closeDialog }: { closeDialog: () => void }) {
   const { toast } = useToast();
   const router = useRouter();
   const {
@@ -100,7 +100,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
     formState: { errors: formErrors, isSubmitting },
     watch,
     setValue,
-  } = useForm<FormData>({ defaultValues: { request: "refund", comments: [] } });
+  } = useForm<FormData>({ defaultValues: { request: 'refund', comments: [] } });
   const [isPending, startTransition] = useTransition();
   const [inventoryItems, setInventoryItems] = useState<
     InventoryItemWithRelations[]
@@ -122,13 +122,13 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
   const [customersError, setCustomersError] = useState<string | null>(null);
   const [customerPopoverOpen, setCustomerPopoverOpen] = useState(false);
 
-  const selectedItemId = watch("itemId");
-  const selectedVariationId = watch("variationId");
-  const comments = watch("comments") || [];
-  const returningParty = watch("returningParty");
-  const selectedCustomerId = watch("customerId");
+  const selectedItemId = watch('itemId');
+  const selectedVariationId = watch('variationId');
+  const comments = watch('comments') || [];
+  const returningParty = watch('returningParty');
+  const selectedCustomerId = watch('customerId');
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     const fetchInventoryItems = async () => {
@@ -136,14 +136,15 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
       setInventoryError(null);
       try {
         const items = await getInventoryItems();
+
         setInventoryItems(items);
       } catch (error) {
-        console.error("Error fetching inventory items:", error);
-        setInventoryError("Error fetching inventory items");
+        console.error('Error fetching inventory items:', error);
+        setInventoryError('Error fetching inventory items');
         toast({
-          title: "Error",
-          description: "Could not fetch inventory items.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Could not fetch inventory items.',
+          variant: 'destructive',
         });
       } finally {
         setInventoryLoading(false);
@@ -155,14 +156,15 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
       setLocationsError(null);
       try {
         const locs = await getItemStoreLocations();
+
         setLocations(locs);
       } catch (error) {
-        console.error("Error fetching locations:", error);
-        setLocationsError("Error fetching locations");
+        console.error('Error fetching locations:', error);
+        setLocationsError('Error fetching locations');
         toast({
-          title: "Error",
-          description: "Could not fetch store locations.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Could not fetch store locations.',
+          variant: 'destructive',
         });
       } finally {
         setLocationsLoading(false);
@@ -174,14 +176,15 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
       setSuppliersError(null);
       try {
         const fetchedSuppliers = await getSuppliers();
+
         setSuppliers(Array.isArray(fetchedSuppliers) ? fetchedSuppliers : []);
       } catch (error) {
-        console.error("Error fetching suppliers:", error);
-        setSuppliersError("Error fetching suppliers");
+        console.error('Error fetching suppliers:', error);
+        setSuppliersError('Error fetching suppliers');
         toast({
-          title: "Error",
-          description: "Could not fetch suppliers.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Could not fetch suppliers.',
+          variant: 'destructive',
         });
       } finally {
         setSuppliersLoading(false);
@@ -193,14 +196,15 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
       setCustomersError(null);
       try {
         const fetchedCustomers = await getCustomers();
+
         setCustomers(fetchedCustomers);
       } catch (error) {
-        console.error("Error fetching customers:", error);
-        setCustomersError("Error fetching customers");
+        console.error('Error fetching customers:', error);
+        setCustomersError('Error fetching customers');
         toast({
-          title: "Error",
-          description: "Could not fetch customers.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Could not fetch customers.',
+          variant: 'destructive',
         });
       } finally {
         setCustomersLoading(false);
@@ -214,40 +218,41 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
   }, [toast]);
 
   useEffect(() => {
-    if (returningParty === "shop") {
-      setValue("customerId", undefined);
-      setValue("request", "refund");
+    if (returningParty === 'shop') {
+      setValue('customerId', undefined);
+      setValue('request', 'refund');
     }
   }, [returningParty, setValue]);
 
   const handleItemChange = (itemId: string) => {
-    const selectedItemData = inventoryItems.find(
-      (item: InventoryItemWithRelations) => item.id === itemId
-    );
+    const selectedItemData = inventoryItems.find((item: InventoryItemWithRelations) => item.id === itemId);
+
     setSelectedItem(selectedItemData || null);
     if (selectedItemData) {
       setVariations(selectedItemData.variations);
-      setValue("variationId", "");
+      setValue('variationId', '');
     } else {
       setVariations([]);
     }
   };
 
   const onSubmit = async (data: FormData) => {
-    if (data.returningParty === "customer" && !data.customerId) {
+    if (data.returningParty === 'customer' && !data.customerId) {
       toast({
-        title: "Missing Information",
-        description: "Please select a customer.",
-        variant: "destructive",
+        title: 'Missing Information',
+        description: 'Please select a customer.',
+        variant: 'destructive',
       });
+
       return;
     }
-    if (data.returningParty === "shop" && !data.supplier) {
+    if (data.returningParty === 'shop' && !data.supplier) {
       toast({
-        title: "Missing Information",
-        description: "Please select a supplier.",
-        variant: "destructive",
+        title: 'Missing Information',
+        description: 'Please select a supplier.',
+        variant: 'destructive',
       });
+
       return;
     }
 
@@ -259,67 +264,69 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
 
         if (isNaN(quantityValue) || quantityValue <= 0) {
           toast({
-            title: "Invalid Input",
-            description: "Quantity must be a positive whole number.",
-            variant: "destructive",
+            title: 'Invalid Input',
+            description: 'Quantity must be a positive whole number.',
+            variant: 'destructive',
           });
+
           return;
         }
         if (isNaN(amountValue) || amountValue <= 0) {
           toast({
-            title: "Invalid Input",
-            description: "Amount must be a positive number.",
-            variant: "destructive",
+            title: 'Invalid Input',
+            description: 'Amount must be a positive number.',
+            variant: 'destructive',
           });
+
           return;
         }
 
         const payload = {
           inventoryItemId: data.itemId,
           locationId: data.locationId,
-          reason: data.reason as string,
+          reason: data.reason,
           variationId: data.variationId,
           quantity: quantityValue,
           amount: amountValue,
           returningParty: data.returningParty,
           returnedAt: returnedAt,
           comments:
-            data.comments?.filter((comment) => comment.trim() !== "") || [],
-          ...(data.returningParty === "customer" && {
+            data.comments?.filter((comment) => comment.trim() !== '') || [],
+          ...(data.returningParty === 'customer' && {
             customerId: data.customerId,
             request: data.request,
           }),
-          ...(data.returningParty === "shop" && {
+          ...(data.returningParty === 'shop' && {
             supplier: data.supplier,
           }),
         };
 
         const res = await createReturnedItem(payload as any);
 
-        if (res.status === "success") {
+        if (res.status === 'success') {
           toast({
-            title: "Item Returned",
-            description: "The Item has been returned successfully.",
+            title: 'Item Returned',
+            description: 'The Item has been returned successfully.',
           });
           router.refresh();
           closeDialog();
         } else {
           toast({
-            title: "Return Failed",
+            title: 'Return Failed',
             description:
-              (res as any).message ||
-              "Failed to record the return. Please check details.",
-            variant: "destructive",
+              (res as any).message
+              || 'Failed to record the return. Please check details.',
+            variant: 'destructive',
           });
         }
       } catch (error: any) {
-        console.error("Error submitting return:", error);
+        console.error('Error submitting return:', error);
         toast({
-          title: "Submission Error",
+          title: 'Submission Error',
           description:
-            error.message ||
-            "An unexpected error occurred while saving the return.",
-          variant: "destructive",
+            error.message
+            || 'An unexpected error occurred while saving the return.',
+          variant: 'destructive',
         });
       }
     });
@@ -356,7 +363,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                   <Controller
                     control={control}
                     name="itemId"
-                    rules={{ required: "Item selection is required" }}
+                    rules={{ required: 'Item selection is required' }}
                     render={({ field }) => (
                       <Popover
                         open={itemPopoverOpen}
@@ -368,17 +375,15 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                             role="combobox"
                             aria-expanded={itemPopoverOpen}
                             className={cn(
-                              "w-full justify-between",
-                              !field.value && "text-muted-foreground",
-                              formErrors.itemId &&
-                                "border-red-500 focus:ring-red-500"
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground',
+                              formErrors.itemId
+                                && 'border-red-500 focus:ring-red-500',
                             )}
                           >
                             {field.value
-                              ? inventoryItems.find(
-                                  (item) => item.id === field.value
-                                )?.name
-                              : "Select item"}
+                              ? inventoryItems.find((item) => item.id === field.value)?.name
+                              : 'Select item'}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </PopoverTrigger>
@@ -400,10 +405,10 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                                   >
                                     <Check
                                       className={cn(
-                                        "mr-2 h-4 w-4",
+                                        'mr-2 h-4 w-4',
                                         field.value === item.id
-                                          ? "opacity-100"
-                                          : "opacity-0"
+                                          ? 'opacity-100'
+                                          : 'opacity-0',
                                       )}
                                     />
                                     {item.name}
@@ -432,7 +437,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                   <Controller
                     control={control}
                     name="variationId"
-                    rules={{ required: "Variation selection is required" }}
+                    rules={{ required: 'Variation selection is required' }}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -440,9 +445,9 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                       >
                         <SelectTrigger
                           className={cn(
-                            "w-full",
-                            formErrors.variationId &&
-                              "border-red-500 focus:ring-red-500"
+                            'w-full',
+                            formErrors.variationId
+                              && 'border-red-500 focus:ring-red-500',
                           )}
                         >
                           <SelectValue placeholder="Select a variation" />
@@ -487,7 +492,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                   <Controller
                     control={control}
                     name="locationId"
-                    rules={{ required: "Location is required" }}
+                    rules={{ required: 'Location is required' }}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -495,9 +500,9 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                       >
                         <SelectTrigger
                           className={cn(
-                            "w-full",
-                            formErrors.locationId &&
-                              "border-red-500 focus:ring-red-500"
+                            'w-full',
+                            formErrors.locationId
+                              && 'border-red-500 focus:ring-red-500',
                           )}
                         >
                           <SelectValue placeholder="Select location" />
@@ -531,12 +536,10 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                   id="quantity"
                   type="number"
                   placeholder="Enter quantity"
-                  className={cn(
-                    formErrors.quantity && "border-red-500 focus:ring-red-500"
-                  )}
-                  {...register("quantity", {
-                    required: "Quantity is required",
-                    min: { value: 1, message: "Quantity must be at least 1" },
+                  className={cn(formErrors.quantity && 'border-red-500 focus:ring-red-500')}
+                  {...register('quantity', {
+                    required: 'Quantity is required',
+                    min: { value: 1, message: 'Quantity must be at least 1' },
                   })}
                 />
                 {formErrors.quantity && (
@@ -560,14 +563,14 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                 <Controller
                   control={control}
                   name="returningParty"
-                  rules={{ required: "Returning party is required" }}
+                  rules={{ required: 'Returning party is required' }}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger
                         className={cn(
-                          "w-full",
-                          formErrors.returningParty &&
-                            "border-red-500 focus:ring-red-500"
+                          'w-full',
+                          formErrors.returningParty
+                            && 'border-red-500 focus:ring-red-500',
                         )}
                       >
                         <SelectValue placeholder="Select party" />
@@ -593,11 +596,9 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                   id="returnedAt"
                   type="date"
                   max={today}
-                  className={cn(
-                    formErrors.returnedAt && "border-red-500 focus:ring-red-500"
-                  )}
-                  {...register("returnedAt", {
-                    required: "Return date is required",
+                  className={cn(formErrors.returnedAt && 'border-red-500 focus:ring-red-500')}
+                  {...register('returnedAt', {
+                    required: 'Return date is required',
                   })}
                 />
                 {formErrors.returnedAt && (
@@ -607,7 +608,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                 )}
               </div>
 
-              {returningParty === "shop" && (
+              {returningParty === 'shop' && (
                 <div className="space-y-2">
                   <Label htmlFor="supplier" className="text-sm font-medium">
                     Supplier <span className="text-red-500">*</span>
@@ -627,8 +628,8 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                       name="supplier"
                       rules={{
                         required:
-                          returningParty === "shop"
-                            ? "Supplier is required when returning to shop"
+                          returningParty === 'shop'
+                            ? 'Supplier is required when returning to shop'
                             : false,
                       }}
                       render={({ field }) => (
@@ -638,9 +639,9 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                         >
                           <SelectTrigger
                             className={cn(
-                              "w-full",
-                              formErrors.supplier &&
-                                "border-red-500 focus:ring-red-500"
+                              'w-full',
+                              formErrors.supplier
+                                && 'border-red-500 focus:ring-red-500',
                             )}
                           >
                             <SelectValue placeholder="Select supplier" />
@@ -668,7 +669,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
               )}
             </div>
 
-            {returningParty === "customer" && (
+            {returningParty === 'customer' && (
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="customerId" className="text-sm font-medium">
@@ -689,8 +690,8 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                       name="customerId"
                       rules={{
                         required:
-                          returningParty === "customer"
-                            ? "Customer selection is required"
+                          returningParty === 'customer'
+                            ? 'Customer selection is required'
                             : false,
                       }}
                       render={({ field }) => (
@@ -704,22 +705,18 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                               role="combobox"
                               aria-expanded={customerPopoverOpen}
                               className={cn(
-                                "w-full justify-between text-left h-10",
-                                !field.value && "text-muted-foreground",
-                                formErrors.customerId &&
-                                  "border-red-500 focus:ring-red-500"
+                                'w-full justify-between text-left h-10',
+                                !field.value && 'text-muted-foreground',
+                                formErrors.customerId
+                                  && 'border-red-500 focus:ring-red-500',
                               )}
                             >
                               <span className="truncate">
                                 {field.value
-                                  ? customers.find(
-                                      (customer) => customer.id === field.value
-                                    )?.firstName +
-                                    " " +
-                                    customers.find(
-                                      (customer) => customer.id === field.value
-                                    )?.lastName
-                                  : "Select customer"}
+                                  ? `${customers.find((customer) => customer.id === field.value)?.firstName
+                                  } ${
+                                    customers.find((customer) => customer.id === field.value)?.lastName}`
+                                  : 'Select customer'}
                               </span>
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
@@ -733,8 +730,8 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                                   {customers.map((customer) => (
                                     <CommandItem
                                       key={customer.id}
-                                      value={`${customer.firstName || ""} ${
-                                        customer.lastName || ""
+                                      value={`${customer.firstName || ''} ${
+                                        customer.lastName || ''
                                       } ${customer.email}`}
                                       onSelect={() => {
                                         field.onChange(customer.id);
@@ -744,20 +741,20 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                                     >
                                       <Check
                                         className={cn(
-                                          "mr-2 h-4 w-4",
+                                          'mr-2 h-4 w-4',
                                           field.value === customer.id
-                                            ? "opacity-100"
-                                            : "opacity-0"
+                                            ? 'opacity-100'
+                                            : 'opacity-0',
                                         )}
                                       />
                                       <div className="flex flex-col">
                                         <span className="text-sm font-medium">
-                                          {customer.firstName ||
-                                          customer.lastName
-                                            ? `${customer.firstName || ""} ${
-                                                customer.lastName || ""
-                                              }`.trim()
-                                            : "No Name"}
+                                          {customer.firstName
+                                          || customer.lastName
+                                            ? `${customer.firstName || ''} ${
+                                              customer.lastName || ''
+                                            }`.trim()
+                                            : 'No Name'}
                                         </span>
                                         <span className="text-xs text-muted-foreground">
                                           {customer.email}
@@ -782,7 +779,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
               </div>
             )}
 
-            {returningParty === "customer" && (
+            {returningParty === 'customer' && (
               <div className="space-y-2">
                 <Label htmlFor="request" className="text-sm font-medium">
                   Request Type <span className="text-red-500">*</span>
@@ -792,20 +789,20 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                   name="request"
                   rules={{
                     required:
-                      returningParty === "customer"
-                        ? "Request type is required"
+                      returningParty === 'customer'
+                        ? 'Request type is required'
                         : false,
                   }}
                   render={({ field }) => (
                     <Select
                       onValueChange={field.onChange}
-                      value={field.value || "refund"}
+                      value={field.value || 'refund'}
                     >
                       <SelectTrigger
                         className={cn(
-                          "w-full",
-                          formErrors.request &&
-                            "border-red-500 focus:ring-red-500"
+                          'w-full',
+                          formErrors.request
+                            && 'border-red-500 focus:ring-red-500',
                         )}
                       >
                         <SelectValue placeholder="Select request type" />
@@ -841,15 +838,17 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                     min="0.01"
                     placeholder="0.00"
                     className={cn(
-                      "pl-7",
-                      formErrors.amount && "border-red-500 focus:ring-red-500"
+                      'pl-7',
+                      formErrors.amount && 'border-red-500 focus:ring-red-500',
                     )}
-                    {...register("amount", {
-                      required: "Return amount is required",
+                    {...register('amount', {
+                      required: 'Return amount is required',
                       validate: (value) => {
                         const num = parseFloat(value);
-                        if (isNaN(num)) return "Please enter a valid number";
-                        if (num <= 0) return "Amount must be positive";
+
+                        if (isNaN(num)) { return 'Please enter a valid number'; }
+                        if (num <= 0) { return 'Amount must be positive'; }
+
                         return true;
                       },
                     })}
@@ -870,14 +869,14 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                   id="reason"
                   placeholder="Why is the item being returned?"
                   className={cn(
-                    "min-h-[80px]",
-                    formErrors.reason && "border-red-500 focus:ring-red-500"
+                    'min-h-[80px]',
+                    formErrors.reason && 'border-red-500 focus:ring-red-500',
                   )}
-                  {...register("reason", {
-                    required: "Reason is required",
+                  {...register('reason', {
+                    required: 'Reason is required',
                     minLength: {
                       value: 5,
-                      message: "Please provide a more detailed reason",
+                      message: 'Please provide a more detailed reason',
                     },
                   })}
                 />
@@ -901,7 +900,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
               onClick={() => setShowComments(!showComments)}
               className="text-sm"
             >
-              {showComments ? "Hide Comments" : "Add Comments"}
+              {showComments ? 'Hide Comments' : 'Add Comments'}
             </Button>
           </div>
 
@@ -922,6 +921,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                           className="flex-1"
                           onChange={(e) => {
                             const newComments = [...field.value];
+
                             newComments[index] = e.target.value;
                             field.onChange(newComments);
                           }}
@@ -936,6 +936,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                                 className="h-9 w-9 text-red-600 hover:text-red-700 hover:bg-red-100"
                                 onClick={() => {
                                   const newComments = [...field.value];
+
                                   newComments.splice(index, 1);
                                   field.onChange(newComments);
                                 }}
@@ -958,7 +959,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => field.onChange([...(field.value || []), ""])}
+                    onClick={() => field.onChange([...(field.value || []), ''])}
                     className="mt-2 flex items-center gap-1"
                   >
                     <Plus size={14} />
@@ -985,7 +986,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
             {isPending || isSubmitting ? (
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
             ) : null}
-            {isPending || isSubmitting ? "Saving..." : "Save Return"}
+            {isPending || isSubmitting ? 'Saving...' : 'Save Return'}
           </Button>
         </DialogFooter>
       </form>
@@ -993,7 +994,7 @@ function ReturnFormContent({ closeDialog }: { closeDialog: () => void }) {
   );
 }
 
-export default function CreateReturnItemDialog({
+export default function CreateReturnItemDialog ({
   trigger,
 }: {
   trigger?: React.ReactNode;

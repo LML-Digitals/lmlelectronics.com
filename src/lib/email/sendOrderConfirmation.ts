@@ -1,16 +1,17 @@
-"use server";
+'use server';
 
-import { Resend } from "resend";
+import { Resend } from 'resend';
 
 const apiKey = process.env.RESEND_API_KEY;
+
 if (!apiKey) {
-  throw new Error("RESEND_API_KEY is not set");
+  throw new Error('RESEND_API_KEY is not set');
 }
 const resend = new Resend(apiKey);
 
-const BRAND_COLOR = "#d6cd00";
+const BRAND_COLOR = '#d6cd00';
 
-export async function sendOrderConfirmationEmail({
+export async function sendOrderConfirmationEmail ({
   to,
   orderId,
   customerName,
@@ -22,7 +23,7 @@ export async function sendOrderConfirmationEmail({
   orderDetailsHtml: string;
 }) {
   return resend.emails.send({
-    from: "orders@lmlrepair.com", // You must verify this sender in Resend
+    from: 'orders@lmlrepair.com', // You must verify this sender in Resend
     to,
     subject: `Order Confirmation - #${orderId}`,
     html: `

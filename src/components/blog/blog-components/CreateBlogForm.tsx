@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, useTransition } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -11,25 +11,25 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Badge } from "@/components/ui/badge";
-import { X, CircleDashedIcon } from "lucide-react";
-import dynamic from "next/dynamic";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { toast } from "@/components/ui/use-toast";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+} from '@/components/ui/command';
+import { Badge } from '@/components/ui/badge';
+import { X, CircleDashedIcon } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { type SubmitHandler, useForm } from 'react-hook-form';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { toast } from '@/components/ui/use-toast';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Form,
   FormControl,
@@ -38,25 +38,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { createBlog } from "@/components/blog/services/blogCrud";
-import { Tag, BlogCategory, Blog } from "@prisma/client";
-import { DataToBlog } from "@/components/blog/types/blogTypes";
+} from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { createBlog } from '@/components/blog/services/blogCrud';
+import { Tag, BlogCategory, Blog } from '@prisma/client';
+import { DataToBlog } from '@/components/blog/types/blogTypes';
 
-const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
 });
 
-import "easymde/dist/easymde.min.css";
+import 'easymde/dist/easymde.min.css';
 
 const blogFormSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(1, 'Title is required'),
   content: z.string().optional(),
-  description: z.string().min(1, "Description is required"),
-  categoryId: z.string().min(1, "Category is required"),
-  link: z.string().url().optional().or(z.literal("")),
+  description: z.string().min(1, 'Description is required'),
+  categoryId: z.string().min(1, 'Category is required'),
+  link: z.string().url().optional().or(z.literal('')),
   tagIds: z.array(z.string()).optional(),
   image: z.string().optional(),
   metaTitle: z.string().optional(),
@@ -73,7 +73,7 @@ interface CreateBlogFormProps {
   onSuccess: () => void;
 }
 
-export default function CreateBlogForm({
+export default function CreateBlogForm ({
   allTags,
   allCategories,
   onSuccess,
@@ -83,58 +83,59 @@ export default function CreateBlogForm({
   const [preview, setPreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  const [tagQuery, setTagQuery] = useState("");
+  const [tagQuery, setTagQuery] = useState('');
 
   const form = useForm<BlogFormData>({
     resolver: zodResolver(blogFormSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      description: "",
-      link: "",
-      image: "",
-      categoryId: "",
+      title: '',
+      content: '',
+      description: '',
+      link: '',
+      image: '',
+      categoryId: '',
       tagIds: [],
-      metaTitle: "",
-      metaDesc: "",
+      metaTitle: '',
+      metaDesc: '',
       isPublished: false,
       isFeatured: false,
     },
   });
 
-  const filteredTags = allTags.filter(
-    (tag) =>
-      tag.name.toLowerCase().includes(tagQuery.toLowerCase()) &&
-      !selectedTags.find((selectedTag) => selectedTag.id === tag.id)
-  );
+  const filteredTags = allTags.filter((tag) => tag.name.toLowerCase().includes(tagQuery.toLowerCase())
+      && !selectedTags.find((selectedTag) => selectedTag.id === tag.id));
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (file) {
       setImageFile(file);
       setPreview(URL.createObjectURL(file));
-      form.setValue("image", "temp-upload-placeholder");
+      form.setValue('image', 'temp-upload-placeholder');
     }
   };
 
   const uploadImage = async (file: File): Promise<string> => {
     const response = await fetch(`/api/upload?filename=${file.name}`, {
-      method: "POST",
+      method: 'POST',
       body: file,
     });
 
-    if (!response.ok) throw new Error("Failed to upload file.");
+    if (!response.ok) { throw new Error('Failed to upload file.'); }
     const newBlob = await response.json();
+
     return newBlob.url;
   };
 
   const handleImageUpload = (editor: any) => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
+    const fileInput = document.createElement('input');
+
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
 
     fileInput.onchange = async (e: any) => {
       const file = e.target.files[0];
+
       if (file) {
         try {
           const imageUrl = await uploadImage(file);
@@ -143,9 +144,10 @@ export default function CreateBlogForm({
           const cm = editor.codemirror;
           const doc = cm.getDoc();
           const cursor = doc.getCursor();
+
           doc.replaceRange(markdownImage, cursor);
         } catch (error) {
-          console.error("Error inserting image:", error);
+          console.error('Error inserting image:', error);
         }
       }
     };
@@ -155,53 +157,54 @@ export default function CreateBlogForm({
 
   const mdeOptions: any = {
     toolbar: [
-      "bold",
-      "italic",
-      "heading",
-      "|",
-      "code",
-      "quote",
-      "unordered-list",
-      "ordered-list",
-      "|",
-      "link",
-      "image",
+      'bold',
+      'italic',
+      'heading',
+      '|',
+      'code',
+      'quote',
+      'unordered-list',
+      'ordered-list',
+      '|',
+      'link',
+      'image',
       {
-        name: "upload-image",
+        name: 'upload-image',
         action: (editor: any) => handleImageUpload(editor),
-        className: "fa fa-upload",
-        title: "Upload Image",
+        className: 'fa fa-upload',
+        title: 'Upload Image',
       },
-      "|",
-      "preview",
-      "side-by-side",
-      "fullscreen",
-      "|",
-      "guide",
+      '|',
+      'preview',
+      'side-by-side',
+      'fullscreen',
+      '|',
+      'guide',
     ],
   };
 
   const handleSelectTag = (tagName: string) => {
     const tagToAdd = allTags.find((tag) => tag.name === tagName);
+
     if (tagToAdd && !selectedTags.find((st) => st.id === tagToAdd.id)) {
       const newSelectedTags = [...selectedTags, tagToAdd];
+
       setSelectedTags(newSelectedTags);
       form.setValue(
-        "tagIds",
-        newSelectedTags.map((t) => t.id)
+        'tagIds',
+        newSelectedTags.map((t) => t.id),
       );
     }
-    setTagQuery("");
+    setTagQuery('');
   };
 
   const handleRemoveTag = (tagIdToRemove: string) => {
-    const newSelectedTags = selectedTags.filter(
-      (tag) => tag.id !== tagIdToRemove
-    );
+    const newSelectedTags = selectedTags.filter((tag) => tag.id !== tagIdToRemove);
+
     setSelectedTags(newSelectedTags);
     form.setValue(
-      "tagIds",
-      newSelectedTags.map((t) => t.id)
+      'tagIds',
+      newSelectedTags.map((t) => t.id),
     );
   };
 
@@ -211,7 +214,7 @@ export default function CreateBlogForm({
 
     startTransition(async () => {
       try {
-        let imageUrl = "";
+        let imageUrl = '';
 
         // 1. Handle Image Upload
         if (imageFile) {
@@ -219,17 +222,18 @@ export default function CreateBlogForm({
         } else {
           // Require image for new posts
           toast({
-            variant: "destructive",
-            title: "Image Required",
-            description: "Please upload a cover image.",
+            variant: 'destructive',
+            title: 'Image Required',
+            description: 'Please upload a cover image.',
           });
+
           return;
         }
 
         // 2. Prepare Blog Data Payload
         const blogPayload: DataToBlog = {
           title: data.title,
-          content: data.content || "",
+          content: data.content || '',
           description: data.description,
           categoryId: data.categoryId,
           link: data.link,
@@ -245,34 +249,35 @@ export default function CreateBlogForm({
           ...blogPayload,
           isPublished: shouldBePublished,
         };
+
         await createBlog(createPayload);
 
         // 4. Show appropriate toast based on publish status
         if (shouldBePublished) {
           toast({
-            title: "Blog Created and Published",
-            description: "Your blog post has been created and is live.",
+            title: 'Blog Created and Published',
+            description: 'Your blog post has been created and is live.',
           });
         } else {
           toast({
-            title: "Blog Created as Draft",
-            description: "Your blog post has been saved as a draft.",
+            title: 'Blog Created as Draft',
+            description: 'Your blog post has been saved as a draft.',
           });
         }
 
         // 5. Redirect
         onSuccess();
-        router.push("/dashboard/blogs");
+        router.push('/dashboard/blogs');
         router.refresh(); // Ensure dashboard list is updated
       } catch (error) {
-        console.error("Submission error:", error);
+        console.error('Submission error:', error);
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
             error instanceof Error
               ? error.message
-              : "Failed to create blog post",
+              : 'Failed to create blog post',
         });
       }
     });
@@ -370,7 +375,7 @@ export default function CreateBlogForm({
                 alt="Image preview"
                 fill
                 sizes="(max-width: 768px) 100vw, 800px"
-                style={{ objectFit: "cover" }}
+                style={{ objectFit: 'cover' }}
               />
             </div>
           )}
@@ -409,8 +414,8 @@ export default function CreateBlogForm({
                     <CommandList className="absolute z-10 mt-1 w-full bg-popover border rounded-md shadow-md max-h-40 overflow-y-auto">
                       <CommandEmpty>
                         {filteredTags.length === 0 && tagQuery
-                          ? "No tags found."
-                          : "Type to search..."}
+                          ? 'No tags found.'
+                          : 'Type to search...'}
                       </CommandEmpty>
                       <CommandGroup>
                         {filteredTags.map((tag) => (
@@ -529,7 +534,7 @@ export default function CreateBlogForm({
           {isPending ? (
             <CircleDashedIcon className="mr-2 h-4 w-4 animate-spin" />
           ) : null}
-          {form.getValues("isPublished") ? "Create & Publish" : "Create Draft"}
+          {form.getValues('isPublished') ? 'Create & Publish' : 'Create Draft'}
         </Button>
       </form>
     </Form>

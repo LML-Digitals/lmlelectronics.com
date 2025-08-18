@@ -1,14 +1,14 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { fetchSession } from "@/lib/session";
-import { VariationUpdateInput } from "../types/types";
-import { Prisma } from "@prisma/client";
+import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+import { fetchSession } from '@/lib/session';
+import { VariationUpdateInput } from '../types/types';
+import { Prisma } from '@prisma/client';
 import {
   getDefaultShippingRate,
   getDefaultTaxRate,
-} from "@/components/dashboard/settings/services/inventorySettings";
+} from '@/components/dashboard/settings/services/inventorySettings';
 
 // Define type for Variation data within CreateItemInput
 export type VariationInput = {
@@ -58,7 +58,7 @@ type InventoryAdjustment = {
 };
 
 // Create Item
-export async function createInventoryItem(data: CreateItemInput) {
+export async function createInventoryItem (data: CreateItemInput) {
   try {
     // console.log("Creating item with data:", data); // Debug log
 
@@ -67,63 +67,61 @@ export async function createInventoryItem(data: CreateItemInput) {
     const defaultTaxRate = await getDefaultTaxRate();
 
     // Process variations to calculate derived values
-    const processedVariations = await Promise.all(
-      data.variations?.map(async (variation) => {
-        const raw = variation.raw || 0;
+    const processedVariations = await Promise.all(data.variations?.map(async (variation) => {
+      const raw = variation.raw || 0;
 
-        // Fix how useDefaultRates is determined
-        const useDefaultRates =
-          variation.useDefaultRates === true ||
-          variation.useDefaultRates === undefined;
+      // Fix how useDefaultRates is determined
+      const useDefaultRates
+          = variation.useDefaultRates === true
+          || variation.useDefaultRates === undefined;
 
-        // Properly handle tax and shipping when not using default rates
-        // If useDefaultRates is false, use the provided tax/shipping values even if they're 0
-        const tax = useDefaultRates
-          ? defaultTaxRate
-          : variation.tax !== undefined
+      // Properly handle tax and shipping when not using default rates
+      // If useDefaultRates is false, use the provided tax/shipping values even if they're 0
+      const tax = useDefaultRates
+        ? defaultTaxRate
+        : variation.tax !== undefined
           ? variation.tax
           : 0;
-        const shipping = useDefaultRates
-          ? defaultShippingRate
-          : variation.shipping !== undefined
+      const shipping = useDefaultRates
+        ? defaultShippingRate
+        : variation.shipping !== undefined
           ? variation.shipping
           : 0;
 
-        const markup = variation.markup || 0.3;
+      const markup = variation.markup || 0.3;
 
-        // Calculate derived values
-        const cost = raw + raw * (tax / 100) + shipping;
-        const totalCost = cost + cost * (markup / 100);
-        const profit = totalCost - cost;
-        const sellingPrice = totalCost;
+      // Calculate derived values
+      const cost = raw + raw * (tax / 100) + shipping;
+      const totalCost = cost + cost * (markup / 100);
+      const profit = totalCost - cost;
+      const sellingPrice = totalCost;
 
-        return {
-          name: variation.name,
-          sku: variation.sku,
-          image: variation.image || undefined,
-          raw: raw,
-          tax: tax,
-          shipping: shipping,
-          markup: markup,
-          totalCost: totalCost,
-          profit: profit,
-          sellingPrice: sellingPrice,
-          visible: variation.visible !== false, // Default to true if not specified
-          useDefaultRates: useDefaultRates,
-          weight: variation.weight,
-          length: variation.length,
-          width: variation.width,
-          height: variation.height,
-          stockLevels: {
-            create: variation.stockLevels.map((level) => ({
-              locationId: level.locationId,
-              stock: level.stock,
-              purchaseCost: level.purchaseCost,
-            })),
-          },
-        };
-      }) || []
-    );
+      return {
+        name: variation.name,
+        sku: variation.sku,
+        image: variation.image || undefined,
+        raw: raw,
+        tax: tax,
+        shipping: shipping,
+        markup: markup,
+        totalCost: totalCost,
+        profit: profit,
+        sellingPrice: sellingPrice,
+        visible: variation.visible !== false, // Default to true if not specified
+        useDefaultRates: useDefaultRates,
+        weight: variation.weight,
+        length: variation.length,
+        width: variation.width,
+        height: variation.height,
+        stockLevels: {
+          create: variation.stockLevels.map((level) => ({
+            locationId: level.locationId,
+            stock: level.stock,
+            purchaseCost: level.purchaseCost,
+          })),
+        },
+      };
+    }) || []);
 
     // Create the item data with optional warrantyTypeId
     const itemData: Prisma.InventoryItemCreateInput = {
@@ -179,18 +177,20 @@ export async function createInventoryItem(data: CreateItemInput) {
     });
 
     // console.log("Created item:", item);
-    revalidatePath("/dashboard/inventory/items");
-    return { status: "success", item };
+    revalidatePath('/dashboard/inventory/items');
+
+    return { status: 'success', item };
   } catch (error) {
-    console.error("Error creating inventory item:", error);
+    console.error('Error creating inventory item:', error);
     throw error; // Throw the actual error for better debugging
   }
 }
 
-export async function updateInventoryItem(id: string, data: CreateItemInput) {
+export async function updateInventoryItem (id: string, data: CreateItemInput) {
   const session = await fetchSession();
+
   if (!session) {
-    throw new Error("User not authenticated");
+    throw new Error('User not authenticated');
   }
   const user = session;
 
@@ -211,29 +211,22 @@ export async function updateInventoryItem(id: string, data: CreateItemInput) {
     });
 
     if (!foundItem) {
-      throw new Error("Item not found");
+      throw new Error('Item not found');
     }
 
     const incomingVariations = data.variations || [];
     const existingVariations = foundItem.variations;
 
-    const incomingVariationIds = new Set(
-      incomingVariations.map((v) => v.id).filter((id): id is string => !!id)
-    );
+    const incomingVariationIds = new Set(incomingVariations.map((v) => v.id).filter((id): id is string => !!id));
     const existingVariationIds = new Set(existingVariations.map((v) => v.id));
 
     const variationsToDelete = existingVariations
       .filter((v) => !incomingVariationIds.has(v.id))
       .map((v) => v.id);
 
-    const variationsToUpdate = incomingVariations.filter(
-      (v): v is VariationInput & { id: string } =>
-        !!v.id && existingVariationIds.has(v.id)
-    );
+    const variationsToUpdate = incomingVariations.filter((v): v is VariationInput & { id: string } => !!v.id && existingVariationIds.has(v.id));
 
-    const variationsToCreate = incomingVariations.filter(
-      (v): v is VariationInput => !v.id
-    );
+    const variationsToCreate = incomingVariations.filter((v): v is VariationInput => !v.id);
 
     // Track stock adjustments - needs refinement based on CUD operations
     // This simple calculation might not be accurate anymore, needs adjustment
@@ -259,9 +252,7 @@ export async function updateInventoryItem(id: string, data: CreateItemInput) {
     // 2. Update existing variations
     for (const variation of variationsToUpdate) {
       const { stockLevels, ...variationData } = variation;
-      const existingVariation = existingVariations.find(
-        (v) => v.id === variation.id
-      )!; // Should exist based on filter
+      const existingVariation = existingVariations.find((v) => v.id === variation.id)!; // Should exist based on filter
 
       // Check if using default rates
       const useDefaultRates = variationData.useDefaultRates !== false; // Default to true if not specified
@@ -274,11 +265,11 @@ export async function updateInventoryItem(id: string, data: CreateItemInput) {
         : variationData.shipping ?? 0;
       const markup = variationData.markup ?? 0.3;
 
-      const priceFieldsChanged =
-        existingVariation.raw !== raw ||
-        existingVariation.tax !== tax ||
-        existingVariation.shipping !== shipping ||
-        existingVariation.useDefaultRates !== useDefaultRates; // Also check if default rates toggle changed
+      const priceFieldsChanged
+        = existingVariation.raw !== raw
+        || existingVariation.tax !== tax
+        || existingVariation.shipping !== shipping
+        || existingVariation.useDefaultRates !== useDefaultRates; // Also check if default rates toggle changed
 
       const cost = raw + raw * (tax / 100) + shipping;
       const totalCost = cost + cost * (markup / 100);
@@ -307,7 +298,7 @@ export async function updateInventoryItem(id: string, data: CreateItemInput) {
             upsert: stockLevels.map((level) => ({
               where: {
                 variationId_locationId: {
-                  variationId: variation.id!, // ID is guaranteed here
+                  variationId: variation.id, // ID is guaranteed here
                   locationId: level.locationId,
                 },
               },
@@ -352,7 +343,7 @@ export async function updateInventoryItem(id: string, data: CreateItemInput) {
         } catch (error) {
           console.error(
             `Error finding/recalculating RepairOptions for variation ${variation.id} during item update:`,
-            error
+            error,
           );
         }
       }
@@ -360,12 +351,11 @@ export async function updateInventoryItem(id: string, data: CreateItemInput) {
 
       // Simplified Adjustment Tracking (Example - needs careful implementation)
       for (const level of stockLevels) {
-        const existingLevel = existingVariation.stockLevels.find(
-          (sl) => sl.locationId === level.locationId
-        );
+        const existingLevel = existingVariation.stockLevels.find((sl) => sl.locationId === level.locationId);
         const stockBefore = existingLevel?.stock ?? 0;
         const stockAfter = level.stock;
         const change = stockAfter - stockBefore;
+
         if (change !== 0) {
           //  adjustmentsToCreate.push({ /* ... adjustment data ... */ }); // Defer adjustment creation
         }
@@ -479,27 +469,26 @@ export async function updateInventoryItem(id: string, data: CreateItemInput) {
     //   await prisma.inventoryAdjustment.createMany({ data: adjustmentsToCreate });
     // }
 
-    revalidatePath("/dashboard/inventory/items");
-    return { status: "success", item: updatedItem }; // Return the result from the final update
+    revalidatePath('/dashboard/inventory/items');
+
+    return { status: 'success', item: updatedItem }; // Return the result from the final update
   } catch (error) {
-    console.error("Error updating inventory item:", error);
+    console.error('Error updating inventory item:', error);
     // Provide more specific error feedback if possible
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (
-        error.code === "P2002" &&
-        error.meta?.target === "InventoryVariation_sku_key"
+        error.code === 'P2002'
+        && error.meta?.target === 'InventoryVariation_sku_key'
       ) {
-        throw new Error(
-          `Failed to update item: SKU conflict detected. Please ensure all variation SKUs are unique.`
-        );
+        throw new Error('Failed to update item: SKU conflict detected. Please ensure all variation SKUs are unique.');
       }
     }
-    throw new Error("Failed to update inventory item");
+    throw new Error('Failed to update inventory item');
   }
 }
 
 // Get All Items
-export async function getInventoryItems() {
+export async function getInventoryItems () {
   try {
     return await prisma.inventoryItem.findMany({
       where: { isBundle: false },
@@ -525,13 +514,13 @@ export async function getInventoryItems() {
       },
     });
   } catch (error) {
-    console.error("Error fetching inventory items:", error);
-    throw new Error("Failed to fetch inventory items");
+    console.error('Error fetching inventory items:', error);
+    throw new Error('Failed to fetch inventory items');
   }
 }
 
 // Get Single Item
-export async function getInventoryItem(id: string) {
+export async function getInventoryItem (id: string) {
   try {
     const item = await prisma.inventoryItem.findUnique({
       where: { id },
@@ -557,16 +546,17 @@ export async function getInventoryItem(id: string) {
       },
     });
 
-    if (!item) throw new Error("Item not found");
+    if (!item) { throw new Error('Item not found'); }
+
     return item;
   } catch (error) {
-    console.error("Error fetching inventory item:", error);
-    throw new Error("Failed to fetch inventory item");
+    console.error('Error fetching inventory item:', error);
+    throw new Error('Failed to fetch inventory item');
   }
 }
 
 // Delete Item
-export async function deleteInventoryItem(id: string) {
+export async function deleteInventoryItem (id: string) {
   try {
     await prisma.comment.deleteMany({
       where: {
@@ -594,11 +584,12 @@ export async function deleteInventoryItem(id: string) {
       where: { id },
     });
 
-    revalidatePath("/dashboard/inventory/items");
-    return { status: "success", message: "Item deleted successfully" };
+    revalidatePath('/dashboard/inventory/items');
+
+    return { status: 'success', message: 'Item deleted successfully' };
   } catch (error) {
-    console.error("Error deleting inventory item:", error);
-    throw new Error("Failed to delete inventory item");
+    console.error('Error deleting inventory item:', error);
+    throw new Error('Failed to delete inventory item');
   }
 }
 
@@ -639,11 +630,11 @@ export async function deleteInventoryItem(id: string) {
 // }
 
 // Update Stock Levels
-export async function updateStockLevel(
+export async function updateStockLevel (
   variationId: string,
   locationId: number,
   stock: number,
-  purchaseCost?: number
+  purchaseCost?: number,
 ) {
   try {
     const stockLevel = await prisma.inventoryStockLevel.upsert({
@@ -665,15 +656,16 @@ export async function updateStockLevel(
       },
     });
 
-    revalidatePath("/dashboard/inventory/items");
-    return { status: "success", stockLevel };
+    revalidatePath('/dashboard/inventory/items');
+
+    return { status: 'success', stockLevel };
   } catch (error) {
-    console.error("Error updating stock level:", error);
-    throw new Error("Failed to update stock level");
+    console.error('Error updating stock level:', error);
+    throw new Error('Failed to update stock level');
   }
 }
 
-export async function getCategories() {
+export async function getCategories () {
   try {
     // Get root categories (those without parents) and their children
     return await prisma.inventoryItemCategory.findMany({
@@ -688,16 +680,16 @@ export async function getCategories() {
         },
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     });
   } catch (error) {
-    console.error("Error fetching categories:", error);
-    throw new Error("Failed to fetch categories");
+    console.error('Error fetching categories:', error);
+    throw new Error('Failed to fetch categories');
   }
 }
 
-export async function getSuppliers() {
+export async function getSuppliers () {
   try {
     return await prisma.vendor.findMany({
       select: {
@@ -706,25 +698,25 @@ export async function getSuppliers() {
       },
     });
   } catch (error) {
-    console.error("Error fetching vendors:", error);
-    throw new Error("Failed to fetch vendors");
+    console.error('Error fetching vendors:', error);
+    throw new Error('Failed to fetch vendors');
   }
 }
 
-export async function getTags() {
+export async function getTags () {
   try {
     return await prisma.tag.findMany({
-      orderBy: { name: "asc" },
+      orderBy: { name: 'asc' },
     });
   } catch (error) {
-    console.error("Error fetching tags:", error);
-    throw new Error("Failed to fetch tags");
+    console.error('Error fetching tags:', error);
+    throw new Error('Failed to fetch tags');
   }
 }
 
-export async function getVariationsStockForLocation(
+export async function getVariationsStockForLocation (
   variationIds: string[],
-  locationId: number
+  locationId: number,
 ): Promise<Record<string, number>> {
   if (variationIds.length === 0) {
     return {};
@@ -746,6 +738,7 @@ export async function getVariationsStockForLocation(
 
     // Create a map of variationId -> stock, defaulting to 0 if not found
     const stockMap: Record<string, number> = {};
+
     variationIds.forEach((id) => {
       stockMap[id] = 0; // Initialize all requested IDs with 0
     });
@@ -756,12 +749,12 @@ export async function getVariationsStockForLocation(
 
     return stockMap;
   } catch (error) {
-    console.error("Error fetching variation stock levels:", error);
-    throw new Error("Failed to fetch variation stock levels");
+    console.error('Error fetching variation stock levels:', error);
+    throw new Error('Failed to fetch variation stock levels');
   }
 }
 
-export async function getWarrantyTypes() {
+export async function getWarrantyTypes () {
   try {
     return await prisma.warrantyType.findMany({
       select: {
@@ -771,16 +764,16 @@ export async function getWarrantyTypes() {
         duration: true,
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     });
   } catch (error) {
-    console.error("Error fetching warranty types:", error);
-    throw new Error("Failed to fetch warranty types");
+    console.error('Error fetching warranty types:', error);
+    throw new Error('Failed to fetch warranty types');
   }
 }
 
-export async function getInventoryVariations() {
+export async function getInventoryVariations () {
   try {
     return await prisma.inventoryVariation.findMany({
       include: {
@@ -798,20 +791,21 @@ export async function getInventoryVariations() {
       },
     });
   } catch (error) {
-    console.error("Error fetching inventory variation:", error);
-    throw new Error("Failed to fetch inventory variation");
+    console.error('Error fetching inventory variation:', error);
+    throw new Error('Failed to fetch inventory variation');
   }
 }
 
-export async function updateVariation(
+export async function updateVariation (
   variationId: string,
-  data: VariationUpdateInput
+  data: VariationUpdateInput,
 ) {
   try {
     // Get session for user info
     const session = await fetchSession();
+
     if (!session) {
-      throw new Error("User not authenticated");
+      throw new Error('User not authenticated');
     }
     const user = session;
 
@@ -825,7 +819,7 @@ export async function updateVariation(
     });
 
     if (!existingVariation) {
-      throw new Error("Variation not found");
+      throw new Error('Variation not found');
     }
 
     // Get default rates if useDefaultRates is true
@@ -844,11 +838,11 @@ export async function updateVariation(
     const shipping = useDefaultRates ? defaultShippingRate : data.shipping || 0;
     const markup = data.markup || 0;
 
-    const priceFieldsChanged =
-      existingVariation.raw !== raw ||
-      existingVariation.tax !== tax ||
-      existingVariation.shipping !== shipping ||
-      existingVariation.useDefaultRates !== useDefaultRates; // Also trigger if default rates toggle changed
+    const priceFieldsChanged
+      = existingVariation.raw !== raw
+      || existingVariation.tax !== tax
+      || existingVariation.shipping !== shipping
+      || existingVariation.useDefaultRates !== useDefaultRates; // Also trigger if default rates toggle changed
 
     const cost = raw + raw * (tax / 100) + shipping;
     const totalCost = cost + cost * (markup / 100);
@@ -894,9 +888,7 @@ export async function updateVariation(
               const locationId = parseInt(locationIdStr);
 
               // Find existing stock level for comparison
-              const existingStockLevel = existingVariation.stockLevels.find(
-                (sl) => sl.locationId === locationId
-              );
+              const existingStockLevel = existingVariation.stockLevels.find((sl) => sl.locationId === locationId);
 
               const stockBefore = existingStockLevel?.stock || 0;
               const stockAfter = stockInfo.stock;
@@ -909,7 +901,7 @@ export async function updateVariation(
                   inventoryVariationId: variationId,
                   locationId: locationId,
                   changeAmount,
-                  reason: "Manual stock update",
+                  reason: 'Manual stock update',
                   stockBefore,
                   stockAfter,
                   adjustedById: user.user.id,
@@ -997,7 +989,7 @@ export async function updateVariation(
       } catch (error) {
         console.error(
           `Error finding or recalculating RepairOptions for variation ${variationId}:`,
-          error
+          error,
         );
         // Handle error in finding linked options - potentially log or notify
       }
@@ -1005,54 +997,56 @@ export async function updateVariation(
     // --- End: Recalculate linked RepairOption prices ---
 
     // Revalidate the inventory items path
-    revalidatePath("/dashboard/inventory/items");
+    revalidatePath('/dashboard/inventory/items');
     // Revalidate repairs path as prices might have changed
-    revalidatePath("/dashboard/repairs");
+    revalidatePath('/dashboard/repairs');
 
     return updatedVariation;
   } catch (error) {
-    console.error("Error updating variation:", error);
+    console.error('Error updating variation:', error);
     throw error;
   }
 }
 
 // Helper function to get system admin for automated adjustments
-async function getSystemAdmin() {
+async function getSystemAdmin () {
   const systemAdmin = await prisma.staff.findFirst({
     where: {
-      role: "admin",
+      role: 'admin',
       isActive: true,
     },
     orderBy: {
-      createdAt: "asc", // Get the oldest admin (likely the system admin)
+      createdAt: 'asc', // Get the oldest admin (likely the system admin)
     },
   });
 
   if (!systemAdmin) {
-    throw new Error("No system admin found for automated adjustments");
+    throw new Error('No system admin found for automated adjustments');
   }
 
   return systemAdmin;
 }
 
 // Adjust Stock Level and Create Adjustment Record
-export async function adjustStockLevel(
+export async function adjustStockLevel (
   variationId: string,
   locationId: number,
   changeAmount: number,
   reason: string,
   purchaseCost?: number,
-  fromOrder?: boolean
+  fromOrder?: boolean,
 ) {
   let userId: string;
 
   if (fromOrder) {
     const systemAdmin = await getSystemAdmin();
+
     userId = systemAdmin.id;
   } else {
     const session = await fetchSession();
-    if (!session || session?.user?.userType !== "staff") {
-      throw new Error("User not authenticated");
+
+    if (!session || session?.user?.userType !== 'staff') {
+      throw new Error('User not authenticated');
     }
     userId = session.user.id;
   }
@@ -1094,9 +1088,7 @@ export async function adjustStockLevel(
       const stockAfter = stockBefore + changeAmount;
 
       if (stockAfter < 0) {
-        throw new Error(
-          `Stock level for ${existingStockLevel?.variation.name} at ${existingStockLevel?.location.name} cannot be negative.`
-        );
+        throw new Error(`Stock level for ${existingStockLevel?.variation.name} at ${existingStockLevel?.location.name} cannot be negative.`);
       }
 
       // 3. Upsert the stock level
@@ -1141,38 +1133,36 @@ export async function adjustStockLevel(
       return { updatedStockLevel, adjustment };
     });
 
-    revalidatePath("/dashboard/inventory/items"); // Revalidate relevant paths
+    revalidatePath('/dashboard/inventory/items'); // Revalidate relevant paths
+
     return {
-      status: "success",
-      message: "Stock level adjusted successfully.",
+      status: 'success',
+      message: 'Stock level adjusted successfully.',
       data: result,
     };
   } catch (error) {
-    console.error("Error adjusting stock level:", error);
-    throw new Error(
-      error instanceof Error ? error.message : "Failed to adjust stock level"
-    );
+    console.error('Error adjusting stock level:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to adjust stock level');
   }
 }
 
-export async function adjustStockLevelFromOrder(
+export async function adjustStockLevelFromOrder (
   variationId: string,
   changeAmount: number, // Should be negative for deduction (e.g., -3)
   reason: string,
-  purchaseCost?: number
+  purchaseCost?: number,
 ) {
   let userId: string;
 
   const systemAdmin = await getSystemAdmin();
+
   userId = systemAdmin.id;
 
   if (changeAmount === 0) {
-    throw new Error("Change amount must not be zero.");
+    throw new Error('Change amount must not be zero.');
   }
   if (changeAmount > 0) {
-    throw new Error(
-      "adjustStockLevelFromOrder only supports deduction (negative changeAmount)"
-    );
+    throw new Error('adjustStockLevelFromOrder only supports deduction (negative changeAmount)');
   }
 
   try {
@@ -1196,7 +1186,7 @@ export async function adjustStockLevelFromOrder(
           stock: { gt: 0 },
         },
         orderBy: {
-          stock: "desc",
+          stock: 'desc',
         },
         include: {
           location: true,
@@ -1208,7 +1198,7 @@ export async function adjustStockLevelFromOrder(
       const updatedStockLevels = [];
 
       for (const stockLevel of stockLevels) {
-        if (remainingToDeduct <= 0) break;
+        if (remainingToDeduct <= 0) { break; }
         const deduct = Math.min(stockLevel.stock, remainingToDeduct);
         const stockBefore = stockLevel.stock;
         const stockAfter = stockBefore - deduct;
@@ -1226,6 +1216,7 @@ export async function adjustStockLevelFromOrder(
             ...(purchaseCost !== undefined && { purchaseCost }),
           },
         });
+
         updatedStockLevels.push(updatedStockLevel);
 
         // Create adjustment record
@@ -1243,35 +1234,33 @@ export async function adjustStockLevelFromOrder(
             approved: true,
           },
         });
+
         adjustments.push(adjustment);
 
         remainingToDeduct -= deduct;
       }
 
       if (remainingToDeduct > 0) {
-        throw new Error(
-          `Not enough stock to fulfill the requested deduction. Short by ${remainingToDeduct}`
-        );
+        throw new Error(`Not enough stock to fulfill the requested deduction. Short by ${remainingToDeduct}`);
       }
 
       return { updatedStockLevels, adjustments };
     });
 
-    revalidatePath("/dashboard/inventory/items"); // Revalidate relevant paths
+    revalidatePath('/dashboard/inventory/items'); // Revalidate relevant paths
+
     return {
-      status: "success",
-      message: "Stock level adjusted successfully.",
+      status: 'success',
+      message: 'Stock level adjusted successfully.',
       data: result,
     };
   } catch (error) {
-    console.error("Error adjusting stock level:", error);
-    throw new Error(
-      error instanceof Error ? error.message : "Failed to adjust stock level"
-    );
+    console.error('Error adjusting stock level:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to adjust stock level');
   }
 }
 
-export async function getRelatedProducts(productId: string) {
+export async function getRelatedProducts (productId: string) {
   try {
     const product = await prisma.inventoryItem.findUnique({
       where: { id: productId },
@@ -1320,12 +1309,12 @@ export async function getRelatedProducts(productId: string) {
 
     return relatedProducts;
   } catch (error) {
-    console.error("Error getting related products:", error);
+    console.error('Error getting related products:', error);
     throw error;
   }
 }
 
-export async function getAllVariations() {
+export async function getAllVariations () {
   const variations = await prisma.inventoryVariation.findMany({
     include: {
       inventoryItem: true,

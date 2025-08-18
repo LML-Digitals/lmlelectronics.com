@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import TransferItemDialog from "./TransferItemDialog";
+import TransferItemDialog from './TransferItemDialog';
 
-export function AddTransferItem() {
+export function AddTransferItem () {
   return <TransferItemDialog />;
 }

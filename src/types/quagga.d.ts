@@ -43,7 +43,7 @@
 //   export default Quagga;
 // }
 
-declare module "quagga" {
+declare module 'quagga' {
   const Quagga: any;
   export default Quagga;
 }

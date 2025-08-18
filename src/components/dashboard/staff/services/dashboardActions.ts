@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { format, startOfDay, endOfDay, subDays } from "date-fns";
-import { getComprehensiveAnalytics } from "@/components/dashboard/analytics/services/analytics";
+import prisma from '@/lib/prisma';
+import { format, startOfDay, endOfDay, subDays } from 'date-fns';
+import { getComprehensiveAnalytics } from '@/components/dashboard/analytics/services/analytics';
 
 // Type definitions
 export type DashboardData = {
@@ -66,23 +66,23 @@ export type Announcement = {
 /**
  * Fetches dashboard data for KPIs based on the given date range
  */
-export async function getDashboardData(
+export async function getDashboardData (
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ): Promise<DashboardData> {
   try {
     // Use comprehensive analytics service for data
     const analyticsData = await getComprehensiveAnalytics(
-      "custom",
+      'custom',
       startDate,
-      endDate
+      endDate,
     );
 
     // Get active tickets count
     const activeTickets = await prisma.ticket.count({
       where: {
         status: {
-          notIn: ["DONE", "CANCELLED"],
+          notIn: ['DONE', 'CANCELLED'],
         },
       },
     });
@@ -90,7 +90,7 @@ export async function getDashboardData(
     const pendingTickets = await prisma.ticket.count({
       where: {
         status: {
-          not: "DONE"
+          not: 'DONE',
         },
       },
     });
@@ -136,7 +136,7 @@ export async function getDashboardData(
 
     const bookingSchedule = await prisma.booking.count({
       where: {
-        status: "SCHEDULED",
+        status: 'SCHEDULED',
         createdAt: {
           gte: startDate,
           lte: endDate,
@@ -163,10 +163,12 @@ export async function getDashboardData(
     const totalValue = inventoryItems.reduce((sum: number, item: any) => {
       const variationsTotal = item.variations.reduce(
         (varSum: number, variation: any) => varSum + variation.sellingPrice,
-        0
+        0,
       );
+
       return sum + variationsTotal;
     }, 0);
+
     // Extract data from comprehensive analytics
     return {
       totalRevenue: analyticsData.businessMetrics?.totalRevenue || 0,
@@ -182,8 +184,8 @@ export async function getDashboardData(
       repairDivisionPercent:
         analyticsData.businessMetrics?.serviceDistribution?.repairs || 0,
       serviceDivisionPercent:
-        analyticsData.businessMetrics?.serviceDistribution?.serviceDivision ||
-        0,
+        analyticsData.businessMetrics?.serviceDistribution?.serviceDivision
+        || 0,
       salesDivisionPercent:
         analyticsData.businessMetrics?.serviceDistribution?.salesDivision || 0,
       revenueChange: analyticsData.financial?.trends?.incomeChange || 0,
@@ -195,7 +197,8 @@ export async function getDashboardData(
       quoteCount,
     };
   } catch (error) {
-    console.error("Error fetching dashboard data:", error);
+    console.error('Error fetching dashboard data:', error);
+
     return {
       totalRevenue: 0,
       activeRepairs: 0,
@@ -222,12 +225,12 @@ export async function getDashboardData(
 /**
  * Fetches recent sales
  */
-export async function getRecentSales(): Promise<RecentSale[]> {
+export async function getRecentSales (): Promise<RecentSale[]> {
   try {
     const sales = await prisma.order.findMany({
       take: 8,
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
       include: {
         items: {
@@ -240,11 +243,12 @@ export async function getRecentSales(): Promise<RecentSale[]> {
     });
 
     return sales.map((sale) => {
-      let itemDescription = "";
+      let itemDescription = '';
+
       if (sale.items.length > 0) {
-        itemDescription = sale.items[0]?.inventoryVariation?.name || "" ;
+        itemDescription = sale.items[0]?.inventoryVariation?.name || '' ;
       } else if (sale.items && sale.items.length > 0) {
-        itemDescription = sale.items[0]?.inventoryVariation?.name || "";
+        itemDescription = sale.items[0]?.inventoryVariation?.name || '';
         if (sale.items.length > 1) {
           itemDescription += ` +${sale.items.length - 1} more`;
         }
@@ -252,16 +256,17 @@ export async function getRecentSales(): Promise<RecentSale[]> {
 
       return {
         id: sale.id,
-        date: format(sale.createdAt, "MMM dd, yyyy"),
-        customerName: sale.customer.firstName + " " + sale.customer.lastName,
+        date: format(sale.createdAt, 'MMM dd, yyyy'),
+        customerName: `${sale.customer.firstName} ${sale.customer.lastName}`,
         total: sale.total,
-        paymentMethod: sale.paymentMethod || "",
+        paymentMethod: sale.paymentMethod || '',
         status: sale.status,
         items: itemDescription,
       };
     });
   } catch (error) {
-    console.error("Error fetching recent sales:", error);
+    console.error('Error fetching recent sales:', error);
+
     return [];
   }
 }
@@ -269,16 +274,16 @@ export async function getRecentSales(): Promise<RecentSale[]> {
 /**
  * Fetches recent tickets
  */
-export async function getRecentTickets(): Promise<RecentTicket[]> {
+export async function getRecentTickets (): Promise<RecentTicket[]> {
   try {
     const tickets = await prisma.ticket.findMany({
       take: 10,
       orderBy: [
         {
-          priority: "desc",
+          priority: 'desc',
         },
         {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
       ],
       include: {
@@ -293,17 +298,18 @@ export async function getRecentTickets(): Promise<RecentTicket[]> {
 
     return tickets.map((ticket) => {
       // Get device info from the first repair device if available
-      const deviceInfo =
-        ticket.repairDevices.length > 0
+      const deviceInfo
+        = ticket.repairDevices.length > 0
           ? `${ticket.repairDevices[0].brand} ${ticket.repairDevices[0].model}`
-          : "No device info";
+          : 'No device info';
 
       // Get repair type from booked repairs if available
       let service = ticket.bookingType;
+
       if (
-        ticket.repairDevices.length > 0 &&
-        ticket.repairDevices[0].repairOptions &&
-        ticket.repairDevices[0].repairOptions.length > 0
+        ticket.repairDevices.length > 0
+        && ticket.repairDevices[0].repairOptions
+        && ticket.repairDevices[0].repairOptions.length > 0
       ) {
         service = ticket.repairDevices[0].repairOptions[0].name || service;
       }
@@ -313,14 +319,15 @@ export async function getRecentTickets(): Promise<RecentTicket[]> {
         code: ticket.code,
         customer: `${ticket.customer.firstName} ${ticket.customer.lastName}`,
         status: ticket.status,
-        createdAt: format(ticket.createdAt, "MMM dd, yyyy"),
+        createdAt: format(ticket.createdAt, 'MMM dd, yyyy'),
         service,
         deviceInfo,
         priority: ticket.priority,
       };
     });
   } catch (error) {
-    console.error("Error fetching recent tickets:", error);
+    console.error('Error fetching recent tickets:', error);
+
     return [];
   }
 }
@@ -328,7 +335,7 @@ export async function getRecentTickets(): Promise<RecentTicket[]> {
 /**
  * Fetches low stock items
  */
-export async function getLowStockItems(): Promise<LowStockItem[]> {
+export async function getLowStockItems (): Promise<LowStockItem[]> {
   try {
     const stockLevels = await prisma.inventoryStockLevel.findMany({
       where: {
@@ -340,7 +347,7 @@ export async function getLowStockItems(): Promise<LowStockItem[]> {
         },
       },
       orderBy: {
-        stock: "asc",
+        stock: 'asc',
       },
       include: {
         variation: {
@@ -364,7 +371,8 @@ export async function getLowStockItems(): Promise<LowStockItem[]> {
       locationName: item.location.name,
     }));
   } catch (error) {
-    console.error("Error fetching low stock items:", error);
+    console.error('Error fetching low stock items:', error);
+
     return [];
   }
 }
@@ -372,27 +380,25 @@ export async function getLowStockItems(): Promise<LowStockItem[]> {
 /**
  * Fetches system announcements
  */
-export async function getSystemAnnouncements(): Promise<Announcement[]> {
+export async function getSystemAnnouncements (): Promise<Announcement[]> {
   try {
     const announcements = await prisma.announcement.findMany({
       where: {
         isActive: true,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
       take: 3,
     });
 
     return announcements.map((announcement) => {
       // Format relative date
-      const daysAgo = Math.floor(
-        (Date.now() - announcement.createdAt.getTime()) / (1000 * 60 * 60 * 24)
-      );
-      let date = "Today";
+      const daysAgo = Math.floor((Date.now() - announcement.createdAt.getTime()) / (1000 * 60 * 60 * 24));
+      let date = 'Today';
 
       if (daysAgo === 1) {
-        date = "Yesterday";
+        date = 'Yesterday';
       } else if (daysAgo > 1) {
         date = `${daysAgo} days ago`;
       }
@@ -400,14 +406,15 @@ export async function getSystemAnnouncements(): Promise<Announcement[]> {
       return {
         id: announcement.id,
         title:
-          announcement.content.substring(0, 30) +
-          (announcement.content.length > 30 ? "..." : ""),
+          announcement.content.substring(0, 30)
+          + (announcement.content.length > 30 ? '...' : ''),
         message: announcement.content,
         date,
       };
     });
   } catch (error) {
-    console.error("Error fetching system announcements:", error);
+    console.error('Error fetching system announcements:', error);
+
     return [];
   }
 }

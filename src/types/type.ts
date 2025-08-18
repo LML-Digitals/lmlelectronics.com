@@ -55,23 +55,23 @@ export type ItemReturnExtended = InventoryReturn & {
   };
 };
 export type Announcement = {
-  content: String;
-  tag: String;
-  Active: Boolean;
+  content: string;
+  tag: string;
+  Active: boolean;
   createdAt: Date;
 };
 export type Post = {
   id: number;
-  title: String;
-  content: String;
+  title: string;
+  content: string;
   authorId: number;
   blogCategoryId: number;
-  tag: String;
-  published: Boolean;
+  tag: string;
+  published: boolean;
   createdAt: Date;
   updatedAt: Date;
-  metaTitle?: String;
-  metaDescription?: String;
+  metaTitle?: string;
+  metaDescription?: string;
   publishedAt?: Date;
 };
 export interface MonthlyData {

@@ -1,6 +1,6 @@
-import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
-import { Warranty, WarrantyClaim, WarrantyType } from "@prisma/client";
+import prisma from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
+import { Warranty, WarrantyClaim, WarrantyType } from '@prisma/client';
 
 export type WarrantyProps = Prisma.WarrantyGetPayload<{
   include: {
@@ -30,7 +30,7 @@ export type WarrantyProps = Prisma.WarrantyGetPayload<{
     warrantyClaims: true;
   };
   orderBy: {
-    createdAt: "desc";
+    createdAt: 'desc';
   };
 }>;
 
@@ -58,7 +58,7 @@ export type WarrantyClaimProps = Prisma.WarrantyClaimGetPayload<{
     };
   };
   orderBy: {
-    createdAt: "desc";
+    createdAt: 'desc';
   };
 }>;
 
@@ -126,7 +126,7 @@ export type inventoryItemProps = Prisma.InventoryItemGetPayload<{
     };
   };
   orderBy: {
-    name: "asc";
+    name: 'asc';
   };
 }>;
 export type inventoryVariationProps = Prisma.InventoryVariationGetPayload<{

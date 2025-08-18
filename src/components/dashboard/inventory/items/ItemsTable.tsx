@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   Search,
   Package,
@@ -25,16 +25,16 @@ import {
   Square,
   RefreshCcw,
   InfoIcon,
-} from "lucide-react";
-import { useState } from "react";
-import { InventoryItemWithRelations } from "./types/ItemType";
+} from 'lucide-react';
+import { useState } from 'react';
+import { InventoryItemWithRelations } from './types/ItemType';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ItemDetailsDialog } from "./ItemDetailsDialog";
+} from '@/components/ui/dropdown-menu';
+import { ItemDetailsDialog } from './ItemDetailsDialog';
 import {
   Command,
   CommandEmpty,
@@ -42,85 +42,89 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useInventoryData } from "./hooks/useInventoryData";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import type { CategoryWithChildren } from "@/components/dashboard/inventory/categories/types/types";
-import { AllFiltersDialog } from "./AllFiltersDialog";
-import { Badge } from "@/components/ui/badge";
-import { AddItemDialog } from "./AddItemDialog";
-import { ScannerDialog } from "./ScannerDialog";
-import { EditItemDialog } from "./EditItemDialog";
-import { DeleteItemDialog } from "./DeleteItemDialog";
-import { DuplicateItemDialog } from "./DuplicateItemDialog";
-import { BulkDeleteDialog } from "./BulkDeleteDialog";
-import { BulkDuplicateDialog } from "./BulkDuplicateDialog";
-import { useRouter } from "next/navigation";
-import { DefaultRatesDialog } from "./DefaultRatesDialog";
-import CategoryDialog from "../categories/CategoryDialog";
+} from '@/components/ui/popover';
+import { useInventoryData } from './hooks/useInventoryData';
+import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import type { CategoryWithChildren } from '@/components/dashboard/inventory/categories/types/types';
+import { AllFiltersDialog } from './AllFiltersDialog';
+import { Badge } from '@/components/ui/badge';
+import { AddItemDialog } from './AddItemDialog';
+import { ScannerDialog } from './ScannerDialog';
+import { EditItemDialog } from './EditItemDialog';
+import { DeleteItemDialog } from './DeleteItemDialog';
+import { DuplicateItemDialog } from './DuplicateItemDialog';
+import { BulkDeleteDialog } from './BulkDeleteDialog';
+import { BulkDuplicateDialog } from './BulkDuplicateDialog';
+import { useRouter } from 'next/navigation';
+import { DefaultRatesDialog } from './DefaultRatesDialog';
+import CategoryDialog from '../categories/CategoryDialog';
 
 // Move helper functions outside and before the ItemsTable component
 const getLocationStockInfo = (
   item: InventoryItemWithRelations,
-  locationId: number
+  locationId: number,
 ) => {
   const totalStock = item.variations.reduce((total, variation) => {
-    const stockLevel = variation.stockLevels.find(
-      (level) => level.locationId === locationId
-    );
+    const stockLevel = variation.stockLevels.find((level) => level.locationId === locationId);
+
     return total + (stockLevel?.stock || 0);
   }, 0);
+
   return totalStock;
 };
 
 const isAvailableInAllLocations = (item: InventoryItemWithRelations) => {
   const stockByLocation = item.variations[0]?.stockLevels.every((level) => {
     const stock = getLocationStockInfo(item, level.locationId);
+
     return stock > 0;
   });
+
   return stockByLocation;
 };
 
 const calculateAverageCost = (item: InventoryItemWithRelations) => {
   let totalCost = 0;
-  let totalItems = item.variations.length;
+  const totalItems = item.variations.length;
 
   item.variations.forEach((variation) => {
     totalCost += variation.sellingPrice;
   });
 
-  return totalItems > 0 ? (totalCost / totalItems).toFixed(2) : "0.00";
+  return totalItems > 0 ? (totalCost / totalItems).toFixed(2) : '0.00';
 };
 
 const getCategoryPath = (
   categories: CategoryWithChildren[],
-  categoryId: string
+  categoryId: string,
 ): string => {
   const findPath = (
     categories: CategoryWithChildren[],
     id: string,
-    path: string[] = []
+    path: string[] = [],
   ): string[] => {
     for (const category of categories) {
-      if (category.id === id) return [...path, category.name];
+      if (category.id === id) { return [...path, category.name]; }
       if (category.children?.length) {
         const result = findPath(category.children, id, [
           ...path,
           category.name,
         ]);
-        if (result.length) return result;
+
+        if (result.length) { return result; }
       }
     }
+
     return [];
   };
 
-  return findPath(categories, categoryId).join(" > ");
+  return findPath(categories, categoryId).join(' > ');
 };
 
 type ItemsTableProps = {
@@ -128,14 +132,14 @@ type ItemsTableProps = {
   onRefresh: () => void;
 };
 
-function ItemsTable({ items, onRefresh }: ItemsTableProps) {
+function ItemsTable ({ items, onRefresh }: ItemsTableProps) {
   const router = useRouter();
-  const [search, setSearch] = useState("");
-  const [selectedItem, setSelectedItem] =
-    useState<InventoryItemWithRelations | null>(null);
+  const [search, setSearch] = useState('');
+  const [selectedItem, setSelectedItem]
+    = useState<InventoryItemWithRelations | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const { categories, suppliers, locations, tags, isLoading } =
-    useInventoryData();
+  const { categories, suppliers, locations, tags, isLoading }
+    = useInventoryData();
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -156,12 +160,12 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
     0,
     Number.MAX_VALUE,
   ]);
-  const [itemToEdit, setItemToEdit] =
-    useState<InventoryItemWithRelations | null>(null);
-  const [itemToDelete, setItemToDelete] =
-    useState<InventoryItemWithRelations | null>(null);
-  const [itemToDuplicate, setItemToDuplicate] =
-    useState<InventoryItemWithRelations | null>(null);
+  const [itemToEdit, setItemToEdit]
+    = useState<InventoryItemWithRelations | null>(null);
+  const [itemToDelete, setItemToDelete]
+    = useState<InventoryItemWithRelations | null>(null);
+  const [itemToDuplicate, setItemToDuplicate]
+    = useState<InventoryItemWithRelations | null>(null);
   const [addItemDialogOpen, setAddItemDialogOpen] = useState(false);
 
   // New states for bulk selection
@@ -189,11 +193,9 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
 
   const toggleSelectItem = (e: React.MouseEvent, itemId: string) => {
     e.stopPropagation(); // Prevent row click event
-    setSelectedItems((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId]
-    );
+    setSelectedItems((prev) => prev.includes(itemId)
+      ? prev.filter((id) => id !== itemId)
+      : [...prev, itemId]);
   };
 
   const clearSelection = () => {
@@ -202,16 +204,14 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
 
   // Bulk action handlers
   const handleBulkDelete = () => {
-    const itemsToDelete = filteredItems.filter((item) =>
-      selectedItems.includes(item.id)
-    );
+    const itemsToDelete = filteredItems.filter((item) => selectedItems.includes(item.id));
+
     setItemsToDeleteBulk(itemsToDelete);
   };
 
   const handleBulkDuplicate = () => {
-    const itemsToDuplicate = filteredItems.filter((item) =>
-      selectedItems.includes(item.id)
-    );
+    const itemsToDuplicate = filteredItems.filter((item) => selectedItems.includes(item.id));
+
     setItemsToDuplicateBulk(itemsToDuplicate);
   };
 
@@ -220,11 +220,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
       .toLowerCase()
       .includes(search.toLowerCase());
     const matchesLocation = selectedLocation
-      ? item.variations.some((v) =>
-          v.stockLevels.some(
-            (sl) => sl.locationId === selectedLocation && sl.stock > 0
-          )
-        )
+      ? item.variations.some((v) => v.stockLevels.some((sl) => sl.locationId === selectedLocation && sl.stock > 0))
       : true;
     const matchesSupplier = selectedSupplier
       ? item.supplierId === selectedSupplier
@@ -236,33 +232,32 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
       ? item.tags.some((t) => t.id === selectedTag)
       : true;
     const matchesVisibility = selectedVisibility
-      ? selectedVisibility === "visible"
+      ? selectedVisibility === 'visible'
         ? item.variations.some((v) => v.visible)
         : item.variations.every((v) => !v.visible)
       : true;
 
     const totalStock = item.variations.reduce(
-      (total, variation) =>
-        total +
-        variation.stockLevels.reduce((sum, level) => sum + level.stock, 0),
-      0
+      (total, variation) => total
+        + variation.stockLevels.reduce((sum, level) => sum + level.stock, 0),
+      0,
     );
 
     const avgCost = parseFloat(calculateAverageCost(item));
 
-    const matchesStock =
-      totalStock >= stockRange[0] && totalStock <= stockRange[1];
+    const matchesStock
+      = totalStock >= stockRange[0] && totalStock <= stockRange[1];
     const matchesPrice = avgCost >= priceRange[0] && avgCost <= priceRange[1];
 
     return (
-      matchesSearch &&
-      matchesLocation &&
-      matchesSupplier &&
-      matchesCategory &&
-      matchesTag &&
-      matchesVisibility &&
-      matchesStock &&
-      matchesPrice
+      matchesSearch
+      && matchesLocation
+      && matchesSupplier
+      && matchesCategory
+      && matchesTag
+      && matchesVisibility
+      && matchesStock
+      && matchesPrice
     );
   });
 
@@ -361,8 +356,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
           {/* Location Filter */}
           <Popover
             open={filtersOpen.location}
-            onOpenChange={(open) =>
-              setFiltersOpen((prev) => ({ ...prev, location: open }))
+            onOpenChange={(open) => setFiltersOpen((prev) => ({ ...prev, location: open }))
             }
           >
             <PopoverTrigger asChild>
@@ -373,7 +367,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
               >
                 {selectedLocation
                   ? locations.find((l) => l.id === selectedLocation)?.name
-                  : "All Locations"}
+                  : 'All Locations'}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -394,14 +388,14 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          !selectedLocation ? "opacity-100" : "opacity-0"
+                          'mr-2 h-4 w-4',
+                          !selectedLocation ? 'opacity-100' : 'opacity-0',
                         )}
                       />
                       All Locations
                     </CommandItem>
-                    {Array.isArray(locations) &&
-                      locations.map((location) => (
+                    {Array.isArray(locations)
+                      && locations.map((location) => (
                         <CommandItem
                           key={location.id}
                           onSelect={() => {
@@ -414,10 +408,10 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                         >
                           <Check
                             className={cn(
-                              "mr-2 h-4 w-4",
+                              'mr-2 h-4 w-4',
                               selectedLocation === location.id
-                                ? "opacity-100"
-                                : "opacity-0"
+                                ? 'opacity-100'
+                                : 'opacity-0',
                             )}
                           />
                           {location.name}
@@ -432,8 +426,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
           {/* supplier Filter */}
           <Popover
             open={filtersOpen.supplier}
-            onOpenChange={(open) =>
-              setFiltersOpen((prev) => ({ ...prev, supplier: open }))
+            onOpenChange={(open) => setFiltersOpen((prev) => ({ ...prev, supplier: open }))
             }
           >
             <PopoverTrigger asChild>
@@ -444,7 +437,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
               >
                 {selectedSupplier
                   ? suppliers.find((v) => v.id === selectedSupplier)?.name
-                  : "All Suppliers"}
+                  : 'All Suppliers'}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -465,14 +458,14 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          !selectedSupplier ? "opacity-100" : "opacity-0"
+                          'mr-2 h-4 w-4',
+                          !selectedSupplier ? 'opacity-100' : 'opacity-0',
                         )}
                       />
                       All suppliers
                     </CommandItem>
-                    {Array.isArray(suppliers) &&
-                      suppliers.map((supplier) => (
+                    {Array.isArray(suppliers)
+                      && suppliers.map((supplier) => (
                         <CommandItem
                           key={supplier.id}
                           onSelect={() => {
@@ -485,10 +478,10 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                         >
                           <Check
                             className={cn(
-                              "mr-2 h-4 w-4",
+                              'mr-2 h-4 w-4',
                               selectedSupplier === supplier.id
-                                ? "opacity-100"
-                                : "opacity-0"
+                                ? 'opacity-100'
+                                : 'opacity-0',
                             )}
                           />
                           {supplier.name}
@@ -503,8 +496,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
           {/* Category Filter */}
           <Popover
             open={filtersOpen.category}
-            onOpenChange={(open) =>
-              setFiltersOpen((prev) => ({ ...prev, category: open }))
+            onOpenChange={(open) => setFiltersOpen((prev) => ({ ...prev, category: open }))
             }
           >
             <PopoverTrigger asChild>
@@ -515,7 +507,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
               >
                 {selectedCategory
                   ? getSelectedCategoryPath(selectedCategory)
-                  : "All Categories"}
+                  : 'All Categories'}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -536,8 +528,8 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          !selectedCategory ? "opacity-100" : "opacity-0"
+                          'mr-2 h-4 w-4',
+                          !selectedCategory ? 'opacity-100' : 'opacity-0',
                         )}
                       />
                       All Categories
@@ -565,8 +557,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
           {/* Tag Filter */}
           <Popover
             open={filtersOpen.tag}
-            onOpenChange={(open) =>
-              setFiltersOpen((prev) => ({ ...prev, tag: open }))
+            onOpenChange={(open) => setFiltersOpen((prev) => ({ ...prev, tag: open }))
             }
           >
             <PopoverTrigger asChild>
@@ -576,8 +567,8 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                 className="min-w-[100px] justify-between h-10"
               >
                 {selectedTag
-                  ? tags.find((t) => t.id === selectedTag)?.name || "All Tags"
-                  : "All Tags"}
+                  ? tags.find((t) => t.id === selectedTag)?.name || 'All Tags'
+                  : 'All Tags'}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -598,8 +589,8 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          !selectedTag ? "opacity-100" : "opacity-0"
+                          'mr-2 h-4 w-4',
+                          !selectedTag ? 'opacity-100' : 'opacity-0',
                         )}
                       />
                       All Tags
@@ -617,8 +608,8 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                       >
                         <Check
                           className={cn(
-                            "mr-2 h-4 w-4",
-                            selectedTag === tag.id ? "opacity-100" : "opacity-0"
+                            'mr-2 h-4 w-4',
+                            selectedTag === tag.id ? 'opacity-100' : 'opacity-0',
                           )}
                         />
                         {tag.name}
@@ -633,8 +624,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
           {/* Visibility Filter */}
           <Popover
             open={filtersOpen.visibility}
-            onOpenChange={(open) =>
-              setFiltersOpen((prev) => ({ ...prev, visibility: open }))
+            onOpenChange={(open) => setFiltersOpen((prev) => ({ ...prev, visibility: open }))
             }
           >
             <PopoverTrigger asChild>
@@ -644,10 +634,10 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                 className="min-w-[150px] justify-between h-10"
               >
                 {selectedVisibility
-                  ? selectedVisibility === "visible"
-                    ? "Visible"
-                    : "Hidden"
-                  : "All Visibility"}
+                  ? selectedVisibility === 'visible'
+                    ? 'Visible'
+                    : 'Hidden'
+                  : 'All Visibility'}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -668,15 +658,15 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          !selectedVisibility ? "opacity-100" : "opacity-0"
+                          'mr-2 h-4 w-4',
+                          !selectedVisibility ? 'opacity-100' : 'opacity-0',
                         )}
                       />
                       All Visibility
                     </CommandItem>
                     <CommandItem
                       onSelect={() => {
-                        setSelectedVisibility("visible");
+                        setSelectedVisibility('visible');
                         setFiltersOpen((prev) => ({
                           ...prev,
                           visibility: false,
@@ -685,15 +675,15 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          selectedVisibility === "visible" ? "opacity-100" : "opacity-0"
+                          'mr-2 h-4 w-4',
+                          selectedVisibility === 'visible' ? 'opacity-100' : 'opacity-0',
                         )}
                       />
                       Visible
                     </CommandItem>
                     <CommandItem
                       onSelect={() => {
-                        setSelectedVisibility("hidden");
+                        setSelectedVisibility('hidden');
                         setFiltersOpen((prev) => ({
                           ...prev,
                           visibility: false,
@@ -702,8 +692,8 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          selectedVisibility === "hidden" ? "opacity-100" : "opacity-0"
+                          'mr-2 h-4 w-4',
+                          selectedVisibility === 'hidden' ? 'opacity-100' : 'opacity-0',
                         )}
                       />
                       Hidden
@@ -757,11 +747,12 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
           <Button
             variant="outline"
             onClick={() => {
-              const button = document.querySelector(".refresh-icon");
-              button?.classList.add("animate-spin");
+              const button = document.querySelector('.refresh-icon');
+
+              button?.classList.add('animate-spin');
               onRefresh();
               setTimeout(() => {
-                button?.classList.remove("animate-spin");
+                button?.classList.remove('animate-spin');
               }, 1000);
             }}
             className="h-10"
@@ -786,8 +777,8 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                         className="cursor-pointer"
                         aria-label={
                           selectedItems.length === filteredItems.length
-                            ? "Deselect all"
-                            : "Select all"
+                            ? 'Deselect all'
+                            : 'Select all'
                         }
                       >
                         {selectedItems.length === filteredItems.length ? (
@@ -806,7 +797,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                 <TableHead className="min-w-[120px] dark:text-black">Locations</TableHead>
                 <TableHead className="min-w-[80px] dark:text-black">Total Stock</TableHead>
                 <TableHead className="min-w-[80px] dark:text-black">Avg. Cost</TableHead>
-                <TableHead className="w-[60px]"></TableHead>
+                <TableHead className="w-[60px]" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -831,7 +822,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                 filteredItems.map((item) => (
                   <TableRow
                     key={item.id}
-                    className={cn("group cursor-pointer")}
+                    className={cn('group cursor-pointer')}
                     onClick={() => {
                       setSelectedItem(item);
                       setIsDetailsOpen(true);
@@ -854,7 +845,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                       <div className="flex items-center gap-3">
                         {item.image ? (
                           <Image
-                            src={item.image ? item.image : "/noPicture.png"}
+                            src={item.image ? item.image : '/noPicture.png'}
                             className="rounded-lg aspect-square"
                             alt="No Picture"
                             width={50}
@@ -910,8 +901,9 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                           item.variations[0]?.stockLevels.map((level) => {
                             const stock = getLocationStockInfo(
                               item,
-                              level.locationId
+                              level.locationId,
                             );
+
                             if (stock > 0) {
                               return (
                                 <span
@@ -922,6 +914,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                                 </span>
                               );
                             }
+
                             return null;
                           })
                         )}
@@ -929,13 +922,12 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
                     </TableCell>
                     <TableCell className="font-medium text-sm">
                       {item.variations.reduce(
-                        (total, variation) =>
-                          total +
-                          variation.stockLevels.reduce(
+                        (total, variation) => total
+                          + variation.stockLevels.reduce(
                             (sum, level) => sum + level.stock,
-                            0
+                            0,
                           ),
-                        0
+                        0,
                       )}
                     </TableCell>
                     <TableCell className="text-sm">
@@ -1065,7 +1057,7 @@ function ItemsTable({ items, onRefresh }: ItemsTableProps) {
 }
 
 // Recursive category component
-function RecursiveCategoryList({
+function RecursiveCategoryList ({
   categories = [], // Add default empty array
   selectedCategory,
   onSelect,
@@ -1090,8 +1082,8 @@ function RecursiveCategoryList({
           >
             <Check
               className={cn(
-                "mr-2 h-4 w-4",
-                selectedCategory === category.id ? "opacity-100" : "opacity-0"
+                'mr-2 h-4 w-4',
+                selectedCategory === category.id ? 'opacity-100' : 'opacity-0',
               )}
             />
             {category.name}

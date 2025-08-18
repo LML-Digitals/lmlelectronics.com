@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "../ui/button";
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '../ui/button';
 
 export type Product = {
   id: string;
@@ -32,9 +32,9 @@ type ProductCarouselProps = {
   autoplaySpeed?: number;
 };
 
-export default function ProductCarousel({
+export default function ProductCarousel ({
   products,
-  title = "You may also like",
+  title = 'You may also like',
   autoplay = true,
   autoplaySpeed = 3000,
 }: ProductCarouselProps) {
@@ -58,18 +58,17 @@ export default function ProductCarousel({
     };
 
     handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Autoplay functionality
   useEffect(() => {
-    if (!autoplay || isPaused || products.length <= itemsToShow) return;
+    if (!autoplay || isPaused || products.length <= itemsToShow) { return; }
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === products.length - itemsToShow ? 0 : prevIndex + 1
-      );
+      setCurrentIndex((prevIndex) => prevIndex === products.length - itemsToShow ? 0 : prevIndex + 1);
     }, autoplaySpeed);
 
     return () => clearInterval(interval);
@@ -91,13 +90,14 @@ export default function ProductCarousel({
     }
   };
 
-  if (!products.length) return null;
+  if (!products.length) { return null; }
 
   const getProductUrl = (product: Product) => {
     // If it has variations, it's a main product
     if (product.variations && product.variations.length > 0) {
       return `/shop/${product.id}`;
     }
+
     // Otherwise it's likely a variation
     return `/shop/${product.id}`;
   };
@@ -135,8 +135,8 @@ export default function ProductCarousel({
         <motion.div
           className="flex"
           initial={{ x: 0 }}
-          animate={{ x: -currentIndex * (100 / itemsToShow) + "%" }}
-          transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
+          animate={{ x: `${-currentIndex * (100 / itemsToShow)}%` }}
+          transition={{ type: 'tween', ease: 'easeInOut', duration: 0.5 }}
         >
           {products.map((product) => (
             <div
@@ -148,7 +148,7 @@ export default function ProductCarousel({
                 <div className="bg-white rounded-[20px] p-0 flex flex-col h-full">
                   <div className="flex items-center justify-center bg-[#f5f6fa] rounded-[20px] h-[150px] w-full mt-0 mb-0 overflow-hidden">
                     <Image
-                      src={product.image || "/placeholder.svg"}
+                      src={product.image || '/placeholder.svg'}
                       alt={product.name}
                       width={120}
                       height={120}
@@ -165,9 +165,7 @@ export default function ProductCarousel({
                       <div className="px-4 pb-3 pt-0">
                         <p className="text-[#e53935] font-bold text-lg text-left">
                           $
-                          {Math.round(
-                            product.sellingPrice || product.price || 0
-                          )}
+                          {Math.round(product.sellingPrice || product.price || 0)}
                         </p>
                       </div>
                     )}

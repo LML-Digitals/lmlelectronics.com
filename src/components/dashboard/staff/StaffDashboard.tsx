@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Card,
@@ -7,11 +7,11 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { DateRangePicker } from "@/components/ui/DateRangePicker";
-import { getComprehensiveAnalytics } from "../analytics/services/analytics";
-import { DateRange } from "react-day-picker";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { DateRangePicker } from '@/components/ui/DateRangePicker';
+import { getComprehensiveAnalytics } from '../analytics/services/analytics';
+import { DateRange } from 'react-day-picker';
 import {
   subDays,
   format,
@@ -21,7 +21,7 @@ import {
   subYears,
   startOfMonth,
   endOfMonth,
-} from "date-fns";
+} from 'date-fns';
 import {
   ArrowUpRight,
   ClipboardList,
@@ -63,16 +63,16 @@ import {
   CircleDashed,
   Activity,
   Target,
-} from "lucide-react";
-import { useState, useEffect } from "react";
-import Link from "next/link";
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   getDashboardData,
   getRecentSales,
   getRecentTickets,
   getLowStockItems,
   getSystemAnnouncements,
-} from "./services/dashboardActions";
+} from './services/dashboardActions';
 
 import {
   Table,
@@ -81,18 +81,18 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { useSession } from "next-auth/react";
+} from '@/components/ui/select';
+import { useSession } from 'next-auth/react';
 
 // Types for our fetched data
 type DashboardData = {
@@ -153,15 +153,13 @@ type Announcement = {
   date: string;
 };
 
-export default function StaffDashboard() {
-  const [period, setPeriod] = useState<string>("monthly");
+export default function StaffDashboard () {
+  const [period, setPeriod] = useState<string>('monthly');
   const [dateRange, setDateRange] = useState<DateRange>({
     from: subDays(new Date(), 30),
     to: new Date(),
   });
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
-    null
-  );
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [recentSales, setRecentSales] = useState<RecentSale[]>([]);
   const [recentTickets, setRecentTickets] = useState<RecentTicket[]>([]);
   const [lowStockItems, setLowStockItems] = useState<LowStockItem[]>([]);
@@ -178,27 +176,27 @@ export default function StaffDashboard() {
         let startDate: Date;
         let endDate = new Date();
 
-        if (period === "custom" && dateRange.from) {
+        if (period === 'custom' && dateRange.from) {
           startDate = dateRange.from;
           endDate = dateRange.to || endDate;
         } else {
           switch (period) {
-            case "weekly":
-              startDate = subDays(endDate, 7);
-              break;
-            case "monthly":
-              startDate = startOfMonth(endDate);
-              endDate = endOfMonth(endDate);
-              break;
-            case "quarterly":
-              startDate = subMonths(endDate, 3);
-              break;
-            case "yearly":
-              startDate = subYears(endDate, 1);
-              break;
-            default:
-              startDate = startOfMonth(endDate);
-              endDate = endOfMonth(endDate);
+          case 'weekly':
+            startDate = subDays(endDate, 7);
+            break;
+          case 'monthly':
+            startDate = startOfMonth(endDate);
+            endDate = endOfMonth(endDate);
+            break;
+          case 'quarterly':
+            startDate = subMonths(endDate, 3);
+            break;
+          case 'yearly':
+            startDate = subYears(endDate, 1);
+            break;
+          default:
+            startDate = startOfMonth(endDate);
+            endDate = endOfMonth(endDate);
           }
         }
 
@@ -215,7 +213,7 @@ export default function StaffDashboard() {
         setLowStockItems(stockItems);
         setAnnouncements(systemAnnouncements);
       } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
+        console.error('Failed to fetch dashboard data:', error);
       } finally {
         setLoading(false);
       }
@@ -225,18 +223,18 @@ export default function StaffDashboard() {
   }, [period, dateRange]);
 
   const handleDateRangeChange = (range: DateRange | undefined) => {
-    if (range && range.from) {
+    if (range?.from) {
       setDateRange(range);
-      setPeriod("custom");
+      setPeriod('custom');
     }
   };
 
   // Quick action buttons
   const quickActions = [
     {
-      name: "New Ticket",
+      name: 'New Ticket',
       icon: <Wrench className="h-4 w-4" />,
-      href: "/dashboard/tickets",
+      href: '/dashboard/tickets',
     },
     // {
     //   name: "New Sale",
@@ -244,24 +242,24 @@ export default function StaffDashboard() {
     //   href: "/dashboard/sales",
     // },
     {
-      name: "Add Customer",
+      name: 'Add Customer',
       icon: <UserPlus className="h-4 w-4" />,
-      href: "/dashboard/customers",
+      href: '/dashboard/customers',
     },
     {
-      name: "Add Inventory",
+      name: 'Add Inventory',
       icon: <Package className="h-4 w-4" />,
-      href: "/dashboard/inventory/items",
+      href: '/dashboard/inventory/items',
     },
     {
-      name: "New Order",
+      name: 'New Order',
       icon: <FileText className="h-4 w-4" />,
-      href: "/dashboard/orders",
+      href: '/dashboard/orders',
     },
     {
-      name: "Clock In",
+      name: 'Clock In',
       icon: <Clock className="h-4 w-4" />,
-      href: "/dashboard/workforce/my-workforce",
+      href: '/dashboard/workforce/my-workforce',
     },
   ];
 
@@ -275,16 +273,16 @@ export default function StaffDashboard() {
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case "DONE":
-        return "default";
-      case "PENDING":
-        return "secondary";
-      case "INSPECTING":
-        return "outline";
-      case "REPAIRING":
-        return "destructive";
-      default:
-        return "destructive";
+    case 'DONE':
+      return 'default';
+    case 'PENDING':
+      return 'secondary';
+    case 'INSPECTING':
+      return 'outline';
+    case 'REPAIRING':
+      return 'destructive';
+    default:
+      return 'destructive';
     }
   };
 
@@ -333,7 +331,7 @@ export default function StaffDashboard() {
               </SelectContent>
             </Select>
 
-            {period === "custom" && (
+            {period === 'custom' && (
               <DateRangePicker
                 dateRange={dateRange}
                 onDateRangeChange={handleDateRangeChange}
@@ -360,12 +358,12 @@ export default function StaffDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl sm:text-3xl font-bold">
-                  ${dashboardData?.totalRevenue.toFixed(2) || "0.00"}
+                  ${dashboardData?.totalRevenue.toFixed(2) || '0.00'}
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <div className={`flex items-center gap-1 text-xs ${
-                    dashboardData && dashboardData.revenueChange > 0 
-                      ? 'text-primary' 
+                    dashboardData && dashboardData.revenueChange > 0
+                      ? 'text-primary'
                       : 'text-destructive'
                   }`}>
                     {dashboardData && dashboardData.revenueChange > 0 ? (
@@ -373,7 +371,7 @@ export default function StaffDashboard() {
                     ) : (
                       <ArrowDownCircle className="h-3 w-3" />
                     )}
-                    {dashboardData && dashboardData.revenueChange > 0 ? "+" : ""}
+                    {dashboardData && dashboardData.revenueChange > 0 ? '+' : ''}
                     {dashboardData?.revenueChange.toFixed(1) || 0}%
                   </div>
                   <span className="text-xs text-muted-foreground">from last period</span>
@@ -414,7 +412,7 @@ export default function StaffDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl sm:text-3xl font-bold">
-                  ${dashboardData?.inventoryValue.toFixed(2) || "0.00"}
+                  ${dashboardData?.inventoryValue.toFixed(2) || '0.00'}
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -463,7 +461,7 @@ export default function StaffDashboard() {
                 <div className="flex items-center gap-2 mt-2">
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock className="h-3 w-3" />
-                    {dashboardData && dashboardData.bookingSchedule > 0 ? "+" : ""}
+                    {dashboardData && dashboardData.bookingSchedule > 0 ? '+' : ''}
                     {dashboardData?.bookingSchedule || 0} scheduled
                   </div>
                 </div>
@@ -569,17 +567,17 @@ export default function StaffDashboard() {
         <div className="space-y-8">
           <Card className="h-full flex flex-col group hover:shadow-lg transition-all duration-300 border-border/50 bg-card/50 backdrop-blur">
             <CardHeader>
-                              <div className="flex justify-between items-center">
-                  <CardTitle className="flex items-center gap-2">
-                    <div className="p-2 rounded-lg bg-destructive/10">
-                      <AlertTriangle className="h-5 w-5 text-destructive" />
-                    </div>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-destructive/10">
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                  </div>
                     Low Stock Items
-                  </CardTitle>
-                  <Badge variant="outline" className="text-xs bg-destructive/10 text-destructive border-destructive/20">
-                    {lowStockItems.length}
-                  </Badge>
-                </div>
+                </CardTitle>
+                <Badge variant="outline" className="text-xs bg-destructive/10 text-destructive border-destructive/20">
+                  {lowStockItems.length}
+                </Badge>
+              </div>
               <CardDescription>Items that need to be restocked</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow p-0">
@@ -606,11 +604,11 @@ export default function StaffDashboard() {
                           <TableCell className="text-right">
                             <Badge
                               variant={
-                                item.stock <= 2 ? "destructive" : "outline"
+                                item.stock <= 2 ? 'destructive' : 'outline'
                               }
                               className={`ml-auto ${
-                                item.stock <= 2 
-                                  ? 'bg-destructive/10 text-destructive border-destructive/20' 
+                                item.stock <= 2
+                                  ? 'bg-destructive/10 text-destructive border-destructive/20'
                                   : 'bg-muted text-muted-foreground border-border'
                               }`}
                             >
@@ -637,12 +635,12 @@ export default function StaffDashboard() {
               )}
             </CardContent>
             <CardFooter className="border-t border-border/50 pt-4">
-                              <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all duration-200"
-                  onClick={() => (window.location.href = "/dashboard/inventory")}
-                >
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all duration-200"
+                onClick={() => (window.location.href = '/dashboard/inventory')}
+              >
                 <Truck className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">
                   View All Low Stock Items
@@ -660,17 +658,17 @@ export default function StaffDashboard() {
         <Card className="h-full flex flex-col group hover:shadow-lg transition-all duration-300 border-border/50 bg-card/50 backdrop-blur">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                              <div className="flex items-center gap-2">
-                  <CardTitle className="flex items-center gap-2">
-                    <div className="p-2 rounded-lg bg-muted">
-                      <ClipboardList className="h-5 w-5 text-muted-foreground" />
-                    </div>
+              <div className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-muted">
+                    <ClipboardList className="h-5 w-5 text-muted-foreground" />
+                  </div>
                     Recent Tickets
-                  </CardTitle>
-                  <Badge variant="outline" className="text-xs bg-muted text-muted-foreground border-border">
-                    {recentTickets.length}
-                  </Badge>
-                </div>
+                </CardTitle>
+                <Badge variant="outline" className="text-xs bg-muted text-muted-foreground border-border">
+                  {recentTickets.length}
+                </Badge>
+              </div>
             </div>
             <CardDescription>Latest repair tickets</CardDescription>
           </CardHeader>
@@ -691,8 +689,7 @@ export default function StaffDashboard() {
                       <TableRow
                         key={ticket.id}
                         className="hover:bg-muted/50 cursor-pointer"
-                        onClick={() =>
-                          (window.location.href = `/dashboard/tickets/${ticket.id}`)
+                        onClick={() => (window.location.href = `/dashboard/tickets/${ticket.id}`)
                         }
                       >
                         <TableCell>
@@ -704,13 +701,13 @@ export default function StaffDashboard() {
                           </div>
                         </TableCell>
                         <TableCell className="hidden sm:table-cell">
-                          {ticket.customer.split(" ").length > 1 ? (
+                          {ticket.customer.split(' ').length > 1 ? (
                             <>
                               <div className="font-medium text-sm">
-                                {ticket.customer.split(" ")[0]}
+                                {ticket.customer.split(' ')[0]}
                               </div>
                               <div className="text-xs text-muted-foreground">
-                                {ticket.customer.split(" ").slice(1).join(" ")}
+                                {ticket.customer.split(' ').slice(1).join(' ')}
                               </div>
                             </>
                           ) : (
@@ -747,7 +744,7 @@ export default function StaffDashboard() {
               variant="outline"
               size="sm"
               className="w-full"
-              onClick={() => (window.location.href = "/dashboard/tickets")}
+              onClick={() => (window.location.href = '/dashboard/tickets')}
             >
               <span className="hidden sm:inline">View All Tickets</span>
               <span className="sm:hidden">View All</span>
@@ -789,8 +786,7 @@ export default function StaffDashboard() {
                       <TableRow
                         key={sale.id}
                         className="hover:bg-muted/50 cursor-pointer"
-                        onClick={() =>
-                          (window.location.href = `/dashboard/pos/sale/${sale.id}`)
+                        onClick={() => (window.location.href = `/dashboard/pos/sale/${sale.id}`)
                         }
                       >
                         <TableCell>
@@ -802,13 +798,13 @@ export default function StaffDashboard() {
                           </div>
                         </TableCell>
                         <TableCell className="hidden sm:table-cell">
-                          {sale.customerName.split(" ").length > 1 ? (
+                          {sale.customerName.split(' ').length > 1 ? (
                             <>
                               <div className="font-medium text-sm">
-                                {sale.customerName.split(" ")[0]}
+                                {sale.customerName.split(' ')[0]}
                               </div>
                               <div className="text-xs text-muted-foreground">
-                                {sale.customerName.split(" ").slice(1).join(" ")}
+                                {sale.customerName.split(' ').slice(1).join(' ')}
                               </div>
                             </>
                           ) : (
@@ -817,7 +813,7 @@ export default function StaffDashboard() {
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           <div className="text-sm text-muted-foreground">
-                            {sale.items || "—"}
+                            {sale.items || '—'}
                           </div>
                         </TableCell>
                         <TableCell className="text-right font-medium">
@@ -845,8 +841,7 @@ export default function StaffDashboard() {
               variant="outline"
               size="sm"
               className="w-full"
-              onClick={() =>
-                (window.location.href = "/dashboard/reports/sales")
+              onClick={() => (window.location.href = '/dashboard/reports/sales')
               }
             >
               <span className="hidden sm:inline">View Sales Report</span>
@@ -928,8 +923,7 @@ export default function StaffDashboard() {
               variant="outline"
               size="sm"
               className="w-full"
-              onClick={() =>
-                (window.location.href = "/dashboard/announcements")
+              onClick={() => (window.location.href = '/dashboard/announcements')
               }
             >
               <span className="hidden sm:inline">View All Announcements</span>

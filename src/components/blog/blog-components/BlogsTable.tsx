@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   AlertCircle,
   MoreHorizontal,
@@ -8,10 +8,10 @@ import {
   CircleCheckIcon,
   Trash2,
   Star,
-} from "lucide-react";
-import { useState, useTransition } from "react";
-import { Card } from "../../ui/card";
-import { Input } from "../../ui/input";
+} from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { Card } from '../../ui/card';
+import { Input } from '../../ui/input';
 import {
   Table,
   TableBody,
@@ -19,47 +19,47 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../ui/table";
+} from '../../ui/table';
 import {
   deleteBlog,
   publishBlog,
   unpublishBlog,
-} from "@/components/blog/services/blogCrud";
-import Link from "next/link";
-import EditBlogDialog from "./EditBlogDialog";
-import { Button } from "../../ui/button";
-import { toast } from "../../ui/use-toast";
-import { BlogWithDetailsType } from "@/components/blog/types/blogTypes";
-import { Badge } from "@/components/ui/badge";
-import CreateBlogDialog from "./CreateBlogDialog";
+} from '@/components/blog/services/blogCrud';
+import Link from 'next/link';
+import EditBlogDialog from './EditBlogDialog';
+import { Button } from '../../ui/button';
+import { toast } from '../../ui/use-toast';
+import { BlogWithDetailsType } from '@/components/blog/types/blogTypes';
+import { Badge } from '@/components/ui/badge';
+import CreateBlogDialog from './CreateBlogDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/dropdown-menu';
+import { useRouter } from 'next/navigation';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { DateRangePicker } from "@/components/ui/DateRangePicker";
-import { DateRange } from "react-day-picker";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/select';
+import { DateRangePicker } from '@/components/ui/DateRangePicker';
+import { DateRange } from 'react-day-picker';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type PostsTableProps = {
   posts: BlogWithDetailsType[];
 };
-function BlogsTable({ posts }: PostsTableProps) {
-  const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+function BlogsTable ({ posts }: PostsTableProps) {
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDateRange, setSelectedDateRange] = useState<
     DateRange | undefined
   >(undefined);
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState('all');
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -71,6 +71,7 @@ function BlogsTable({ posts }: PostsTableProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
     setSearch(inputValue);
   };
 
@@ -82,26 +83,23 @@ function BlogsTable({ posts }: PostsTableProps) {
     setSelectedDateRange(dateRange);
   };
 
-  const uniqueCategories = Array.from(
-    new Set(posts.map((post) => post.category.name))
-  );
+  const uniqueCategories = Array.from(new Set(posts.map((post) => post.category.name)));
 
   const filteredPosts = posts.filter((post) => {
-    const matchesSearch =
-      search.toLowerCase() === "" || post.title.toLowerCase().includes(search);
-    const matchesCategory =
-      selectedCategory === "all" || post.category.name === selectedCategory;
-    const matchesDate =
-      !selectedDateRange ||
-      !selectedDateRange.from ||
-      !selectedDateRange.to ||
-      (new Date(post.createdAt) >= selectedDateRange.from &&
-        new Date(post.createdAt) <= selectedDateRange.to);
-    const matchesStatus =
-      selectedStatus === "all" ||
-      (selectedStatus === "published" && post.isPublished) ||
-      (selectedStatus === "drafts" && !post.isPublished) ||
-      (selectedStatus === "featured" && post.isFeatured);
+    const matchesSearch
+      = search.toLowerCase() === '' || post.title.toLowerCase().includes(search);
+    const matchesCategory
+      = selectedCategory === 'all' || post.category.name === selectedCategory;
+    const matchesDate
+      = !selectedDateRange?.from
+      || !selectedDateRange.to
+      || (new Date(post.createdAt) >= selectedDateRange.from
+        && new Date(post.createdAt) <= selectedDateRange.to);
+    const matchesStatus
+      = selectedStatus === 'all'
+      || (selectedStatus === 'published' && post.isPublished)
+      || (selectedStatus === 'drafts' && !post.isPublished)
+      || (selectedStatus === 'featured' && post.isFeatured);
 
     return matchesSearch && matchesCategory && matchesDate && matchesStatus;
   });
@@ -111,53 +109,53 @@ function BlogsTable({ posts }: PostsTableProps) {
       try {
         await deleteBlog(postId);
         toast({
-          title: "Successfully Deleted",
-          description: "Successfully Deleted Your Post",
+          title: 'Successfully Deleted',
+          description: 'Successfully Deleted Your Post',
         });
         // onRefresh();
         router.refresh();
       } catch (error) {
         toast({
-          title: "Error",
-          description: "Error Deleting Post",
+          title: 'Error',
+          description: 'Error Deleting Post',
         });
       }
     });
   };
 
-  function handlePublishPost(id: number): void {
+  function handlePublishPost (id: number): void {
     startTransition(async () => {
       try {
         await publishBlog(id);
         toast({
-          title: "Successfully Published",
-          description: "Successfully Published Your Post",
+          title: 'Successfully Published',
+          description: 'Successfully Published Your Post',
         });
         // onRefresh();
         router.refresh();
       } catch (error) {
         toast({
-          title: "Error",
-          description: "Error Publishing Post",
+          title: 'Error',
+          description: 'Error Publishing Post',
         });
       }
     });
   }
 
-  function handleUnpublishPost(id: number): void {
+  function handleUnpublishPost (id: number): void {
     startTransition(async () => {
       try {
         await unpublishBlog(id);
         toast({
-          title: "Successfully Unpublished",
-          description: "Successfully Unpublished Your Post",
+          title: 'Successfully Unpublished',
+          description: 'Successfully Unpublished Your Post',
         });
         // onRefresh();
         router.refresh();
       } catch (error) {
         toast({
-          title: "Error",
-          description: "Error Unpublishing Post",
+          title: 'Error',
+          description: 'Error Unpublishing Post',
         });
       }
     });
@@ -172,10 +170,10 @@ function BlogsTable({ posts }: PostsTableProps) {
               <Button>Add New</Button>
             </Link> */}
           <CreateBlogDialog />
-          <Link href={"/blogs"}>
+          <Link href={'/blogs'}>
             <Button className="min-h-[44px]">View Blogs</Button>
           </Link>
-          <Link href={"/dashboard/blogs/categories"}>
+          <Link href={'/dashboard/blogs/categories'}>
             <Button className="min-h-[44px]">Manage Categories</Button>
           </Link>
         </div>
@@ -293,8 +291,8 @@ function BlogsTable({ posts }: PostsTableProps) {
                         </p>
                         <p className="text-muted-foreground mt-1 text-sm sm:text-base">
                           {posts.length === 0
-                            ? "Start by creating your first blog post"
-                            : "No results matching your filters"}
+                            ? 'Start by creating your first blog post'
+                            : 'No results matching your filters'}
                         </p>
                       </div>
                     </div>
@@ -308,8 +306,8 @@ function BlogsTable({ posts }: PostsTableProps) {
                     </TableCell>
                     <TableCell className="w-48 sm:w-80 text-xs sm:text-sm">
                       {post.description
-                        ? post.description.slice(0, 60) + "..."
-                        : "No description"}
+                        ? `${post.description.slice(0, 60)}...`
+                        : 'No description'}
                     </TableCell>
                     <TableCell className="w-32 sm:w-80 text-xs sm:text-sm">
                       Staff
@@ -335,9 +333,9 @@ function BlogsTable({ posts }: PostsTableProps) {
                           {post.tags.slice(0, 2).map((tag, index) => (
                             <span key={tag.id}>
                               {tag.name}
-                              {post.tags &&
-                                index < Math.min(1, post.tags.length - 1) &&
-                                ", "}
+                              {post.tags
+                                && index < Math.min(1, post.tags.length - 1)
+                                && ', '}
                             </span>
                           ))}
                           {post.tags.length > 2 && (
@@ -347,7 +345,7 @@ function BlogsTable({ posts }: PostsTableProps) {
                           )}
                         </>
                       ) : (
-                        "No tags"
+                        'No tags'
                       )}
                     </TableCell>
                     <TableCell className="w-20 sm:w-40">
@@ -359,10 +357,10 @@ function BlogsTable({ posts }: PostsTableProps) {
                       )}
                     </TableCell>
                     <TableCell className="w-32 sm:w-80 text-xs sm:text-sm">
-                      {new Date(post.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
+                      {new Date(post.createdAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
                       })}
                     </TableCell>
                     {/* <TableCell className="w-80">

@@ -12,7 +12,7 @@ import {
 import { useState } from 'react';
 import { SupplierForm } from './SupplierForm';
 
-export function AddSupplierDialog() {
+export function AddSupplierDialog () {
   const [open, setOpen] = useState(false);
 
   return (

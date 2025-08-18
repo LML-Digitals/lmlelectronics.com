@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -14,27 +14,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Pencil, ImagePlus, X, CircleDashed } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import Image from "next/image";
-import { useToast } from "@/components/ui/use-toast";
+} from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
+import { Pencil, ImagePlus, X, CircleDashed } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import Image from 'next/image';
+import { useToast } from '@/components/ui/use-toast';
 import {
   StockLevel,
   Variation,
   VariationFormData,
   VariationUpdateInput,
-} from "./types/types";
-import { updateVariation } from "./services/itemsCrud";
+} from './types/types';
+import { updateVariation } from './services/itemsCrud';
 import {
   getDefaultShippingRate,
   getDefaultTaxRate,
-} from "@/components/dashboard/settings/services/inventorySettings";
+} from '@/components/dashboard/settings/services/inventorySettings';
 
 interface EditVariationDialogProps {
   variation: {
@@ -72,7 +72,7 @@ interface EditVariationDialogProps {
   parentItemName?: string;
 }
 
-export function EditVariationDialog({
+export function EditVariationDialog ({
   variation,
   locations,
   onUpdate,
@@ -96,7 +96,7 @@ export function EditVariationDialog({
         setDefaultShippingRate(shippingRate || 0);
         setLoadingRates(false);
       } catch (error) {
-        console.error("Error fetching default rates:", error);
+        console.error('Error fetching default rates:', error);
         setLoadingRates(false);
       }
     };
@@ -106,9 +106,7 @@ export function EditVariationDialog({
 
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(
-    variation.image || null
-  );
+  const [preview, setPreview] = useState<string | null>(variation.image || null);
   const [imageChanged, setImageChanged] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -116,10 +114,7 @@ export function EditVariationDialog({
 
   // Default stock levels based on the current variation
   const defaultStockLevels = locations.reduce((acc, location) => {
-    const existingLevel = variation.stockLevels.find(
-      (level) =>
-        level.locationId === location.id || level.location?.id === location.id
-    );
+    const existingLevel = variation.stockLevels.find((level) => level.locationId === location.id || level.location?.id === location.id);
 
     return {
       ...acc,
@@ -157,9 +152,8 @@ export function EditVariationDialog({
       width: variation.width || 0,
       height: variation.height || 0,
       stockLevels: locations.reduce((acc, location) => {
-        const stockLevel = variation.stockLevels?.find(
-          (sl) => sl.locationId === location.id
-        );
+        const stockLevel = variation.stockLevels?.find((sl) => sl.locationId === location.id);
+
         return {
           ...acc,
           [location.id]: {
@@ -174,9 +168,11 @@ export function EditVariationDialog({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const file = e.target.files[0];
+
       setImage(file);
       setImageChanged(true);
       const previewURL = URL.createObjectURL(file);
+
       setPreview(previewURL);
     }
   };
@@ -188,13 +184,13 @@ export function EditVariationDialog({
   };
 
   // Calculate derived values for preview
-  const rawValue = form.watch("raw") || 0;
-  const useDefaultRates = form.watch("useDefaultRates");
-  const taxValue = useDefaultRates ? defaultTaxRate : form.watch("tax") || 0;
+  const rawValue = form.watch('raw') || 0;
+  const useDefaultRates = form.watch('useDefaultRates');
+  const taxValue = useDefaultRates ? defaultTaxRate : form.watch('tax') || 0;
   const shippingValue = useDefaultRates
     ? defaultShippingRate
-    : form.watch("shipping") || 0;
-  const markupValue = form.watch("markup") || 0;
+    : form.watch('shipping') || 0;
+  const markupValue = form.watch('markup') || 0;
 
   const cost = rawValue + rawValue * (taxValue / 100) + shippingValue;
   const totalCost = cost + cost * (markupValue / 100);
@@ -207,41 +203,43 @@ export function EditVariationDialog({
 
       // Handle image upload
       let imageUrl = variation.image || null;
+
       if (imageChanged) {
         if (image) {
           try {
             // Upload image using API endpoint
             const fileName = `variation-${Date.now()}-${image.name.replace(
               /\s+/g,
-              "-"
+              '-',
             )}`;
 
             const uploadResponse = await fetch(
               `/api/upload?filename=${image.name}`,
               {
-                method: "POST",
+                method: 'POST',
                 body: image,
-              }
+              },
             );
 
             if (!uploadResponse.ok) {
-              throw new Error("Failed to upload image");
+              throw new Error('Failed to upload image');
             }
 
             const uploadResult = await uploadResponse.json();
+
             imageUrl = uploadResult.url;
           } catch (error) {
-            console.error("Failed to upload image:", error);
+            console.error('Failed to upload image:', error);
             toast({
-              variant: "destructive",
-              title: "Image Upload Failed",
+              variant: 'destructive',
+              title: 'Image Upload Failed',
               description:
-                "The image could not be uploaded, but other changes will be saved.",
+                'The image could not be uploaded, but other changes will be saved.',
             });
           }
         } else {
           // If image was removed
-          imageUrl = "";
+          imageUrl = '';
         }
       }
 
@@ -251,6 +249,7 @@ export function EditVariationDialog({
       // Make sure each location has an entry with at least stock: 0
       locations.forEach((location) => {
         const stockLevel = data.stockLevels[location.id.toString()];
+
         formattedStockLevels[location.id.toString()] = {
           stock: stockLevel?.stock || 0,
           purchaseCost: stockLevel?.purchaseCost,
@@ -285,19 +284,19 @@ export function EditVariationDialog({
       await updateVariation(variation.id, formattedData);
 
       toast({
-        title: "Success",
-        description: "Variation updated successfully",
+        title: 'Success',
+        description: 'Variation updated successfully',
       });
 
       setOpen(false);
-      if (onUpdate) onUpdate();
+      if (onUpdate) { onUpdate(); }
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update variation",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to update variation',
       });
-      console.error("Error updating variation:", error);
+      console.error('Error updating variation:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -431,8 +430,8 @@ export function EditVariationDialog({
                     <FormLabel>Use Default Rates</FormLabel>
                     <p className="text-sm text-muted-foreground">
                       {field.value
-                        ? "Using system default shipping and tax rates"
-                        : "Using custom shipping and tax rates"}
+                        ? 'Using system default shipping and tax rates'
+                        : 'Using custom shipping and tax rates'}
                     </p>
                   </div>
                   <FormControl>
@@ -459,10 +458,7 @@ export function EditVariationDialog({
                           type="number"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(
-                              Number.parseFloat(e.target.value) || 0
-                            )
+                          onChange={(e) => field.onChange(Number.parseFloat(e.target.value) || 0)
                           }
                         />
                       </FormControl>
@@ -484,18 +480,15 @@ export function EditVariationDialog({
                             placeholder={
                               useDefaultRates
                                 ? `${defaultTaxRate} (Default)`
-                                : "0.00"
+                                : '0.00'
                             }
                             {...field}
-                            disabled={form.watch("useDefaultRates")}
-                            onChange={(e) =>
-                              field.onChange(
-                                Number.parseFloat(e.target.value) || 0
-                              )
+                            disabled={form.watch('useDefaultRates')}
+                            onChange={(e) => field.onChange(Number.parseFloat(e.target.value) || 0)
                             }
                           />
                         </FormControl>
-                        {form.watch("useDefaultRates") && (
+                        {form.watch('useDefaultRates') && (
                           <p className="text-xs text-muted-foreground">
                             Using system default tax rate: {defaultTaxRate}%
                           </p>
@@ -519,18 +512,15 @@ export function EditVariationDialog({
                             placeholder={
                               useDefaultRates
                                 ? `${defaultShippingRate} (Default)`
-                                : "0.00"
+                                : '0.00'
                             }
                             {...field}
-                            disabled={form.watch("useDefaultRates")}
-                            onChange={(e) =>
-                              field.onChange(
-                                Number.parseFloat(e.target.value) || 0
-                              )
+                            disabled={form.watch('useDefaultRates')}
+                            onChange={(e) => field.onChange(Number.parseFloat(e.target.value) || 0)
                             }
                           />
                         </FormControl>
-                        {form.watch("useDefaultRates") && (
+                        {form.watch('useDefaultRates') && (
                           <p className="text-xs text-muted-foreground">
                             Using system default shipping rate: $
                             {defaultShippingRate}
@@ -552,10 +542,11 @@ export function EditVariationDialog({
                         <Input
                           type="number"
                           placeholder="0.30"
-                          value={field.value !== undefined ? field.value : ""}
+                          value={field.value !== undefined ? field.value : ''}
                           onChange={(e) => {
-                            const value =
-                              Number.parseFloat(e.target.value) || 0;
+                            const value
+                              = Number.parseFloat(e.target.value) || 0;
+
                             field.onChange(value);
                           }}
                         />
@@ -600,8 +591,7 @@ export function EditVariationDialog({
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value || "0"))
+                          onChange={(e) => field.onChange(parseFloat(e.target.value || '0'))
                           }
                         />
                       </FormControl>
@@ -621,8 +611,7 @@ export function EditVariationDialog({
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value || "0"))
+                          onChange={(e) => field.onChange(parseFloat(e.target.value || '0'))
                           }
                         />
                       </FormControl>
@@ -642,8 +631,7 @@ export function EditVariationDialog({
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value || "0"))
+                          onChange={(e) => field.onChange(parseFloat(e.target.value || '0'))
                           }
                         />
                       </FormControl>
@@ -663,8 +651,7 @@ export function EditVariationDialog({
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value || "0"))
+                          onChange={(e) => field.onChange(parseFloat(e.target.value || '0'))
                           }
                         />
                       </FormControl>
@@ -698,8 +685,7 @@ export function EditVariationDialog({
                               {...field}
                               type="number"
                               min="0"
-                              onChange={(e) =>
-                                field.onChange(parseInt(e.target.value) || 0)
+                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)
                               }
                               placeholder="Stock"
                             />
@@ -721,7 +707,7 @@ export function EditVariationDialog({
                     Updating...
                   </>
                 ) : (
-                  "Update Variation"
+                  'Update Variation'
                 )}
               </Button>
             </div>

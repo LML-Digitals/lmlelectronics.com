@@ -7,19 +7,21 @@ interface TermDetailPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({
+export async function generateMetadata ({
   params,
 }: TermDetailPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
     const term = await getActiveTermsBySlug(slug);
+
     return {
       title: `${term?.title || 'Term Details'}`,
       description: `Details for the term: ${term?.title}`,
       keywords: `LML Repair, terms of service, ${term?.title || 'term details'}`,
     };
   } catch (error) {
-    console.error("Error fetching term metadata:", error);
+    console.error('Error fetching term metadata:', error);
+
     return {
       title: 'LML Repair | Term Details',
       description: 'Error fetching term details',
@@ -27,7 +29,7 @@ export async function generateMetadata({
   }
 }
 
-export default async function TermDetailPage({ params }: TermDetailPageProps) {
+export default async function TermDetailPage ({ params }: TermDetailPageProps) {
   try {
     const { slug } = await params;
     const term = await getActiveTermsBySlug(slug);
@@ -46,8 +48,8 @@ export default async function TermDetailPage({ params }: TermDetailPageProps) {
 
     return (
       <div>
-             {/* Hero Section */}
-             <div className="flex flex-col gap-8 text-center my-20">
+        {/* Hero Section */}
+        <div className="flex flex-col gap-8 text-center my-20">
           <div className="flex flex-col gap-1">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-secondary animate-pulse">
               {term.title}

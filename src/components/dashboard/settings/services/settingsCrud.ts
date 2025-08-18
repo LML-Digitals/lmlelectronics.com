@@ -1,30 +1,30 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import prisma from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/config/authOptions";
-import { redirect } from "next/navigation";
+import { revalidatePath } from 'next/cache';
+import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/config/authOptions';
+import { redirect } from 'next/navigation';
 import {
   SettingCategory,
   SettingScope,
   SettingValue,
   parseSettingValue,
   stringifySettingValue,
-} from "./settingsTypes";
+} from './settingsTypes';
 
 /**
  * Verify admin access or throw error
  */
-async function verifyAdminAccess() {
+async function verifyAdminAccess () {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    throw new Error("Authentication required");
+    throw new Error('Authentication required');
   }
 
-  if (session.user.role !== "admin") {
-    throw new Error("Admin access required");
+  if (session.user.role !== 'admin') {
+    throw new Error('Admin access required');
   }
 
   return session.user;
@@ -33,7 +33,7 @@ async function verifyAdminAccess() {
 /**
  * Get a system-wide setting value
  */
-export async function getSystemSetting(key: string): Promise<SettingValue> {
+export async function getSystemSetting (key: string): Promise<SettingValue> {
   const setting = await prisma.settings.findUnique({
     where: { key },
     include: { systemValues: true },
@@ -41,6 +41,7 @@ export async function getSystemSetting(key: string): Promise<SettingValue> {
 
   if (!setting) {
     console.log(`Warning: Setting with key '${key}' not found`);
+
     return null;
   }
 
@@ -56,8 +57,7 @@ export async function getSystemSetting(key: string): Promise<SettingValue> {
 /**
  * Set a system-wide setting value
  */
-export async function setSystemSetting(
-  formData:
+export async function setSystemSetting (formData:
     | FormData
     | {
         key: string;
@@ -65,34 +65,33 @@ export async function setSystemSetting(
         category?: SettingCategory;
         name?: string;
         description?: string;
-      }
-) {
+      }) {
   await verifyAdminAccess();
 
   // Get form values
-  const key =
-    formData instanceof FormData
-      ? (formData.get("key") as string)
+  const key
+    = formData instanceof FormData
+      ? (formData.get('key') as string)
       : formData.key;
-  const value =
-    formData instanceof FormData
-      ? (formData.get("value") as string)
+  const value
+    = formData instanceof FormData
+      ? (formData.get('value') as string)
       : formData.value;
-  const category =
-    formData instanceof FormData
-      ? (formData.get("category") as SettingCategory) || SettingCategory.SYSTEM
+  const category
+    = formData instanceof FormData
+      ? (formData.get('category') as SettingCategory) || SettingCategory.SYSTEM
       : formData.category || SettingCategory.SYSTEM;
-  const name =
-    formData instanceof FormData
-      ? (formData.get("name") as string) || key
+  const name
+    = formData instanceof FormData
+      ? (formData.get('name') as string) || key
       : formData.name || key;
-  const description =
-    formData instanceof FormData
-      ? (formData.get("description") as string) || `Setting for ${key}`
+  const description
+    = formData instanceof FormData
+      ? (formData.get('description') as string) || `Setting for ${key}`
       : formData.description || `Setting for ${key}`;
 
   if (!key) {
-    throw new Error("Setting key is required");
+    throw new Error('Setting key is required');
   }
 
   // Get the stringified value and ensure it's a string type
@@ -134,16 +133,15 @@ export async function setSystemSetting(
     });
   }
 
-  revalidatePath("/dashboard/settings");
+  revalidatePath('/dashboard/settings');
+
   return { success: true };
 }
 
 /**
  * Get all settings for a specific category
  */
-export async function getSettingsByCategory(
-  category: SettingCategory
-): Promise<any[]> {
+export async function getSettingsByCategory (category: SettingCategory): Promise<any[]> {
   // No authentication needed for reading settings in many cases
 
   const settings = await prisma.settings.findMany({
@@ -156,9 +154,10 @@ export async function getSettingsByCategory(
   }
 
   const result = [];
+
   for (const setting of settings) {
-    const value =
-      setting.systemValues && setting.systemValues.length > 0
+    const value
+      = setting.systemValues && setting.systemValues.length > 0
         ? parseSettingValue(setting.systemValues[0].value)
         : parseSettingValue(setting.defaultValue || null);
 
@@ -182,15 +181,16 @@ export async function getSettingsByCategory(
 /**
  * Get all settings
  */
-export async function getAllSettings(): Promise<any[]> {
+export async function getAllSettings (): Promise<any[]> {
   const settings = await prisma.settings.findMany({
     include: { systemValues: true },
   });
 
   const result = [];
+
   for (const setting of settings) {
-    const value =
-      setting.systemValues && setting.systemValues.length > 0
+    const value
+      = setting.systemValues && setting.systemValues.length > 0
         ? parseSettingValue(setting.systemValues[0].value)
         : parseSettingValue(setting.defaultValue || null);
 
@@ -214,12 +214,12 @@ export async function getAllSettings(): Promise<any[]> {
 /**
  * Get all route metadata entries
  */
-export async function getAllRouteMetadata(): Promise<any[]> {
+export async function getAllRouteMetadata (): Promise<any[]> {
   await verifyAdminAccess();
 
   const routeMetadata = await prisma.routeMetadata.findMany({
     orderBy: {
-      route: "asc",
+      route: 'asc',
     },
   });
 
@@ -229,9 +229,9 @@ export async function getAllRouteMetadata(): Promise<any[]> {
 /**
  * Get metadata for a specific route
  */
-export async function getRouteMetadata(route: string): Promise<any | null> {
+export async function getRouteMetadata (route: string): Promise<any | null> {
   // Clean the route path to ensure consistent format
-  const normalizedRoute = route.startsWith("/") ? route : `/${route}`;
+  const normalizedRoute = route.startsWith('/') ? route : `/${route}`;
 
   const metadata = await prisma.routeMetadata.findFirst({
     where: {
@@ -251,33 +251,31 @@ export async function getRouteMetadata(route: string): Promise<any | null> {
 /**
  * Save or update metadata for a specific route
  */
-export async function saveRouteMetadata(
-  formData:
+export async function saveRouteMetadata (formData:
     | FormData
     | {
         route: string;
         title: string;
         description: string;
-      }
-) {
+      }) {
   await verifyAdminAccess();
 
   // Get form values
-  const route =
-    formData instanceof FormData
-      ? (formData.get("route") as string)
+  const route
+    = formData instanceof FormData
+      ? (formData.get('route') as string)
       : formData.route;
-  const title =
-    formData instanceof FormData
-      ? (formData.get("title") as string)
+  const title
+    = formData instanceof FormData
+      ? (formData.get('title') as string)
       : formData.title;
-  const description =
-    formData instanceof FormData
-      ? (formData.get("description") as string)
+  const description
+    = formData instanceof FormData
+      ? (formData.get('description') as string)
       : formData.description;
 
   // Clean the route path to ensure consistent format
-  const normalizedRoute = route.startsWith("/") ? route : `/${route}`;
+  const normalizedRoute = route.startsWith('/') ? route : `/${route}`;
 
   // Try to find existing route metadata
   const existingMetadata = await prisma.routeMetadata.findFirst({
@@ -311,7 +309,7 @@ export async function saveRouteMetadata(
   }
 
   // Revalidate paths that might be affected
-  revalidatePath("/dashboard/settings");
+  revalidatePath('/dashboard/settings');
   revalidatePath(normalizedRoute);
 
   return { success: true };
@@ -320,7 +318,7 @@ export async function saveRouteMetadata(
 /**
  * Delete metadata for a specific route
  */
-export async function deleteRouteMetadata(routeId: string) {
+export async function deleteRouteMetadata (routeId: string) {
   await verifyAdminAccess();
 
   const metadata = await prisma.routeMetadata.findUnique({
@@ -330,7 +328,7 @@ export async function deleteRouteMetadata(routeId: string) {
   });
 
   if (!metadata) {
-    throw new Error("Route metadata not found");
+    throw new Error('Route metadata not found');
   }
 
   await prisma.routeMetadata.delete({
@@ -340,7 +338,7 @@ export async function deleteRouteMetadata(routeId: string) {
   });
 
   // Revalidate paths that might be affected
-  revalidatePath("/dashboard/settings");
+  revalidatePath('/dashboard/settings');
   revalidatePath(metadata.route);
 
   return { success: true };
@@ -349,15 +347,15 @@ export async function deleteRouteMetadata(routeId: string) {
 /**
  * Reset a setting to its default value
  */
-export async function resetSetting(formData: FormData) {
+export async function resetSetting (formData: FormData) {
   await verifyAdminAccess();
 
-  const key = formData.get("key") as string;
-  const scope = formData.get("scope") as SettingScope;
-  const scopeId = formData.get("scopeId") as string | null;
+  const key = formData.get('key') as string;
+  const scope = formData.get('scope') as SettingScope;
+  const scopeId = formData.get('scopeId') as string | null;
 
   if (!key) {
-    throw new Error("Setting key is required");
+    throw new Error('Setting key is required');
   }
 
   const setting = await prisma.settings.findUnique({
@@ -366,25 +364,27 @@ export async function resetSetting(formData: FormData) {
 
   if (!setting) {
     console.warn(`Setting with key '${key}' not found, nothing to reset`);
-    return { success: true, message: "Setting not found, nothing to reset" };
+
+    return { success: true, message: 'Setting not found, nothing to reset' };
   }
 
   switch (scope) {
-    case "system":
-      await prisma.systemSetting.deleteMany({
-        where: { settingId: setting.id },
-      });
-      break;
+  case 'system':
+    await prisma.systemSetting.deleteMany({
+      where: { settingId: setting.id },
+    });
+    break;
   }
 
-  revalidatePath("/dashboard/settings");
+  revalidatePath('/dashboard/settings');
+
   return { success: true };
 }
 
 /**
  * Initialize default appearance settings if they don't exist
  */
-export async function initializeAppearanceSettings(): Promise<{
+export async function initializeAppearanceSettings (): Promise<{
   success: boolean;
   message: string;
 }> {
@@ -392,114 +392,113 @@ export async function initializeAppearanceSettings(): Promise<{
     // Default appearance settings
     const defaultAppearanceSettings = [
       {
-        key: "primary_color",
-        name: "Primary Color",
-        description: "Main brand color used for buttons and accents",
-        value: "#000000",
+        key: 'primary_color',
+        name: 'Primary Color',
+        description: 'Main brand color used for buttons and accents',
+        value: '#000000',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "secondary_color",
-        name: "Secondary Color",
-        description: "Used for secondary buttons and elements",
-        value: "#d6cd00",
+        key: 'secondary_color',
+        name: 'Secondary Color',
+        description: 'Used for secondary buttons and elements',
+        value: '#d6cd00',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "accent_color",
-        name: "Accent Color",
-        description: "Used for highlights and accents",
-        value: "#fdf200",
+        key: 'accent_color',
+        name: 'Accent Color',
+        description: 'Used for highlights and accents',
+        value: '#fdf200',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "background_color",
-        name: "Background Color",
-        description: "Main background color",
-        value: "#ffffff",
+        key: 'background_color',
+        name: 'Background Color',
+        description: 'Main background color',
+        value: '#ffffff',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "text_color",
-        name: "Text Color",
-        description: "Main text color",
-        value: "#171717",
+        key: 'text_color',
+        name: 'Text Color',
+        description: 'Main text color',
+        value: '#171717',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "muted_color",
-        name: "Muted Color",
-        description: "Used for secondary text and disabled elements",
-        value: "#737373",
+        key: 'muted_color',
+        name: 'Muted Color',
+        description: 'Used for secondary text and disabled elements',
+        value: '#737373',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "card_color",
-        name: "Card Color",
-        description: "Background color for cards and panels",
-        value: "#f5f5f5",
+        key: 'card_color',
+        name: 'Card Color',
+        description: 'Background color for cards and panels',
+        value: '#f5f5f5',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "border_color",
-        name: "Border Color",
-        description: "Color used for borders and dividers",
-        value: "#e5e5e5",
+        key: 'border_color',
+        name: 'Border Color',
+        description: 'Color used for borders and dividers',
+        value: '#e5e5e5',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "font_family",
-        name: "Font Family",
-        description: "Main font family used throughout the application",
-        value: "GeistSans, sans-serif",
+        key: 'font_family',
+        name: 'Font Family',
+        description: 'Main font family used throughout the application',
+        value: 'GeistSans, sans-serif',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "brand_name",
-        name: "Brand Name",
-        description: "The name of your business or application",
-        value: "LML Repair",
+        key: 'brand_name',
+        name: 'Brand Name',
+        description: 'The name of your business or application',
+        value: 'LML Repair',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "logo_url",
-        name: "Logo URL",
-        description: "URL to your logo image",
-        value: "/logo.png",
+        key: 'logo_url',
+        name: 'Logo URL',
+        description: 'URL to your logo image',
+        value: '/logo.png',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "favicon_url",
-        name: "Favicon URL",
-        description: "URL to your favicon image",
-        value: "/favicon.ico",
+        key: 'favicon_url',
+        name: 'Favicon URL',
+        description: 'URL to your favicon image',
+        value: '/favicon.ico',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "site_description",
-        name: "Site Description",
-        description: "A brief description of your site for SEO purposes",
-        value: "Professional repair services for all your needs",
+        key: 'site_description',
+        name: 'Site Description',
+        description: 'A brief description of your site for SEO purposes',
+        value: 'Professional repair services for all your needs',
         category: SettingCategory.APPEARANCE,
       },
       {
-        key: "meta_title_template",
-        name: "Meta Title Template",
+        key: 'meta_title_template',
+        name: 'Meta Title Template',
         description:
-          "Template for page titles. Use %s for page name and {brand_name} for brand name",
-        value: "%s | {brand_name}",
+          'Template for page titles. Use %s for page name and {brand_name} for brand name',
+        value: '%s | {brand_name}',
         category: SettingCategory.APPEARANCE,
       },
     ];
 
     // Check existing settings
-    const existingSettings = await getSettingsByCategory(
-      SettingCategory.APPEARANCE
-    );
+    const existingSettings = await getSettingsByCategory(SettingCategory.APPEARANCE);
     const existingKeys = existingSettings.map((setting) => setting.key);
 
     // Initialize settings that don't exist yet
     let createdCount = 0;
+
     for (const setting of defaultAppearanceSettings) {
       if (!existingKeys.includes(setting.key)) {
         await setSystemSetting({
@@ -513,20 +512,21 @@ export async function initializeAppearanceSettings(): Promise<{
       }
     }
 
-    revalidatePath("/dashboard/settings");
+    revalidatePath('/dashboard/settings');
 
     return {
       success: true,
       message:
         createdCount > 0
           ? `Successfully initialized ${createdCount} appearance settings`
-          : "All appearance settings already exist",
+          : 'All appearance settings already exist',
     };
   } catch (error) {
-    console.error("Error initializing appearance settings:", error);
+    console.error('Error initializing appearance settings:', error);
+
     return {
       success: false,
-      message: "Failed to initialize appearance settings",
+      message: 'Failed to initialize appearance settings',
     };
   }
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   BarChart,
   Bar,
@@ -10,14 +10,14 @@ import {
   Pie,
   Cell,
   TooltipProps,
-} from "recharts";
+} from 'recharts';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   MapPin,
   DollarSign,
@@ -25,32 +25,33 @@ import {
   BarChart3,
   ShoppingCart,
   Package,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface LocationAnalyticsProps {
   data: any;
 }
 
 const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884d8",
-  "#82ca9d",
+  '#0088FE',
+  '#00C49F',
+  '#FFBB28',
+  '#FF8042',
+  '#8884d8',
+  '#82ca9d',
 ];
 
-export function LocationAnalytics({ data }: LocationAnalyticsProps) {
+export function LocationAnalytics ({ data }: LocationAnalyticsProps) {
   if (!data) {
     return <div>No location data available</div>;
   }
 
   // Safe formatter function to handle different value types
   const currencyFormatter = (value: any) => {
-    if (typeof value === "number") {
-      return [`$${value.toFixed(2)}`, ""];
+    if (typeof value === 'number') {
+      return [`$${value.toFixed(2)}`, ''];
     }
-    return [`$${value}`, ""];
+
+    return [`$${value}`, ''];
   };
 
   // Prepare ticket data by location
@@ -72,17 +73,17 @@ export function LocationAnalytics({ data }: LocationAnalyticsProps) {
     .slice(0, 10); // Top 10 locations by sales
 
   // Calculate total sales - using proper type casting to handle Object.values returning unknown[]
-  const salesValues = Object.values(data.salesByLocation || {}) as number[];
+  const salesValues = Object.values(data.salesByLocation || {});
   const totalSales = salesValues.reduce(
     (sum: number, val: number) => sum + (val || 0),
-    0
+    0,
   );
 
   // Calculate total tickets - using proper type casting to handle Object.values returning unknown[]
-  const ticketValues = Object.values(data.ticketsByLocation || {}) as number[];
+  const ticketValues = Object.values(data.ticketsByLocation || {});
   const totalTickets = ticketValues.reduce(
     (sum: number, val: number) => sum + (val || 0),
-    0
+    0,
   );
 
   return (
@@ -108,7 +109,7 @@ export function LocationAnalytics({ data }: LocationAnalyticsProps) {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              ${typeof totalSales === "number" ? totalSales.toFixed(2) : "0.00"}
+              ${typeof totalSales === 'number' ? totalSales.toFixed(2) : '0.00'}
             </div>
           </CardContent>
         </Card>
@@ -120,7 +121,7 @@ export function LocationAnalytics({ data }: LocationAnalyticsProps) {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              {typeof totalTickets === "number" ? totalTickets : 0}
+              {typeof totalTickets === 'number' ? totalTickets : 0}
             </div>
           </CardContent>
         </Card>
@@ -143,7 +144,7 @@ export function LocationAnalytics({ data }: LocationAnalyticsProps) {
                   <BarChart data={ticketData} layout="vertical">
                     <XAxis type="number" />
                     <YAxis dataKey="name" type="category" width={150} />
-                    <Tooltip formatter={(value) => [`${value} tickets`, ""]} />
+                    <Tooltip formatter={(value) => [`${value} tickets`, '']} />
                     <Bar dataKey="value" fill="#8884d8">
                       {ticketData.map((entry, index) => (
                         <Cell
@@ -230,31 +231,31 @@ export function LocationAnalytics({ data }: LocationAnalyticsProps) {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {data.inventoryByLocation &&
-                data.inventoryByLocation.length > 0 ? (
-                  data.inventoryByLocation.map((location: any) => (
-                    <tr key={location.locationId}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {location.locationName}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-medium">
-                        {location.totalStock}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                {data.inventoryByLocation
+                && data.inventoryByLocation.length > 0 ? (
+                    data.inventoryByLocation.map((location: any) => (
+                      <tr key={location.locationId}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {location.locationName}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-medium">
+                          {location.totalStock}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
                         ${location.totalValue.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {location.lowStockCount}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {location.lowStockCount}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="px-6 py-4 text-center">
+                      No inventory data by location available
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-4 text-center">
-                      No inventory data by location available
-                    </td>
-                  </tr>
-                )}
+                  )}
               </tbody>
             </table>
           </div>
@@ -275,8 +276,8 @@ export function LocationAnalytics({ data }: LocationAnalyticsProps) {
                   data={data.inventoryByLocation.map((loc: any) => {
                     return {
                       name: loc.locationName,
-                      "Inventory Value": loc.totalValue,
-                      "Ticket Count":
+                      'Inventory Value': loc.totalValue,
+                      'Ticket Count':
                         data.ticketsByLocation[loc.locationName] || 0,
                       Sales: data.salesByLocation[loc.locationName] || 0,
                     };
@@ -287,14 +288,16 @@ export function LocationAnalytics({ data }: LocationAnalyticsProps) {
                   <Tooltip
                     formatter={(value, name) => {
                       if (
-                        typeof name === "string" &&
-                        (name === "Inventory Value" || name === "Sales")
+                        typeof name === 'string'
+                        && (name === 'Inventory Value' || name === 'Sales')
                       ) {
-                        if (typeof value === "number") {
+                        if (typeof value === 'number') {
                           return [`$${value.toFixed(2)}`, name];
                         }
+
                         return [`$${value}`, name];
                       }
+
                       return [value, name];
                     }}
                   />

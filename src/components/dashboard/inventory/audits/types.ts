@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 
 export type AuditProps = Prisma.InventoryAuditGetPayload<{
   include: {
@@ -7,5 +7,5 @@ export type AuditProps = Prisma.InventoryAuditGetPayload<{
     location: true;
     staff: true;
   };
-  orderBy: { createdAt: "desc" };
+  orderBy: { createdAt: 'desc' };
 }>;

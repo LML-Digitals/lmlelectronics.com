@@ -62,4 +62,4 @@ export function formatPrice (price: number): string {
     style: 'currency',
     currency: 'USD',
   }).format(price);
-} 
+}

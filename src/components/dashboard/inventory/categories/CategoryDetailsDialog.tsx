@@ -46,7 +46,7 @@ interface CategoryDetailsDialogProps {
   categories?: CategoryWithChildren[]; // All categories for finding parent name
 }
 
-export function CategoryDetailsDialog({
+export function CategoryDetailsDialog ({
   category,
   onItemAdded,
   children,
@@ -71,6 +71,7 @@ export function CategoryDetailsDialog({
     try {
       setLoading(true);
       const allItems = await getInventoryItems();
+
       setItems(allItems);
       setLoading(false);
     } catch (error) {
@@ -85,7 +86,7 @@ export function CategoryDetailsDialog({
 
   // Updated function to add an item to a category using server action
   const handleAddItem = async () => {
-    if (!selectedItemId) return;
+    if (!selectedItemId) { return; }
 
     setAddingItem(true);
     try {
@@ -167,17 +168,14 @@ export function CategoryDetailsDialog({
   };
 
   // Get items that are not in this category yet
-  const availableItems = items.filter(
-    (item) => !category.items.some((catItem) => catItem.id === item.id)
-  );
+  const availableItems = items.filter((item) => !category.items.some((catItem) => catItem.id === item.id));
 
   // Find parent category name if exists
   const getParentCategoryName = () => {
-    if (!category.parentId) return null;
+    if (!category.parentId) { return null; }
 
-    const parentCategory = categories.find(
-      (cat) => cat.id === category.parentId
-    );
+    const parentCategory = categories.find((cat) => cat.id === category.parentId);
+
     return parentCategory?.name || `Unknown (ID: ${category.parentId})`;
   };
 

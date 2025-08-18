@@ -1,67 +1,65 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { getAllSettings } from "@/components/dashboard/settings/services/settingsCrud";
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { getAllSettings } from '@/components/dashboard/settings/services/settingsCrud';
 
 // UI Components
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Loader2 } from "lucide-react";
+} from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Loader2 } from 'lucide-react';
 
-
-import Security from "../../../components/dashboard/settings/components/Securty";
-import InventorySettings from "../../../components/dashboard/settings/components/InventorySettings";
+import Security from '../../../components/dashboard/settings/components/Securty';
+import InventorySettings from '../../../components/dashboard/settings/components/InventorySettings';
 
 // Category configurations
 const CATEGORIES = [
   {
-    value: "inventory",
-    label: "Inventory",
+    value: 'inventory',
+    label: 'Inventory',
     component: InventorySettings,
   },
   {
-    value: "security",
-    label: "Security",
+    value: 'security',
+    label: 'Security',
     component: Security,
-    activeTab: "security",
+    activeTab: 'security',
   },
 ];
 
-export default function SettingsPage() {
+export default function SettingsPage () {
   const searchParams = useSearchParams();
-  const tabParam = searchParams?.get("tab");
-  const [activeTab, setActiveTab] = useState<string>(
-    tabParam && CATEGORIES.some((c) => c.value === tabParam)
-      ? tabParam
-      : "branding"
-  );
+  const tabParam = searchParams?.get('tab');
+  const [activeTab, setActiveTab] = useState<string>(tabParam && CATEGORIES.some((c) => c.value === tabParam)
+    ? tabParam
+    : 'branding');
   const [isLoading, setIsLoading] = useState(true);
   const [settings, setSettings] = useState<Record<string, any>>({});
 
   // Load settings on mount
   useEffect(() => {
-    async function loadSettings() {
+    async function loadSettings () {
       try {
         setIsLoading(true);
         const allSettings = await getAllSettings();
 
         // Create a map of settings by key for easy access
         const settingsMap: Record<string, any> = {};
+
         allSettings.forEach((setting) => {
           settingsMap[setting.key] = setting.value;
         });
 
         setSettings(settingsMap);
       } catch (error) {
-        console.error("Failed to load settings:", error);
+        console.error('Failed to load settings:', error);
       } finally {
         setIsLoading(false);
       }
@@ -114,6 +112,7 @@ export default function SettingsPage() {
 
             {CATEGORIES.map((category) => {
               const SettingsComponent = category.component;
+
               return (
                 <TabsContent
                   key={category.value}

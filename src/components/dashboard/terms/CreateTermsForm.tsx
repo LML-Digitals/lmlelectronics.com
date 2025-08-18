@@ -25,15 +25,15 @@ const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
 import 'easymde/dist/easymde.min.css';
 
 const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
-  major: z.number().min(0, "Major version must be 0 or greater"),
-  minor: z.number().min(0, "Minor version must be 0 or greater"),
-  patch: z.number().min(0, "Patch version must be 0 or greater"),
-  effectiveAt: z.string().min(1, "Effective date is required"),
+  title: z.string().min(1, 'Title is required'),
+  content: z.string().min(1, 'Content is required'),
+  major: z.number().min(0, 'Major version must be 0 or greater'),
+  minor: z.number().min(0, 'Minor version must be 0 or greater'),
+  patch: z.number().min(0, 'Patch version must be 0 or greater'),
+  effectiveAt: z.string().min(1, 'Effective date is required'),
 });
 
-export function CreateTermsForm() {
+export function CreateTermsForm () {
   const { toast } = useToast();
   const router = useRouter();
   const form = useForm({
@@ -51,6 +51,7 @@ export function CreateTermsForm() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const version = `${values.major}.${values.minor}.${values.patch}`;
+
       await createTerm({
         title: values.title,
         content: values.content,
@@ -124,8 +125,7 @@ export function CreateTermsForm() {
                     {...form.register('major', {
                       valueAsNumber: true,
                     })}
-                    onChange={(e) =>
-                      form.setValue('major', parseInt(e.target.value, 10))
+                    onChange={(e) => form.setValue('major', parseInt(e.target.value, 10))
                     }
                     className="w-16 sm:w-20 min-h-[44px] text-sm sm:text-base"
                   />
@@ -136,8 +136,7 @@ export function CreateTermsForm() {
                     {...form.register('minor', {
                       valueAsNumber: true,
                     })}
-                    onChange={(e) =>
-                      form.setValue('minor', parseInt(e.target.value, 10))
+                    onChange={(e) => form.setValue('minor', parseInt(e.target.value, 10))
                     }
                     className="w-16 sm:w-20 min-h-[44px] text-sm sm:text-base"
                   />
@@ -148,8 +147,7 @@ export function CreateTermsForm() {
                     {...form.register('patch', {
                       valueAsNumber: true,
                     })}
-                    onChange={(e) =>
-                      form.setValue('patch', parseInt(e.target.value, 10))
+                    onChange={(e) => form.setValue('patch', parseInt(e.target.value, 10))
                     }
                     className="w-16 sm:w-20 min-h-[44px] text-sm sm:text-base"
                   />

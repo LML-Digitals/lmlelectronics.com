@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -9,14 +9,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import {
   MoreHorizontal,
   Eye,
@@ -25,21 +25,21 @@ import {
   Trash2,
   Search,
   X,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   approveInventoryAdjustment,
   deleteInventoryAdjustment,
-} from "./services/inventory-adjustment";
-import { useToast } from "@/components/ui/use-toast";
-import { useSession } from "next-auth/react";
-import { Card } from "@/components/ui/card";
-import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
-import { getItemStoreLocations } from "@/components/dashboard/inventory/location/services/itemLocationCrud";
-import { useEffect, useState } from "react";
-import { StoreLocation } from "@prisma/client";
-import { InventoryItemWithRelations } from "../items/types/ItemType";
-import { AddAdjustmentDialog } from "./adjustment-dialog";
-import { AdjustmentDetailDialog } from "./adjustment-detail-dialog";
+} from './services/inventory-adjustment';
+import { useToast } from '@/components/ui/use-toast';
+import { useSession } from 'next-auth/react';
+import { Card } from '@/components/ui/card';
+import { getInventoryItems } from '@/components/dashboard/inventory/items/services/itemsCrud';
+import { getItemStoreLocations } from '@/components/dashboard/inventory/location/services/itemLocationCrud';
+import { useEffect, useState } from 'react';
+import { StoreLocation } from '@prisma/client';
+import { InventoryItemWithRelations } from '../items/types/ItemType';
+import { AddAdjustmentDialog } from './adjustment-dialog';
+import { AdjustmentDetailDialog } from './adjustment-detail-dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,16 +49,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { AdjustmentsProps } from "./types/types";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/alert-dialog';
+import { AdjustmentsProps } from './types/types';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 interface AdjustmentTableProps {
   adjustments: AdjustmentsProps[] | [];
@@ -73,28 +73,28 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
   const [locations, setLocations] = useState<StoreLocation[]>([]);
   const { data: session } = useSession();
   const currentUser = session?.user;
-  const [selectedAdjustment, setSelectedAdjustment] =
-    useState<AdjustmentsProps | null>(null);
+  const [selectedAdjustment, setSelectedAdjustment]
+    = useState<AdjustmentsProps | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [adjustmentToDelete, setAdjustmentToDelete] = useState<string | null>(
-    null
-  );
+  const [adjustmentToDelete, setAdjustmentToDelete] = useState<string | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   // Filter states
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState<string>("all");
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
   useEffect(() => {
     const fetchInventoryItems = async () => {
       const data = await getInventoryItems();
+
       setInventoryItems(data);
     };
 
     const fetchLocations = async () => {
       const data = await getItemStoreLocations();
+
       setLocations(data);
     };
 
@@ -105,21 +105,21 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
   // Filter the adjustments based on the filter criteria
   const filteredAdjustments = adjustments.filter((adjustment) => {
     // Search by item name
-    const matchesSearch =
-      searchQuery === "" ||
-      adjustment.inventoryItem.name
+    const matchesSearch
+      = searchQuery === ''
+      || adjustment.inventoryItem.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
 
     // Filter by location
-    const matchesLocation =
-      selectedLocation === "all" ||
-      adjustment.location.id === parseInt(selectedLocation);
+    const matchesLocation
+      = selectedLocation === 'all'
+      || adjustment.location.id === parseInt(selectedLocation);
 
     // Filter by status
-    const matchesStatus =
-      selectedStatus === "all" ||
-      (selectedStatus === "approved"
+    const matchesStatus
+      = selectedStatus === 'all'
+      || (selectedStatus === 'approved'
         ? adjustment.approved
         : !adjustment.approved);
 
@@ -128,22 +128,23 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
 
   // Format date to a more readable format
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   const handleApprove = async (id: string) => {
-    if (!currentUser?.id && currentUser?.role !== "admin") {
+    if (!currentUser?.id && currentUser?.role !== 'admin') {
       toast({
-        title: "Authentication error",
-        description: "You need to be an Admin to perform this action",
-        variant: "destructive",
+        title: 'Authentication error',
+        description: 'You need to be an Admin to perform this action',
+        variant: 'destructive',
       });
+
       return;
     }
 
@@ -151,15 +152,15 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
 
     if (result.success) {
       toast({
-        title: "Success",
-        description: "Inventory adjustment approved successfully",
+        title: 'Success',
+        description: 'Inventory adjustment approved successfully',
       });
       router.refresh(); // Use Next.js router refresh instead of custom callback
     } else {
       toast({
-        title: "Error",
-        description: "Failed to approve inventory adjustment",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to approve inventory adjustment',
+        variant: 'destructive',
       });
     }
   };
@@ -169,16 +170,16 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
 
     if (result.success) {
       toast({
-        title: "Success",
-        description: "Inventory adjustment deleted successfully",
+        title: 'Success',
+        description: 'Inventory adjustment deleted successfully',
       });
       router.refresh();
       setDeleteDialogOpen(false);
     } else {
       toast({
-        title: "Error",
-        description: "Failed to delete inventory adjustment",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to delete inventory adjustment',
+        variant: 'destructive',
       });
     }
   };
@@ -190,9 +191,9 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
 
   // Clear all filters
   const clearFilters = () => {
-    setSearchQuery("");
-    setSelectedLocation("all");
-    setSelectedStatus("all");
+    setSearchQuery('');
+    setSelectedLocation('all');
+    setSelectedStatus('all');
   };
 
   return (
@@ -227,7 +228,7 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
                   variant="ghost"
                   size="sm"
                   className="absolute right-1 top-1 h-6 w-6 p-0 rounded-full"
-                  onClick={() => setSearchQuery("")}
+                  onClick={() => setSearchQuery('')}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -272,9 +273,9 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
             </Select>
           </div>
 
-          {(searchQuery ||
-            selectedLocation !== "all" ||
-            selectedStatus !== "all") && (
+          {(searchQuery
+            || selectedLocation !== 'all'
+            || selectedStatus !== 'all') && (
             <Button
               variant="outline"
               size="sm"
@@ -318,11 +319,11 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
                   <TableCell
                     className={`text-xs sm:text-sm ${
                       adjustment.changeAmount >= 0
-                        ? "text-green-600"
-                        : "text-red-600"
+                        ? 'text-green-600'
+                        : 'text-red-600'
                     }`}
                   >
-                    {adjustment.changeAmount >= 0 ? "+" : ""}
+                    {adjustment.changeAmount >= 0 ? '+' : ''}
                     {adjustment.changeAmount}
                   </TableCell>
                   <TableCell className="max-w-xs truncate text-xs sm:text-sm">
@@ -340,7 +341,7 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
                     )}
                   </TableCell>
                   <TableCell className="text-xs sm:text-sm">
-                    {adjustment.adjustedBy.firstName}{" "}
+                    {adjustment.adjustedBy.firstName}{' '}
                     {adjustment.adjustedBy.lastName}
                   </TableCell>
                   <TableCell className="text-xs sm:text-sm">
@@ -447,8 +448,7 @@ export const AdjustmentTable = ({ adjustments }: AdjustmentTableProps) => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() =>
-                adjustmentToDelete && handleDelete(adjustmentToDelete)
+              onClick={() => adjustmentToDelete && handleDelete(adjustmentToDelete)
               }
               className="bg-destructive text-destructive-foreground"
             >

@@ -20,7 +20,7 @@ const DeleteStaff = ({ id }: { id: string }) => {
   const router = useRouter();
   const { toast } = useToast();
 
-  async function onSubmit() {
+  async function onSubmit () {
     try {
       setLoading(true);
 
@@ -41,9 +41,9 @@ const DeleteStaff = ({ id }: { id: string }) => {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon" 
+        <Button
+          variant="ghost"
+          size="icon"
           className="h-8 w-8 sm:h-10 sm:w-10 min-h-[44px] min-w-[44px] hover:bg-red-50"
         >
           <Trash2 size={18} className="text-red-500" />
@@ -59,16 +59,16 @@ const DeleteStaff = ({ id }: { id: string }) => {
           </p>
         </DialogHeader>
         <DialogFooter className="flex flex-col sm:flex-row gap-2">
-          <Button 
-            onClick={() => setDialogOpen(false)} 
+          <Button
+            onClick={() => setDialogOpen(false)}
             variant="outline"
             className="min-h-[44px] w-full sm:w-auto"
           >
             Cancel
           </Button>
-          <Button 
-            onClick={onSubmit} 
-            disabled={loading} 
+          <Button
+            onClick={onSubmit}
+            disabled={loading}
             variant="destructive"
             className="min-h-[44px] w-full sm:w-auto"
           >

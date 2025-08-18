@@ -8,7 +8,7 @@ interface LocationCardProps {
   location: StoreLocation;
 }
 
-export default function LocationCard({ location }: LocationCardProps) {
+export default function LocationCard ({ location }: LocationCardProps) {
   const images = location.images as string[];
   const mainImage = images && images.length > 0 ? images[0] : '/logo.png';
 

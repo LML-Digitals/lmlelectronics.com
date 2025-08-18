@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   BarChart,
   Bar,
@@ -29,10 +29,10 @@ import {
   Scatter,
   ZAxis,
   Cell,
-} from "recharts";
-import { Loader2, Download, Filter, ArrowUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from 'recharts';
+import { Loader2, Download, Filter, ArrowUpDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -40,7 +40,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   Select,
   SelectContent,
@@ -49,8 +49,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -58,17 +58,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/dialog';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import {
   getSupplierPerformanceData,
   getSupplierComparisonData,
-} from "../services/supplierMetrics";
+} from '../services/supplierMetrics';
 
 // Colors for the charts
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 // Define interfaces for the data
 interface Supplier {
@@ -102,32 +102,29 @@ interface ComparisonData {
   }>;
 }
 
-export function SupplierPerformance() {
+export function SupplierPerformance () {
   const [supplierData, setSupplierData] = useState<Supplier[]>([]);
-  const [comparisonData, setComparisonData] = useState<ComparisonData | null>(
-    null
-  );
+  const [comparisonData, setComparisonData] = useState<ComparisonData | null>(null);
   const [filteredSuppliers, setFilteredSuppliers] = useState<Supplier[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Supplier;
-    direction: "asc" | "desc";
+    direction: 'asc' | 'desc';
   }>({
-    key: "performance",
-    direction: "desc",
+    key: 'performance',
+    direction: 'desc',
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(
-    null
-  );
-  const [timeRange, setTimeRange] = useState("90days");
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
+  const [timeRange, setTimeRange] = useState('90days');
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchData () {
       setIsLoading(true);
       try {
         // Fetch supplier performance data
         const result = await getSupplierPerformanceData(timeRange);
+
         if (result.success && result.data) {
           setSupplierData(result.data);
           setFilteredSuppliers(result.data);
@@ -135,11 +132,12 @@ export function SupplierPerformance() {
 
         // Fetch comparison data
         const compareResult = await getSupplierComparisonData();
+
         if (compareResult.success && compareResult.data) {
           setComparisonData(compareResult.data);
         }
       } catch (error) {
-        console.error("Error fetching supplier data:", error);
+        console.error('Error fetching supplier data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -150,31 +148,32 @@ export function SupplierPerformance() {
 
   // Filter suppliers based on search term
   useEffect(() => {
-    if (searchTerm.trim() === "") {
+    if (searchTerm.trim() === '') {
       setFilteredSuppliers(supplierData);
     } else {
-      const filtered = supplierData.filter((supplier) =>
-        supplier.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const filtered = supplierData.filter((supplier) => supplier.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
       setFilteredSuppliers(filtered);
     }
   }, [searchTerm, supplierData]);
 
   // Sort suppliers
   const requestSort = (key: keyof Supplier) => {
-    let direction: "asc" | "desc" = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
+    let direction: 'asc' | 'desc' = 'asc';
+
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
     }
     setSortConfig({ key, direction });
 
     const sortedData = [...filteredSuppliers].sort((a, b) => {
       if (a[key] < b[key]) {
-        return direction === "asc" ? -1 : 1;
+        return direction === 'asc' ? -1 : 1;
       }
       if (a[key] > b[key]) {
-        return direction === "asc" ? 1 : -1;
+        return direction === 'asc' ? 1 : -1;
       }
+
       return 0;
     });
 
@@ -186,12 +185,10 @@ export function SupplierPerformance() {
   };
 
   const getPerformanceBadge = (score: number) => {
-    if (score >= 90)
-      return <Badge className="bg-green-100 text-green-800">Excellent</Badge>;
-    if (score >= 75)
-      return <Badge className="bg-blue-100 text-blue-800">Good</Badge>;
-    if (score >= 60)
-      return <Badge className="bg-yellow-100 text-yellow-800">Average</Badge>;
+    if (score >= 90) { return <Badge className="bg-green-100 text-green-800">Excellent</Badge>; }
+    if (score >= 75) { return <Badge className="bg-blue-100 text-blue-800">Good</Badge>; }
+    if (score >= 60) { return <Badge className="bg-yellow-100 text-yellow-800">Average</Badge>; }
+
     return <Badge className="bg-red-100 text-red-800">Poor</Badge>;
   };
 
@@ -270,7 +267,7 @@ export function SupplierPerformance() {
                 <TableHead>Supplier</TableHead>
                 <TableHead
                   className="cursor-pointer"
-                  onClick={() => requestSort("leadTime")}
+                  onClick={() => requestSort('leadTime')}
                 >
                   <div className="flex items-center">
                     Avg. Lead Time
@@ -279,7 +276,7 @@ export function SupplierPerformance() {
                 </TableHead>
                 <TableHead
                   className="cursor-pointer"
-                  onClick={() => requestSort("onTimeDelivery")}
+                  onClick={() => requestSort('onTimeDelivery')}
                 >
                   <div className="flex items-center">
                     On-Time Delivery
@@ -288,7 +285,7 @@ export function SupplierPerformance() {
                 </TableHead>
                 <TableHead
                   className="cursor-pointer"
-                  onClick={() => requestSort("priceIndex")}
+                  onClick={() => requestSort('priceIndex')}
                 >
                   <div className="flex items-center">
                     Price Index
@@ -297,7 +294,7 @@ export function SupplierPerformance() {
                 </TableHead>
                 <TableHead
                   className="cursor-pointer"
-                  onClick={() => requestSort("quality")}
+                  onClick={() => requestSort('quality')}
                 >
                   <div className="flex items-center">
                     Quality
@@ -306,7 +303,7 @@ export function SupplierPerformance() {
                 </TableHead>
                 <TableHead
                   className="cursor-pointer"
-                  onClick={() => requestSort("performance")}
+                  onClick={() => requestSort('performance')}
                 >
                   <div className="flex items-center">
                     Overall Score
@@ -357,8 +354,8 @@ export function SupplierPerformance() {
                           key={i}
                           className={`h-4 w-4 ${
                             i < Math.round(supplier.quality / 20)
-                              ? "text-yellow-400 fill-current"
-                              : "text-gray-300 fill-current"
+                              ? 'text-yellow-400 fill-current'
+                              : 'text-gray-300 fill-current'
                           }`}
                           viewBox="0 0 20 20"
                         >
@@ -370,7 +367,7 @@ export function SupplierPerformance() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {supplier.performance}/100{" "}
+                      {supplier.performance}/100{' '}
                       {getPerformanceBadge(supplier.performance)}
                     </div>
                   </TableCell>
@@ -461,8 +458,8 @@ export function SupplierPerformance() {
                         dataKey="price"
                         name="Price Index"
                         label={{
-                          value: "Price Index (%)",
-                          position: "bottom",
+                          value: 'Price Index (%)',
+                          position: 'bottom',
                           offset: 0,
                         }}
                         domain={[80, 120]}
@@ -472,9 +469,9 @@ export function SupplierPerformance() {
                         dataKey="quality"
                         name="Quality Score"
                         label={{
-                          value: "Quality Score (%)",
+                          value: 'Quality Score (%)',
                           angle: -90,
-                          position: "left",
+                          position: 'left',
                         }}
                         domain={[70, 100]}
                       />
@@ -485,10 +482,11 @@ export function SupplierPerformance() {
                         name="Orders"
                       />
                       <Tooltip
-                        cursor={{ strokeDasharray: "3 3" }}
+                        cursor={{ strokeDasharray: '3 3' }}
                         content={({ active, payload }) => {
                           if (active && payload && payload.length) {
                             const data = payload[0].payload;
+
                             return (
                               <div className="bg-white p-4 border rounded shadow-lg">
                                 <p className="font-bold">{data.name}</p>
@@ -498,6 +496,7 @@ export function SupplierPerformance() {
                               </div>
                             );
                           }
+
                           return null;
                         }}
                       />

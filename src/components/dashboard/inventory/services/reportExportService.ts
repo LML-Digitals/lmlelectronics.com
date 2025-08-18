@@ -27,9 +27,7 @@ export interface ReportResult {
 }
 
 // Generate inventory stock report
-export async function generateInventoryStockReport(
-  filters: ReportFilters
-): Promise<ReportResult> {
+export async function generateInventoryStockReport (filters: ReportFilters): Promise<ReportResult> {
   try {
     // Build query based on filters
     const items = await prisma.inventoryItem.findMany({
@@ -50,14 +48,14 @@ export async function generateInventoryStockReport(
               where: {
                 location: {
                   isActive: true,
-              },
-              ...(filters.locations && filters.locations.length > 0
-                ? {
-                      locationId: {
-                        in: filters.locations.map((id) => parseInt(id)),
+                },
+                ...(filters.locations && filters.locations.length > 0
+                  ? {
+                    locationId: {
+                      in: filters.locations.map((id) => parseInt(id)),
                     },
                   }
-                : {}),
+                  : {}),
               },
               include: {
                 location: true,
@@ -74,7 +72,7 @@ export async function generateInventoryStockReport(
         return item.variations.flatMap((variation) => {
           return variation.stockLevels.map((level) => ({
             id: variation.id,
-            name: item.name + ' - ' + variation.name,
+            name: `${item.name} - ${variation.name}`,
             sku: variation.sku,
             category:
               item.categories.map((c) => c.name).join(', ') || 'Uncategorized',
@@ -90,6 +88,7 @@ export async function generateInventoryStockReport(
         if (!filters.includeZeroStock && item.stock === 0) {
           return false;
         }
+
         return true;
       });
 
@@ -107,6 +106,7 @@ export async function generateInventoryStockReport(
     };
   } catch (error) {
     console.error('Error generating inventory stock report:', error);
+
     return {
       success: false,
       error: 'Failed to generate inventory stock report',
@@ -115,9 +115,9 @@ export async function generateInventoryStockReport(
 }
 
 // Generate low stock report
-export async function generateLowStockReport(
+export async function generateLowStockReport (
   filters: ReportFilters,
-  threshold: number = 5
+  threshold = 5,
 ): Promise<ReportResult> {
   try {
     // Similar to inventory stock report but filter for low stock
@@ -135,10 +135,10 @@ export async function generateLowStockReport(
                 },
                 ...(filters.locations && filters.locations.length > 0
                   ? {
-                      locationId: {
-                        in: filters.locations.map((id) => parseInt(id)),
-                      },
-                    }
+                    locationId: {
+                      in: filters.locations.map((id) => parseInt(id)),
+                    },
+                  }
                   : {}),
               },
               include: {
@@ -161,11 +161,11 @@ export async function generateLowStockReport(
     // Format data for report - only include items with low stock levels
     const reportData = items.flatMap((item) => {
       return item.variations.flatMap((variation) => {
-        if (variation.stockLevels.length === 0) return [];
+        if (variation.stockLevels.length === 0) { return []; }
 
         return variation.stockLevels.map((level) => ({
           id: variation.id,
-          name: item.name + ' - ' + variation.name,
+          name: `${item.name} - ${variation.name}`,
           sku: variation.sku,
           category:
             item.categories.map((c) => c.name).join(', ') || 'Uncategorized',
@@ -192,6 +192,7 @@ export async function generateLowStockReport(
     };
   } catch (error) {
     console.error('Error generating low stock report:', error);
+
     return {
       success: false,
       error: 'Failed to generate low stock report',
@@ -200,9 +201,7 @@ export async function generateLowStockReport(
 }
 
 // Generate supplier report
-export async function generateSupplierReport(
-  filters: ReportFilters
-): Promise<ReportResult> {
+export async function generateSupplierReport (filters: ReportFilters): Promise<ReportResult> {
   try {
     // Convert string dates to actual Date objects if needed
     const fromDate = new Date(filters.dateRange.from);
@@ -243,14 +242,15 @@ export async function generateSupplierReport(
                   where:
                     filters.locations && filters.locations.length > 0
                       ? {
-                          locationId: {
-                            in: filters.locations.map((id) => {
-                              // Handle possible parsing errors
-                              const parsed = parseInt(id);
-                              return isNaN(parsed) ? -1 : parsed; // Use -1 as fallback (which won't match)
-                            }),
-                          },
-                        }
+                        locationId: {
+                          in: filters.locations.map((id) => {
+                            // Handle possible parsing errors
+                            const parsed = parseInt(id);
+
+                            return isNaN(parsed) ? -1 : parsed; // Use -1 as fallback (which won't match)
+                          }),
+                        },
+                      }
                       : undefined,
                 },
               },
@@ -266,18 +266,16 @@ export async function generateSupplierReport(
       const totalOrders = supplier.purchaseOrders.length;
 
       // Count completed orders
-      const completedOrders = supplier.purchaseOrders.filter(
-        (order) => order.status === PurchaseOrderStatus.RECEIVED
-      ).length;
+      const completedOrders = supplier.purchaseOrders.filter((order) => order.status === PurchaseOrderStatus.RECEIVED).length;
 
       const totalItems = supplier.purchaseOrders.reduce(
         (sum, order) => sum + order.items.length,
-        0
+        0,
       );
 
       const totalSpent = supplier.purchaseOrders.reduce(
         (sum, order) => sum + order.totalCost,
-        0
+        0,
       );
 
       // Count inventory items supplied by this supplier
@@ -324,11 +322,11 @@ export async function generateSupplierReport(
     const totalSuppliers = reportData.length;
     const totalItemsAcrossSuppliers = reportData.reduce(
       (sum, s) => sum + (s.totalItems || 0),
-      0
+      0,
     );
     const totalSpentAcrossSuppliers = reportData.reduce(
       (sum, s) => sum + (s.totalSpent || 0),
-      0
+      0,
     );
 
     return {
@@ -340,6 +338,7 @@ export async function generateSupplierReport(
     };
   } catch (error) {
     console.error('Error generating supplier report:', error);
+
     return {
       success: false,
       error: 'Failed to generate supplier report',
@@ -348,9 +347,9 @@ export async function generateSupplierReport(
 }
 
 // Export the report to the specified format
-export async function exportReport(
+export async function exportReport (
   reportData: any,
-  format: string
+  format: string,
 ): Promise<ReportResult> {
   try {
     // Validate supported formats
@@ -365,31 +364,34 @@ export async function exportReport(
     const dataToExport = Array.isArray(reportData)
       ? reportData
       : reportData.data && Array.isArray(reportData.data)
-      ? reportData.data
-      : [reportData];
+        ? reportData.data
+        : [reportData];
 
     if (format === 'csv') {
       // Generate CSV content
-      const headers =
-        dataToExport.length > 0 ? Object.keys(dataToExport[0]) : [];
+      const headers
+        = dataToExport.length > 0 ? Object.keys(dataToExport[0]) : [];
 
-      let csvContent = headers.join(',') + '\n';
+      let csvContent = `${headers.join(',')}\n`;
 
       dataToExport.forEach((item: any) => {
         const row = headers.map((header) => {
           // Handle special characters and ensure proper CSV formatting
           const value = item[header]?.toString() || '';
+
           // Escape quotes and wrap in quotes if the value contains commas or quotes
           if (
-            value.includes(',') ||
-            value.includes('"') ||
-            value.includes('\n')
+            value.includes(',')
+            || value.includes('"')
+            || value.includes('\n')
           ) {
             return `"${value.replace(/"/g, '""')}"`;
           }
+
           return value;
         });
-        csvContent += row.join(',') + '\n';
+
+        csvContent += `${row.join(',')}\n`;
       });
 
       return {
@@ -437,11 +439,12 @@ export async function exportReport(
     };
   } catch (error) {
     console.error('Error exporting report:', error);
+
     return {
       success: false,
       error:
-        'Failed to export report: ' +
-        (error instanceof Error ? error.message : String(error)),
+        `Failed to export report: ${
+          error instanceof Error ? error.message : String(error)}`,
     };
   }
 }

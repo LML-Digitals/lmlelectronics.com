@@ -7,7 +7,7 @@ import { useTransition, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
-export function EditCategoryDialog({ categoryId }: { categoryId: string }) {
+export function EditCategoryDialog ({ categoryId }: { categoryId: string }) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -22,7 +22,7 @@ export function EditCategoryDialog({ categoryId }: { categoryId: string }) {
             getCategories(),
           ]);
 
-          if (!category) throw new Error('Category not found');
+          if (!category) { throw new Error('Category not found'); }
           setFormData({ category, allCategories });
           setOpen(true);
         } catch (error) {

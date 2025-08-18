@@ -23,13 +23,13 @@ const Posts = async () => {
   }
 
   return (
-      <div className="flex flex-col justify-center gap-4 sm:gap-6 lg:gap-8">
-        {error ? (
-          <p className="text-red-500 text-center text-sm sm:text-base">{error}</p>
-        ) : (
-          <BlogsTable posts={posts} />
-        )}
-      </div>
+    <div className="flex flex-col justify-center gap-4 sm:gap-6 lg:gap-8">
+      {error ? (
+        <p className="text-red-500 text-center text-sm sm:text-base">{error}</p>
+      ) : (
+        <BlogsTable posts={posts} />
+      )}
+    </div>
   );
 };
 

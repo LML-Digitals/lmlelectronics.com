@@ -29,6 +29,7 @@ const DeleteItemCategory = ({ itemCategoryId }: DeleteCategoryProps) => {
     startTransition(async () => {
       try {
         const res = await deleteItemCategory(itemCategoryId);
+
         if (res.status === 'success') {
           toast({
             title: 'Category',

@@ -1,41 +1,41 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import dynamic from "next/dynamic";
-import { PriceItem } from "../types/priceTypes";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { PriceItem } from '../types/priceTypes';
 
 // Dynamically import the PriceCheckerPage to avoid SSR issues
-const PriceCheckerPage = dynamic(() => import("@/app/dashboard/price-checker/page"), { ssr: false });
+const PriceCheckerPage = dynamic(() => import('@/app/dashboard/price-checker/page'), { ssr: false });
 
 interface PriceSearchModalProps {
   trigger?: React.ReactNode;
   onSelectPrice: (item: PriceItem) => void;
-  initialType?: "all" | "repair" | "product";
+  initialType?: 'all' | 'repair' | 'product';
   buttonVariant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   buttonLabel?: string;
 }
 
 export const PriceSearchModal: React.FC<PriceSearchModalProps> = ({
   trigger,
   onSelectPrice,
-  initialType = "all",
-  buttonVariant = "outline",
-  buttonLabel = "Search Prices",
+  initialType = 'all',
+  buttonVariant = 'outline',
+  buttonLabel = 'Search Prices',
 }) => {
   const [open, setOpen] = useState(false);
 

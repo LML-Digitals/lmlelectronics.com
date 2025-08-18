@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { CheckCircle2, CircleDashed } from "lucide-react";
-import { submitFAQQuestion } from "./services/faqService";
-import { toast } from "@/components/ui/use-toast";
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { CheckCircle2, CircleDashed } from 'lucide-react';
+import { submitFAQQuestion } from './services/faqService';
+import { toast } from '@/components/ui/use-toast';
 
 interface FormData {
   customerName: string;
@@ -15,30 +15,30 @@ interface FormData {
   question: string;
 }
 
-export default function FaqQuestionForm() {
+export default function FaqQuestionForm () {
   const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    customerName: "",
-    customerEmail: "",
-    question: "",
+    customerName: '',
+    customerEmail: '',
+    question: '',
   });
   const [loading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);
       await submitFAQQuestion(formData);
-      setFormData({ customerName: "", customerEmail: "", question: "" });
+      setFormData({ customerName: '', customerEmail: '', question: '' });
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 5000);
     } catch (error) {
-      console.error("Error submitting question:", error);
+      console.error('Error submitting question:', error);
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError("An unknown error occurred.");
+        setError('An unknown error occurred.');
       }
     } finally {
       setIsLoading(false);
@@ -57,8 +57,7 @@ export default function FaqQuestionForm() {
             <Input
               id="name"
               value={formData.customerName}
-              onChange={(e) =>
-                setFormData({ ...formData, customerName: e.target.value })
+              onChange={(e) => setFormData({ ...formData, customerName: e.target.value })
               }
               placeholder="Your name"
               className="mt-2"
@@ -74,8 +73,7 @@ export default function FaqQuestionForm() {
               id="email"
               type="email"
               value={formData.customerEmail}
-              onChange={(e) =>
-                setFormData({ ...formData, customerEmail: e.target.value })
+              onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })
               }
               placeholder="Your email"
               className="mt-2"
@@ -91,8 +89,7 @@ export default function FaqQuestionForm() {
           <Textarea
             id="question"
             value={formData.question}
-            onChange={(e) =>
-              setFormData({ ...formData, question: e.target.value })
+            onChange={(e) => setFormData({ ...formData, question: e.target.value })
             }
             placeholder="Type your question here..."
             required

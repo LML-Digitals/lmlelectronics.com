@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import NewsletterComp from "@/components/NewsletterComp";
-import { Facebook, Instagram, Linkedin, Youtube, Twitter } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import PaymentMethods from "@/components/PaymentMethods";
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import NewsletterComp from '@/components/NewsletterComp';
+import { Facebook, Instagram, Linkedin, Youtube, Twitter } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import PaymentMethods from '@/components/PaymentMethods';
 
 const FooterClient = () => {
   const QuickLinks = [
-    { id: 1, link: "Shop", href: "/shop" },
-    { id: 2, link: "Bundles", href: "/bundles" },
-    { id: 3, link: "Cart", href: "/cart" },
-    { id: 4, link: "Orders", href: "/orders" },
+    { id: 1, link: 'Shop', href: '/shop' },
+    { id: 2, link: 'Bundles', href: '/bundles' },
+    { id: 3, link: 'Cart', href: '/cart' },
+    { id: 4, link: 'Orders', href: '/orders' },
   ];
 
   const Categories = [
@@ -24,8 +24,8 @@ const FooterClient = () => {
   ];
 
   const Support = [
-    { id: 1, link: "Contact Us", href: "/contact" },
-    { id: 2, link: "FAQs", href: "/faqs" },
+    { id: 1, link: 'Contact Us', href: '/contact' },
+    { id: 2, link: 'FAQs', href: '/faqs' },
     // { id: 3, link: "Shipping Info", href: "/shipping" },
     // { id: 4, link: "Returns", href: "/returns" },
     // { id: 5, link: "Repair Guides", href: "/repair-guides" },
@@ -35,40 +35,40 @@ const FooterClient = () => {
     {
       id: 1,
       platform: <Facebook size={24} />,
-      href: "https://facebook.com/lmlelectronics",
+      href: 'https://facebook.com/lmlelectronics',
     },
     {
       id: 2,
       platform: <Youtube size={24} />,
-      href: "https://youtube.com/lmlelectronics",
+      href: 'https://youtube.com/lmlelectronics',
     },
     {
       id: 3,
       platform: <Instagram size={24} />,
-      href: "https://instagram.com/lmlelectronics",
+      href: 'https://instagram.com/lmlelectronics',
     },
     {
       id: 4,
       platform: <Linkedin size={24} />,
-      href: "https://linkedin.com/company/lmlelectronics",
+      href: 'https://linkedin.com/company/lmlelectronics',
     },
     {
       id: 5,
       platform: <Twitter size={24} />,
-      href: "https://twitter.com/lmlelectronics",
+      href: 'https://twitter.com/lmlelectronics',
     },
   ];
 
   const bottomLinks = [
-    { id: 1, link: "Terms & Conditions", href: "/terms" },
-    { id: 2, link: "Portal", href: "/auth/signin" },
+    { id: 1, link: 'Terms & Conditions', href: '/terms' },
+    { id: 2, link: 'Portal', href: '/auth/signin' },
   ];
 
   return (
     <div className="bg-black px-10 lg:px-10 xl:px-40 lg:w-screen pt-20 pb-14">
       <div className="text-white flex flex-col items-center justify-center gap-10 md:items-center lg:items-start md:justify-center lg:flex-row lg:justify-between">
         <div className="flex flex-col items-center lg:items-start gap-4 w-full">
-          <Link href={"/"}>
+          <Link href={'/'}>
             <Image
               src="/images/lml_logo.png"
               width={70}
@@ -87,8 +87,8 @@ const FooterClient = () => {
           <div className="flex flex-col items-center justify-center mt-6 md:mt-0 md:items-center lg:justify-start gap-6 md:w-96">
             <ul className="flex items-center gap-3 mt-2">
               {platforms.map((social) => (
-                <Link 
-                  key={social.id} 
+                <Link
+                  key={social.id}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"

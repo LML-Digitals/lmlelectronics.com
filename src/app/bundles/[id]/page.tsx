@@ -17,12 +17,15 @@ async function getBundleData (id: string) {
   try {
     const result = await getBundleById(id);
     const data = result;
+
     if (!data) {
       return null;
     }
+
     return data.bundle;
   } catch (error) {
     console.error('Error fetching bundle:', error);
+
     return null;
   }
 }
@@ -46,8 +49,8 @@ export async function generateMetadata ({
   return {
     title: `${bundle.name} - Complete Repair Bundle | LML Repair`,
     description:
-      bundle.description ||
-      `Complete repair bundle featuring ${
+      bundle.description
+      || `Complete repair bundle featuring ${
         bundle.bundleComponents?.length || 0
       } components. Professional quality parts and tools for ${
         bundle.name

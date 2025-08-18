@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/config/authOptions';
 
-export async function getStaffAnalyticsData(userRole?: string) {
+export async function getStaffAnalyticsData (userRole?: string) {
   try {
     // Security check - admin only
     if (userRole !== 'admin') {
@@ -71,24 +71,24 @@ export async function getStaffAnalyticsData(userRole?: string) {
 
     // Process performance metrics
     const performanceMetrics = staffPerformanceData.map((staff) => {
-      const completedTickets = staff.tickets.filter(
-        (ticket) => ticket.status === 'DONE'
-      );
+      const completedTickets = staff.tickets.filter((ticket) => ticket.status === 'DONE');
       const resolutionTimes = completedTickets
         .map((ticket) => {
           if (ticket.completionDate) {
             const created = new Date(ticket.createdAt);
             const completed = new Date(ticket.completionDate);
+
             return (completed.getTime() - created.getTime()) / (1000 * 60 * 60); // hours
           }
+
           return null;
         })
         .filter(Boolean) as number[];
 
-      const avgResolutionTime =
-        resolutionTimes.length > 0
-          ? resolutionTimes.reduce((sum, time) => sum + time, 0) /
-            resolutionTimes.length
+      const avgResolutionTime
+        = resolutionTimes.length > 0
+          ? resolutionTimes.reduce((sum, time) => sum + time, 0)
+            / resolutionTimes.length
           : 0;
 
       return {
@@ -133,11 +133,11 @@ export async function getStaffAnalyticsData(userRole?: string) {
     const salaryMetrics = salaryData.map((staff) => {
       const recentEarnings = staff.payrolls.reduce(
         (sum, payroll) => sum + payroll.netPay,
-        0
+        0,
       );
       const recentCommission = staff.payrolls.reduce(
         (sum, payroll) => sum + (payroll.commissionAmount || 0),
-        0
+        0,
       );
 
       return {
@@ -179,6 +179,7 @@ export async function getStaffAnalyticsData(userRole?: string) {
     };
   } catch (error) {
     console.error('Error fetching staff analytics:', error);
+
     return {
       error: 'Internal server error',
       status: 500,

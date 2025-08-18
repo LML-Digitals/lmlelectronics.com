@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Sheet,
@@ -6,16 +6,16 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
-import { useCartStore } from "@/lib/stores/useCartStore";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import Image from "next/image";
-import Link from "next/link";
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { ShoppingCart, Trash2, Plus, Minus } from 'lucide-react';
+import { useCartStore } from '@/lib/stores/useCartStore';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import Image from 'next/image';
+import Link from 'next/link';
 
-export default function CartDrawer() {
+export default function CartDrawer () {
   const { items, updateItemQuantity, removeItem } = useCartStore();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -85,11 +85,10 @@ export default function CartDrawer() {
                           variant="outline"
                           size="icon"
                           className="h-7 w-7"
-                          onClick={() =>
-                            updateItemQuantity(
-                              item.id,
-                              Math.max(1, item.quantity - 1)
-                            )
+                          onClick={() => updateItemQuantity(
+                            item.id,
+                            Math.max(1, item.quantity - 1),
+                          )
                           }
                         >
                           <Minus className="h-3 w-3" />
@@ -101,8 +100,7 @@ export default function CartDrawer() {
                           variant="outline"
                           size="icon"
                           className="h-7 w-7"
-                          onClick={() =>
-                            updateItemQuantity(item.id, item.quantity + 1)
+                          onClick={() => updateItemQuantity(item.id, item.quantity + 1)
                           }
                         >
                           <Plus className="h-3 w-3" />

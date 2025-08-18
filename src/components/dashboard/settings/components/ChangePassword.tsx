@@ -13,7 +13,7 @@ interface ChangePasswordProps {
   id: string;
 }
 
-export default function ChangePassword({ id }: ChangePasswordProps) {
+export default function ChangePassword ({ id }: ChangePasswordProps) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -31,6 +31,7 @@ export default function ChangePassword({ id }: ChangePasswordProps) {
         description: 'New passwords do not match',
         variant: 'destructive',
       });
+
       return;
     }
 
@@ -40,13 +41,14 @@ export default function ChangePassword({ id }: ChangePasswordProps) {
         description: 'Password must be at least 8 characters long',
         variant: 'destructive',
       });
+
       return;
     }
 
     startTransition(async () => {
       try {
         const result = await changePassword(id, newPassword);
-        
+
         if (result.message) {
           toast({
             title: 'Success',
@@ -176,4 +178,4 @@ export default function ChangePassword({ id }: ChangePasswordProps) {
       </CardContent>
     </Card>
   );
-} 
+}

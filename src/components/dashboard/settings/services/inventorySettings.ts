@@ -1,38 +1,38 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import prisma from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/config/authOptions";
+import { revalidatePath } from 'next/cache';
+import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/config/authOptions';
 import {
   setSystemSetting,
   getSystemSetting,
   getSettingsByCategory,
-} from "./settingsCrud";
-import { SettingCategory } from "./settingsTypes";
+} from './settingsCrud';
+import { SettingCategory } from './settingsTypes';
 
 // Define inventory settings keys as constants instead of exporting an object
-const DEFAULT_SHIPPING_RATE = "default_shipping_rate";
-const DEFAULT_TAX_RATE = "default_tax_rate";
+const DEFAULT_SHIPPING_RATE = 'default_shipping_rate';
+const DEFAULT_TAX_RATE = 'default_tax_rate';
 
 /**
  * Initialize inventory settings if they don't exist
  */
-export async function initializeInventorySettings() {
+export async function initializeInventorySettings () {
   const defaultSettings = [
     {
       key: DEFAULT_SHIPPING_RATE,
-      value: "0.00",
+      value: '0.00',
       category: SettingCategory.INVENTORY,
-      name: "Default Shipping Rate",
-      description: "Default shipping rate for all inventory items",
+      name: 'Default Shipping Rate',
+      description: 'Default shipping rate for all inventory items',
     },
     {
       key: DEFAULT_TAX_RATE,
-      value: "0.00",
+      value: '0.00',
       category: SettingCategory.INVENTORY,
-      name: "Default Tax Rate",
-      description: "Default tax rate for all inventory items",
+      name: 'Default Tax Rate',
+      description: 'Default tax rate for all inventory items',
     },
   ];
 
@@ -45,14 +45,15 @@ export async function initializeInventorySettings() {
 /**
  * Get inventory settings, and initialize them if they don't exist
  */
-export async function getInventorySettings() {
+export async function getInventorySettings () {
   // First try to get existing settings
   const settings = await getSettingsByCategory(SettingCategory.INVENTORY);
 
   // If no settings found, initialize them
   if (settings.length === 0) {
-    console.log("No inventory settings found. Initializing defaults...");
+    console.log('No inventory settings found. Initializing defaults...');
     await initializeInventorySettings();
+
     // Fetch again after initialization
     return await getSettingsByCategory(SettingCategory.INVENTORY);
   }
@@ -63,29 +64,30 @@ export async function getInventorySettings() {
 /**
  * Get default shipping rate
  */
-export async function getDefaultShippingRate(): Promise<number> {
+export async function getDefaultShippingRate (): Promise<number> {
   // Try to get the setting
-  let value = await getSystemSetting("default_shipping_rate");
+  let value = await getSystemSetting('default_shipping_rate');
 
   // If the setting doesn't exist, initialize it
   if (value === null) {
-    console.log("Shipping rate setting not found. Initializing defaults...");
+    console.log('Shipping rate setting not found. Initializing defaults...');
     await initializeInventorySettings();
     value = await getSystemSetting(DEFAULT_SHIPPING_RATE);
   }
+
   return parseFloat(value as string);
 }
 
 /**
  * Get default tax rate
  */
-export async function getDefaultTaxRate(): Promise<number> {
+export async function getDefaultTaxRate (): Promise<number> {
   // Try to get the setting
-  let value = await getSystemSetting("default_tax_rate");
+  let value = await getSystemSetting('default_tax_rate');
 
   // If the setting doesn't exist, initialize it
   if (value === null) {
-    console.log("Tax rate setting not found. Initializing defaults...");
+    console.log('Tax rate setting not found. Initializing defaults...');
     await initializeInventorySettings();
     value = await getSystemSetting(DEFAULT_TAX_RATE);
   }
@@ -96,7 +98,7 @@ export async function getDefaultTaxRate(): Promise<number> {
 /**
  * Recalculate prices for all variations that use default rates
  */
-async function recalculateVariationsWithDefaultRates() {
+async function recalculateVariationsWithDefaultRates () {
   try {
     // Find all variations that use default rates
     const variations = await prisma.inventoryVariation.findMany({
@@ -105,9 +107,7 @@ async function recalculateVariationsWithDefaultRates() {
       },
     });
 
-    console.log(
-      `Recalculating prices for ${variations.length} variations that use default rates`
-    );
+    console.log(`Recalculating prices for ${variations.length} variations that use default rates`);
 
     // Get default rates
     const defaultShipping = await getDefaultShippingRate();
@@ -152,33 +152,33 @@ async function recalculateVariationsWithDefaultRates() {
       } catch (error) {
         console.error(
           `Error recalculating repair options for variation ${variation.id}:`,
-          error
+          error,
         );
       }
     }
 
-    console.log("Price recalculation completed successfully");
+    console.log('Price recalculation completed successfully');
   } catch (error) {
-    console.error("Error recalculating variation prices:", error);
+    console.error('Error recalculating variation prices:', error);
   }
 }
 
 /**
  * Update default inventory rates
  */
-export async function updateInventoryRates(formData: FormData) {
+export async function updateInventoryRates (formData: FormData) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    throw new Error("Authentication required");
+    throw new Error('Authentication required');
   }
 
-  if (!["admin", "manager", "staff"].includes(session.user.role)) {
-    throw new Error("Permission denied");
+  if (!['admin', 'manager', 'staff'].includes(session.user.role)) {
+    throw new Error('Permission denied');
   }
 
-  const shippingRate = formData.get("shippingRate") as string;
-  const taxRate = formData.get("taxRate") as string;
+  const shippingRate = formData.get('shippingRate') as string;
+  const taxRate = formData.get('taxRate') as string;
 
   // Update shipping rate
   await setSystemSetting({
@@ -197,7 +197,8 @@ export async function updateInventoryRates(formData: FormData) {
   // Recalculate prices for all variations that use default rates
   await recalculateVariationsWithDefaultRates();
 
-  revalidatePath("/dashboard/settings");
-  revalidatePath("/dashboard/inventory/items");
+  revalidatePath('/dashboard/settings');
+  revalidatePath('/dashboard/inventory/items');
+
   return { success: true };
 }

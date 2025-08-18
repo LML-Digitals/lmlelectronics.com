@@ -26,7 +26,7 @@ type StaffProfileTabsProps = {
   isAdmin: boolean;
 };
 
-export default function StaffProfileTabs({ staff, isAdmin }: StaffProfileTabsProps) {
+export default function StaffProfileTabs ({ staff, isAdmin }: StaffProfileTabsProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState('overview');
@@ -36,22 +36,24 @@ export default function StaffProfileTabs({ staff, isAdmin }: StaffProfileTabsPro
 
   // Function to get commission rate safely
   const getCommissionRate = () => {
-    if (!staff) return 'N/A';
+    if (!staff) { return 'N/A'; }
     if (staff.commissionRate) {
       return `${staff.commissionRate.repairPercentage}%`;
     }
+
     return 'N/A';
   };
 
   // Fetch reviews and metrics when staff data is available
   useEffect(() => {
     const fetchData = async () => {
-      if (!staff?.id) return;
-      
+      if (!staff?.id) { return; }
+
       setLoading(true);
       try {
         // Fetch reviews
         const reviewsData = await getStaffReviews(staff.id);
+
         setReviews(reviewsData as any[]);
 
         // Calculate performance metrics
@@ -59,11 +61,12 @@ export default function StaffProfileTabs({ staff, isAdmin }: StaffProfileTabsPro
           const completedTickets = staff.tickets.filter(ticket => ticket.status === 'DONE');
           const avgResolutionTime = completedTickets.length > 0
             ? completedTickets.reduce((sum, ticket) => {
-                const resolutionTime = ticket.completionDate
-                  ? new Date(ticket.completionDate).getTime() - new Date(ticket.createdAt).getTime()
-                  : 0;
-                return sum + resolutionTime;
-              }, 0) / (completedTickets.length * 3600000)
+              const resolutionTime = ticket.completionDate
+                ? new Date(ticket.completionDate).getTime() - new Date(ticket.createdAt).getTime()
+                : 0;
+
+              return sum + resolutionTime;
+            }, 0) / (completedTickets.length * 3600000)
             : 0;
 
           const last30Days = subMonths(new Date(), 1);
@@ -75,9 +78,9 @@ export default function StaffProfileTabs({ staff, isAdmin }: StaffProfileTabsPro
             avgResolutionTime,
             recentSessionsCount: recentSessions.length,
             totalReviews: reviewsData.length,
-            averageRating: reviewsData.length > 0 
-              ? reviewsData.reduce((sum: number, review: any) => sum + review.rating, 0) / reviewsData.length 
-              : 0
+            averageRating: reviewsData.length > 0
+              ? reviewsData.reduce((sum: number, review: any) => sum + review.rating, 0) / reviewsData.length
+              : 0,
           });
         }
       } catch (error) {
@@ -92,12 +95,12 @@ export default function StaffProfileTabs({ staff, isAdmin }: StaffProfileTabsPro
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING': return 'bg-yellow-500';
-      case 'INSPECTING': return 'bg-blue-500';
-      case 'REPAIRING': return 'bg-purple-500';
-      case 'DONE': return 'bg-green-500';
-      case 'CANCELLED': return 'bg-red-500';
-      default: return 'bg-gray-500';
+    case 'PENDING': return 'bg-yellow-500';
+    case 'INSPECTING': return 'bg-blue-500';
+    case 'REPAIRING': return 'bg-purple-500';
+    case 'DONE': return 'bg-green-500';
+    case 'CANCELLED': return 'bg-red-500';
+    default: return 'bg-gray-500';
     }
   };
 
@@ -394,9 +397,7 @@ export default function StaffProfileTabs({ staff, isAdmin }: StaffProfileTabsPro
                     </CardHeader>
                     <CardContent>
                       <p className="text-3xl font-bold">
-                        {staff.tickets.filter(ticket => 
-                          ['PENDING', 'INSPECTING', 'REPAIRING'].includes(ticket.status)
-                        ).length}
+                        {staff.tickets.filter(ticket => ['PENDING', 'INSPECTING', 'REPAIRING'].includes(ticket.status)).length}
                       </p>
                     </CardContent>
                   </Card>
@@ -511,4 +512,4 @@ export default function StaffProfileTabs({ staff, isAdmin }: StaffProfileTabsPro
       </div>
     </div>
   );
-} 
+}

@@ -2,7 +2,7 @@
 
 import { ShoppingBag, TruckIcon, CheckCircle2, Clock } from 'lucide-react';
 
-export default function ProductsBenefits() {
+export default function ProductsBenefits () {
   const benefits = [
     {
       icon: <ShoppingBag className="h-6 w-6 text-secondary" />,

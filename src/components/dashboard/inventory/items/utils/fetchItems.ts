@@ -6,7 +6,7 @@ interface FetchItemsResponse {
   error: string | null;
 }
 
-export async function fetchItems() {
+export async function fetchItems () {
   try {
     const items = await getInventoryItems();
 

@@ -6,20 +6,22 @@ import TermCard from '@/components/terms/term-components/TermCard';
 import SearchableTerms from '@/components/terms/term-components/SearchableTerms';
 import Script from 'next/script';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata (): Promise<Metadata> {
   return {
     title: 'Terms of Service | LML Repair',
     description: 'Review our comprehensive Terms of Service for device repair services. Clear policies and guidelines for all customers.',
-    keywords: 'terms of service, LML Repair policies, repair guidelines, device repair terms, warranty information, service policies, repair service agreement, customer responsibilities, repair terms and conditions'
+    keywords: 'terms of service, LML Repair policies, repair guidelines, device repair terms, warranty information, service policies, repair service agreement, customer responsibilities, repair terms and conditions',
   };
 }
 
-export default async function TermsPage() {
+export default async function TermsPage () {
   let activeTerms;
+
   try {
     activeTerms = await getActiveTerms();
   } catch (error) {
     console.error('Error fetching active terms:', error);
+
     return (
       <div>
         <main className="container mx-auto px-4 py-8">
@@ -48,16 +50,16 @@ export default async function TermsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            "name": "Terms of Service | LML Repair",
-            "description": "Review LML Repair's comprehensive Terms of Service for device repair services.",
-            "publisher": {
-              "@type": "Organization",
-              "name": "LML Repair",
-              "url": "https://lmlrepair.com"
-            }
-          })
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            'name': 'Terms of Service | LML Repair',
+            'description': "Review LML Repair's comprehensive Terms of Service for device repair services.",
+            'publisher': {
+              '@type': 'Organization',
+              'name': 'LML Repair',
+              'url': 'https://lmlrepair.com',
+            },
+          }),
         }}
       />
       <div>

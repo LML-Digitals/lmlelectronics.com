@@ -1,12 +1,12 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 /**
  * Creates a new inventory audit
  */
-export async function createInventoryAudit(data: {
+export async function createInventoryAudit (data: {
   inventoryItemId: string;
   inventoryVariationId: string;
   locationId: number;
@@ -30,20 +30,22 @@ export async function createInventoryAudit(data: {
       },
     });
 
-    revalidatePath("/dashboard/inventory/audits");
+    revalidatePath('/dashboard/inventory/audits');
+
     return { success: true, audit };
   } catch (error) {
-    console.error("Failed to create inventory audit:", error);
+    console.error('Failed to create inventory audit:', error);
+
     return { success: false, error };
   }
 }
 
-export async function updateInventoryAudit(
+export async function updateInventoryAudit (
   id: string,
   data: {
     actualStock: number;
     recordedStock: number;
-  }
+  },
 ) {
   try {
     const discrepancy = data.actualStock - data.recordedStock;
@@ -52,14 +54,16 @@ export async function updateInventoryAudit(
       where: { id },
       data: {
         actualStock: data.actualStock,
-        discrepancy
-      }
+        discrepancy,
+      },
     });
 
-    revalidatePath("/dashboard/inventory/audits");
+    revalidatePath('/dashboard/inventory/audits');
+
     return { success: true, audit };
   } catch (error) {
-    console.error("Failed to update inventory audit:", error);
+    console.error('Failed to update inventory audit:', error);
+
     return { success: false, error };
   }
 }
@@ -67,17 +71,19 @@ export async function updateInventoryAudit(
 /**
  * Updates the status of an inventory audit (e.g., from Pending to Resolved)
  */
-export async function updateInventoryAuditStatus(id: string, status: string) {
+export async function updateInventoryAuditStatus (id: string, status: string) {
   try {
     const audit = await prisma.inventoryAudit.update({
       where: { id },
       data: { status },
     });
 
-    revalidatePath("/dashboard/inventory/audits");
+    revalidatePath('/dashboard/inventory/audits');
+
     return { success: true, audit };
   } catch (error) {
-    console.error("Failed to update inventory audit status:", error);
+    console.error('Failed to update inventory audit status:', error);
+
     return { success: false, error };
   }
 }
@@ -85,7 +91,7 @@ export async function updateInventoryAuditStatus(id: string, status: string) {
 /**
  * Resolves an audit by updating the inventory stock to match the actual count
  */
-export async function resolveInventoryAudit(id: string, staffId: string) {
+export async function resolveInventoryAudit (id: string, staffId: string) {
   try {
     // Get the audit details
     const audit = await prisma.inventoryAudit.findUnique({
@@ -97,7 +103,7 @@ export async function resolveInventoryAudit(id: string, staffId: string) {
     });
 
     if (!audit) {
-      throw new Error("Audit not found");
+      throw new Error('Audit not found');
     }
 
     // Update the stock levels
@@ -135,13 +141,15 @@ export async function resolveInventoryAudit(id: string, staffId: string) {
     // Update audit status to resolved
     await prisma.inventoryAudit.update({
       where: { id },
-      data: { status: "Resolved" },
+      data: { status: 'Resolved' },
     });
 
-    revalidatePath("/dashboard/inventory/audits");
+    revalidatePath('/dashboard/inventory/audits');
+
     return { success: true };
   } catch (error) {
-    console.error("Failed to resolve inventory audit:", error);
+    console.error('Failed to resolve inventory audit:', error);
+
     return { success: false, error };
   }
 }
@@ -149,7 +157,7 @@ export async function resolveInventoryAudit(id: string, staffId: string) {
 /**
  * Gets all inventory audits with pagination
  */
-export async function getInventoryAudits() {
+export async function getInventoryAudits () {
   try {
     const audits = await prisma.inventoryAudit.findMany({
       include: {
@@ -158,7 +166,7 @@ export async function getInventoryAudits() {
         location: true,
         staff: true,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     const count = await prisma.inventoryAudit.count();
@@ -168,7 +176,8 @@ export async function getInventoryAudits() {
       audits,
     };
   } catch (error) {
-    console.error("Failed to get inventory audits:", error);
+    console.error('Failed to get inventory audits:', error);
+
     return { success: false, error };
   }
 }
@@ -176,7 +185,7 @@ export async function getInventoryAudits() {
 /**
  * Gets a single inventory audit by ID
  */
-export async function getInventoryAudit(id: string) {
+export async function getInventoryAudit (id: string) {
   try {
     const audit = await prisma.inventoryAudit.findUnique({
       where: { id },
@@ -187,27 +196,29 @@ export async function getInventoryAudit(id: string) {
     });
 
     if (!audit) {
-      return { success: false, error: "Audit not found" };
+      return { success: false, error: 'Audit not found' };
     }
 
     return { success: true, audit };
   } catch (error) {
-    console.error("Failed to get inventory audit:", error);
+    console.error('Failed to get inventory audit:', error);
+
     return { success: false, error };
   }
 }
 
-export async function deleteInventoryAudit(id: string) {
+export async function deleteInventoryAudit (id: string) {
   try {
     await prisma.inventoryAudit.delete({
       where: { id },
     });
 
-    revalidatePath("/dashboard/inventory/audits");
+    revalidatePath('/dashboard/inventory/audits');
+
     return { success: true };
   } catch (error) {
-    console.error("Failed to delete inventory audit:", error);
+    console.error('Failed to delete inventory audit:', error);
+
     return { success: false, error };
   }
 }
-

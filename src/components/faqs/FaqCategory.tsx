@@ -1,6 +1,6 @@
 'use client';
 import AccordionItem from './AccordionItem';
-import { FAQ } from "@prisma/client";
+import { FAQ } from '@prisma/client';
 
 interface FaqCategoryProps {
   category: string;

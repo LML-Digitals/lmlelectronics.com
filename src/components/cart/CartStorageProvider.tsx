@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useCartStore } from "@/lib/stores/useCartStore";
-import { CircleDashed } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { useCartStore } from '@/lib/stores/useCartStore';
+import { CircleDashed } from 'lucide-react';
 
 // This component ensures that the store's state is not hydrated until the component is mounted on the client
-export function CartStorageProvider({
+export function CartStorageProvider ({
   children,
 }: {
   children: React.ReactNode;
@@ -21,6 +21,7 @@ export function CartStorageProvider({
   const initializeStore = () => {
     // Access the store once to initialize it
     const _ = useCartStore.getState();
+
     return null;
   };
 

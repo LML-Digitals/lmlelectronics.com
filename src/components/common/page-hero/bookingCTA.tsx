@@ -1,7 +1,7 @@
-import Link from "next/link";
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Wrench } from "lucide-react";
+import Link from 'next/link';
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Wrench } from 'lucide-react';
 
 const BookingCTA = () => {
   return (

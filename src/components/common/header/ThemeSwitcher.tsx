@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
 
-export function ThemeSwitcher() {
+export function ThemeSwitcher () {
   const { setTheme, theme } = useTheme();
 
   return (

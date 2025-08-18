@@ -14,7 +14,7 @@ class PerformanceMonitor {
   private readonly maxCallsPerMinute = 100; // Threshold for excessive calls
   private readonly cleanupInterval = 60000; // 1 minute
 
-  constructor() {
+  constructor () {
     // Clean up old calls periodically
     // DISABLED: This was causing high function invocations
     // TODO: Re-enable when performance monitoring is needed
@@ -28,8 +28,8 @@ class PerformanceMonitor {
   /**
    * Track a function call
    */
-  trackCall(functionName: string, includeStack = false): void {
-    if (process.env.NODE_ENV !== "development") return;
+  trackCall (functionName: string, includeStack = false): void {
+    if (process.env.NODE_ENV !== 'development') { return; }
 
     const now = Date.now();
     const call: FunctionCall = {
@@ -43,17 +43,17 @@ class PerformanceMonitor {
     }
 
     const functionCalls = this.calls.get(functionName)!;
+
     functionCalls.push(call);
 
     // Check for excessive calls
-    const recentCalls = functionCalls.filter(
-      (call) => now - call.timestamp < 60000 // Last minute
+    const recentCalls = functionCalls.filter((call) => now - call.timestamp < 60000, // Last minute
     );
 
     if (recentCalls.length > this.maxCallsPerMinute) {
       console.warn(
         `⚠️ Potential infinite loop detected: ${functionName} called ${recentCalls.length} times in the last minute`,
-        { recentCalls: recentCalls.slice(-10) } // Show last 10 calls
+        { recentCalls: recentCalls.slice(-10) }, // Show last 10 calls
       );
     }
   }
@@ -61,7 +61,7 @@ class PerformanceMonitor {
   /**
    * Get call statistics for a function
    */
-  getStats(functionName: string): {
+  getStats (functionName: string): {
     totalCalls: number;
     callsLastMinute: number;
     callsLastHour: number;
@@ -70,12 +70,8 @@ class PerformanceMonitor {
     const calls = this.calls.get(functionName) || [];
     const now = Date.now();
 
-    const callsLastMinute = calls.filter(
-      (call) => now - call.timestamp < 60000
-    ).length;
-    const callsLastHour = calls.filter(
-      (call) => now - call.timestamp < 3600000
-    ).length;
+    const callsLastMinute = calls.filter((call) => now - call.timestamp < 60000).length;
+    const callsLastHour = calls.filter((call) => now - call.timestamp < 3600000).length;
 
     return {
       totalCalls: calls.length,
@@ -88,7 +84,7 @@ class PerformanceMonitor {
   /**
    * Get all function call statistics
    */
-  getAllStats(): Record<string, ReturnType<typeof this.getStats>> {
+  getAllStats (): Record<string, ReturnType<typeof this.getStats>> {
     const stats: Record<string, ReturnType<typeof this.getStats>> = {};
 
     for (const functionName of this.calls.keys()) {
@@ -101,7 +97,7 @@ class PerformanceMonitor {
   /**
    * Clean up old calls
    */
-  private cleanup(): void {
+  private cleanup (): void {
     const cutoff = Date.now() - 3600000; // Keep last hour
 
     for (const [functionName, calls] of this.calls.entries()) {
@@ -118,15 +114,16 @@ class PerformanceMonitor {
   /**
    * Reset all tracking data
    */
-  reset(): void {
+  reset (): void {
     this.calls.clear();
   }
 
   /**
    * Log current statistics to console
    */
-  logStats(): void {
+  logStats (): void {
     const stats = this.getAllStats();
+
     console.table(stats);
   }
 }
@@ -137,17 +134,18 @@ export const performanceMonitor = new PerformanceMonitor();
 /**
  * Decorator to automatically track function calls
  */
-export function trackCalls(functionName?: string) {
+export function trackCalls (functionName?: string) {
   return function (
     target: any,
     propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
     const name = functionName || `${target.constructor.name}.${propertyKey}`;
 
     descriptor.value = function (...args: any[]) {
       performanceMonitor.trackCall(name);
+
       return originalMethod.apply(this, args);
     };
 
@@ -158,14 +156,16 @@ export function trackCalls(functionName?: string) {
 /**
  * Higher-order function to wrap functions with call tracking
  */
-export function withCallTracking<T extends (...args: any[]) => any>(
+export function withCallTracking<T extends (
+...args: any[]) => any>(
   fn: T,
-  functionName?: string
+  functionName?: string,
 ): T {
-  const name = functionName || fn.name || "anonymous";
+  const name = functionName || fn.name || 'anonymous';
 
   return ((...args: any[]) => {
     performanceMonitor.trackCall(name);
+
     return fn(...args);
   }) as T;
 }
@@ -173,13 +173,13 @@ export function withCallTracking<T extends (...args: any[]) => any>(
 /**
  * React hook to track component renders
  */
-export function useRenderTracking(componentName: string): void {
-  if (process.env.NODE_ENV === "development") {
+export function useRenderTracking (componentName: string): void {
+  if (process.env.NODE_ENV === 'development') {
     performanceMonitor.trackCall(`${componentName}.render`);
   }
 }
 
 // Expose to window for debugging in development
-if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
   (window as any).performanceMonitor = performanceMonitor;
 }

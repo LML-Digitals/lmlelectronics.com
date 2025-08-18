@@ -1,20 +1,20 @@
-"use client";
-import { useResponsiveSidebar } from "@/hooks/useSidebarToggle";
-import type { SideNavItem } from "./types/sidebarTypes";
-import classNames from "classnames";
-import { useTheme } from "next-themes";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { ChevronRight } from "lucide-react";
+'use client';
+import { useResponsiveSidebar } from '@/hooks/useSidebarToggle';
+import type { SideNavItem } from './types/sidebarTypes';
+import classNames from 'classnames';
+import { useTheme } from 'next-themes';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { ChevronRight } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
-import { AnimatePresence } from "framer-motion";
+} from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
+import { AnimatePresence } from 'framer-motion';
 
 export const SideBarMenuItem = ({ item }: { item: SideNavItem }) => {
   const { theme } = useTheme();
@@ -35,29 +35,29 @@ export const SideBarMenuItem = ({ item }: { item: SideNavItem }) => {
     }
   };
 
-  const isActive = item.path === '/dashboard' 
-    ? pathname === item.path 
-    : pathname === item.path || pathname?.startsWith(item.path + '/');
+  const isActive = item.path === '/dashboard'
+    ? pathname === item.path
+    : pathname === item.path || pathname?.startsWith(`${item.path}/`);
 
   const inactiveLink = classNames(
-    "flex items-center min-h-[44px] h-full text-muted-foreground py-2.5 px-3 hover:text-foreground hover:bg-muted/60 rounded-lg transition-all duration-200 group relative",
-    { ["justify-center"]: toggleCollapse && !isMobile }
+    'flex items-center min-h-[44px] h-full text-muted-foreground py-2.5 px-3 hover:text-foreground hover:bg-muted/60 rounded-lg transition-all duration-200 group relative',
+    { 'justify-center': toggleCollapse && !isMobile },
   );
 
   const activeLink = classNames(
-    "relative flex items-center min-h-[44px] h-full text-foreground py-2.5 px-3 transition-all duration-200 rounded-lg bg-primary/10 border border-primary/20 shadow-sm",
+    'relative flex items-center min-h-[44px] h-full text-foreground py-2.5 px-3 transition-all duration-200 rounded-lg bg-primary/10 border border-primary/20 shadow-sm',
     {
-      "justify-center w-12 transition-all delay-100 duration-100":
+      'justify-center w-12 transition-all delay-100 duration-100':
         toggleCollapse && !isMobile,
-      "text-primary font-medium": true,
-    }
+      'text-primary font-medium': true,
+    },
   );
 
-  const navMenuDropdownItem =
-    "text-sm py-2 px-3 hover:text-foreground hover:bg-muted/40 transition-all duration-200 rounded-md";
+  const navMenuDropdownItem
+    = 'text-sm py-2 px-3 hover:text-foreground hover:bg-muted/40 transition-all duration-200 rounded-md';
 
   const dropdownMenuHeaderLink = classNames(inactiveLink, {
-    ["bg-muted/40 rounded-b-none border-b border-border/50"]: subMenuOpen,
+    'bg-muted/40 rounded-b-none border-b border-border/50': subMenuOpen,
   });
 
   // For collapsed desktop state, wrap in tooltip
@@ -74,6 +74,7 @@ export const SideBarMenuItem = ({ item }: { item: SideNavItem }) => {
         </TooltipProvider>
       );
     }
+
     return <>{children}</>;
   };
 
@@ -85,12 +86,12 @@ export const SideBarMenuItem = ({ item }: { item: SideNavItem }) => {
             <button
               type="button"
               className={`${dropdownMenuHeaderLink} ${
-                isActive ? activeLink : ""
+                isActive ? activeLink : ''
               } w-full text-left cursor-pointer`}
               onClick={toggleSubMenu}
             >
               <div className={`min-w-[20px] shrink-0 transition-colors duration-200 ${
-                isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
               }`}>
                 {item.icon}
               </div>
@@ -101,7 +102,7 @@ export const SideBarMenuItem = ({ item }: { item: SideNavItem }) => {
                   </span>
                   <ChevronRight
                     className={`${
-                      subMenuOpen ? "rotate-90" : ""
+                      subMenuOpen ? 'rotate-90' : ''
                     } ml-auto stroke-2 text-xs shrink-0 transition-transform duration-200 text-muted-foreground`}
                   />
                 </>
@@ -115,14 +116,15 @@ export const SideBarMenuItem = ({ item }: { item: SideNavItem }) => {
                   ?.sort((a, b) => a.title.length - b.title.length)
                   .map((subItem, idx) => {
                     const isSubActive = subItem.path === pathname;
+
                     return (
                       <Link
                         key={idx}
                         href={subItem.path}
                         className={`${navMenuDropdownItem} ${
                           isSubActive
-                            ? "text-primary font-medium bg-primary/10"
-                            : "text-muted-foreground"
+                            ? 'text-primary font-medium bg-primary/10'
+                            : 'text-muted-foreground'
                         }`}
                         onClick={handleLinkClick}
                       >
@@ -140,7 +142,7 @@ export const SideBarMenuItem = ({ item }: { item: SideNavItem }) => {
             <Link
               href={item.path}
               className={`${inactiveLink} ${
-                isActive ? activeLink : ""
+                isActive ? activeLink : ''
               }`}
               onClick={handleLinkClick}
             >
@@ -148,22 +150,22 @@ export const SideBarMenuItem = ({ item }: { item: SideNavItem }) => {
               <div
                 className={`absolute left-0 w-1 h-full rounded-r-full transition-all duration-200 ${
                   isActive
-                    ? "bg-primary w-1 h-8 top-1/2 -translate-y-1/2"
-                    : ""
+                    ? 'bg-primary w-1 h-8 top-1/2 -translate-y-1/2'
+                    : ''
                 }`}
-              ></div>
-              
+              />
+
               <div
                 className={classNames(
-                  "shrink-0 transition-colors duration-200",
+                  'shrink-0 transition-colors duration-200',
                   isActive
-                    ? "text-primary"
-                    : "text-muted-foreground group-hover:text-foreground"
+                    ? 'text-primary'
+                    : 'text-muted-foreground group-hover:text-foreground',
                 )}
               >
                 {item.icon}
               </div>
-              
+
               {(!toggleCollapse || isMobile) && (
                 <span className="ml-3 leading-4 font-medium text-sm truncate">
                   {item.title}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -13,15 +13,15 @@ import {
   Line,
   TooltipProps,
   Legend,
-} from "recharts";
+} from 'recharts';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Package,
   ShoppingCart,
@@ -36,33 +36,34 @@ import {
   PackageCheck,
   PackageX,
   PackagePlus,
-} from "lucide-react";
-import { InventoryAnalytics as InventoryAnalyticsType } from "../types";
+} from 'lucide-react';
+import { InventoryAnalytics as InventoryAnalyticsType } from '../types';
 
 interface InventoryAnalyticsProps {
   data: InventoryAnalyticsType;
 }
 
 const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884d8",
-  "#82ca9d",
+  '#0088FE',
+  '#00C49F',
+  '#FFBB28',
+  '#FF8042',
+  '#8884d8',
+  '#82ca9d',
 ];
 
-export function InventoryAnalytics({ data }: InventoryAnalyticsProps) {
+export function InventoryAnalytics ({ data }: InventoryAnalyticsProps) {
   if (!data) {
     return <div>No inventory data available</div>;
   }
 
   // Safe formatter function to handle different value types
   const currencyFormatter = (value: any) => {
-    if (typeof value === "number") {
-      return [`$${value.toFixed(2)}`, ""];
+    if (typeof value === 'number') {
+      return [`$${value.toFixed(2)}`, ''];
     }
-    return [`$${value}`, ""];
+
+    return [`$${value}`, ''];
   };
 
   return (
@@ -81,7 +82,7 @@ export function InventoryAnalytics({ data }: InventoryAnalyticsProps) {
               {data.inventory.items?.total || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              {Object.keys(data.inventory.items?.byCategory || {}).length || 0}{" "}
+              {Object.keys(data.inventory.items?.byCategory || {}).length || 0}{' '}
               categories
             </p>
           </CardContent>
@@ -96,11 +97,11 @@ export function InventoryAnalytics({ data }: InventoryAnalyticsProps) {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              ${data.inventory.totalValue?.toFixed(2) || "0.00"}
+              ${data.inventory.totalValue?.toFixed(2) || '0.00'}
             </div>
             <p className="text-xs text-muted-foreground">
               Avg product: $
-              {data.inventory.avgProductValue?.toFixed(2) || "0.00"}
+              {data.inventory.avgProductValue?.toFixed(2) || '0.00'}
             </p>
           </CardContent>
         </Card>
@@ -154,22 +155,22 @@ export function InventoryAnalytics({ data }: InventoryAnalyticsProps) {
                   <BarChart
                     data={[
                       {
-                        name: "Items",
+                        name: 'Items',
                         value: data.inventory?.items?.total || 0,
                       },
                       {
-                        name: "Low Stock",
+                        name: 'Low Stock',
                         value: data.inventory?.lowStockItems || 0,
                       },
                       {
-                        name: "Adjustments",
+                        name: 'Adjustments',
                         value: data.inventory?.totalAdjustments || 0,
                       },
                     ]}
                   >
                     <XAxis dataKey="name" />
                     <YAxis />
-                    <Tooltip formatter={(value) => [`${value} items`, ""]} />
+                    <Tooltip formatter={(value) => [`${value} items`, '']} />
                     <Bar dataKey="value" fill="#8884d8">
                       {[0, 1, 2].map((index) => (
                         <Cell

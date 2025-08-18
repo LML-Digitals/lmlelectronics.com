@@ -1,7 +1,7 @@
-"use client";
-import { Search } from "lucide-react";
-import { Card } from "../../ui/card";
-import { Input } from "../../ui/input";
+'use client';
+import { Search } from 'lucide-react';
+import { Card } from '../../ui/card';
+import { Input } from '../../ui/input';
 import {
   Table,
   TableBody,
@@ -9,22 +9,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../ui/table";
-import { useState, useEffect } from "react";
-import { Announcement } from "@prisma/client";
-import EditAnnouncement from "./EditAnnouncement";
-import AddAnnouncement from "./AddAnnouncement";
-import DeleteAnnouncement from "./DeleteAnnoucement";
+} from '../../ui/table';
+import { useState, useEffect } from 'react';
+import { Announcement } from '@prisma/client';
+import EditAnnouncement from './EditAnnouncement';
+import AddAnnouncement from './AddAnnouncement';
+import DeleteAnnouncement from './DeleteAnnoucement';
 
 interface AnnouncementsTableProps {
   announcements: Announcement[];
 }
 
-function AnnouncementsTable({
+function AnnouncementsTable ({
   announcements: initialAnnouncements,
 }: AnnouncementsTableProps) {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [announcements, setAnnouncements] = useState(initialAnnouncements);
+
   // Update local state when props change
   useEffect(() => {
     setAnnouncements(initialAnnouncements);
@@ -32,6 +33,7 @@ function AnnouncementsTable({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
     setSearch(inputValue);
   };
 
@@ -42,8 +44,8 @@ function AnnouncementsTable({
 
   const filteredAnnouncements = announcements.filter((announcement) => {
     return (
-      search.toLowerCase() === "" ||
-      announcement.content.toLowerCase().includes(search.toLowerCase())
+      search.toLowerCase() === ''
+      || announcement.content.toLowerCase().includes(search.toLowerCase())
     );
   });
 
@@ -82,18 +84,18 @@ function AnnouncementsTable({
                   {announcement.content}
                 </TableCell>
                 <TableCell className="text-xs sm:text-sm max-w-[150px] sm:max-w-none truncate">
-                  {announcement.buttonText || "-"}
+                  {announcement.buttonText || '-'}
                 </TableCell>
                 <TableCell className="text-xs sm:text-sm max-w-[150px] sm:max-w-none truncate">
-                  {announcement.buttonLink || "-"}
+                  {announcement.buttonLink || '-'}
                 </TableCell>
                 <TableCell className="text-xs sm:text-sm">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    announcement.isActive 
-                      ? "bg-green-100 text-green-800" 
-                      : "bg-gray-100 text-gray-800"
+                    announcement.isActive
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-800'
                   }`}>
-                    {announcement.isActive ? "Active" : "Inactive"}
+                    {announcement.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </TableCell>
                 <TableCell className="text-xs sm:text-sm">

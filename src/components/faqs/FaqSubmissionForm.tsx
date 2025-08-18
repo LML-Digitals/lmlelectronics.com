@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { submitFAQQuestion } from "./services/faqService";
+import { useState } from 'react';
+import { submitFAQQuestion } from './services/faqService';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 
 interface FaqSubmissionFormProps {
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export default function FaqSubmissionForm({
+export default function FaqSubmissionForm ({
   onClose,
   onSuccess,
 }: FaqSubmissionFormProps) {
   const [formData, setFormData] = useState({
-    customerName: "",
-    customerEmail: "",
-    question: "",
+    customerName: '',
+    customerEmail: '',
+    question: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,7 +35,7 @@ export default function FaqSubmissionForm({
       await submitFAQQuestion(formData);
       onSuccess();
     } catch (error) {
-      console.error("Error submitting question:", error);
+      console.error('Error submitting question:', error);
     }
   };
 
@@ -51,8 +51,7 @@ export default function FaqSubmissionForm({
             <Input
               id="name"
               value={formData.customerName}
-              onChange={(e) =>
-                setFormData({ ...formData, customerName: e.target.value })
+              onChange={(e) => setFormData({ ...formData, customerName: e.target.value })
               }
               placeholder="Your name"
             />
@@ -63,8 +62,7 @@ export default function FaqSubmissionForm({
               id="email"
               type="email"
               value={formData.customerEmail}
-              onChange={(e) =>
-                setFormData({ ...formData, customerEmail: e.target.value })
+              onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })
               }
               placeholder="Your email"
             />
@@ -74,8 +72,7 @@ export default function FaqSubmissionForm({
             <Textarea
               id="question"
               value={formData.question}
-              onChange={(e) =>
-                setFormData({ ...formData, question: e.target.value })
+              onChange={(e) => setFormData({ ...formData, question: e.target.value })
               }
               placeholder="Type your question here..."
               required

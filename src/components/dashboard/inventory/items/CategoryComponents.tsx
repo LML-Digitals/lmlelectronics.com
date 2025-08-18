@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp, Search } from 'lucide-react';
 import { DialogDescription } from '@/components/common/top-dialog/TopDialog';
 
-function CategoryItem({
+function CategoryItem ({
   category,
   selectedIds,
   onSelect,
@@ -79,7 +79,7 @@ function CategoryItem({
   );
 }
 
-export function CategorySelect({
+export function CategorySelect ({
   categories,
   selectedIds,
   onSelect,
@@ -93,9 +93,9 @@ export function CategorySelect({
   // Filter categories based on search query
   const filterCategories = (
     cats: CategoryWithChildren[],
-    query: string
+    query: string,
   ): CategoryWithChildren[] => {
-    if (!query) return cats;
+    if (!query) { return cats; }
 
     return cats
       .map((cat) => {
@@ -107,6 +107,7 @@ export function CategorySelect({
         // Check if any children match and create a new object with only matching children
         if (cat.children.length > 0) {
           const filteredChildren = filterCategories(cat.children, query);
+
           if (filteredChildren.length > 0) {
             return {
               ...cat,
@@ -144,7 +145,7 @@ export function CategorySelect({
   );
 }
 
-export function CategorySelectionDialog({
+export function CategorySelectionDialog ({
   open,
   onOpenChange,
   categories,

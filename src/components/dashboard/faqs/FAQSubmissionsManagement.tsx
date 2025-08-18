@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { FAQSubmission } from "@prisma/client";
+import { useState, useEffect } from 'react';
+import { FAQSubmission } from '@prisma/client';
 import {
   getFAQSubmissions,
   updateFAQSubmissionStatus,
   getFAQCategories,
-} from "./Services/faqCrud";
-import FAQForm from "./FAQForm";
+} from './Services/faqCrud';
+import FAQForm from './FAQForm';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
-export default function FAQSubmissionsManagement() {
+export default function FAQSubmissionsManagement () {
   const [submissions, setSubmissions] = useState<FAQSubmission[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
-  const [filter, setFilter] = useState<string>("");
+  const [filter, setFilter] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [showFAQForm, setShowFAQForm] = useState(false);
-  const [selectedSubmission, setSelectedSubmission] =
-    useState<FAQSubmission | null>(null);
+  const [selectedSubmission, setSelectedSubmission]
+    = useState<FAQSubmission | null>(null);
 
   useEffect(() => {
     loadSubmissions();
@@ -33,9 +33,10 @@ export default function FAQSubmissionsManagement() {
   const loadCategories = async () => {
     try {
       const categoriesData = await getFAQCategories();
+
       setCategories(categoriesData);
     } catch (error) {
-      console.error("Error loading categories:", error);
+      console.error('Error loading categories:', error);
     }
   };
 
@@ -43,9 +44,10 @@ export default function FAQSubmissionsManagement() {
     try {
       setIsLoading(true);
       const data = await getFAQSubmissions(filter || undefined);
+
       setSubmissions(data);
     } catch (error) {
-      console.error("Error loading submissions:", error);
+      console.error('Error loading submissions:', error);
     } finally {
       setIsLoading(false);
     }
@@ -53,27 +55,29 @@ export default function FAQSubmissionsManagement() {
 
   const handleStatusUpdate = async (
     id: string,
-    status: "approved" | "rejected"
+    status: 'approved' | 'rejected',
   ) => {
     try {
-      if (status === "approved") {
+      if (status === 'approved') {
         const submission = submissions.find((sub) => sub.id === id);
+
         if (submission) {
           setSelectedSubmission(submission);
           setShowFAQForm(true);
+
           return;
         }
       }
       await updateFAQSubmissionStatus(id, status);
       await loadSubmissions();
     } catch (error) {
-      console.error("Error updating submission status:", error);
+      console.error('Error updating submission status:', error);
     }
   };
 
   const handleFormSuccess = async () => {
     if (selectedSubmission) {
-      await updateFAQSubmissionStatus(selectedSubmission.id, "approved");
+      await updateFAQSubmissionStatus(selectedSubmission.id, 'approved');
       setShowFAQForm(false);
       setSelectedSubmission(null);
       await loadSubmissions();
@@ -85,9 +89,9 @@ export default function FAQSubmissionsManagement() {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h2 className="text-lg sm:text-xl font-semibold">FAQ Submissions</h2>
         <Select
-          value={filter || "all"}
+          value={filter || 'all'}
           onValueChange={(value) => {
-            setFilter(value === "all" ? "" : value);
+            setFilter(value === 'all' ? '' : value);
           }}
         >
           <SelectTrigger className="w-full sm:w-48 min-h-[44px] text-sm sm:text-base">
@@ -117,37 +121,35 @@ export default function FAQSubmissionsManagement() {
                   {submission.customerName && (
                     <p className="text-xs sm:text-sm text-gray-600">
                       From: {submission.customerName}
-                      {submission.customerEmail &&
-                        ` (${submission.customerEmail})`}
+                      {submission.customerEmail
+                        && ` (${submission.customerEmail})`}
                     </p>
                   )}
                 </div>
                 <span
                   className={`px-2 py-1 rounded-full text-xs ${
-                    submission.status === "pending"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : submission.status === "approved"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
+                    submission.status === 'pending'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : submission.status === 'approved'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
                   }`}
                 >
                   {submission.status}
                 </span>
               </div>
 
-              {submission.status === "pending" && (
+              {submission.status === 'pending' && (
                 <div className="flex flex-col sm:flex-row gap-2">
                   <button
-                    onClick={() =>
-                      handleStatusUpdate(submission.id, "approved")
+                    onClick={() => handleStatusUpdate(submission.id, 'approved')
                     }
                     className="bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 min-h-[44px] text-sm sm:text-base"
                   >
                     Approve
                   </button>
                   <button
-                    onClick={() =>
-                      handleStatusUpdate(submission.id, "rejected")
+                    onClick={() => handleStatusUpdate(submission.id, 'rejected')
                     }
                     className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 min-h-[44px] text-sm sm:text-base"
                   >

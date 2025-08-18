@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   getLowStockItems,
   StockItem,
-} from "@/components/dashboard/inventory/services/inventoryStockService";
+} from '@/components/dashboard/inventory/services/inventoryStockService';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -19,29 +19,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 // import { DataTableSkeleton } from "./DataTableSkeleton"; // Assuming this exists for loading state
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
 
-export function LowStockItems() {
+export function LowStockItems () {
   const [items, setItems] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchData () {
       setLoading(true);
       setError(null);
       try {
         const response = await getLowStockItems(5); // Example threshold
+
         if (response.success && response.data) {
           setItems(response.data);
         } else {
-          setError(response.error || "Failed to fetch low stock items");
+          setError(response.error || 'Failed to fetch low stock items');
         }
       } catch (err) {
         console.error(err);
-        setError("An unexpected error occurred.");
+        setError('An unexpected error occurred.');
       } finally {
         setLoading(false);
       }
@@ -92,7 +93,7 @@ export function LowStockItems() {
                   </TableCell>
                   <TableCell className="text-right">
                     <Badge
-                      variant={item.stock <= 2 ? "destructive" : "outline"}
+                      variant={item.stock <= 2 ? 'destructive' : 'outline'}
                     >
                       {item.stock}
                     </Badge>

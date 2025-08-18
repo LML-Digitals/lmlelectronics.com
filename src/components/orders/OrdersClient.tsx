@@ -1,46 +1,47 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Eye, ShoppingBag } from "lucide-react";
-import { format } from "date-fns";
-import Link from "next/link";
-import { toast } from "sonner";
-import type { OrderDetails  } from "@/types/api";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import { NextRequest, NextResponse } from "next/server";
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Eye, ShoppingBag } from 'lucide-react';
+import { format } from 'date-fns';
+import Link from 'next/link';
+import { toast } from 'sonner';
+import type { OrderDetails  } from '@/types/api';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import { NextRequest, NextResponse } from 'next/server';
 import {
   getCustomerOrders,
   getOrdersByCustomerEmail,
-} from "@/app/actions/orders";
+} from '@/app/actions/orders';
 
-export default function OrdersClient() {
-  const [email, setEmail] = useState("");
+export default function OrdersClient () {
+  const [email, setEmail] = useState('');
   const [orders, setOrders] = useState<OrderDetails[]>([]);
   const [loading, setLoading] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "PAID":
-        return "bg-green-100 text-green-800";
-      case "PENDING":
-        return "bg-yellow-100 text-yellow-800";
-      case "CANCELLED":
-        return "bg-red-100 text-red-800";
-      case "REFUNDED":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-blue-100 text-blue-800";
+    case 'PAID':
+      return 'bg-green-100 text-green-800';
+    case 'PENDING':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'CANCELLED':
+      return 'bg-red-100 text-red-800';
+    case 'REFUNDED':
+      return 'bg-gray-100 text-gray-800';
+    default:
+      return 'bg-blue-100 text-blue-800';
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
-      toast.error("Please enter your email address");
+      toast.error('Please enter your email address');
+
       return;
     }
 
@@ -48,14 +49,13 @@ export default function OrdersClient() {
     try {
       const result = await getOrdersByCustomerEmail(email);
       const data = result.data;
+
       setOrders(data as unknown as OrderDetails[]);
     } catch (error) {
-      console.error("Error fetching orders:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to fetch orders. Please try again."
-      );
+      console.error('Error fetching orders:', error);
+      toast.error(error instanceof Error
+        ? error.message
+        : 'Failed to fetch orders. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -84,7 +84,7 @@ export default function OrdersClient() {
                 required
               />
               <Button type="submit" disabled={loading} className="bg-black text-white hover:bg-gray-800">
-                {loading ? "Loading..." : "Find Orders"}
+                {loading ? 'Loading...' : 'Find Orders'}
               </Button>
             </div>
           </form>
@@ -94,7 +94,7 @@ export default function OrdersClient() {
               <div>
                 <h2 className="text-2xl font-semibold">Order History</h2>
                 <p className="text-muted-foreground">
-                  {orders.length} {orders.length === 1 ? "order" : "orders"}{" "}
+                  {orders.length} {orders.length === 1 ? 'order' : 'orders'}{' '}
                   found
                 </p>
               </div>
@@ -109,8 +109,8 @@ export default function OrdersClient() {
                   </h3>
                   <p className="text-gray-500 text-center mb-6">
                     {email
-                      ? "No orders found for this email address."
-                      : "Enter your email address to view your orders."}
+                      ? 'No orders found for this email address.'
+                      : 'Enter your email address to view your orders.'}
                   </p>
                   <Link href="/products">
                     <Button className="bg-black text-white hover:bg-gray-800">Start Shopping</Button>
@@ -122,7 +122,7 @@ export default function OrdersClient() {
                 {orders.map((order) => {
                   const totalItems = order.items.reduce(
                     (sum, item) => sum + item.quantity,
-                    0
+                    0,
                   );
 
                   return (
@@ -144,19 +144,19 @@ export default function OrdersClient() {
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                               <div>
-                                <span className="font-medium">Date:</span>{" "}
+                                <span className="font-medium">Date:</span>{' '}
                                 {format(
                                   new Date(order.createdAt),
-                                  "MMM d, yyyy"
+                                  'MMM d, yyyy',
                                 )}
                               </div>
                               <div>
-                                <span className="font-medium">Items:</span>{" "}
-                                {totalItems}{" "}
-                                {totalItems === 1 ? "item" : "items"}
+                                <span className="font-medium">Items:</span>{' '}
+                                {totalItems}{' '}
+                                {totalItems === 1 ? 'item' : 'items'}
                               </div>
                               <div>
-                                <span className="font-medium">Store:</span>{" "}
+                                <span className="font-medium">Store:</span>{' '}
                                 {order.storeLocation.name}
                               </div>
                             </div>

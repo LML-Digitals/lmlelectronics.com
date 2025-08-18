@@ -1,22 +1,22 @@
-"use client";
-import { SIDENAV_ITEMS } from "@/components/dashboard/sidebar/SideNavItems";
-import { CUSTOMER_SIDENAV_ITEMS } from "./CustomerSideNavItem";
-import { useResponsiveSidebar } from "@/hooks/useSidebarToggle";
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import SideBarMenuGroup from "./SidebarMenuGroup";
-import { fetchSession } from "@/lib/session";
-import { Session } from "next-auth";
+'use client';
+import { SIDENAV_ITEMS } from '@/components/dashboard/sidebar/SideNavItems';
+import { CUSTOMER_SIDENAV_ITEMS } from './CustomerSideNavItem';
+import { useResponsiveSidebar } from '@/hooks/useSidebarToggle';
+import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import SideBarMenuGroup from './SidebarMenuGroup';
+import { fetchSession } from '@/lib/session';
+import { Session } from 'next-auth';
 // import {
 //   BRAND_KEYS,
 //   getClientBrandSettings,
 // } from "@/lib/config/brandConfig.client";
-import { X, ChevronLeft, ChevronRight, Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { X, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 
 export const SideBar = () => {
   const {
@@ -28,7 +28,7 @@ export const SideBar = () => {
     invokeToggleCollapse,
   } = useResponsiveSidebar();
 
-  const [logoUrl, setLogoUrl] = useState<string>("/logo.png");
+  const [logoUrl, setLogoUrl] = useState<string>('/logo.png');
   const [user, setUser] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,33 +36,35 @@ export const SideBar = () => {
     const fetchData = async () => {
       try {
         const userInSession: Session | null | undefined = await fetchSession();
+
         if (userInSession) {
           setUser(userInSession.user);
         }
       } catch (error) {
-        console.error("Error fetching session:", error);
+        console.error('Error fetching session:', error);
       } finally {
         setIsLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
   // Load brand logo - make it non-blockin
 
   const asideVariants = {
-    expanded: { width: "18rem" },
-    collapsed: { width: "4.5rem" },
+    expanded: { width: '18rem' },
+    collapsed: { width: '4.5rem' },
   };
 
   const mobileOverlayVariants = {
-    hidden: { opacity: 0, visibility: "hidden" as const },
-    visible: { opacity: 1, visibility: "visible" as const },
+    hidden: { opacity: 0, visibility: 'hidden' as const },
+    visible: { opacity: 1, visibility: 'visible' as const },
   };
 
   const mobileSidebarVariants = {
-    hidden: { x: "-100%" },
-    visible: { x: "0%" },
+    hidden: { x: '-100%' },
+    visible: { x: '0%' },
   };
 
   const handleLinkClick = () => {
@@ -91,13 +93,13 @@ export const SideBar = () => {
 
     return (
       <div className="flex flex-col gap-2">
-        {user && user.userType === "staff"
+        {user && user.userType === 'staff'
           ? SIDENAV_ITEMS.map((item, idx) => (
-              <SideBarMenuGroup key={idx} menuGroup={item} />
-            ))
+            <SideBarMenuGroup key={idx} menuGroup={item} />
+          ))
           : CUSTOMER_SIDENAV_ITEMS.map((item, idx) => (
-              <SideBarMenuGroup key={idx} menuGroup={item} />
-            ))}
+            <SideBarMenuGroup key={idx} menuGroup={item} />
+          ))}
       </div>
     );
   };
@@ -125,14 +127,14 @@ export const SideBar = () => {
               animate="visible"
               exit="hidden"
               variants={mobileSidebarVariants}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
               className="fixed left-0 top-0 h-full w-80 bg-background border-r shadow-xl z-50 md:hidden"
             >
               <div className="relative flex flex-col h-full">
                 {/* Header with close button */}
                 <div className="flex items-center justify-between px-4 py-4 border-b bg-muted/30">
                   <div className="flex items-center gap-3">
-                    <Link href={"/dashboard"} onClick={handleLinkClick}>
+                    <Link href={'/dashboard'} onClick={handleLinkClick}>
                       {logoUrl ? (
                         <Image
                           src={logoUrl}
@@ -156,7 +158,7 @@ export const SideBar = () => {
                       </h1>
                       {user && (
                         <Badge variant="secondary" className="text-xs w-fit">
-                          {user.userType === "staff" ? "Staff" : "Customer"}
+                          {user.userType === 'staff' ? 'Staff' : 'Customer'}
                         </Badge>
                       )}
                     </div>
@@ -197,15 +199,15 @@ export const SideBar = () => {
   return (
     <motion.aside
       initial={false}
-      animate={toggleCollapse ? "collapsed" : "expanded"}
+      animate={toggleCollapse ? 'collapsed' : 'expanded'}
       variants={asideVariants}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
       className="relative h-full bg-background border-r shadow-sm hidden md:flex flex-col"
     >
       {/* Sidebar Header */}
       <div className="flex items-center justify-between px-4 py-4 border-b bg-muted/30">
         <div className="flex items-center gap-3 min-w-0">
-          <Link href={"/dashboard"} className="shrink-0">
+          <Link href={'/dashboard'} className="shrink-0">
             {logoUrl ? (
               <Image
                 src={logoUrl}
@@ -228,7 +230,7 @@ export const SideBar = () => {
               </h1>
               {user && (
                 <Badge variant="secondary" className="text-xs w-fit">
-                  {user.userType === "staff" ? "Staff" : "Customer"}
+                  {user.userType === 'staff' ? 'Staff' : 'Customer'}
                 </Badge>
               )}
             </div>

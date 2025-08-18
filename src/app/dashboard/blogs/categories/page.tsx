@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { BlogCategory } from "@prisma/client";
+import React, { useState, useEffect, useCallback } from 'react';
+import { BlogCategory } from '@prisma/client';
 import {
   getBlogCategories,
   deleteBlogCategory,
-} from "@/components/blog/services/blogCategoryCrud";
-import { CategoryFormDialog } from "@/components/blog/blog-components/CategoryFormDialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/blog/services/blogCategoryCrud';
+import { CategoryFormDialog } from '@/components/blog/blog-components/CategoryFormDialog';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -15,8 +15,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
+} from '@/components/ui/table';
+import { useToast } from '@/components/ui/use-toast';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,33 +26,31 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/alert-dialog';
+import { PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-
-export default function ManageBlogCategoriesPage() {
+export default function ManageBlogCategoriesPage () {
   const router = useRouter();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<BlogCategory | null>(
-    null
-  );
+  const [selectedCategory, setSelectedCategory] = useState<BlogCategory | null>(null);
   const { toast } = useToast();
 
   const fetchCategories = useCallback(async () => {
     setLoading(true);
     try {
       const fetchedCategories = await getBlogCategories();
+
       setCategories(fetchedCategories);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error('Error fetching categories:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch categories.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to fetch categories.',
       });
     } finally {
       setLoading(false);
@@ -88,23 +86,23 @@ export default function ManageBlogCategoriesPage() {
   };
 
   const handleDeleteCategory = async () => {
-    if (!selectedCategory) return;
+    if (!selectedCategory) { return; }
 
     try {
       await deleteBlogCategory(selectedCategory.id);
       toast({
-        title: "Success",
-        description: "Category deleted successfully.",
+        title: 'Success',
+        description: 'Category deleted successfully.',
       });
       fetchCategories(); // Refresh the list
       handleCloseDeleteDialog();
     } catch (error) {
-      console.error("Error deleting category:", error);
+      console.error('Error deleting category:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
-          error instanceof Error ? error.message : "Failed to delete category.",
+          error instanceof Error ? error.message : 'Failed to delete category.',
       });
     }
   };
@@ -142,7 +140,7 @@ export default function ManageBlogCategoriesPage() {
               {categories.map((category) => (
                 <TableRow key={category.id}>
                   <TableCell className="font-medium text-xs sm:text-sm">{category.name}</TableCell>
-                  <TableCell className="text-xs sm:text-sm">{category.description || "-"}</TableCell>
+                  <TableCell className="text-xs sm:text-sm">{category.description || '-'}</TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button
                       variant="outline"
@@ -207,8 +205,8 @@ export default function ManageBlogCategoriesPage() {
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }

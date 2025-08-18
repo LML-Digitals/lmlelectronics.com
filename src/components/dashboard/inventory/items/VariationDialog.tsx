@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -18,22 +18,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { ImagePlus, X, CircleDashed } from "lucide-react";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ImagePlus, X, CircleDashed } from 'lucide-react';
 import type {
   Location,
   Variation,
   VariationFormData,
   StockLevel,
-} from "./types/types";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { generateSKU } from "./utils/generateSKU";
+} from './types/types';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
+import { generateSKU } from './utils/generateSKU';
 import {
   getDefaultShippingRate,
   getDefaultTaxRate,
-} from "@/components/dashboard/settings/services/inventorySettings";
+} from '@/components/dashboard/settings/services/inventorySettings';
 
 interface VariationDialogProps {
   open: boolean;
@@ -46,7 +46,7 @@ interface VariationDialogProps {
   variationImage?: { file: File | null; preview: string | null } | null;
 }
 
-export function VariationDialog({
+export function VariationDialog ({
   open,
   onOpenChange,
   onAdd,
@@ -58,9 +58,7 @@ export function VariationDialog({
 }: VariationDialogProps) {
   // Initialize state with edit data if provided
   const [image, setImage] = useState<File | null>(variationImage?.file || null);
-  const [preview, setPreview] = useState<string | null>(
-    variationImage?.preview || null
-  );
+  const [preview, setPreview] = useState<string | null>(variationImage?.preview || null);
   const [imageChanged, setImageChanged] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditing = editingVariation !== null;
@@ -78,49 +76,49 @@ export function VariationDialog({
         stock: 0,
       },
     }),
-    {} as Record<string, { stock: number }>
+    {} as Record<string, { stock: number }>,
   );
 
   const variationForm = useForm<VariationFormData>({
     defaultValues: isEditing
       ? {
-          ...editingVariation,
-          stockLevels: editingVariation.stockLevels || defaultStockLevels,
-          raw: editingVariation.raw || 0,
-          tax: editingVariation.tax || 0,
-          shipping: editingVariation.shipping || 0,
-          markup: editingVariation.markup || 0.3,
-          visible: editingVariation.visible !== false,
-          useDefaultRates: editingVariation.useDefaultRates !== false,
-          image: editingVariation.image || null,
-          weight: editingVariation.weight || 0,
-          length: editingVariation.length || 0,
-          width: editingVariation.width || 0,
-          height: editingVariation.height || 0,
-        }
+        ...editingVariation,
+        stockLevels: editingVariation.stockLevels || defaultStockLevels,
+        raw: editingVariation.raw || 0,
+        tax: editingVariation.tax || 0,
+        shipping: editingVariation.shipping || 0,
+        markup: editingVariation.markup || 0.3,
+        visible: editingVariation.visible !== false,
+        useDefaultRates: editingVariation.useDefaultRates !== false,
+        image: editingVariation.image || null,
+        weight: editingVariation.weight || 0,
+        length: editingVariation.length || 0,
+        width: editingVariation.width || 0,
+        height: editingVariation.height || 0,
+      }
       : {
-          name: "",
-          sku: "",
-          image: null,
-          stockLevels: defaultStockLevels,
-          raw: 0,
-          tax: 0,
-          shipping: 0,
-          markup: 0.3,
-          visible: true,
-          useDefaultRates: true,
-          barcode: undefined,
-          imageFile: null,
-          imagePreview: null,
-          imageChanged: false,
-          id: undefined,
-        },
+        name: '',
+        sku: '',
+        image: null,
+        stockLevels: defaultStockLevels,
+        raw: 0,
+        tax: 0,
+        shipping: 0,
+        markup: 0.3,
+        visible: true,
+        useDefaultRates: true,
+        barcode: undefined,
+        imageFile: null,
+        imagePreview: null,
+        imageChanged: false,
+        id: undefined,
+      },
   });
 
   // Reset form when editing variation changes
   useEffect(() => {
-    if (!open) return; // Don't reset form while dialog is open
-    
+    if (!open) { return; } // Don't reset form while dialog is open
+
     if (isEditing && editingVariation) {
       // Explicitly set price fields from editingVariation
       variationForm.reset({
@@ -149,7 +147,7 @@ export function VariationDialog({
       setImageChanged(false);
     } else if (!isEditing) {
       variationForm.reset({
-        name: "",
+        name: '',
         sku: generateSKU(),
         image: null,
         stockLevels: defaultStockLevels,
@@ -187,7 +185,7 @@ export function VariationDialog({
         setDefaultShippingRate(shippingRate || 0);
         setLoadingRates(false);
       } catch (error) {
-        console.error("Error fetching default rates:", error);
+        console.error('Error fetching default rates:', error);
         setLoadingRates(false);
       }
     };
@@ -198,7 +196,7 @@ export function VariationDialog({
   // Auto-generate SKU only when adding a new variation and dialog opens
   useEffect(() => {
     if (!isEditing && open) {
-      variationForm.setValue("sku", generateSKU());
+      variationForm.setValue('sku', generateSKU());
     }
   }, [isEditing, open, variationForm]);
 
@@ -218,9 +216,11 @@ export function VariationDialog({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const file = e.target.files[0];
+
       setImage(file);
       setImageChanged(true);
       const previewURL = URL.createObjectURL(file);
+
       setPreview(previewURL);
     }
   };
@@ -232,15 +232,15 @@ export function VariationDialog({
   };
 
   // Calculate derived values for preview
-  const rawValue = variationForm.watch("raw") || 0;
-  const useDefaultRates = variationForm.watch("useDefaultRates");
+  const rawValue = variationForm.watch('raw') || 0;
+  const useDefaultRates = variationForm.watch('useDefaultRates');
   const taxValue = useDefaultRates
     ? defaultTaxRate
-    : variationForm.watch("tax") || 0;
+    : variationForm.watch('tax') || 0;
   const shippingValue = useDefaultRates
     ? defaultShippingRate
-    : variationForm.watch("shipping") || 0;
-  const markupValue = variationForm.watch("markup") || 0;
+    : variationForm.watch('shipping') || 0;
+  const markupValue = variationForm.watch('markup') || 0;
 
   const cost = rawValue + rawValue * (taxValue / 100) + shippingValue;
   const totalCost = cost + cost * (markupValue / 100);
@@ -267,24 +267,26 @@ export function VariationDialog({
           const uploadResponse = await fetch(
             `/api/upload?filename=${image.name}`, // Keep fileName in query param for now
             {
-              method: "POST",
+              method: 'POST',
               body: image,
-            }
+            },
           );
 
           if (!uploadResponse.ok) {
             console.error(
-              "Failed to upload image:",
-              await uploadResponse.text()
+              'Failed to upload image:',
+              await uploadResponse.text(),
             );
-            throw new Error("Failed to upload image");
+            throw new Error('Failed to upload image');
           }
 
           const uploadResult = await uploadResponse.json();
+
           imageUrl = uploadResult.url;
         } catch (error) {
-          console.error("Failed to upload image:", error);
+          console.error('Failed to upload image:', error);
           setIsSubmitting(false);
+
           return;
         }
       } else {
@@ -311,7 +313,7 @@ export function VariationDialog({
       // Don't reset form immediately - let the cleanup effect handle it
       onOpenChange(false);
     } catch (error) {
-      console.error("Error during variation save:", error);
+      console.error('Error during variation save:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -322,7 +324,7 @@ export function VariationDialog({
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Edit Variation" : "Add Variation"}
+            {isEditing ? 'Edit Variation' : 'Add Variation'}
           </DialogTitle>
         </DialogHeader>
 
@@ -360,8 +362,7 @@ export function VariationDialog({
                           type="button"
                           variant="secondary"
                           size="sm"
-                          onClick={() =>
-                            variationForm.setValue("sku", generateSKU())
+                          onClick={() => variationForm.setValue('sku', generateSKU())
                           }
                         >
                           Generate
@@ -376,7 +377,7 @@ export function VariationDialog({
                 {preview ? (
                   <div className="relative h-24 w-24 rounded-md overflow-hidden border">
                     <Image
-                      src={preview || "/placeholder.svg"}
+                      src={preview || '/placeholder.svg'}
                       alt="Variation Preview"
                       fill
                       className="object-cover"
@@ -418,8 +419,8 @@ export function VariationDialog({
                     <FormLabel>Visibility</FormLabel>
                     <div className="text-sm text-muted-foreground">
                       {field.value
-                        ? "Visible to customers"
-                        : "Hidden from customers"}
+                        ? 'Visible to customers'
+                        : 'Hidden from customers'}
                     </div>
                   </div>
                   <FormControl>
@@ -444,8 +445,8 @@ export function VariationDialog({
                     <FormLabel>Use Default Rates</FormLabel>
                     <div className="text-sm text-muted-foreground">
                       {field.value
-                        ? "Using system default shipping and tax rates"
-                        : "Using custom shipping and tax rates"}
+                        ? 'Using system default shipping and tax rates'
+                        : 'Using custom shipping and tax rates'}
                     </div>
                   </div>
                   <FormControl>
@@ -476,10 +477,7 @@ export function VariationDialog({
                           min="0"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(
-                              Number.parseFloat(e.target.value) || 0
-                            )
+                          onChange={(e) => field.onChange(Number.parseFloat(e.target.value) || 0)
                           }
                         />
                       </FormControl>
@@ -503,18 +501,15 @@ export function VariationDialog({
                             placeholder={
                               useDefaultRates
                                 ? `${defaultTaxRate} (Default)`
-                                : "0.00"
+                                : '0.00'
                             }
                             {...field}
-                            disabled={variationForm.watch("useDefaultRates")}
-                            onChange={(e) =>
-                              field.onChange(
-                                Number.parseFloat(e.target.value) || 0
-                              )
+                            disabled={variationForm.watch('useDefaultRates')}
+                            onChange={(e) => field.onChange(Number.parseFloat(e.target.value) || 0)
                             }
                           />
                         </FormControl>
-                        {variationForm.watch("useDefaultRates") && (
+                        {variationForm.watch('useDefaultRates') && (
                           <p className="text-xs text-muted-foreground">
                             Using system default tax rate: {defaultTaxRate}%
                           </p>
@@ -540,18 +535,15 @@ export function VariationDialog({
                             placeholder={
                               useDefaultRates
                                 ? `${defaultShippingRate} (Default)`
-                                : "0.00"
+                                : '0.00'
                             }
                             {...field}
-                            disabled={variationForm.watch("useDefaultRates")}
-                            onChange={(e) =>
-                              field.onChange(
-                                Number.parseFloat(e.target.value) || 0
-                              )
+                            disabled={variationForm.watch('useDefaultRates')}
+                            onChange={(e) => field.onChange(Number.parseFloat(e.target.value) || 0)
                             }
                           />
                         </FormControl>
-                        {variationForm.watch("useDefaultRates") && (
+                        {variationForm.watch('useDefaultRates') && (
                           <p className="text-xs text-muted-foreground">
                             Using system default shipping rate: $
                             {defaultShippingRate}
@@ -576,10 +568,7 @@ export function VariationDialog({
                           min="0"
                           placeholder="0.30"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(
-                              Number.parseFloat(e.target.value) || 0
-                            )
+                          onChange={(e) => field.onChange(Number.parseFloat(e.target.value) || 0)
                           }
                         />
                       </FormControl>
@@ -625,8 +614,7 @@ export function VariationDialog({
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value || "0"))
+                          onChange={(e) => field.onChange(parseFloat(e.target.value || '0'))
                           }
                         />
                       </FormControl>
@@ -646,8 +634,7 @@ export function VariationDialog({
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value || "0"))
+                          onChange={(e) => field.onChange(parseFloat(e.target.value || '0'))
                           }
                         />
                       </FormControl>
@@ -667,8 +654,7 @@ export function VariationDialog({
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value || "0"))
+                          onChange={(e) => field.onChange(parseFloat(e.target.value || '0'))
                           }
                         />
                       </FormControl>
@@ -688,8 +674,7 @@ export function VariationDialog({
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value || "0"))
+                          onChange={(e) => field.onChange(parseFloat(e.target.value || '0'))
                           }
                         />
                       </FormControl>
@@ -721,10 +706,7 @@ export function VariationDialog({
                             placeholder="Stock amount"
                             {...field}
                             value={field.value || 0}
-                            onChange={(e) =>
-                              field.onChange(
-                                Number.parseInt(e.target.value) || 0
-                              )
+                            onChange={(e) => field.onChange(Number.parseInt(e.target.value) || 0)
                             }
                           />
                         </FormControl>
@@ -749,7 +731,7 @@ export function VariationDialog({
                 {isSubmitting ? (
                   <CircleDashed className="mr-2 h-4 w-4 animate-spin" />
                 ) : null}
-                {isEditing ? "Save Changes" : "Add Variation"}
+                {isEditing ? 'Save Changes' : 'Add Variation'}
               </Button>
             </div>
           </form>

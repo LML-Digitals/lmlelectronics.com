@@ -8,7 +8,7 @@ interface SocialMediaIconsProps {
   className?: string;
 }
 
-export default function SocialMediaIcons({
+export default function SocialMediaIcons ({
   links,
   iconSize = 20,
   className = '',

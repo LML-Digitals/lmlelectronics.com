@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -11,41 +11,41 @@ import {
   Legend,
   Cell,
   CartesianGrid,
-} from "recharts";
+} from 'recharts';
 import {
   getInventoryValueByCategory,
   getInventoryQuantityByLocation,
   getLowStockItems,
   BarChartData,
-} from "../services/chartDataServices";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '../services/chartDataServices';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { AlertCircle, BarChart3 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from '@/components/ui/card';
+import { AlertCircle, BarChart3 } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-type ChartType = "categoryValue" | "locationQuantity" | "lowStock";
+type ChartType = 'categoryValue' | 'locationQuantity' | 'lowStock';
 
-export function Overview() {
+export function Overview () {
   const [data, setData] = useState<BarChartData>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [chartType, setChartType] = useState<ChartType>("categoryValue");
+  const [chartType, setChartType] = useState<ChartType>('categoryValue');
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchData () {
       setIsLoading(true);
       setError(null);
 
@@ -53,27 +53,27 @@ export function Overview() {
         let result;
 
         switch (chartType) {
-          case "categoryValue":
-            result = await getInventoryValueByCategory();
-            break;
-          case "locationQuantity":
-            result = await getInventoryQuantityByLocation();
-            break;
-          case "lowStock":
-            result = await getLowStockItems(5); // Items with stock level <= 5
-            break;
-          default:
-            result = await getInventoryValueByCategory();
+        case 'categoryValue':
+          result = await getInventoryValueByCategory();
+          break;
+        case 'locationQuantity':
+          result = await getInventoryQuantityByLocation();
+          break;
+        case 'lowStock':
+          result = await getLowStockItems(5); // Items with stock level <= 5
+          break;
+        default:
+          result = await getInventoryValueByCategory();
         }
 
         if (result.success && result.data) {
           setData(result.data);
         } else {
-          setError(result.error || "Failed to fetch chart data");
+          setError(result.error || 'Failed to fetch chart data');
         }
       } catch (err) {
-        console.error("Error loading chart data:", err);
-        setError("An unexpected error occurred while loading chart data");
+        console.error('Error loading chart data:', err);
+        setError('An unexpected error occurred while loading chart data');
       } finally {
         setIsLoading(false);
       }
@@ -84,42 +84,43 @@ export function Overview() {
 
   const getChartTitle = () => {
     switch (chartType) {
-      case "categoryValue":
-        return "Inventory Value by Category";
-      case "locationQuantity":
-        return "Item Quantity by Location";
+    case 'categoryValue':
+      return 'Inventory Value by Category';
+    case 'locationQuantity':
+      return 'Item Quantity by Location';
       // case "lowStock": return "Low Stock Items";
-      default:
-        return "Inventory Overview";
+    default:
+      return 'Inventory Overview';
     }
   };
 
   const getYAxisLabel = () => {
     switch (chartType) {
-      case "categoryValue":
-        return "Value ($)";
-      case "locationQuantity":
-        return "Quantity";
+    case 'categoryValue':
+      return 'Value ($)';
+    case 'locationQuantity':
+      return 'Quantity';
       // case "lowStock": return "Stock Level";
-      default:
-        return "";
+    default:
+      return '';
     }
   };
 
   const formatYAxis = (value: number) => {
-    if (chartType === "categoryValue") {
+    if (chartType === 'categoryValue') {
       return `$${value}`;
     }
+
     return value.toString();
   };
 
   // Custom formatter for the tooltip
   const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
+    if (active && payload?.length) {
       return (
         <div className="bg-background p-2 border rounded-md shadow-md">
           <p className="font-medium">{label}</p>
-          {chartType === "categoryValue" ? (
+          {chartType === 'categoryValue' ? (
             <p className="text-primary">{`Value: $${payload[0].value.toLocaleString()}`}</p>
           ) : (
             <p className="text-primary">{`Quantity: ${payload[0].value}`}</p>
@@ -127,6 +128,7 @@ export function Overview() {
         </div>
       );
     }
+
     return null;
   };
 
@@ -136,11 +138,11 @@ export function Overview() {
         <div>
           <CardTitle>{getChartTitle()}</CardTitle>
           <CardDescription>
-            {chartType === "categoryValue"
-              ? "Overview of inventory value distributed by category"
-              : chartType === "locationQuantity"
-                ? "Distribution of inventory items across locations"
-                : "Items with stock level at or below threshold"}
+            {chartType === 'categoryValue'
+              ? 'Overview of inventory value distributed by category'
+              : chartType === 'locationQuantity'
+                ? 'Distribution of inventory items across locations'
+                : 'Items with stock level at or below threshold'}
           </CardDescription>
         </div>
         <Select
@@ -191,8 +193,7 @@ export function Overview() {
                 tickLine={false}
                 axisLine={false}
                 interval={0}
-                tickFormatter={(value) =>
-                  value.length > 12 ? `${value.substring(0, 12)}...` : value
+                tickFormatter={(value) => value.length > 12 ? `${value.substring(0, 12)}...` : value
                 }
                 // angle={-45}
                 // textAnchor="end"
@@ -207,14 +208,14 @@ export function Overview() {
                 label={{
                   value: getYAxisLabel(),
                   angle: -90,
-                  position: "insideLeft",
-                  style: { textAnchor: "middle" },
+                  position: 'insideLeft',
+                  style: { textAnchor: 'middle' },
                 }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Bar
-                name={chartType === "categoryValue" ? "Value" : "Quantity"}
+                name={chartType === 'categoryValue' ? 'Value' : 'Quantity'}
                 dataKey="value"
                 className="fill-primary"
                 radius={[4, 4, 0, 0]}
@@ -222,8 +223,8 @@ export function Overview() {
                 {data.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={entry.color || "currentColor"}
-                    className={entry.color ? "" : "fill-primary"}
+                    fill={entry.color || 'currentColor'}
+                    className={entry.color ? '' : 'fill-primary'}
                   />
                 ))}
               </Bar>

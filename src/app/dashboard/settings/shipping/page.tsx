@@ -1,12 +1,12 @@
-import { Metadata } from "next";
-import { ShippingManagement } from "@/components/dashboard/shipping/ShippingManagement";
+import { Metadata } from 'next';
+import { ShippingManagement } from '@/components/dashboard/shipping/ShippingManagement';
 
 export const metadata: Metadata = {
-  title: "Shipping Management",
-  description: "Manage shipping rates and zones",
+  title: 'Shipping Management',
+  description: 'Manage shipping rates and zones',
 };
 
-export default function ShippingPage() {
+export default function ShippingPage () {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8">

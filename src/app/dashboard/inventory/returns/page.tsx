@@ -1,7 +1,7 @@
-import ItemReturnTable from "@/components/dashboard/inventory/returns/ItemReturnTable";
-import { fetchReturnedItems } from "@/components/dashboard/inventory/returns/utils/fetchReturnedItems";
+import ItemReturnTable from '@/components/dashboard/inventory/returns/ItemReturnTable';
+import { fetchReturnedItems } from '@/components/dashboard/inventory/returns/utils/fetchReturnedItems';
 
-async function ReturnsPage() {
+async function ReturnsPage () {
   const { returnedItems, error } = await fetchReturnedItems();
 
   return (

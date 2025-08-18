@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -8,8 +8,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   AreaChart,
   Area,
@@ -26,9 +26,9 @@ import {
   PieChart,
   Pie,
   Cell,
-} from "recharts";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+} from 'recharts';
+import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -37,21 +37,21 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import {
   getInventoryQuantityByLocation,
   getInventoryMetrics,
   BarChartData,
-} from "../services/chartDataServices";
-import { getInventoryTrends } from "../services/inventoryTrendServices";
+} from '../services/chartDataServices';
+import { getInventoryTrends } from '../services/inventoryTrendServices';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -59,9 +59,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { getLowStockItems, getOutOfStockItems, StockItem } from "../services/inventoryStockService";
-import { toast } from "@/components/ui/use-toast";
+} from '@/components/ui/table';
+import { getLowStockItems, getOutOfStockItems, StockItem } from '../services/inventoryStockService';
+import { toast } from '@/components/ui/use-toast';
 
 // Define interfaces for the data
 interface InventoryMetrics {
@@ -82,42 +82,45 @@ interface TrendData {
 }
 
 // Colors for the charts
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
-export function RealTimeInventoryDashboard() {
+export function RealTimeInventoryDashboard () {
   const [locationData, setLocationData] = useState<BarChartData>([]);
   const [trendData, setTrendData] = useState<TrendData[]>([]);
   const [metrics, setMetrics] = useState<InventoryMetrics | null>(null);
-  const [timeRange, setTimeRange] = useState("7days");
+  const [timeRange, setTimeRange] = useState('7days');
   const [isLoading, setIsLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogType, setDialogType] = useState<"lowStock" | "outOfStock">("lowStock");
+  const [dialogType, setDialogType] = useState<'lowStock' | 'outOfStock'>('lowStock');
   const [dialogItems, setDialogItems] = useState<StockItem[]>([]);
   const [dialogLoading, setDialogLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchData () {
       setIsLoading(true);
       try {
         // Fetch stock levels by location
         const locationResult = await getInventoryQuantityByLocation();
+
         if (locationResult.success && locationResult.data) {
           setLocationData(locationResult.data);
         }
 
         // Fetch inventory metrics
         const metricsResult = await getInventoryMetrics();
+
         if (metricsResult.success && metricsResult.data) {
           setMetrics(metricsResult.data);
         }
 
         // Fetch trend data
         const trendResult = await getInventoryTrends(timeRange);
+
         if (trendResult.success && trendResult.data) {
           setTrendData(trendResult.data);
         }
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error('Error fetching dashboard data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -132,28 +135,29 @@ export function RealTimeInventoryDashboard() {
 
   // Function to fetch and show low stock items
   const handleLowStockClick = async () => {
-    setDialogType("lowStock");
+    setDialogType('lowStock');
     setDialogLoading(true);
     setDialogOpen(true);
-    
+
     try {
       const result = await getLowStockItems(5);
+
       if (result.success && result.data) {
         setDialogItems(result.data);
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to load low stock items",
-          variant: "destructive"
+          title: 'Error',
+          description: result.error || 'Failed to load low stock items',
+          variant: 'destructive',
         });
         setDialogItems([]);
       }
     } catch (error) {
-      console.error("Error loading low stock items:", error);
+      console.error('Error loading low stock items:', error);
       toast({
-        title: "Error",
-        description: "Failed to load low stock items",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to load low stock items',
+        variant: 'destructive',
       });
       setDialogItems([]);
     } finally {
@@ -163,28 +167,29 @@ export function RealTimeInventoryDashboard() {
 
   // Function to fetch and show out of stock items
   const handleOutOfStockClick = async () => {
-    setDialogType("outOfStock");
+    setDialogType('outOfStock');
     setDialogLoading(true);
     setDialogOpen(true);
-    
+
     try {
       const result = await getOutOfStockItems();
+
       if (result.success && result.data) {
         setDialogItems(result.data);
       } else {
         toast({
-          title: "Error",
-          description: result.error || "Failed to load out of stock items",
-          variant: "destructive"
+          title: 'Error',
+          description: result.error || 'Failed to load out of stock items',
+          variant: 'destructive',
         });
         setDialogItems([]);
       }
     } catch (error) {
-      console.error("Error loading out of stock items:", error);
+      console.error('Error loading out of stock items:', error);
       toast({
-        title: "Error",
-        description: "Failed to load out of stock items",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to load out of stock items',
+        variant: 'destructive',
       });
       setDialogItems([]);
     } finally {
@@ -193,13 +198,13 @@ export function RealTimeInventoryDashboard() {
   };
 
   const getDialogTitle = () => {
-    return dialogType === "lowStock" ? "Low Stock Items" : "Out of Stock Items";
+    return dialogType === 'lowStock' ? 'Low Stock Items' : 'Out of Stock Items';
   };
 
   const getDialogDescription = () => {
-    return dialogType === "lowStock" 
-      ? "Items with stock levels below safety threshold" 
-      : "Items that are completely out of stock and need reordering";
+    return dialogType === 'lowStock'
+      ? 'Items with stock levels below safety threshold'
+      : 'Items that are completely out of stock and need reordering';
   };
 
   if (isLoading) {
@@ -252,7 +257,7 @@ export function RealTimeInventoryDashboard() {
               </p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Stock</CardTitle>
@@ -267,8 +272,8 @@ export function RealTimeInventoryDashboard() {
               </p>
             </CardContent>
           </Card>
-          
-          <Card 
+
+          <Card
             className="cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={handleLowStockClick}
           >
@@ -287,7 +292,7 @@ export function RealTimeInventoryDashboard() {
               </p>
             </CardContent>
           </Card>
-          
+
           <Card
             className="cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={handleOutOfStockClick}
@@ -374,8 +379,7 @@ export function RealTimeInventoryDashboard() {
                         fill="#8884d8"
                         dataKey="value"
                         nameKey="name"
-                        label={({ name, percent }) =>
-                          `${name}: ${(percent || 0 * 100).toFixed(0)}%`
+                        label={({ name, percent }) => `${name}: ${(percent || 0 * 100).toFixed(0)}%`
                         }
                       >
                         {locationData.map((entry, index) => (
@@ -408,9 +412,9 @@ export function RealTimeInventoryDashboard() {
                           Healthy Stock
                         </div>
                         <div className="text-2xl font-bold">
-                          {metrics.totalVariations -
-                            metrics.lowStockCount -
-                            metrics.outOfStockCount}
+                          {metrics.totalVariations
+                            - metrics.lowStockCount
+                            - metrics.outOfStockCount}
                           <span className="text-sm font-normal text-muted-foreground ml-2">
                             items
                           </span>
@@ -420,14 +424,14 @@ export function RealTimeInventoryDashboard() {
                             className="bg-green-500 h-2.5 rounded-full"
                             style={{
                               width: `${
-                                ((metrics.totalVariations -
-                                  metrics.lowStockCount -
-                                  metrics.outOfStockCount) /
-                                  metrics.totalVariations) *
-                                100
+                                ((metrics.totalVariations
+                                  - metrics.lowStockCount
+                                  - metrics.outOfStockCount)
+                                  / metrics.totalVariations)
+                                * 100
                               }%`,
                             }}
-                          ></div>
+                          />
                         </div>
                       </div>
 
@@ -446,12 +450,12 @@ export function RealTimeInventoryDashboard() {
                             className="bg-amber-500 h-2.5 rounded-full"
                             style={{
                               width: `${
-                                (metrics.lowStockCount /
-                                  metrics.totalVariations) *
-                                100
+                                (metrics.lowStockCount
+                                  / metrics.totalVariations)
+                                * 100
                               }%`,
                             }}
-                          ></div>
+                          />
                         </div>
                       </div>
 
@@ -470,12 +474,12 @@ export function RealTimeInventoryDashboard() {
                             className="bg-red-500 h-2.5 rounded-full"
                             style={{
                               width: `${
-                                (metrics.outOfStockCount /
-                                  metrics.totalVariations) *
-                                100
+                                (metrics.outOfStockCount
+                                  / metrics.totalVariations)
+                                * 100
                               }%`,
                             }}
-                          ></div>
+                          />
                         </div>
                       </div>
 
@@ -601,7 +605,7 @@ export function RealTimeInventoryDashboard() {
             <DialogTitle>{getDialogTitle()}</DialogTitle>
             <DialogDescription>{getDialogDescription()}</DialogDescription>
           </DialogHeader>
-          
+
           {dialogLoading ? (
             <div className="flex justify-center p-6">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -627,7 +631,7 @@ export function RealTimeInventoryDashboard() {
                     <TableCell>{item.location}</TableCell>
                     <TableCell className="text-right">
                       <Badge
-                        variant={item.stock === 0 ? "destructive" : "outline"}
+                        variant={item.stock === 0 ? 'destructive' : 'outline'}
                         className="ml-auto"
                       >
                         {item.stock}
@@ -645,7 +649,7 @@ export function RealTimeInventoryDashboard() {
               <p className="text-muted-foreground">No items to display</p>
             </div>
           )}
-          
+
           <div className="mt-4 flex justify-end">
             <Button onClick={() => setDialogOpen(false)}>Close</Button>
           </div>

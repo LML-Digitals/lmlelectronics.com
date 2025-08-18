@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 
-export async function findItemByBarcode(barcode: string) {
+export async function findItemByBarcode (barcode: string) {
   try {
     const variation = await prisma.inventoryVariation.findFirst({
       where: {
@@ -30,18 +30,18 @@ export async function findItemByBarcode(barcode: string) {
 
     return variation?.inventoryItem || null;
   } catch (error) {
-    console.error("Error finding item by barcode:", error);
-    throw new Error("Failed to find item by barcode");
+    console.error('Error finding item by barcode:', error);
+    throw new Error('Failed to find item by barcode');
   }
 }
 
 // Generate a unique barcode for a new variation
-export async function generateUniqueBarcode() {
+export async function generateUniqueBarcode () {
   // Generate a barcode with format: LML + timestamp + 3 random digits
   const timestamp = Date.now().toString().slice(-10);
   const randomDigits = Math.floor(Math.random() * 1000)
     .toString()
-    .padStart(3, "0");
+    .padStart(3, '0');
   const barcode = `LML${timestamp}${randomDigits}`;
 
   // Make sure it's unique
@@ -58,9 +58,9 @@ export async function generateUniqueBarcode() {
 }
 
 // Update a variation with a new barcode
-export async function updateVariationBarcode(
+export async function updateVariationBarcode (
   variationId: string,
-  barcode?: string
+  barcode?: string,
 ) {
   try {
     // If no barcode provided, generate one
@@ -73,7 +73,7 @@ export async function updateVariationBarcode(
 
     return finalBarcode;
   } catch (error) {
-    console.error("Error updating variation barcode:", error);
-    throw new Error("Failed to update variation barcode");
+    console.error('Error updating variation barcode:', error);
+    throw new Error('Failed to update variation barcode');
   }
 }

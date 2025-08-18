@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState, useTransition, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useState, useTransition, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Edit,
   Loader2,
   CalendarIcon,
   Check,
   ChevronsUpDown,
-} from "lucide-react";
-import { format } from "date-fns";
+} from 'lucide-react';
+import { format } from 'date-fns';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -23,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -32,23 +32,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 import {
   Command,
   CommandEmpty,
@@ -56,33 +56,33 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 
-import { updateExchange } from "./services/exchangeCrud";
-import { UpdateExchangeInput, ExchangeWithRelations } from "./services/types";
-import { Customer, Staff, InventoryItem, StoreLocation } from "@prisma/client";
-import { useState as useHookState } from "react";
-import { InventoryVariationData } from "./services/types";
-import { InventoryItemWithRelations } from "../items/types/ItemType";
-import { getItemStoreLocations } from "@/components/dashboard/inventory/location/services/itemLocationCrud";
+import { updateExchange } from './services/exchangeCrud';
+import { UpdateExchangeInput, ExchangeWithRelations } from './services/types';
+import { Customer, Staff, InventoryItem, StoreLocation } from '@prisma/client';
+import { useState as useHookState } from 'react';
+import { InventoryVariationData } from './services/types';
+import { InventoryItemWithRelations } from '../items/types/ItemType';
+import { getItemStoreLocations } from '@/components/dashboard/inventory/location/services/itemLocationCrud';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 
 // Define the form schema similar to AddExchangeForm but adapting as needed
 const formSchema = z.object({
   id: z.string(),
-  customerId: z.string().min(1, "Customer is required"),
-  locationId: z.number().min(1, "Location is required"),
+  customerId: z.string().min(1, 'Customer is required'),
+  locationId: z.number().min(1, 'Location is required'),
   returnedItemId: z.string(),
   newItemId: z.string(),
   returnedVariationId: z.string(),
   newVariationId: z.string(),
-  reason: z.string().min(3, "Reason is required"),
-  processedBy: z.string().min(1, "Staff member is required"),
+  reason: z.string().min(3, 'Reason is required'),
+  processedBy: z.string().min(1, 'Staff member is required'),
   status: z.string(),
   exchangedAt: z.date().optional(),
 });
@@ -97,7 +97,7 @@ interface EditExchangeDialogProps {
   isLoading: boolean;
 }
 
-export default function EditExchangeDialog({
+export default function EditExchangeDialog ({
   exchange,
   customers,
   staff,
@@ -117,9 +117,7 @@ export default function EditExchangeDialog({
   const [selectedReturnedItemId, setSelectedReturnedItemId] = useHookState<
     string | null
   >(exchange.returnedItemId);
-  const [selectedNewItemId, setSelectedNewItemId] = useHookState<string | null>(
-    exchange.newItemId
-  );
+  const [selectedNewItemId, setSelectedNewItemId] = useHookState<string | null>(exchange.newItemId);
   const [returnedItemVariations, setReturnedItemVariations] = useHookState<
     InventoryVariationData[]
   >([]);
@@ -152,14 +150,15 @@ export default function EditExchangeDialog({
         setIsFetchingLocations(true);
         try {
           const fetchedLocations = await getItemStoreLocations();
+
           setLocations(fetchedLocations);
         } catch (error) {
-          console.error("Error fetching locations:", error);
+          console.error('Error fetching locations:', error);
           toast({
-            variant: "destructive",
-            title: "Error fetching locations",
+            variant: 'destructive',
+            title: 'Error fetching locations',
             description:
-              (error as Error).message || "Could not fetch locations.",
+              (error as Error).message || 'Could not fetch locations.',
           });
         } finally {
           setIsFetchingLocations(false);
@@ -169,17 +168,19 @@ export default function EditExchangeDialog({
       fetchLocations();
 
       // Load variations based on current form values or initial exchange data
-      const initialReturnedItemId =
-        form.getValues("returnedItemId") || exchange.returnedItemId;
-      const initialNewItemId =
-        form.getValues("newItemId") || exchange.newItemId;
+      const initialReturnedItemId
+        = form.getValues('returnedItemId') || exchange.returnedItemId;
+      const initialNewItemId
+        = form.getValues('newItemId') || exchange.newItemId;
 
       if (initialReturnedItemId) {
         const returnedVariations = getVariationsForItem(initialReturnedItemId);
+
         setReturnedItemVariations(returnedVariations);
       }
       if (initialNewItemId) {
         const newVariations = getVariationsForItem(initialNewItemId);
+
         setNewItemVariations(newVariations);
       }
     }
@@ -188,6 +189,7 @@ export default function EditExchangeDialog({
   // Get variations from inventory items directly
   const getVariationsForItem = (itemId: string) => {
     const selectedItem = inventoryItems.find((item) => item.id === itemId);
+
     if (selectedItem && selectedItem.variations) {
       return selectedItem.variations.map((variation) => ({
         id: variation.id,
@@ -196,10 +198,11 @@ export default function EditExchangeDialog({
         image: variation.image,
       }));
     }
+
     return [];
   };
 
-  function onSubmit(values: FormValues) {
+  function onSubmit (values: FormValues) {
     startTransition(async () => {
       try {
         const updateData: UpdateExchangeInput = {
@@ -217,8 +220,8 @@ export default function EditExchangeDialog({
 
         // If exchangedAt wasn't changed or is invalid, don't include it in the update
         if (
-          !values.exchangedAt ||
-          isNaN(new Date(values.exchangedAt).getTime())
+          !values.exchangedAt
+          || isNaN(new Date(values.exchangedAt).getTime())
         ) {
           delete updateData.exchangedAt;
         } else {
@@ -228,22 +231,22 @@ export default function EditExchangeDialog({
         const response = await updateExchange(updateData);
 
         if (!response.success) {
-          throw new Error(response.error || "Failed to update exchange");
+          throw new Error(response.error || 'Failed to update exchange');
         }
 
         toast({
-          title: "Exchange updated",
-          description: "The exchange has been successfully updated",
+          title: 'Exchange updated',
+          description: 'The exchange has been successfully updated',
         });
 
         setOpen(false);
         router.refresh();
       } catch (error) {
         toast({
-          variant: "destructive",
-          title: "Error updating exchange",
+          variant: 'destructive',
+          title: 'Error updating exchange',
           description:
-            (error as Error).message || "An unexpected error occurred",
+            (error as Error).message || 'An unexpected error occurred',
         });
       }
     });
@@ -299,8 +302,8 @@ export default function EditExchangeDialog({
                           role="combobox"
                           aria-expanded={customerPopoverOpen}
                           className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
+                            'w-full justify-between',
+                            !field.value && 'text-muted-foreground',
                           )}
                           disabled={
                             isPending || isLoading || isFetchingLocations
@@ -308,15 +311,11 @@ export default function EditExchangeDialog({
                         >
                           {field.value
                             ? `${
-                                customers.find(
-                                  (customer) => customer.id === field.value
-                                )?.firstName
-                              } ${
-                                customers.find(
-                                  (customer) => customer.id === field.value
-                                )?.lastName
-                              }`
-                            : "Select a customer"}
+                              customers.find((customer) => customer.id === field.value)?.firstName
+                            } ${
+                              customers.find((customer) => customer.id === field.value)?.lastName
+                            }`
+                            : 'Select a customer'}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
@@ -332,16 +331,16 @@ export default function EditExchangeDialog({
                                 key={customer.id}
                                 value={`${customer.firstName} ${customer.lastName}`.toLowerCase()}
                                 onSelect={() => {
-                                  form.setValue("customerId", customer.id);
+                                  form.setValue('customerId', customer.id);
                                   setCustomerPopoverOpen(false);
                                 }}
                               >
                                 <Check
                                   className={cn(
-                                    "mr-2 h-4 w-4",
+                                    'mr-2 h-4 w-4',
                                     field.value === customer.id
-                                      ? "opacity-100"
-                                      : "opacity-0"
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
                                   )}
                                 />
                                 {customer.firstName} {customer.lastName}
@@ -375,8 +374,8 @@ export default function EditExchangeDialog({
                           role="combobox"
                           aria-expanded={locationPopoverOpen}
                           className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
+                            'w-full justify-between',
+                            !field.value && 'text-muted-foreground',
                           )}
                           disabled={
                             isPending || isLoading || isFetchingLocations
@@ -384,8 +383,8 @@ export default function EditExchangeDialog({
                         >
                           {field.value
                             ? locations.find((loc) => loc.id === field.value)
-                                ?.name
-                            : "Select a location"}
+                              ?.name
+                            : 'Select a location'}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
@@ -401,16 +400,16 @@ export default function EditExchangeDialog({
                                 key={location.id}
                                 value={location.name}
                                 onSelect={() => {
-                                  form.setValue("locationId", location.id);
+                                  form.setValue('locationId', location.id);
                                   setLocationPopoverOpen(false);
                                 }}
                               >
                                 <Check
                                   className={cn(
-                                    "mr-2 h-4 w-4",
+                                    'mr-2 h-4 w-4',
                                     field.value === location.id
-                                      ? "opacity-100"
-                                      : "opacity-0"
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
                                   )}
                                 />
                                 {location.name}
@@ -446,18 +445,16 @@ export default function EditExchangeDialog({
                               role="combobox"
                               aria-expanded={returnedItemPopoverOpen}
                               className={cn(
-                                "w-full justify-between",
-                                !field.value && "text-muted-foreground"
+                                'w-full justify-between',
+                                !field.value && 'text-muted-foreground',
                               )}
                               disabled={
                                 isPending || isLoading || isFetchingLocations
                               }
                             >
                               {field.value
-                                ? inventoryItems.find(
-                                    (item) => item.id === field.value
-                                  )?.name
-                                : "Select returned item"}
+                                ? inventoryItems.find((item) => item.id === field.value)?.name
+                                : 'Select returned item'}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
@@ -473,22 +470,24 @@ export default function EditExchangeDialog({
                                     key={item.id}
                                     value={item.name}
                                     onSelect={() => {
-                                      form.setValue("returnedItemId", item.id);
+                                      form.setValue('returnedItemId', item.id);
                                       const itemId = item.id;
+
                                       setSelectedReturnedItemId(itemId);
-                                      const variations =
-                                        getVariationsForItem(itemId);
+                                      const variations
+                                        = getVariationsForItem(itemId);
+
                                       setReturnedItemVariations(variations);
-                                      form.setValue("returnedVariationId", "");
+                                      form.setValue('returnedVariationId', '');
                                       setReturnedItemPopoverOpen(false);
                                     }}
                                   >
                                     <Check
                                       className={cn(
-                                        "mr-2 h-4 w-4",
+                                        'mr-2 h-4 w-4',
                                         field.value === item.id
-                                          ? "opacity-100"
-                                          : "opacity-0"
+                                          ? 'opacity-100'
+                                          : 'opacity-0',
                                       )}
                                     />
                                     {item.name}
@@ -559,18 +558,16 @@ export default function EditExchangeDialog({
                               role="combobox"
                               aria-expanded={newItemPopoverOpen}
                               className={cn(
-                                "w-full justify-between",
-                                !field.value && "text-muted-foreground"
+                                'w-full justify-between',
+                                !field.value && 'text-muted-foreground',
                               )}
                               disabled={
                                 isPending || isLoading || isFetchingLocations
                               }
                             >
                               {field.value
-                                ? inventoryItems.find(
-                                    (item) => item.id === field.value
-                                  )?.name
-                                : "Select new item"}
+                                ? inventoryItems.find((item) => item.id === field.value)?.name
+                                : 'Select new item'}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
@@ -586,22 +583,24 @@ export default function EditExchangeDialog({
                                     key={item.id}
                                     value={item.name}
                                     onSelect={() => {
-                                      form.setValue("newItemId", item.id);
+                                      form.setValue('newItemId', item.id);
                                       const itemId = item.id;
+
                                       setSelectedNewItemId(itemId);
-                                      const variations =
-                                        getVariationsForItem(itemId);
+                                      const variations
+                                        = getVariationsForItem(itemId);
+
                                       setNewItemVariations(variations);
-                                      form.setValue("newVariationId", "");
+                                      form.setValue('newVariationId', '');
                                       setNewItemPopoverOpen(false);
                                     }}
                                   >
                                     <Check
                                       className={cn(
-                                        "mr-2 h-4 w-4",
+                                        'mr-2 h-4 w-4',
                                         field.value === item.id
-                                          ? "opacity-100"
-                                          : "opacity-0"
+                                          ? 'opacity-100'
+                                          : 'opacity-0',
                                       )}
                                     />
                                     {item.name}
@@ -716,13 +715,13 @@ export default function EditExchangeDialog({
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground',
                             )}
                             disabled={isPending || isLoading}
                           >
                             {field.value ? (
-                              format(new Date(field.value), "PPP")
+                              format(new Date(field.value), 'PPP')
                             ) : (
                               <span>Select date</span>
                             )}
@@ -790,7 +789,7 @@ export default function EditExchangeDialog({
                 type="submit"
                 disabled={isPending || isLoading || isFetchingLocations}
               >
-                {isPending ? "Updating..." : "Update Exchange"}
+                {isPending ? 'Updating...' : 'Update Exchange'}
               </Button>
             </DialogFooter>
           </form>

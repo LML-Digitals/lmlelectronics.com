@@ -66,7 +66,7 @@ interface EditTransferItemDialogProps {
   transfer: ExtendedInventoryTransfer;
 }
 
-export function EditTransferItemDialog({
+export function EditTransferItemDialog ({
   transfer,
 }: EditTransferItemDialogProps) {
   const { toast } = useToast();
@@ -93,8 +93,8 @@ export function EditTransferItemDialog({
   const [inventoryError, setInventoryError] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
 
-  const [selectedItem, setSelectedItem] =
-    useState<InventoryItemWithRelations | null>(null);
+  const [selectedItem, setSelectedItem]
+    = useState<InventoryItemWithRelations | null>(null);
   const [variations, setVariations] = useState<any[]>([]);
   const [fromVariationLocations, setFromVariationLocations] = useState<
     StockWithLocation[]
@@ -117,14 +117,13 @@ export function EditTransferItemDialog({
         getInventoryItems(),
         getItemStoreLocations(),
       ]);
+
       setInventoryItems(items);
       setLocations(locs);
 
       // Find the selected item
-      const item = items.find(
-        (item: InventoryItemWithRelations) =>
-          transfer && item.id === transfer.inventoryItemId
-      );
+      const item = items.find((item: InventoryItemWithRelations) => transfer && item.id === transfer.inventoryItemId);
+
       setSelectedItem(item || null);
 
       // Set form values
@@ -158,19 +157,15 @@ export function EditTransferItemDialog({
   // Handle selected variation change
   useEffect(() => {
     if (variations.length > 0) {
-      const selectedVariation = variations.find(
-        (vr) => vr.id === Number(getValues('InventoryVariationId'))
-      );
+      const selectedVariation = variations.find((vr) => vr.id === Number(getValues('InventoryVariationId')));
 
       if (selectedVariation) {
-        setFromVariationLocations(
-          selectedVariation.stockLevels.map((sl: any) => ({
-            id: sl.id,
-            stock: sl.stock,
-            locationId: sl.locationId,
-            location: sl.location,
-          }))
-        );
+        setFromVariationLocations(selectedVariation.stockLevels.map((sl: any) => ({
+          id: sl.id,
+          stock: sl.stock,
+          locationId: sl.locationId,
+          location: sl.location,
+        })));
       } else {
         setFromVariationLocations([]);
       }
@@ -179,6 +174,7 @@ export function EditTransferItemDialog({
 
   const handleItemChange = (itemId: string) => {
     const item = inventoryItems.find((item) => item.id === itemId);
+
     setSelectedItem(item || null);
   };
 
@@ -186,14 +182,12 @@ export function EditTransferItemDialog({
     const variation = variations.find((vr) => vr.id === variationId);
 
     if (variation) {
-      setFromVariationLocations(
-        variation.stockLevels.map((sl: any) => ({
-          id: sl.id,
-          stock: sl.stock,
-          locationId: sl.locationId,
-          location: sl.location,
-        }))
-      );
+      setFromVariationLocations(variation.stockLevels.map((sl: any) => ({
+        id: sl.id,
+        stock: sl.stock,
+        locationId: sl.locationId,
+        location: sl.location,
+      })));
     } else {
       setFromVariationLocations([]);
     }
@@ -205,32 +199,33 @@ export function EditTransferItemDialog({
         type: 'manual',
         message: "You can't transfer this variation to the same location.",
       });
+
       return;
     }
 
     // In edit mode, we need to check if the from location has changed
     // If it has changed, we need to validate stock amount
     if (transfer && String(transfer.fromLocationId) !== data.fromLocationId) {
-      const locationStockLevel = fromVariationLocations.find(
-        (sl) => sl.locationId === Number(data.fromLocationId)
-      );
+      const locationStockLevel = fromVariationLocations.find((sl) => sl.locationId === Number(data.fromLocationId));
 
       if (!locationStockLevel) {
         setError('fromLocationId', {
           type: 'manual',
           message: 'This variation is not available in the selected location',
         });
+
         return;
       }
 
-      const inValidVariationQuantity =
-        locationStockLevel.stock < Number(data.quantity);
+      const inValidVariationQuantity
+        = locationStockLevel.stock < Number(data.quantity);
 
       if (inValidVariationQuantity) {
         setError('quantity', {
           type: 'manual',
           message: `Insufficient quantity, try less you have (${locationStockLevel.stock}) in the from location selected`,
         });
+
         return;
       }
     }
@@ -245,6 +240,7 @@ export function EditTransferItemDialog({
           fromLocationId: Number(data.fromLocationId),
           toLocationId: Number(data.toLocationId),
         });
+
         if (res.status === 'success') {
           toast({
             title: 'Success',
@@ -390,26 +386,26 @@ export function EditTransferItemDialog({
                       <SelectContent>
                         {fromVariationLocations.length > 0
                           ? fromVariationLocations.map((stockLocation) => (
-                              <SelectItem
-                                key={stockLocation.location.id}
-                                value={String(stockLocation.locationId)}
-                              >
-                                <div className="flex items-center justify-between w-full">
-                                  <span>{stockLocation.location.name}</span>
-                                  <span className="ml-2 px-2 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs">
+                            <SelectItem
+                              key={stockLocation.location.id}
+                              value={String(stockLocation.locationId)}
+                            >
+                              <div className="flex items-center justify-between w-full">
+                                <span>{stockLocation.location.name}</span>
+                                <span className="ml-2 px-2 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs">
                                     Stock: {stockLocation.stock}
-                                  </span>
-                                </div>
-                              </SelectItem>
-                            ))
+                                </span>
+                              </div>
+                            </SelectItem>
+                          ))
                           : locations.map((location) => (
-                              <SelectItem
-                                key={location.id}
-                                value={String(location.id)}
-                              >
-                                {location.name}
-                              </SelectItem>
-                            ))}
+                            <SelectItem
+                              key={location.id}
+                              value={String(location.id)}
+                            >
+                              {location.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   )}

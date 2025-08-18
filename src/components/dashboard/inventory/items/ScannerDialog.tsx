@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -6,26 +6,26 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Scan, CircleDashed } from "lucide-react";
-import { useState, useRef } from "react";
-import { BarcodeScanner } from "./BarcodeScanner";
-import { findItemByBarcode } from "./services/barcodeService";
-import { useToast } from "@/components/ui/use-toast";
-import { InventoryItemWithRelations } from "./types/ItemType";
-import { useInventoryData } from "./hooks/useInventoryData";
-import { AddItemDialog } from "./AddItemDialog";
-import { ItemDetailsDialog } from "./ItemDetailsDialog";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Scan, CircleDashed } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { BarcodeScanner } from './BarcodeScanner';
+import { findItemByBarcode } from './services/barcodeService';
+import { useToast } from '@/components/ui/use-toast';
+import { InventoryItemWithRelations } from './types/ItemType';
+import { useInventoryData } from './hooks/useInventoryData';
+import { AddItemDialog } from './AddItemDialog';
+import { ItemDetailsDialog } from './ItemDetailsDialog';
+import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
 
 interface ScannerDialogProps {
   onItemFound: (item: InventoryItemWithRelations, scanResult: string) => void;
   onRefresh: () => void;
 }
 
-export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
+export function ScannerDialog ({ onItemFound, onRefresh }: ScannerDialogProps) {
   const { toast } = useToast();
   const { categories, suppliers, locations } = useInventoryData();
 
@@ -41,12 +41,10 @@ export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
   // View states - only one can be true at a time
   const [isLoading, setIsLoading] = useState(false);
   const [scanResult, setScanResult] = useState<string | null>(null);
-  const [scanType, setScanType] = useState<"sku" | "barcode" | null>(null);
+  const [scanType, setScanType] = useState<'sku' | 'barcode' | null>(null);
 
   // Item-related states
-  const [foundItem, setFoundItem] = useState<InventoryItemWithRelations | null>(
-    null
-  );
+  const [foundItem, setFoundItem] = useState<InventoryItemWithRelations | null>(null);
   const [foundVariation, setFoundVariation] = useState<any | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [showAddItem, setShowAddItem] = useState(false);
@@ -71,13 +69,11 @@ export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
       .then((item) => {
         if (item) {
           // Find which variation matched the barcode
-          const matchingVariation = item.variations.find(
-            (v) => v.sku === barcode || v.barcode === barcode
-          );
+          const matchingVariation = item.variations.find((v) => v.sku === barcode || v.barcode === barcode);
 
           // Determine if we matched by SKU or barcode
           if (matchingVariation) {
-            setScanType(matchingVariation.sku === barcode ? "sku" : "barcode");
+            setScanType(matchingVariation.sku === barcode ? 'sku' : 'barcode');
             setFoundVariation(matchingVariation);
           }
 
@@ -89,9 +85,9 @@ export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
 
           // Only show toast if the dialog is being closed after finding item
           toast({
-            title: "Success",
+            title: 'Success',
             description: `Found item: ${item.name} - ${
-              matchingVariation?.name || ""
+              matchingVariation?.name || ''
             }`,
           });
 
@@ -106,9 +102,9 @@ export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
       })
       .catch((error) => {
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to look up barcode",
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Failed to look up barcode',
         });
 
         // Only resume scanning on error if the dialog is still open
@@ -144,8 +140,8 @@ export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
     setOpen(false);
     onRefresh();
     toast({
-      title: "Success",
-      description: "Item added successfully",
+      title: 'Success',
+      description: 'Item added successfully',
     });
   };
 
@@ -155,8 +151,7 @@ export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
         open={open}
         onOpenChange={(isOpen) => {
           setOpen(isOpen);
-          if (!isOpen) handleDialogClose();
-          else {
+          if (!isOpen) { handleDialogClose(); } else {
             // Reset scan state when opening dialog
             lastScannedBarcode.current = null;
             isProcessingScan.current = false;
@@ -173,7 +168,7 @@ export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {isLoading ? "Looking up item..." : "Scan Barcode"}
+              {isLoading ? 'Looking up item...' : 'Scan Barcode'}
             </DialogTitle>
           </DialogHeader>
 
@@ -203,7 +198,7 @@ export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
                 <Button variant="secondary" onClick={resetScanner}>
                   Scan Again
                 </Button>
-                {/* 
+                {/*
                 <Button
                   variant="default"
                   onClick={() => {
@@ -220,14 +215,13 @@ export function ScannerDialog({ onItemFound, onRefresh }: ScannerDialogProps) {
           ) : (
             // Scanner state - add a key to force remount when resetting
             <BarcodeScanner
-              key={`scanner-${lastScannedBarcode.current || "initial"}`}
+              key={`scanner-${lastScannedBarcode.current || 'initial'}`}
               onScanSuccess={handleScan}
-              onScanError={(error) =>
-                toast({
-                  variant: "destructive",
-                  title: "Error",
-                  description: "Failed to initialize scanner",
-                })
+              onScanError={(error) => toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to initialize scanner',
+              })
               }
               isStarted={scannerActive}
               onStart={() => setScannerActive(true)}

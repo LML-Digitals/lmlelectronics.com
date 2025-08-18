@@ -87,11 +87,13 @@ export const AuditTable = ({ audits }: AuditTableProps) => {
   useEffect(() => {
     const fetchInventoryItems = async () => {
       const data = await getInventoryItems();
+
       setInventoryItems(data);
     };
 
     const fetchLocations = async () => {
       const data = await getItemStoreLocations();
+
       setLocations(data);
     };
 
@@ -111,20 +113,20 @@ export const AuditTable = ({ audits }: AuditTableProps) => {
   // Apply filters to audits
   const filteredAudits = audits.filter((audit) => {
     // Search filter for item name
-    const matchesSearch =
-      searchQuery === '' ||
-      audit.inventoryItem.name
+    const matchesSearch
+      = searchQuery === ''
+      || audit.inventoryItem.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
 
     // Location filter
-    const matchesLocation =
-      locationFilter === 'all' ||
-      audit.location.id === parseInt(locationFilter);
+    const matchesLocation
+      = locationFilter === 'all'
+      || audit.location.id === parseInt(locationFilter);
 
     // Status filter
-    const matchesStatus =
-      statusFilter === 'all' || audit.status === statusFilter;
+    const matchesStatus
+      = statusFilter === 'all' || audit.status === statusFilter;
 
     return matchesSearch && matchesLocation && matchesStatus;
   });
@@ -136,6 +138,7 @@ export const AuditTable = ({ audits }: AuditTableProps) => {
         description: 'You need to be logged in to perform this action',
         variant: 'destructive',
       });
+
       return;
     }
 
@@ -178,7 +181,7 @@ export const AuditTable = ({ audits }: AuditTableProps) => {
 
   // Function to handle delete
   const handleDelete = async () => {
-    if (!selectedAudit) return;
+    if (!selectedAudit) { return; }
 
     const result = await deleteInventoryAudit(selectedAudit.id);
 
@@ -286,8 +289,8 @@ export const AuditTable = ({ audits }: AuditTableProps) => {
                   >
                     <TableCell className="font-medium">{audit.inventoryItem.name}</TableCell>
                     <TableCell>
-                      {audit.inventoryVariation.name ||
-                        audit.inventoryVariation.sku}
+                      {audit.inventoryVariation.name
+                        || audit.inventoryVariation.sku}
                     </TableCell>
                     <TableCell>{audit.location.name}</TableCell>
                     <TableCell>{audit.recordedStock}</TableCell>

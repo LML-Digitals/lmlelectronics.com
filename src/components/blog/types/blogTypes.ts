@@ -1,5 +1,5 @@
-import { Blog, Tag, BlogCategory } from "@prisma/client";
-import { Prisma } from "@prisma/client";
+import { Blog, Tag, BlogCategory } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 export type BlogWithDetailsType = Prisma.BlogGetPayload<{
   include: {

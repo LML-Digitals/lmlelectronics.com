@@ -1,20 +1,21 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 // import BadgeComponent from "./BadgeComponent"; // Removed
-import { updateBlogSlugs } from "@/components/blog/services/blogCrud";
-import { toast } from "../../ui/use-toast";
+import { updateBlogSlugs } from '@/components/blog/services/blogCrud';
+import { toast } from '../../ui/use-toast';
 // Use a more specific type if available, like BlogWithAuthorAndTagsType or BlogWithDetailsType
 // Assuming BlogWithDetailsType is passed which includes category
-import { BlogWithDetailsType } from "@/components/blog/types/blogTypes";
-import router from "next/router";
-import { Badge } from "@/components/ui/badge";
-import BadgeComponent from "./BadgeComponent";
+import { BlogWithDetailsType } from '@/components/blog/types/blogTypes';
+import router from 'next/router';
+import { Badge } from '@/components/ui/badge';
+import BadgeComponent from './BadgeComponent';
 
 // Utility function to capitalize the first letter of a string
-function capitalizeFirstLetter(word: string): string {
-  if (!word) return "";
+function capitalizeFirstLetter (word: string): string {
+  if (!word) { return ''; }
+
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
@@ -22,8 +23,8 @@ type BlogCardProps = {
   blog: BlogWithDetailsType; // Updated type to include category
 };
 
-function BlogCard({ blog }: BlogCardProps) {
-  const encodedSlug = encodeURIComponent(blog.slug || "");
+function BlogCard ({ blog }: BlogCardProps) {
+  const encodedSlug = encodeURIComponent(blog.slug || '');
 
   // NOTE: The handleGenerateSlug functionality might be better placed in an admin interface
   // rather than directly on the public-facing blog card.
@@ -31,38 +32,38 @@ function BlogCard({ blog }: BlogCardProps) {
     try {
       // Add try-catch for better error handling
       const res = await updateBlogSlugs();
+
       if (res) {
         toast({
-          title: "Slugs generated",
-          description: "Slug has been generated for all blogs",
+          title: 'Slugs generated',
+          description: 'Slug has been generated for all blogs',
         });
       } else {
         toast({
-          title: "Error",
-          description: "Failed to generate slugs",
-          variant: "destructive", // Use destructive variant for errors
+          title: 'Error',
+          description: 'Failed to generate slugs',
+          variant: 'destructive', // Use destructive variant for errors
         });
       }
     } catch (error) {
-      console.error("Error generating slugs:", error);
+      console.error('Error generating slugs:', error);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred while generating slugs.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'An unexpected error occurred while generating slugs.',
+        variant: 'destructive',
       });
     }
   };
-
 
   return (
     <div className="group relative bg-white rounded-3xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden h-full flex flex-col">
       <Link href={`/blogs/${encodedSlug}`} className=" flex flex-col flex-grow">
         {/* Image Section - Removed aspect ratio, added fixed height */}
         <div className="relative h-48 overflow-hidden flex-shrink-0">
-          {" "}
+          {' '}
           {/* Set fixed height & ensure overflow is hidden */}
           <Image
-            src={blog.image ? blog.image : "/logo.png"}
+            src={blog.image ? blog.image : '/logo.png'}
             alt={blog.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -76,7 +77,7 @@ function BlogCard({ blog }: BlogCardProps) {
           <div className="mb-3 flex-shrink-0">
             {/* Display Category */}
             {blog.category && (
-                <BadgeComponent categoryName={blog.category.name} />
+              <BadgeComponent categoryName={blog.category.name} />
             )}
           </div>
 
@@ -95,16 +96,16 @@ function BlogCard({ blog }: BlogCardProps) {
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <span>Staff</span>
             <span>•</span>
-            <span>{new Date(blog.createdAt).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric"
+            <span>{new Date(blog.createdAt).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
             })}</span>
           </div>
           {/* Display Tags as comma-separated text */}
           <div className="flex flex-wrap gap-2">
             {blog.tags.map((tag) => (
-              <Link key={tag.id} href={`/blogs/tags/${encodeURIComponent(tag.name.toLowerCase().replace(/ /g, "-"))}`}>
+              <Link key={tag.id} href={`/blogs/tags/${encodeURIComponent(tag.name.toLowerCase().replace(/ /g, '-'))}`}>
                 <Badge key={tag.id} variant="default">
                   {capitalizeFirstLetter(tag.name)}
                 </Badge>
@@ -117,7 +118,7 @@ function BlogCard({ blog }: BlogCardProps) {
       {/* Slug Generation Button - Keep outside the link */}
       {!blog.slug && (
         <div className="absolute top-2 right-2 z-10">
-          {" "}
+          {' '}
           {/* Position button */}
           <button
             onClick={(e) => {

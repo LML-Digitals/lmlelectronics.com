@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+} from '@/components/ui/select';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface OrdersPaginationProps {
   currentPage: number;
@@ -18,7 +18,7 @@ interface OrdersPaginationProps {
   limit: number;
 }
 
-export function OrdersPagination({
+export function OrdersPagination ({
   currentPage,
   totalPages,
   total,
@@ -29,14 +29,16 @@ export function OrdersPagination({
 
   const updatePage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("page", page.toString());
+
+    params.set('page', page.toString());
     router.push(`/dashboard/pos/orders?${params.toString()}`);
   };
 
   const updateLimit = (newLimit: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("limit", newLimit);
-    params.set("page", "1"); // Reset to first page when changing limit
+
+    params.set('limit', newLimit);
+    params.set('page', '1'); // Reset to first page when changing limit
     router.push(`/dashboard/pos/orders?${params.toString()}`);
   };
 
@@ -92,6 +94,7 @@ export function OrdersPagination({
           {/* Show page numbers */}
           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
             let pageNumber;
+
             if (totalPages <= 5) {
               pageNumber = i + 1;
             } else if (currentPage <= 3) {
@@ -105,7 +108,7 @@ export function OrdersPagination({
             return (
               <Button
                 key={pageNumber}
-                variant={currentPage === pageNumber ? "default" : "outline"}
+                variant={currentPage === pageNumber ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => updatePage(pageNumber)}
                 className="w-7 h-7 sm:w-8 sm:h-8 p-0 text-xs sm:text-sm"

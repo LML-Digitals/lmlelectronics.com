@@ -1,31 +1,32 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import WarrantyTypeTable from "@/components/dashboard/warranty/WarrantyTypeTable";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
+import React, { useState } from 'react';
+import WarrantyTypeTable from '@/components/dashboard/warranty/WarrantyTypeTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { HelpCircle, Settings, Database } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { seedWarrantyTypes } from "@/components/dashboard/warranty/services/warrantyTypeService";
-import { toast } from "@/components/ui/use-toast";
+} from '@/components/ui/card';
+import { HelpCircle, Settings, Database } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { seedWarrantyTypes } from '@/components/dashboard/warranty/services/warrantyTypeService';
+import { toast } from '@/components/ui/use-toast';
 
-export default function WarrantyTypesPage() {
+export default function WarrantyTypesPage () {
   const [isSeeding, setIsSeeding] = useState(false);
 
   const handleSeedTypes = async () => {
     setIsSeeding(true);
     try {
       const result = await seedWarrantyTypes();
+
       if (result.success) {
         toast({
-          title: result.wasSeeded ? "Success" : "Info",
+          title: result.wasSeeded ? 'Success' : 'Info',
           description: result.message,
         });
         // Refresh the page to show the new types
@@ -34,17 +35,17 @@ export default function WarrantyTypesPage() {
         }
       } else {
         toast({
-          title: "Error",
+          title: 'Error',
           description: result.message,
-          variant: "destructive",
+          variant: 'destructive',
         });
       }
     } catch (error) {
-      console.error("Error seeding warranty types:", error);
+      console.error('Error seeding warranty types:', error);
       toast({
-        title: "Error",
-        description: "Failed to seed warranty types. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to seed warranty types. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSeeding(false);
@@ -69,7 +70,7 @@ export default function WarrantyTypesPage() {
           >
             {isSeeding ? (
               <>
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                 <span>Seeding...</span>
               </>
             ) : (

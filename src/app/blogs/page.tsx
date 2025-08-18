@@ -134,12 +134,12 @@ export default async function BlogPage () {
               'url': 'https://lmlelectronics.com',
               'logo': {
                 '@type': 'ImageObject',
-                'url': 'https://lmlelectronics.com/logo.png'
-              }
+                'url': 'https://lmlelectronics.com/logo.png',
+              },
             },
             'mainEntityOfPage': {
               '@type': 'WebPage',
-              '@id': 'https://lmlelectronics.com/blogs'
+              '@id': 'https://lmlelectronics.com/blogs',
             },
             'breadcrumb': {
               '@type': 'BreadcrumbList',
@@ -148,17 +148,17 @@ export default async function BlogPage () {
                   '@type': 'ListItem',
                   'position': 1,
                   'name': 'Home',
-                  'item': 'https://lmlelectronics.com'
+                  'item': 'https://lmlelectronics.com',
                 },
                 {
                   '@type': 'ListItem',
                   'position': 2,
                   'name': 'Blog',
-                  'item': 'https://lmlelectronics.com/blogs'
-                }
-              ]
-            }
-          })
+                  'item': 'https://lmlelectronics.com/blogs',
+                },
+              ],
+            },
+          }),
         }}
       />
 
@@ -175,27 +175,27 @@ export default async function BlogPage () {
                 'name': 'What topics does the LML Repair blog cover?',
                 'acceptedAnswer': {
                   '@type': 'Answer',
-                  'text': 'Our blog covers a wide range of topics including device repair tips, maintenance guides, tech insights, troubleshooting advice, and the latest updates in device repair technology.'
-                }
+                  'text': 'Our blog covers a wide range of topics including device repair tips, maintenance guides, tech insights, troubleshooting advice, and the latest updates in device repair technology.',
+                },
               },
               {
                 '@type': 'Question',
                 'name': 'How often is the LML Repair blog updated?',
                 'acceptedAnswer': {
                   '@type': 'Answer',
-                  'text': 'We regularly update our blog with new content, including repair guides, tech tips, and industry insights. Check back frequently for the latest articles and updates.'
-                }
+                  'text': 'We regularly update our blog with new content, including repair guides, tech tips, and industry insights. Check back frequently for the latest articles and updates.',
+                },
               },
               {
                 '@type': 'Question',
                 'name': 'Can I request specific topics for the blog?',
                 'acceptedAnswer': {
                   '@type': 'Answer',
-                  'text': 'Yes, we welcome topic suggestions from our readers. Feel free to contact us with your ideas, and our team of experts will consider them for future blog posts.'
-                }
-              }
-            ]
-          })
+                  'text': 'Yes, we welcome topic suggestions from our readers. Feel free to contact us with your ideas, and our team of experts will consider them for future blog posts.',
+                },
+              },
+            ],
+          }),
         }}
       />
     </>

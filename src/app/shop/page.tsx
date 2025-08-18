@@ -1,49 +1,49 @@
-import type { Metadata } from "next";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import type { InventoryItemCategory } from "@/types/api";
+import type { Metadata } from 'next';
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import type { InventoryItemCategory } from '@/types/api';
 
-import CategoryGrid from "@/components/products/CategoryGrid";
-import ProductListing from "@/components/products/ProductListing";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import PageHero from "@/components/PageHero";
-import ProductsClientPage from "./ProductsClientPage";
-import Script from "next/script";
-import { getInventoryCategories } from "@/components/dashboard/inventory/categories/services/itemCategoryCrud";
+import CategoryGrid from '@/components/products/CategoryGrid';
+import ProductListing from '@/components/products/ProductListing';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import PageHero from '@/components/PageHero';
+import ProductsClientPage from './ProductsClientPage';
+import Script from 'next/script';
+import { getInventoryCategories } from '@/components/dashboard/inventory/categories/services/itemCategoryCrud';
 
+export async function generateMetadata (): Promise<Metadata> {
+  const baseUrl = 'https://lmlelectronics.com';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const baseUrl = "https://lmlelectronics.com";
   return {
-    title: "Shop - High-Quality Parts, Devices & Accessories | LML Electronics",
+    title: 'Shop - High-Quality Parts, Devices & Accessories | LML Electronics',
     description:
-      "Shop our extensive collection of high-quality device parts, accessories, and replacement components. Find genuine parts for phones, tablets, and laptops with warranty and expert support.",
+      'Shop our extensive collection of high-quality device parts, accessories, and replacement components. Find genuine parts for phones, tablets, and laptops with warranty and expert support.',
     keywords:
-      "device parts, phone accessories, tablet parts, laptop components, replacement parts, tech accessories, genuine parts, device repair parts, high-quality components, repair accessories",
+      'device parts, phone accessories, tablet parts, laptop components, replacement parts, tech accessories, genuine parts, device repair parts, high-quality components, repair accessories',
     openGraph: {
-      title: "Shop - High-Quality Parts, Devices & Accessories | LML Electronics",
+      title: 'Shop - High-Quality Parts, Devices & Accessories | LML Electronics',
       description:
-        "Shop our extensive collection of high-quality device parts, accessories, and replacement components. Find genuine parts for phones, tablets, and laptops with warranty and expert support.",
+        'Shop our extensive collection of high-quality device parts, accessories, and replacement components. Find genuine parts for phones, tablets, and laptops with warranty and expert support.',
       url: `${baseUrl}/shop`,
-      type: "website",
-      siteName: "LML Electronics",
+      type: 'website',
+      siteName: 'LML Electronics',
       images: [
         {
           url: `${baseUrl}/images/lml_box.webp`,
           width: 1200,
           height: 630,
-          alt: "LML Electronics Shop",
+          alt: 'LML Electronics Shop',
         },
       ],
-      locale: "en_US",
+      locale: 'en_US',
     },
     twitter: {
-      card: "summary_large_image",
-      title: "Shop - High-Quality Parts, Devices & Accessories | LML Electronics",
+      card: 'summary_large_image',
+      title: 'Shop - High-Quality Parts, Devices & Accessories | LML Electronics',
       description:
-        "Shop our extensive collection of high-quality device parts, accessories, and replacement components. Find genuine parts for phones, tablets, and laptops with warranty and expert support.",
+        'Shop our extensive collection of high-quality device parts, accessories, and replacement components. Find genuine parts for phones, tablets, and laptops with warranty and expert support.',
       images: [`${baseUrl}/images/lml_box.webp`],
-      creator: "@lmlelectronics",
+      creator: '@lmlelectronics',
     },
     alternates: {
       canonical: `${baseUrl}/shop`,
@@ -51,27 +51,29 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-async function fetchProductCategories() {
+async function fetchProductCategories () {
   try {
     const response = await getInventoryCategories();
     const categories = response.map(category => ({
       ...category,
       children: category.children || [],
-      items: []
+      items: [],
     }));
+
     return { categories, error: null };
   } catch (error) {
-    console.error("Failed to fetch product categories:", error);
-    return { categories: [], error: "Could not load categories." };
+    console.error('Failed to fetch product categories:', error);
+
+    return { categories: [], error: 'Could not load categories.' };
   }
 }
 
-export default async function ProductsPage() {
+export default async function ProductsPage () {
   const { categories, error } = await fetchProductCategories();
 
   // Convert categories for Filters
   const filterCategories = categories
-    .filter(category => category.visible === true && category.parentId == null && category.name !== "Tickets")
+    .filter(category => category.visible === true && category.parentId == null && category.name !== 'Tickets')
     .map(cat => ({ id: cat.id, name: cat.name }));
 
   return (
@@ -81,37 +83,37 @@ export default async function ProductsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            "name": "Shop - LML Electronics",
-            "description": "Shop our extensive collection of high-quality device parts, accessories, and replacement components.",
-            "url": "https://lmlelectronics.com/shop",
-            "publisher": {
-              "@type": "Organization",
-              "name": "LML Electronics",
-              "url": "https://lmlelectronics.com",
-              "logo": {
-                "@type": "ImageObject",
-                "url": "https://lmlelectronics.com/logo.png"
-              }
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            'name': 'Shop - LML Electronics',
+            'description': 'Shop our extensive collection of high-quality device parts, accessories, and replacement components.',
+            'url': 'https://lmlelectronics.com/shop',
+            'publisher': {
+              '@type': 'Organization',
+              'name': 'LML Electronics',
+              'url': 'https://lmlelectronics.com',
+              'logo': {
+                '@type': 'ImageObject',
+                'url': 'https://lmlelectronics.com/logo.png',
+              },
             },
-            "breadcrumb": {
-              "@type": "BreadcrumbList",
-              "itemListElement": [
+            'breadcrumb': {
+              '@type': 'BreadcrumbList',
+              'itemListElement': [
                 {
-                  "@type": "ListItem",
-                  "position": 1,
-                  "name": "Home",
-                  "item": "https://lmlelectronics.com"
+                  '@type': 'ListItem',
+                  'position': 1,
+                  'name': 'Home',
+                  'item': 'https://lmlelectronics.com',
                 },
                 {
-                  "@type": "ListItem",
-                  "position": 2,
-                  "name": "Shop",
-                  "item": "https://lmlelectronics.com/shop"
-                }
-              ]
-            }
+                  '@type': 'ListItem',
+                  'position': 2,
+                  'name': 'Shop',
+                  'item': 'https://lmlelectronics.com/shop',
+                },
+              ],
+            },
           }),
         }}
       />
@@ -119,7 +121,7 @@ export default async function ProductsPage() {
         title="All Shop Items"
         subtitle="Find the perfect components and repair kits for your needs. High-quality parts for every fix."
         backgroundImage="/images/lml_box.webp"
-        breadcrumbs={[{ name: "Shop", href: "/shop" }]}
+        breadcrumbs={[{ name: 'Shop', href: '/shop' }]}
       />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <ProductsClientPage categories={filterCategories} />
@@ -139,10 +141,10 @@ export default async function ProductsPage() {
                 <p className="text-red-500 text-lg">{error}</p>
               </div>
             ) : (
-              <CategoryGrid categories={categories.filter(category => category.visible === true && category.parentId == null && category.name !== "Tickets").map(category => ({
+              <CategoryGrid categories={categories.filter(category => category.visible === true && category.parentId == null && category.name !== 'Tickets').map(category => ({
                 ...category,
                 children: [],
-                items: []
+                items: [],
               }))} />
             )}
           </div>

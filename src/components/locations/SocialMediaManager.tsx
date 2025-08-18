@@ -11,7 +11,7 @@ interface SocialMediaManagerProps {
   onIconUpload: (file: File) => Promise<string>;
 }
 
-export default function SocialMediaManager({
+export default function SocialMediaManager ({
   links,
   onLinksChange,
   onIconUpload,
@@ -23,6 +23,7 @@ export default function SocialMediaManager({
     try {
       const iconUrl = await onIconUpload(file);
       const newLinks = [...links];
+
       newLinks[index] = { ...newLinks[index], icon: iconUrl };
       onLinksChange(newLinks);
     } catch (error) {
@@ -46,9 +47,10 @@ export default function SocialMediaManager({
   const updateLink = (
     index: number,
     field: keyof SocialMediaLink,
-    value: string
+    value: string,
   ) => {
     const newLinks = [...links];
+
     newLinks[index] = { ...newLinks[index], [field]: value };
     onLinksChange(newLinks);
   };
@@ -84,7 +86,8 @@ export default function SocialMediaManager({
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
-                    if (file) handleIconUpload(index, file);
+
+                    if (file) { handleIconUpload(index, file); }
                   }}
                   disabled={isUploading}
                 />

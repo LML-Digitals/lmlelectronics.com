@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { getStaffAnalytics } from "@/components/dashboard/staff/services/staffCrud";
-import StaffAnalytics from "@/components/dashboard/staff/StaffAnalytics";
-import { useEffect, useState } from "react";
-import { CircleDashed } from "lucide-react";
+import { getStaffAnalytics } from '@/components/dashboard/staff/services/staffCrud';
+import StaffAnalytics from '@/components/dashboard/staff/StaffAnalytics';
+import { useEffect, useState } from 'react';
+import { CircleDashed } from 'lucide-react';
 
 // TypeScript interfaces for analytics data
 interface RoleDistribution {
@@ -57,7 +57,7 @@ interface StaffAnalyticsData {
   averageResponseTime: string;
 }
 
-export default function StaffOverview() {
+export default function StaffOverview () {
   const [analytics, setAnalytics] = useState<StaffAnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,10 +67,11 @@ export default function StaffOverview() {
       setLoading(true);
       setError(null);
       const data = await getStaffAnalytics();
+
       setAnalytics(data);
     } catch (error) {
-      console.error("Failed to load staff analytics:", error);
-      setError("Failed to load analytics data. Please try again later.");
+      console.error('Failed to load staff analytics:', error);
+      setError('Failed to load analytics data. Please try again later.');
     } finally {
       setLoading(false);
     }

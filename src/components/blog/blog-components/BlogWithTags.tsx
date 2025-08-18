@@ -1,10 +1,10 @@
-"use client";
-import { useState, useEffect, useCallback, useRef } from "react";
-import Link from "next/link";
-import BlogCard from "./BlogCard";
+'use client';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
+import BlogCard from './BlogCard';
 // import { Blog, BlogTag, BlogCategory } from "@prisma/client"; // Already imported via BlogWithDetailsType
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   X,
   Filter,
@@ -12,12 +12,12 @@ import {
   Search,
   ChevronDown,
   ChevronUp,
-} from "lucide-react";
-import { getPublishedBlogs } from "@/components/blog/services/blogCrud";
-import { getTags } from "@/components/dashboard/Tags/services/tagCrud";
-import { getBlogCategories } from "@/components/blog/services/blogCategoryCrud"; // Assuming services are exported from an index file
-import { BlogWithDetailsType } from "@/components/blog/types/blogTypes";
-import { BlogCategory, Tag } from "@prisma/client";
+} from 'lucide-react';
+import { getPublishedBlogs } from '@/components/blog/services/blogCrud';
+import { getTags } from '@/components/dashboard/Tags/services/tagCrud';
+import { getBlogCategories } from '@/components/blog/services/blogCategoryCrud'; // Assuming services are exported from an index file
+import { BlogWithDetailsType } from '@/components/blog/types/blogTypes';
+import { BlogCategory, Tag } from '@prisma/client';
 
 interface BlogWithTagsProps {
   // Removed initial props as data is fetched internally
@@ -29,7 +29,7 @@ interface BlogWithTagsProps {
 }
 
 // Utility function to capitalize the first letter of a string
-function capitalizeFirstLetter(word: string): string {
+function capitalizeFirstLetter (word: string): string {
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
@@ -40,13 +40,9 @@ const BlogWithTags = ({
   const [blogs, setBlogs] = useState<BlogWithDetailsType[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
-  const [selectedTag, setSelectedTag] = useState<string | null>(
-    selectedTagFromUrl || null
-  );
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    selectedCategoryFromUrl || null
-  );
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(selectedTagFromUrl || null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(selectedCategoryFromUrl || null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,32 +55,28 @@ const BlogWithTags = ({
   const limit = 6; // Number of blogs to load per page
 
   // Filter states for better UX
-  const [categorySearch, setCategorySearch] = useState("");
-  const [tagSearch, setTagSearch] = useState("");
+  const [categorySearch, setCategorySearch] = useState('');
+  const [tagSearch, setTagSearch] = useState('');
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
 
   // Filtered lists for better performance
-  const filteredCategories = categories.filter(cat =>
-    cat.name.toLowerCase().includes(categorySearch.toLowerCase())
-  );
-  const filteredTags = tags.filter(tag =>
-    tag.name.toLowerCase().includes(tagSearch.toLowerCase())
-  );
+  const filteredCategories = categories.filter(cat => cat.name.toLowerCase().includes(categorySearch.toLowerCase()));
+  const filteredTags = tags.filter(tag => tag.name.toLowerCase().includes(tagSearch.toLowerCase()));
 
   // Show limited items initially
   const displayedCategories = showAllCategories ? filteredCategories : filteredCategories.slice(0, 5);
   const displayedTags = showAllTags ? filteredTags : filteredTags.slice(0, 8);
 
   // Fetch blogs with pagination
-  const fetchBlogs = useCallback(async (pageNum: number, append: boolean = false) => {
+  const fetchBlogs = useCallback(async (pageNum: number, append = false) => {
     if (pageNum === 1) {
       setIsLoading(true);
     } else {
       setIsLoadingMore(true);
     }
     setError(null);
-    
+
     try {
       // Fetch blogs and other data concurrently
       const [blogsData, tagsData, categoriesData] = await Promise.all([
@@ -93,7 +85,7 @@ const BlogWithTags = ({
           limit,
           searchQuery || undefined,
           selectedTag || undefined,
-          selectedCategory || undefined
+          selectedCategory || undefined,
         ),
         pageNum === 1 ? getTags({ limit: 1000 }) : Promise.resolve({ tags }),
         pageNum === 1 ? getBlogCategories() : Promise.resolve(categories),
@@ -104,18 +96,18 @@ const BlogWithTags = ({
       } else {
         setBlogs(blogsData.blogs);
       }
-      
+
       setTotalBlogs(blogsData.total);
       setHasMore(blogsData.blogs.length === limit);
-      
+
       // Only update tags and categories on first load
       if (pageNum === 1) {
         setTags(tagsData.tags);
         setCategories(categoriesData);
       }
     } catch (err) {
-      console.error("Fetch error:", err);
-      setError("Failed to load blog data. Please try again later.");
+      console.error('Fetch error:', err);
+      setError('Failed to load blog data. Please try again later.');
     } finally {
       setIsLoading(false);
       setIsLoadingMore(false);
@@ -131,40 +123,41 @@ const BlogWithTags = ({
 
   // Intersection Observer for infinite scroll
   const lastElementRef = useCallback((node: HTMLDivElement) => {
-    if (isLoading || isLoadingMore) return;
-    if (observer.current) observer.current.disconnect();
+    if (isLoading || isLoadingMore) { return; }
+    if (observer.current) { observer.current.disconnect(); }
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
         const nextPage = page + 1;
+
         setPage(nextPage);
         fetchBlogs(nextPage, true);
       }
     });
-    if (node) observer.current.observe(node);
+    if (node) { observer.current.observe(node); }
   }, [isLoading, hasMore, isLoadingMore, page, fetchBlogs]);
 
   // Handler to reset filters and search
   const handleClearFilters = () => {
     setSelectedTag(null);
     setSelectedCategory(null);
-    setSearchQuery("");
+    setSearchQuery('');
     setPage(1);
     setHasMore(true);
     setIsSidebarOpen(false);
-    setCategorySearch("");
-    setTagSearch("");
+    setCategorySearch('');
+    setTagSearch('');
     setShowAllCategories(false);
     setShowAllTags(false);
   };
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 w-full">
-      {" "}
+      {' '}
       {/* Added w-full */}
       {/* Sidebar */}
       <div
         className={`fixed lg:sticky top-0 left-0 h-full w-80 bg-white shadow-lg lg:shadow-none transform transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         } z-50 lg:z-10 border-r border-gray-200 flex flex-col`}
       >
         <div className="p-4 flex-shrink-0 border-b border-gray-200">
@@ -202,7 +195,7 @@ const BlogWithTags = ({
                 {filteredCategories.length}
               </span>
             </h3>
-            
+
             {/* Category Search */}
             <div className="relative mb-3">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
@@ -219,8 +212,8 @@ const BlogWithTags = ({
               <button
                 className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors ${
                   !selectedCategory
-                    ? "bg-secondary text-black shadow-sm"
-                    : "text-gray-700"
+                    ? 'bg-secondary text-black shadow-sm'
+                    : 'text-gray-700'
                 }`}
                 onClick={() => {
                   setIsSidebarOpen(false);
@@ -240,8 +233,8 @@ const BlogWithTags = ({
                   <button
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors ${
                       selectedCategory === cat.name
-                        ? "bg-secondary text-black shadow-sm"
-                        : "text-gray-700"
+                        ? 'bg-secondary text-black shadow-sm'
+                        : 'text-gray-700'
                     }`}
                     onClick={() => {
                       setIsSidebarOpen(false);
@@ -251,7 +244,7 @@ const BlogWithTags = ({
                   </button>
                 </Link>
               ))}
-              
+
               {/* Show More/Less for Categories */}
               {filteredCategories.length > 5 && (
                 <button
@@ -282,7 +275,7 @@ const BlogWithTags = ({
                 {filteredTags.length}
               </span>
             </h3>
-            
+
             {/* Tag Search */}
             <div className="relative mb-3">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
@@ -297,7 +290,7 @@ const BlogWithTags = ({
             {/* All Tags Button */}
             <button
               className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors ${
-                !selectedTag ? "bg-secondary text-black shadow-sm" : "text-gray-700"
+                !selectedTag ? 'bg-secondary text-black shadow-sm' : 'text-gray-700'
               }`}
               onClick={() => {
                 setSelectedTag(null);
@@ -314,8 +307,8 @@ const BlogWithTags = ({
                   key={tag.id}
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors ${
                     selectedTag === tag.name
-                      ? "bg-secondary text-black shadow-sm"
-                      : "text-gray-700"
+                      ? 'bg-secondary text-black shadow-sm'
+                      : 'text-gray-700'
                   }`}
                   onClick={() => {
                     setSelectedTag(tag.name);
@@ -325,7 +318,7 @@ const BlogWithTags = ({
                   {capitalizeFirstLetter(tag.name)}
                 </button>
               ))}
-              
+
               {/* Show More/Less for Tags */}
               {filteredTags.length > 8 && (
                 <button
@@ -362,7 +355,7 @@ const BlogWithTags = ({
       </div>
       {/* Main content */}
       <div className="flex-1 min-w-0">
-        {" "}
+        {' '}
         {/* Added min-w-0 to prevent overflow issues */}
         {/* Toggle button for mobile */}
         <Button

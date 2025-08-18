@@ -46,13 +46,16 @@ export const getAllHashKey = async (): Promise<Staff[]> => {
 export const changePassword = async (id: string, password: string) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+
     await prisma.staff.update({
       where: { id },
       data: { password: hashedPassword },
     });
+
     return { message: 'Password changed successfully' };
   } catch (error) {
     console.error('Error changing password:', error);
+
     return { error: 'Failed to change password' };
   }
 };
@@ -62,6 +65,7 @@ export const getStaffByEmail = async (email: string): Promise<Staff | null> => {
     const staff = await prisma.staff.findFirst({
       where: { email },
     });
+
     return staff;
   } catch (error) {
     console.error('Error fetching staff:', error);
@@ -85,6 +89,7 @@ export const getStaff = async (email: string): Promise<Staff> => {
     if (!staff) {
       throw new Error('Staff not found');
     }
+
     return staff;
   } catch (error) {
     console.error('Error fetching staff:', error);
@@ -112,6 +117,7 @@ export const getStaffById = async (id: string): Promise<Staff> => {
     if (!staff) {
       throw new Error('Staff not found');
     }
+
     return staff;
   } catch (error) {
     console.error('Error fetching staff:', error);
@@ -127,7 +133,7 @@ export const getStaffWithRelations = async (
   id: string,
   includeParams: string[] = [],
   sessionUserId?: string,
-  userRole?: string
+  userRole?: string,
 ) => {
   try {
     // Security check
@@ -166,11 +172,12 @@ export const getStaffWithRelations = async (
     return { data: staff, status: 200 };
   } catch (error) {
     console.error('Error fetching staff data:', error);
+
     return { error: 'Internal server error', status: 500 };
   }
 };
 
-export async function generateHashKey({
+export async function generateHashKey ({
   email,
   role,
 }: {
@@ -179,6 +186,7 @@ export async function generateHashKey({
 }) {
   const hashKey = uuidv4();
   const hashKeyExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
   try {
     await prisma.staff.create({
       data: {
@@ -198,7 +206,7 @@ export async function generateHashKey({
   }
 }
 
-export async function getTechnicians() {
+export async function getTechnicians () {
   try {
     const staff = await prisma.staff.findMany({
       select: {
@@ -214,11 +222,12 @@ export async function getTechnicians() {
   }
 }
 
-export async function getTechniciansNameAndId() {
+export async function getTechniciansNameAndId () {
   try {
     const staff = await prisma.staff.findMany({
       select: { id: true, firstName: true, lastName: true },
     });
+
     return staff;
   } catch (error) {
     console.error('Error fetching staff:', error);
@@ -253,7 +262,7 @@ export const createStaff = async (staffData: Partial<Staff>) => {
 
 export const updateStaff = async (
   id: string,
-  data: Partial<Staff & { commissionRate?: number }>
+  data: Partial<Staff & { commissionRate?: number }>,
 ) => {
   try {
     const staff = await prisma.staff.update({
@@ -325,7 +334,7 @@ export type StaffAnalytics = {
   }[];
 };
 
-export async function getStaffAnalytics(): Promise<any> {
+export async function getStaffAnalytics (): Promise<any> {
   try {
     const session = await getServerSession(authOptions);
     const userRole = session?.user?.role;

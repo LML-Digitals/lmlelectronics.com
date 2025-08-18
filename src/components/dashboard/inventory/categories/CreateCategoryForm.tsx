@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
-import { createCategory } from "./services/itemCategoryCrud";
-import { CircleDashedIcon, ImageIcon, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useTransition, useState } from "react";
-import { type SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
+import { createCategory } from './services/itemCategoryCrud';
+import { CircleDashedIcon, ImageIcon, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useTransition, useState } from 'react';
+import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
-import Image from "next/image";
-import type { UploadResponse } from "@/lib/types/upload";
+} from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
+import Image from 'next/image';
+import type { UploadResponse } from '@/lib/types/upload';
 
 type Inputs = {
   name: string;
@@ -44,7 +44,7 @@ type CategoryWithChildren = {
   children: CategoryWithChildren[];
 };
 
-function CreateCategoryForm({
+function CreateCategoryForm ({
   categories,
   setDialogOpen,
 }: {
@@ -67,19 +67,22 @@ function CreateCategoryForm({
   } = useForm<Inputs>({
     defaultValues: {
       visible: true, // Default to visible
-      description: "",
+      description: '',
     },
   });
 
-  const isVisible = watch("visible");
+  const isVisible = watch('visible');
 
   // Handle image preview
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+
     if (files && files.length > 0) {
       const file = files[0];
+
       setImageFile(file);
       const reader = new FileReader();
+
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
       };
@@ -88,47 +91,49 @@ function CreateCategoryForm({
   };
 
   const removeImage = () => {
-    setValue("image", undefined);
+    setValue('image', undefined);
     setImagePreview(null);
     setImageFile(null);
   };
 
-  //Todo: Add sub category
+  // Todo: Add sub category
   const { fields, append } = useFieldArray({
     control,
-    name: "subCategories",
+    name: 'subCategories',
   });
 
-  //Todo: Add sub category
+  // Todo: Add sub category
   const handleAddSubCategory = () => {
-    append({ name: "" });
+    append({ name: '' });
   };
 
-  //Todo: Handle submitting the form
+  // Todo: Handle submitting the form
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     startTransition(async () => {
       try {
         // Handle image upload using API endpoint
-        let imageUrl = "";
+        let imageUrl = '';
+
         if (imageFile) {
           const fileName = `category-${Date.now()}-${imageFile.name.replace(
             /\s+/g,
-            "-"
+            '-',
           )}`;
 
           const uploadResponse = await fetch(
             `/api/upload?filename=${fileName}`,
             {
-              method: "POST",
+              method: 'POST',
               body: imageFile,
-            }
+            },
           );
 
           if (!uploadResponse.ok) {
-            throw new Error("Failed to upload image");
+            throw new Error('Failed to upload image');
           }
 
           const newBlob = (await uploadResponse.json()) as UploadResponse;
+
           imageUrl = newBlob.url;
         }
 
@@ -140,9 +145,9 @@ function CreateCategoryForm({
           image: imageUrl,
         });
 
-        if (res.status === "success") {
+        if (res.status === 'success') {
           toast({
-            title: "Created: Category",
+            title: 'Created: Category',
             description: `${res.category.name} has been created.`,
           });
           router.refresh();
@@ -150,8 +155,8 @@ function CreateCategoryForm({
         }
       } catch (error) {
         toast({
-          title: "Error",
-          description: "Failed to create category.",
+          title: 'Error',
+          description: 'Failed to create category.',
         });
       }
     });
@@ -169,7 +174,7 @@ function CreateCategoryForm({
               <Label>Category Name</Label>
               <Input
                 placeholder="e.g., Electronics"
-                {...register("name", { required: true })}
+                {...register('name', { required: true })}
                 className="mt-1.5"
               />
               {errors.name && (
@@ -183,7 +188,7 @@ function CreateCategoryForm({
               <Label>Description</Label>
               <Textarea
                 placeholder="Enter a description for this category"
-                {...register("description")}
+                {...register('description')}
                 className="mt-1.5"
                 rows={3}
               />
@@ -192,8 +197,7 @@ function CreateCategoryForm({
             <div>
               <Label>Parent Category</Label>
               <Select
-                onValueChange={(value) =>
-                  setValue("parentId", value === "none" ? null : value)
+                onValueChange={(value) => setValue('parentId', value === 'none' ? null : value)
                 }
               >
                 <SelectTrigger className="mt-1.5">
@@ -224,7 +228,7 @@ function CreateCategoryForm({
                     {imagePreview ? (
                       <div className="relative h-24 w-24 rounded-md overflow-hidden border">
                         <Image
-                          src={imagePreview || "/placeholder.svg"}
+                          src={imagePreview || '/placeholder.svg'}
                           alt="Category preview"
                           fill
                           className="object-cover"
@@ -248,7 +252,7 @@ function CreateCategoryForm({
                         <input
                           type="file"
                           className="hidden"
-                          {...register("image")}
+                          {...register('image')}
                           onChange={handleImageChange}
                           accept="image/*"
                         />
@@ -268,14 +272,14 @@ function CreateCategoryForm({
                 <Label htmlFor="visible">Visibility</Label>
                 <p className="text-sm text-slate-500">
                   {isVisible
-                    ? "Category will be visible to users"
-                    : "Category will be hidden from users"}
+                    ? 'Category will be visible to users'
+                    : 'Category will be hidden from users'}
                 </p>
               </div>
               <Switch
                 id="visible"
                 checked={isVisible}
-                onCheckedChange={(checked) => setValue("visible", checked)}
+                onCheckedChange={(checked) => setValue('visible', checked)}
               />
             </div>
           </div>

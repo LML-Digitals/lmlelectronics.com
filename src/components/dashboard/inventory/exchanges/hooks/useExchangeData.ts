@@ -1,17 +1,16 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { getStaffs } from "@/components/dashboard/staff/services/staffCrud";
-import { getCustomers } from "@/components/dashboard/customers/services/customerCrud";
-import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
-import { Customer, Staff, InventoryItem } from "@prisma/client";
-import { InventoryItemWithRelations } from "../../items/types/ItemType";
+import { useEffect, useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import { getStaffs } from '@/components/dashboard/staff/services/staffCrud';
+import { getCustomers } from '@/components/dashboard/customers/services/customerCrud';
+import { getInventoryItems } from '@/components/dashboard/inventory/items/services/itemsCrud';
+import { Customer, Staff, InventoryItem } from '@prisma/client';
+import { InventoryItemWithRelations } from '../../items/types/ItemType';
 
 // Define types for the data we'll fetch
 
-
-export function useExchangeData() {
+export function useExchangeData () {
   // State for the fetched data
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [staff, setStaff] = useState<Staff[]>([]);
@@ -27,7 +26,7 @@ export function useExchangeData() {
 
   // Fetch all necessary data
   useEffect(() => {
-    async function fetchData() {
+    async function fetchData () {
       try {
         setIsLoading(true);
         setError(null);
@@ -37,7 +36,6 @@ export function useExchangeData() {
         // Fetch staff
         const staffData = await getStaffs();
 
-
         // Fetch inventory items
         const itemsData = await getInventoryItems();
 
@@ -46,12 +44,13 @@ export function useExchangeData() {
         setStaff(staffData);
         setInventoryItems(itemsData);
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "An unknown error occurred";
+        const errorMessage
+          = err instanceof Error ? err.message : 'An unknown error occurred';
+
         setError(errorMessage);
         toast({
-          variant: "destructive",
-          title: "Error loading data",
+          variant: 'destructive',
+          title: 'Error loading data',
           description: errorMessage,
         });
       } finally {

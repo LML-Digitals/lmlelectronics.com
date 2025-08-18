@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import CategoryTable from "@/components/dashboard/inventory/categories/CategoryTable";
-import { fetchCategories } from "@/components/dashboard/inventory/categories/utils/fetchCategories";
+import React, { useState } from 'react';
+import CategoryTable from '@/components/dashboard/inventory/categories/CategoryTable';
+import { fetchCategories } from '@/components/dashboard/inventory/categories/utils/fetchCategories';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { CategoryWithChildren } from "./CategoryTable";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { CategoryWithChildren } from './CategoryTable';
 
 interface CategoryDialogProps {
   trigger?: React.ReactNode;
@@ -19,11 +19,9 @@ interface CategoryDialogProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-function CategoryDialog({ trigger, open, onOpenChange }: CategoryDialogProps) {
+function CategoryDialog ({ trigger, open, onOpenChange }: CategoryDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [categories, setCategories] = useState<CategoryWithChildren[] | null>(
-    null
-  );
+  const [categories, setCategories] = useState<CategoryWithChildren[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -32,15 +30,16 @@ function CategoryDialog({ trigger, open, onOpenChange }: CategoryDialogProps) {
   const setDialogOpen = onOpenChange || setIsOpen;
 
   const loadCategories = async () => {
-    if (!dialogOpen) return;
+    if (!dialogOpen) { return; }
 
     setLoading(true);
     try {
       const result = await fetchCategories();
+
       setCategories(result.categories);
       setError(result.error);
     } catch (err) {
-      setError("Failed to load categories");
+      setError('Failed to load categories');
     } finally {
       setLoading(false);
     }

@@ -1,9 +1,9 @@
-"use server";
-import prisma from "@/lib/prisma";
+'use server';
+import prisma from '@/lib/prisma';
 import type {
   DeviceTypeWithBrands,
   RepairOption,
-} from "../types/bookingFormTypes";
+} from '../types/bookingFormTypes';
 
 export const getDeviceTypes = async () => {
   try {
@@ -13,13 +13,14 @@ export const getDeviceTypes = async () => {
         name: true,
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     });
+
     return deviceTypes;
   } catch (error) {
-    console.error("Error fetching device types:", error);
-    throw new Error("Failed to fetch device types");
+    console.error('Error fetching device types:', error);
+    throw new Error('Failed to fetch device types');
   }
 };
 
@@ -35,13 +36,14 @@ export const getBrandsForDeviceType = async (deviceTypeId: string) => {
         image: true,
       },
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
     });
+
     return brands;
   } catch (error) {
-    console.error("Error fetching brands:", error);
-    throw new Error("Failed to fetch brands");
+    console.error('Error fetching brands:', error);
+    throw new Error('Failed to fetch brands');
   }
 };
 
@@ -52,13 +54,14 @@ export const getBrandsNames = async (): Promise<string[]> => {
         name: true,
       },
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
     });
+
     return brands.map((brand) => brand.name);
   } catch (error) {
-    console.error("Error fetching brands:", error);
-    throw new Error("Failed to fetch brands");
+    console.error('Error fetching brands:', error);
+    throw new Error('Failed to fetch brands');
   }
 };
 
@@ -74,12 +77,12 @@ export const getBookingSeries = async (brandName: string) => {
         image: true,
       },
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
     });
   } catch (error) {
-    console.error("Error fetching series:", error);
-    throw new Error("Failed to fetch series");
+    console.error('Error fetching series:', error);
+    throw new Error('Failed to fetch series');
   }
 };
 
@@ -95,12 +98,12 @@ export const getSeriesForBrandId = async (brandId: number) => {
         image: true,
       },
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
     });
   } catch (error) {
-    console.error("Error fetching series:", error);
-    throw new Error("Failed to fetch series");
+    console.error('Error fetching series:', error);
+    throw new Error('Failed to fetch series');
   }
 };
 
@@ -117,12 +120,12 @@ export const getBookingModels = async (seriesName: string) => {
         description: true,
       },
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
     });
   } catch (error) {
-    console.error("Error fetching models:", error);
-    throw new Error("Failed to fetch models");
+    console.error('Error fetching models:', error);
+    throw new Error('Failed to fetch models');
   }
 };
 
@@ -139,12 +142,12 @@ export const getModelsForSeriesId = async (seriesId: number) => {
         description: true,
       },
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
     });
   } catch (error) {
-    console.error("Error fetching models:", error);
-    throw new Error("Failed to fetch models");
+    console.error('Error fetching models:', error);
+    throw new Error('Failed to fetch models');
   }
 };
 
@@ -169,12 +172,12 @@ export const getRepairOptionsForModel = async (modelId: number) => {
         },
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     });
   } catch (error) {
-    console.error("Error fetching repair options:", error);
-    throw new Error("Failed to fetch repair options");
+    console.error('Error fetching repair options:', error);
+    throw new Error('Failed to fetch repair options');
   }
 };
 
@@ -205,14 +208,14 @@ export const getBookingTypeOfRepairs = async (modelName: string) => {
         timeFrame: true,
       },
       orderBy: {
-        order: "asc",
+        order: 'asc',
       },
     });
 
     return repairTypes;
   } catch (error) {
-    console.error("Error fetching repair types:", error);
-    throw new Error("Failed to fetch repair types");
+    console.error('Error fetching repair types:', error);
+    throw new Error('Failed to fetch repair types');
   }
 };
 
@@ -242,16 +245,16 @@ export const getBookingRepairs = async (typeOfRepairName: string) => {
         duration: true,
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     });
   } catch (error) {
-    console.error("Error fetching repairs:", error);
-    throw new Error("Failed to fetch repairs");
+    console.error('Error fetching repairs:', error);
+    throw new Error('Failed to fetch repairs');
   }
 };
 
-export async function getDeviceHierarchy(): Promise<DeviceTypeWithBrands[]> {
+export async function getDeviceHierarchy (): Promise<DeviceTypeWithBrands[]> {
   try {
     const deviceTypesWithHierarchy = await prisma.deviceType.findMany({
       include: {
@@ -266,27 +269,27 @@ export async function getDeviceHierarchy(): Promise<DeviceTypeWithBrands[]> {
                         repairType: true, // Include repairType if it's part of RepairOption model
                       },
                       orderBy: {
-                        name: "asc", // Optional: order repair options by name
+                        name: 'asc', // Optional: order repair options by name
                       },
                     },
                   },
                   orderBy: {
-                    name: "asc", // Optional: order models by name
+                    name: 'asc', // Optional: order models by name
                   },
                 },
               },
               orderBy: {
-                name: "asc", // Optional: order series by name
+                name: 'asc', // Optional: order series by name
               },
             },
           },
           orderBy: {
-            name: "asc", // Optional: order brands by name
+            name: 'asc', // Optional: order brands by name
           },
         },
       },
       orderBy: {
-        name: "asc", // Optional: order device types by name
+        name: 'asc', // Optional: order device types by name
       },
     });
 
@@ -317,7 +320,7 @@ export async function getDeviceHierarchy(): Promise<DeviceTypeWithBrands[]> {
       })),
     })) as DeviceTypeWithBrands[]; // Assert type after mapping
   } catch (error) {
-    console.error("Error fetching device hierarchy:", error);
-    throw new Error("Failed to load device hierarchy.");
+    console.error('Error fetching device hierarchy:', error);
+    throw new Error('Failed to load device hierarchy.');
   }
 }

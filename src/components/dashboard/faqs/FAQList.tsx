@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { FAQ } from "@prisma/client";
-import { deleteFAQ, updateFAQ } from "./Services/faqCrud";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { FAQ } from '@prisma/client';
+import { deleteFAQ, updateFAQ } from './Services/faqCrud';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Pencil, Trash2, Eye, EyeOff } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,8 +21,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useState } from "react";
+} from '@/components/ui/alert-dialog';
+import { useState } from 'react';
 
 interface FAQListProps {
   faqs: FAQ[];
@@ -30,7 +30,7 @@ interface FAQListProps {
   onUpdate: () => void;
 }
 
-export default function FAQList({ faqs, onEdit, onUpdate }: FAQListProps) {
+export default function FAQList ({ faqs, onEdit, onUpdate }: FAQListProps) {
   const [deletingFaq, setDeletingFaq] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
@@ -38,7 +38,7 @@ export default function FAQList({ faqs, onEdit, onUpdate }: FAQListProps) {
       await deleteFAQ(id);
       onUpdate();
     } catch (error) {
-      console.error("Error deleting FAQ:", error);
+      console.error('Error deleting FAQ:', error);
     } finally {
       setDeletingFaq(null);
     }
@@ -49,7 +49,7 @@ export default function FAQList({ faqs, onEdit, onUpdate }: FAQListProps) {
       await updateFAQ(faq.id, { isPublished: !faq.isPublished });
       onUpdate();
     } catch (error) {
-      console.error("Error updating FAQ:", error);
+      console.error('Error updating FAQ:', error);
     }
   };
 
@@ -64,8 +64,8 @@ export default function FAQList({ faqs, onEdit, onUpdate }: FAQListProps) {
                   <h3 className="font-medium text-sm sm:text-base">{faq.question}</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">{faq.answer}</p>
                   <div className="flex flex-wrap gap-2 items-center">
-                    <Badge variant={faq.isPublished ? "default" : "secondary"} className="text-xs">
-                      {faq.isPublished ? "Published" : "Draft"}
+                    <Badge variant={faq.isPublished ? 'default' : 'secondary'} className="text-xs">
+                      {faq.isPublished ? 'Published' : 'Draft'}
                     </Badge>
                     <Badge variant="outline" className="text-xs">{faq.category}</Badge>
                   </div>
@@ -88,7 +88,7 @@ export default function FAQList({ faqs, onEdit, onUpdate }: FAQListProps) {
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {faq.isPublished ? "Unpublish" : "Publish"}
+                        {faq.isPublished ? 'Unpublish' : 'Publish'}
                       </TooltipContent>
                     </Tooltip>
 

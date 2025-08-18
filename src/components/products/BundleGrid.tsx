@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Package } from "lucide-react";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import { Card } from "@/components/ui/card";
-import { getBundles } from "../dashboard/inventory/bundles/services/bundles";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Package } from 'lucide-react';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import { Card } from '@/components/ui/card';
+import { getBundles } from '../dashboard/inventory/bundles/services/bundles';
 
 interface BundleItem {
   id: string;
@@ -32,7 +32,7 @@ interface BundleItem {
   calculatedStock: any;
 }
 
-export default function BundleGrid() {
+export default function BundleGrid () {
   const [bundles, setBundles] = useState<BundleItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,28 +44,24 @@ export default function BundleGrid() {
         const bundles = await getBundles();
 
         // Filter for bundles that are visible and have stock.
-        const visibleBundles = bundles.bundles?.filter((bundle) =>
-          bundle.variations.some((v) => v.visible)
-        );
+        const visibleBundles = bundles.bundles?.filter((bundle) => bundle.variations.some((v) => v.visible));
         const data = visibleBundles;
 
         if (data) {
           // Filter only bundles with stock and valid pricing, and take first 4
-          const availableBundles =
-            data
+          const availableBundles
+            = data
               ?.filter((bundle) => {
-                const hasStock =
-                  typeof bundle.calculatedStock === "number"
+                const hasStock
+                  = typeof bundle.calculatedStock === 'number'
                     ? bundle.calculatedStock > 0
                     : Array.isArray(bundle.calculatedStock)
-                    ? bundle.calculatedStock.some(
-                        (stock: any) => stock.availableStock > 0
-                      )
-                    : false;
+                      ? bundle.calculatedStock.some((stock: any) => stock.availableStock > 0)
+                      : false;
 
-                const hasPrice =
-                  bundle.variations.length > 0 &&
-                  bundle.variations[0].sellingPrice > 0;
+                const hasPrice
+                  = bundle.variations.length > 0
+                  && bundle.variations[0].sellingPrice > 0;
 
                 return hasStock && hasPrice;
               })
@@ -75,8 +71,8 @@ export default function BundleGrid() {
         }
         setError(null);
       } catch (err) {
-        console.error("Error fetching bundles:", err);
-        setError("Failed to load bundles. Please try again later.");
+        console.error('Error fetching bundles:', err);
+        setError('Failed to load bundles. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -89,11 +85,11 @@ export default function BundleGrid() {
     const bundlePrice = bundle.variations[0]?.sellingPrice || 0;
     const componentTotal = bundle.bundleComponents.reduce(
       (sum, comp) => sum + comp.componentVariation.sellingPrice * comp.quantity,
-      0
+      0,
     );
     const savings = componentTotal - bundlePrice;
-    const savingsPercent =
-      componentTotal > 0 ? (savings / componentTotal) * 100 : 0;
+    const savingsPercent
+      = componentTotal > 0 ? (savings / componentTotal) * 100 : 0;
 
     return { savings, savingsPercent };
   };
@@ -101,7 +97,7 @@ export default function BundleGrid() {
   if (loading) {
     return (
       <div className="py-8 text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
       </div>
     );
   }
@@ -142,7 +138,7 @@ export default function BundleGrid() {
               <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="aspect-square relative bg-gray-100">
                   <Image
-                    src={bundle.image || "/placeholder-product.svg"}
+                    src={bundle.image || '/placeholder-product.svg'}
                     alt={bundle.name}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"

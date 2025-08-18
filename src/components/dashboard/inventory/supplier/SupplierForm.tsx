@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   createSupplier,
   updateSupplier,
   // SupplierFormData,
-} from "./services/supplierCrud";
-import { Vendor } from "@prisma/client";
+} from './services/supplierCrud';
+import { Vendor } from '@prisma/client';
 import {
   Form,
   FormControl,
@@ -21,10 +21,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 
 const supplierSchema = z.object({
-  name: z.string().min(1, "Supplier name is required"),
+  name: z.string().min(1, 'Supplier name is required'),
   // contactName: z.string().optional().nullable(),
   contactEmail: z.string().email().optional().nullable(),
   contactPhone: z.string().optional().nullable(),
@@ -43,7 +43,7 @@ interface SupplierFormProps {
   onCancel?: () => void;
 }
 
-export function SupplierForm({
+export function SupplierForm ({
   supplier,
   onSuccess,
   onCancel,
@@ -55,23 +55,23 @@ export function SupplierForm({
     resolver: zodResolver(supplierSchema),
     defaultValues: supplier
       ? {
-          ...supplier,
-          leadTime: supplier.leadTime ?? 0,
-          rating: supplier.rating ?? 0,
-        }
+        ...supplier,
+        leadTime: supplier.leadTime ?? 0,
+        rating: supplier.rating ?? 0,
+      }
       : {
-          name: "",
-          contactEmail: "",
-          contactPhone: "",
-          address: "",
-          website: "",
-          notes: "",
-          leadTime: 0,
-          rating: 0,
-        },
+        name: '',
+        contactEmail: '',
+        contactPhone: '',
+        address: '',
+        website: '',
+        notes: '',
+        leadTime: 0,
+        rating: 0,
+      },
   });
 
-  async function onSubmit(data: SupplierFormData) {
+  async function onSubmit (data: SupplierFormData) {
     setIsSubmitting(true);
     try {
       // const updatedData = {
@@ -82,44 +82,46 @@ export function SupplierForm({
 
       if (isEditing && supplier) {
         const result = await updateSupplier(supplier.id, data);
+
         if (result.success) {
           toast({
-            title: "Success",
-            description: "Supplier updated successfully",
-            variant: "default",
+            title: 'Success',
+            description: 'Supplier updated successfully',
+            variant: 'default',
           });
-          if (onSuccess) onSuccess();
+          if (onSuccess) { onSuccess(); }
         } else {
           toast({
-            title: "Error",
-            description: result.error || "Failed to update supplier",
-            variant: "destructive",
+            title: 'Error',
+            description: result.error || 'Failed to update supplier',
+            variant: 'destructive',
           });
         }
       } else {
         const result = await createSupplier(data);
+
         if (result.success) {
           toast({
-            title: "Success",
-            description: "Supplier created successfully",
-            variant: "default",
+            title: 'Success',
+            description: 'Supplier created successfully',
+            variant: 'default',
           });
           form.reset();
-          if (onSuccess) onSuccess();
+          if (onSuccess) { onSuccess(); }
         } else {
           toast({
-            title: "Error",
-            description: result.error || "Failed to create supplier",
-            variant: "destructive",
+            title: 'Error',
+            description: result.error || 'Failed to create supplier',
+            variant: 'destructive',
           });
         }
       }
     } catch (error) {
-      console.error("Error submitting supplier form:", error);
+      console.error('Error submitting supplier form:', error);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive",
+        title: 'Error',
+        description: 'An unexpected error occurred',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -153,7 +155,7 @@ export function SupplierForm({
                 <FormControl>
                   <Input
                     {...field}
-                    value={field.value || ""}
+                    value={field.value || ''}
                     placeholder="Enter contact email"
                     type="email"
                   />
@@ -174,7 +176,7 @@ export function SupplierForm({
                 <FormControl>
                   <Input
                     {...field}
-                    value={field.value || ""}
+                    value={field.value || ''}
                     placeholder="Enter contact phone number"
                   />
                 </FormControl>
@@ -192,7 +194,7 @@ export function SupplierForm({
                 <FormControl>
                   <Input
                     {...field}
-                    value={field.value || ""}
+                    value={field.value || ''}
                     placeholder="https://example.com"
                   />
                 </FormControl>
@@ -253,7 +255,7 @@ export function SupplierForm({
               <FormControl>
                 <Input
                   {...field}
-                  value={field.value || ""}
+                  value={field.value || ''}
                   placeholder="Enter supplier address"
                 />
               </FormControl>
@@ -271,7 +273,7 @@ export function SupplierForm({
               <FormControl>
                 <Textarea
                   {...field}
-                  value={field.value || ""}
+                  value={field.value || ''}
                   placeholder="Additional notes about this supplier"
                   rows={4}
                 />
@@ -289,10 +291,10 @@ export function SupplierForm({
           )}
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting
-              ? "Saving..."
+              ? 'Saving...'
               : isEditing
-              ? "Update Supplier"
-              : "Create Supplier"}
+                ? 'Update Supplier'
+                : 'Create Supplier'}
           </Button>
         </div>
       </form>

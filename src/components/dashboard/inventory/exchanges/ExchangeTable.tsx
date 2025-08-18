@@ -59,8 +59,8 @@ const ItemWithVariationDisplay = ({
   isReturned: boolean;
 }) => {
   // Find the selected variation if specified
-  const selectedVariation =
-    variationId && item.variations
+  const selectedVariation
+    = variationId && item.variations
       ? item.variations.find((v: any) => v.id === variationId)
       : null;
 
@@ -72,8 +72,8 @@ const ItemWithVariationDisplay = ({
           Variation: {selectedVariation.name || selectedVariation.sku}
         </span>
       ) : (
-        item.variations &&
-        item.variations.length > 0 && (
+        item.variations
+        && item.variations.length > 0 && (
           <span className="text-xs text-muted-foreground">
             No specific variation selected
           </span>
@@ -83,7 +83,7 @@ const ItemWithVariationDisplay = ({
   );
 };
 
-export default function ExchangeTable({
+export default function ExchangeTable ({
   exchanges,
 }: {
   exchanges: ExchangeWithRelations[];
@@ -93,8 +93,8 @@ export default function ExchangeTable({
   const [isPending, startTransition] = useTransition();
 
   // Use our custom hook to fetch exchange-related data
-  const { customers, staff, inventoryItems, isLoading, error } =
-    useExchangeData();
+  const { customers, staff, inventoryItems, isLoading, error }
+    = useExchangeData();
 
   // Show error if data fetching fails
   useEffect(() => {
@@ -110,8 +110,8 @@ export default function ExchangeTable({
   // States
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedExchange, setSelectedExchange] =
-    useState<ExchangeWithRelations | null>(null);
+  const [selectedExchange, setSelectedExchange]
+    = useState<ExchangeWithRelations | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<
@@ -130,16 +130,16 @@ export default function ExchangeTable({
 
   // Filter exchanges
   const filteredExchanges = exchanges.filter((exchange) => {
-    const matchesSearch =
-      search.toLowerCase() === '' ||
-      exchange.customer.firstName
+    const matchesSearch
+      = search.toLowerCase() === ''
+      || exchange.customer.firstName
         .toLowerCase()
-        .includes(search.toLowerCase()) ||
-      exchange.returnedItem.name.toLowerCase().includes(search.toLowerCase()) ||
-      exchange.newItem.name.toLowerCase().includes(search.toLowerCase());
+        .includes(search.toLowerCase())
+      || exchange.returnedItem.name.toLowerCase().includes(search.toLowerCase())
+      || exchange.newItem.name.toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === 'all' || exchange.status === statusFilter;
+    const matchesStatus
+      = statusFilter === 'all' || exchange.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -161,7 +161,7 @@ export default function ExchangeTable({
   };
 
   const confirmAction = () => {
-    if (!selectedExchange || !actionType) return;
+    if (!selectedExchange || !actionType) { return; }
 
     startTransition(async () => {
       try {
@@ -178,7 +178,7 @@ export default function ExchangeTable({
         } else if (actionType === 'approve') {
           response = await updateExchangeStatus(
             selectedExchange.id,
-            'Approved'
+            'Approved',
           );
           if (response.success) {
             toast({
@@ -189,7 +189,7 @@ export default function ExchangeTable({
         } else if (actionType === 'reject') {
           response = await updateExchangeStatus(
             selectedExchange.id,
-            'Rejected'
+            'Rejected',
           );
           if (response.success) {
             toast({
@@ -222,13 +222,13 @@ export default function ExchangeTable({
 
   // Handlers for exchange actions
   const handleApproveExchangeFromDetails = () => {
-    if (!selectedExchange) return;
+    if (!selectedExchange) { return; }
     setDetailsDialogOpen(false);
     handleApproveExchange();
   };
 
   const handleRejectExchangeFromDetails = () => {
-    if (!selectedExchange) return;
+    if (!selectedExchange) { return; }
     setDetailsDialogOpen(false);
     handleRejectExchange();
   };
@@ -236,26 +236,26 @@ export default function ExchangeTable({
   // Helper function for status badges
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'Pending':
-        return (
-          <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+    case 'Pending':
+      return (
+        <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
             Pending
-          </Badge>
-        );
-      case 'Approved':
-        return (
-          <Badge variant="outline" className="bg-green-100 text-green-800">
+        </Badge>
+      );
+    case 'Approved':
+      return (
+        <Badge variant="outline" className="bg-green-100 text-green-800">
             Approved
-          </Badge>
-        );
-      case 'Rejected':
-        return (
-          <Badge variant="outline" className="bg-red-100 text-red-800">
+        </Badge>
+      );
+    case 'Rejected':
+      return (
+        <Badge variant="outline" className="bg-red-100 text-red-800">
             Rejected
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline">Unknown</Badge>;
+        </Badge>
+      );
+    default:
+      return <Badge variant="outline">Unknown</Badge>;
     }
   };
 
@@ -379,7 +379,7 @@ export default function ExchangeTable({
                     <div className="flex items-center gap-2">
                       <TooltipProvider>
                         {/* Edit Exchange Button */}
-                        {exchange.status !== "Approved" && (
+                        {exchange.status !== 'Approved' && (
                           <EditExchangeDialog
                             exchange={exchange}
                             customers={customers}
@@ -447,12 +447,12 @@ export default function ExchangeTable({
               {actionType === 'reject' && 'Reject Exchange'}
             </DialogTitle>
             <DialogDescription>
-              {actionType === 'delete' &&
-                'Are you sure you want to delete this exchange? This action cannot be undone.'}
-              {actionType === 'approve' &&
-                'Are you sure you want to approve this exchange?'}
-              {actionType === 'reject' &&
-                'Are you sure you want to reject this exchange?'}
+              {actionType === 'delete'
+                && 'Are you sure you want to delete this exchange? This action cannot be undone.'}
+              {actionType === 'approve'
+                && 'Are you sure you want to approve this exchange?'}
+              {actionType === 'reject'
+                && 'Are you sure you want to reject this exchange?'}
             </DialogDescription>
           </DialogHeader>
 

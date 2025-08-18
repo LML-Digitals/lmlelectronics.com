@@ -23,12 +23,13 @@ interface StaffTableProps {
   staffs: Staff[];
 }
 
-function HashKeyTable({ staffs }: StaffTableProps) {
+function HashKeyTable ({ staffs }: StaffTableProps) {
   const router = useRouter();
   const [search, setSearch] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
     setSearch(inputValue);
   };
   const inactiveStaffs = staffs.filter((staff) => staff.isActive === false);
@@ -78,13 +79,13 @@ function HashKeyTable({ staffs }: StaffTableProps) {
               <TableCell>
                 {staff.hashKeyExpires
                   ? staff.hashKeyExpires.toLocaleString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true,
-                    })
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true,
+                  })
                   : 'N/A'}
               </TableCell>
               <TableCell>

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Search, ArrowLeft, Trash2, Edit } from "lucide-react";
-import { useState, useTransition } from "react";
-import CreateReturnItemDialog from "./CreateReturnItemForm";
-import EditReturnItemDialog from "./EditReturnItemForm";
-import { ViewReturnItemDialog } from "./ViewReturnItemDialog";
-import { Card } from "../../../ui/card";
-import { Input } from "../../../ui/input";
+import { Search, ArrowLeft, Trash2, Edit } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import CreateReturnItemDialog from './CreateReturnItemForm';
+import EditReturnItemDialog from './EditReturnItemForm';
+import { ViewReturnItemDialog } from './ViewReturnItemDialog';
+import { Card } from '../../../ui/card';
+import { Input } from '../../../ui/input';
 import {
   Table,
   TableBody,
@@ -14,18 +14,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../ui/table";
-import { useRouter } from "next/navigation";
-import { Button } from "../../../ui/button";
-import { deleteReturn } from "@/components/dashboard/inventory/returns/services/returnItemCrud";
-import { useToast } from "../../../ui/use-toast";
-import { Badge } from "../../../ui/badge";
+} from '../../../ui/table';
+import { useRouter } from 'next/navigation';
+import { Button } from '../../../ui/button';
+import { deleteReturn } from '@/components/dashboard/inventory/returns/services/returnItemCrud';
+import { useToast } from '../../../ui/use-toast';
+import { Badge } from '../../../ui/badge';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,38 +35,37 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../../../ui/alert-dialog";
-import { ItemReturnExtended } from "@/types/type";
+} from '../../../ui/alert-dialog';
+import { ItemReturnExtended } from '@/types/type';
 
-function ItemReturnTable({
+function ItemReturnTable ({
   returnedItems,
 }: {
   returnedItems: ItemReturnExtended[] | null;
 }) {
   const router = useRouter();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const { toast } = useToast();
   const [isPending, startTranisition] = useTransition();
-  const [selectedItem, setSelectedItem] = useState<ItemReturnExtended | null>(
-    null
-  );
+  const [selectedItem, setSelectedItem] = useState<ItemReturnExtended | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [itemToDeleteId, setItemToDeleteId] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
     setSearch(inputValue);
   };
 
   const filteredReturnedItems = returnedItems
     ? returnedItems.filter((returned: ItemReturnExtended) => {
-        return (
-          search.toLowerCase() === "" ||
-          returned.inventoryItem.name
+      return (
+        search.toLowerCase() === ''
+          || returned.inventoryItem.name
             .toLowerCase()
             .includes(search.toLocaleLowerCase())
-        );
-      })
+      );
+    })
     : [];
 
   const handleDeleteReturn = (stockReturnId: string) => {
@@ -74,17 +73,17 @@ function ItemReturnTable({
       try {
         const res = await deleteReturn(stockReturnId);
 
-        if (res.status === "success") {
+        if (res.status === 'success') {
           router.refresh();
           toast({
-            title: "Deleted",
-            description: "Deleted returned item successfully",
+            title: 'Deleted',
+            description: 'Deleted returned item successfully',
           });
         }
       } catch (error) {
         toast({
-          title: "Failed",
-          description: "Deleting returned item failed",
+          title: 'Failed',
+          description: 'Deleting returned item failed',
         });
       }
     });
@@ -92,20 +91,20 @@ function ItemReturnTable({
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "Approved":
-        return (
-          <Badge className="bg-green-500 hover:bg-green-600">{status}</Badge>
-        );
-      case "Rejected":
-        return <Badge className="bg-red-500 hover:bg-red-600">{status}</Badge>;
-      case "Pending":
-        return (
-          <Badge className="bg-yellow-500 hover:bg-yellow-600">{status}</Badge>
-        );
-      default:
-        return (
-          <Badge className="bg-gray-500 hover:bg-gray-600">{status}</Badge>
-        );
+    case 'Approved':
+      return (
+        <Badge className="bg-green-500 hover:bg-green-600">{status}</Badge>
+      );
+    case 'Rejected':
+      return <Badge className="bg-red-500 hover:bg-red-600">{status}</Badge>;
+    case 'Pending':
+      return (
+        <Badge className="bg-yellow-500 hover:bg-yellow-600">{status}</Badge>
+      );
+    default:
+      return (
+        <Badge className="bg-gray-500 hover:bg-gray-600">{status}</Badge>
+      );
     }
   };
 
@@ -163,14 +162,14 @@ function ItemReturnTable({
                   >
                     <TableCell className="text-xs sm:text-sm">{item.inventoryItem.name}</TableCell>
                     <TableCell className="text-xs sm:text-sm">
-                      {item.returningParty.toLowerCase() === "customer"
-                        ? `${item.customer?.firstName || ""} ${
-                            item.customer?.lastName || ""
-                          }`.trim() || "Customer"
-                        : item.returningParty.toLowerCase() === "shop"
-                        ? item.supplier || "Shop"
-                        : item.returningParty.charAt(0).toUpperCase() +
-                          item.returningParty.slice(1)}
+                      {item.returningParty.toLowerCase() === 'customer'
+                        ? `${item.customer?.firstName || ''} ${
+                          item.customer?.lastName || ''
+                        }`.trim() || 'Customer'
+                        : item.returningParty.toLowerCase() === 'shop'
+                          ? item.supplier || 'Shop'
+                          : item.returningParty.charAt(0).toUpperCase()
+                          + item.returningParty.slice(1)}
                     </TableCell>
                     <TableCell
                       className="max-w-xs truncate text-xs sm:text-sm"
@@ -180,10 +179,8 @@ function ItemReturnTable({
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm">{item.quantity}</TableCell>
                     <TableCell className="text-xs sm:text-sm">
-                      {getStatusBadge(
-                        item.status.charAt(0).toUpperCase() +
-                          item.status.slice(1)
-                      )}
+                      {getStatusBadge(item.status.charAt(0).toUpperCase()
+                          + item.status.slice(1))}
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm">
                       {item.isPaid ? (
@@ -202,7 +199,7 @@ function ItemReturnTable({
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              {item.status !== "approved" ? (
+                              {item.status !== 'approved' ? (
                                 <EditReturnItemDialog
                                   returnedItem={item}
                                   trigger={
@@ -266,8 +263,8 @@ function ItemReturnTable({
             <h3 className="text-base sm:text-lg font-medium">No returned items found</h3>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 mb-4">
               {search
-                ? "Try adjusting your search term"
-                : "Start by adding a returned item"}
+                ? 'Try adjusting your search term'
+                : 'Start by adding a returned item'}
             </p>
             <div className="w-full sm:w-auto">
               <CreateReturnItemDialog />
@@ -314,7 +311,7 @@ function ItemReturnTable({
               disabled={isPending}
               className="bg-red-600 hover:bg-red-700"
             >
-              {isPending ? "Deleting..." : "Delete"}
+              {isPending ? 'Deleting...' : 'Delete'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

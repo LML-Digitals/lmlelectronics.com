@@ -1,9 +1,9 @@
-import { Metadata } from "next";
-import { Tag, Plus } from "lucide-react";
-import TagTable from "@/components/dashboard/Tags/TagTable";
-import { Button } from "@/components/ui/button";
+import { Metadata } from 'next';
+import { Tag, Plus } from 'lucide-react';
+import TagTable from '@/components/dashboard/Tags/TagTable';
+import { Button } from '@/components/ui/button';
 
-export default function TagsPage() {
+export default function TagsPage () {
   return (
     <div className="container mx-auto py-4 sm:py-6 px-4 sm:px-6 space-y-6 sm:space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

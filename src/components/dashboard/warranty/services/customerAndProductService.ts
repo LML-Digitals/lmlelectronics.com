@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 
-export async function getCustomersForSelect() {
+export async function getCustomersForSelect () {
   try {
     const customers = await prisma.customer.findMany({
       select: {
@@ -12,18 +12,18 @@ export async function getCustomersForSelect() {
         email: true,
       },
       orderBy: {
-        firstName: "asc",
+        firstName: 'asc',
       },
     });
 
     return customers;
   } catch (error) {
-    console.error("Error fetching customers:", error);
+    console.error('Error fetching customers:', error);
     throw error;
   }
 }
 
-export async function getInventoryItemsForSelect() {
+export async function getInventoryItemsForSelect () {
   try {
     const items = await prisma.inventoryItem.findMany({
       include: {
@@ -36,18 +36,18 @@ export async function getInventoryItemsForSelect() {
         },
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     });
 
     return items;
   } catch (error) {
-    console.error("Error fetching inventory items:", error);
+    console.error('Error fetching inventory items:', error);
     throw error;
   }
 }
 
-export async function getInventoryVariationsForSelect() {
+export async function getInventoryVariationsForSelect () {
   try {
     const variations = await prisma.inventoryVariation.findMany({
       select: {
@@ -64,14 +64,14 @@ export async function getInventoryVariationsForSelect() {
         inventoryItemId: { not: null }, // Only get variations linked to inventory items
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
       take: 100, // Limit results for better performance
     });
 
     return variations;
   } catch (error) {
-    console.error("Error fetching inventory variations:", error);
+    console.error('Error fetching inventory variations:', error);
     throw error;
   }
 }

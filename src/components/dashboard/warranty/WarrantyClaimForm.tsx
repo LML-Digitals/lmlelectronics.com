@@ -1,20 +1,20 @@
-"use client";
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+'use client';
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { createWarrantyClaim } from "./services/warrantyCrud";
-import { WarrantyClaimInput } from "./types/types";
-import { toast } from "@/components/ui/use-toast";
-import { CheckCircle } from "lucide-react";
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { createWarrantyClaim } from './services/warrantyCrud';
+import { WarrantyClaimInput } from './types/types';
+import { toast } from '@/components/ui/use-toast';
+import { CheckCircle } from 'lucide-react';
 
 interface WarrantyClaimFormProps {
   warrantyId: string;
@@ -23,7 +23,7 @@ interface WarrantyClaimFormProps {
   isLifetimeWarranty?: boolean;
 }
 
-export function WarrantyClaimForm({
+export function WarrantyClaimForm ({
   warrantyId,
   customerId,
   onSuccess,
@@ -32,8 +32,8 @@ export function WarrantyClaimForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [formData, setFormData] = useState<WarrantyClaimInput>({
-    description: "",
-    issueType: "Defect",
+    description: '',
+    issueType: 'Defect',
     warrantyId,
     customerId,
   });
@@ -45,19 +45,19 @@ export function WarrantyClaimForm({
     try {
       await createWarrantyClaim(formData);
       toast({
-        title: "Success",
-        description: "Warranty claim submitted successfully",
+        title: 'Success',
+        description: 'Warranty claim submitted successfully',
       });
 
       if (onSuccess) {
         onSuccess();
       }
     } catch (error) {
-      console.error("Error submitting warranty claim:", error);
+      console.error('Error submitting warranty claim:', error);
       toast({
-        title: "Error",
-        description: "Failed to submit warranty claim. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to submit warranty claim. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -66,6 +66,7 @@ export function WarrantyClaimForm({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -76,8 +77,7 @@ export function WarrantyClaimForm({
         <Select
           name="issueType"
           value={formData.issueType}
-          onValueChange={(value) =>
-            setFormData((prev) => ({ ...prev, issueType: value }))
+          onValueChange={(value) => setFormData((prev) => ({ ...prev, issueType: value }))
           }
           required
         >
@@ -86,7 +86,7 @@ export function WarrantyClaimForm({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Defect">
-              Manufacturing Defect {isLifetimeWarranty && "- Auto-approved"}
+              Manufacturing Defect {isLifetimeWarranty && '- Auto-approved'}
             </SelectItem>
             <SelectItem value="Malfunction">Malfunction</SelectItem>
             <SelectItem value="Performance">Performance Issue</SelectItem>
@@ -95,7 +95,7 @@ export function WarrantyClaimForm({
           </SelectContent>
         </Select>
 
-        {isLifetimeWarranty && formData.issueType === "Defect" && (
+        {isLifetimeWarranty && formData.issueType === 'Defect' && (
           <div className="mt-1 text-sm text-green-600 flex items-center">
             <CheckCircle className="h-4 w-4 mr-1" />
             This claim will be automatically approved
@@ -124,10 +124,10 @@ export function WarrantyClaimForm({
           required
         />
         <Label htmlFor="termsAccepted" className="text-sm">
-          I agree to the{" "}
+          I agree to the{' '}
           <a
             href={`${
-              process.env.NEXT_PUBLIC_APP_URL || "https://lmlrepair.com"
+              process.env.NEXT_PUBLIC_APP_URL || 'https://lmlrepair.com'
             }/terms/warranty-terms`}
             className="text-primary underline hover:text-primary/80"
             target="_blank"
@@ -139,7 +139,7 @@ export function WarrantyClaimForm({
 
       <div className="flex justify-end space-x-2">
         <Button type="submit" disabled={isSubmitting || !termsAccepted}>
-          {isSubmitting ? "Submitting..." : "Submit Claim"}
+          {isSubmitting ? 'Submitting...' : 'Submit Claim'}
         </Button>
       </div>
     </form>

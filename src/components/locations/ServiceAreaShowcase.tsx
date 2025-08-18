@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { MapPin, ArrowRight } from "lucide-react";
+import Link from 'next/link';
+import { MapPin, ArrowRight } from 'lucide-react';
 
 interface ServiceArea {
   slug: string;
@@ -16,10 +16,10 @@ interface ServiceAreaShowcaseProps {
   maxItems?: number;
 }
 
-export default function ServiceAreaShowcase({ 
-  serviceAreas, 
-  showAll = false, 
-  maxItems = 6 
+export default function ServiceAreaShowcase ({
+  serviceAreas,
+  showAll = false,
+  maxItems = 6,
 }: ServiceAreaShowcaseProps) {
   const displayAreas = showAll ? serviceAreas : serviceAreas.slice(0, maxItems);
 
@@ -42,11 +42,11 @@ export default function ServiceAreaShowcase({
                 </div>
                 <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </div>
-              
+
               <p className="text-gray-600 text-sm leading-relaxed mb-4">
                 {area.description}
               </p>
-              
+
               <div className="flex flex-wrap gap-2">
                 {area.nearbyLandmarks.slice(0, 2).map((landmark, index) => (
                   <span
@@ -66,7 +66,7 @@ export default function ServiceAreaShowcase({
           </Link>
         ))}
       </div>
-      
+
       {!showAll && serviceAreas.length > maxItems && (
         <div className="text-center mt-8">
           <Link
@@ -80,4 +80,4 @@ export default function ServiceAreaShowcase({
       )}
     </div>
   );
-} 
+}

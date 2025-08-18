@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -9,11 +9,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { getOrders } from "@/components/dashboard/pos/orders/services/pos-orders";
-import { Eye, RefreshCw } from "lucide-react";
-import { format } from "date-fns";
-import { OrdersPagination } from "./OrdersPagination";
+} from '@/components/ui/table';
+import { getOrders } from '@/components/dashboard/pos/orders/services/pos-orders';
+import { Eye, RefreshCw } from 'lucide-react';
+import { format } from 'date-fns';
+import { OrdersPagination } from './OrdersPagination';
 
 interface OrdersListProps {
   searchParams: {
@@ -27,9 +27,9 @@ interface OrdersListProps {
   };
 }
 
-export async function OrdersList({ searchParams }: OrdersListProps) {
+export async function OrdersList ({ searchParams }: OrdersListProps) {
   const result = await getOrders({
-    page: parseInt(searchParams.page || "1"),
+    page: parseInt(searchParams.page || '1'),
     search: searchParams.search,
     status: searchParams.status,
     paymentMethod: searchParams.paymentMethod,
@@ -45,7 +45,7 @@ export async function OrdersList({ searchParams }: OrdersListProps) {
           <div className="text-center">
             <RefreshCw className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
             <p className="text-muted-foreground">
-              {result.error || "Failed to load orders"}
+              {result.error || 'Failed to load orders'}
             </p>
           </div>
         </CardContent>
@@ -114,7 +114,7 @@ export async function OrdersList({ searchParams }: OrdersListProps) {
                         {order._count.refunds > 0 && (
                           <Badge variant="destructive" className="text-xs">
                             {order._count.refunds} refund
-                            {order._count.refunds > 1 ? "s" : ""}
+                            {order._count.refunds > 1 ? 's' : ''}
                           </Badge>
                         )}
                       </div>
@@ -134,7 +134,7 @@ export async function OrdersList({ searchParams }: OrdersListProps) {
 
                     <TableCell className="font-medium text-xs sm:text-sm">
                       $
-                      {order.total.toLocaleString("en-US", {
+                      {order.total.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -143,10 +143,10 @@ export async function OrdersList({ searchParams }: OrdersListProps) {
                     <TableCell className="hidden md:table-cell">
                       <div className="space-y-1">
                         <p className="text-xs sm:text-sm">
-                          {format(new Date(order.createdAt), "MMM d, yyyy")}
+                          {format(new Date(order.createdAt), 'MMM d, yyyy')}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {format(new Date(order.createdAt), "h:mm a")}
+                          {format(new Date(order.createdAt), 'h:mm a')}
                         </p>
                       </div>
                     </TableCell>
@@ -182,19 +182,19 @@ export async function OrdersList({ searchParams }: OrdersListProps) {
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge ({ status }: { status: string }) {
   const getStatusConfig = (status: string) => {
     switch (status) {
-      case "PAID":
-        return { variant: "default" as const, label: "Paid" };
-      case "INVOICED":
-        return { variant: "secondary" as const, label: "Invoiced" };
-      case "REFUNDED":
-        return { variant: "destructive" as const, label: "Refunded" };
-      case "PARTIALLY_REFUNDED":
-        return { variant: "outline" as const, label: "Partially Refunded" };
-      default:
-        return { variant: "outline" as const, label: status };
+    case 'PAID':
+      return { variant: 'default' as const, label: 'Paid' };
+    case 'INVOICED':
+      return { variant: 'secondary' as const, label: 'Invoiced' };
+    case 'REFUNDED':
+      return { variant: 'destructive' as const, label: 'Refunded' };
+    case 'PARTIALLY_REFUNDED':
+      return { variant: 'outline' as const, label: 'Partially Refunded' };
+    default:
+      return { variant: 'outline' as const, label: status };
     }
   };
 

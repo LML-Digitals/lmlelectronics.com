@@ -1,14 +1,14 @@
-"use client";
-import { z } from "zod";
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
-import { createStaff } from "../services/staffCrud";
-import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
+'use client';
+import { z } from 'zod';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Eye, EyeOff } from 'lucide-react';
+import { createStaff } from '../services/staffCrud';
+import { useToast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/common/top-dialog/TopDialog";
+} from '@/components/common/top-dialog/TopDialog';
 import {
   Form,
   FormField,
@@ -24,7 +24,7 @@ import {
   FormLabel,
   FormControl,
   FormDescription,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -33,76 +33,77 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 const schema = z
   .object({
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    mobilePhone: z.string().min(1, "Staff phone is required"),
-    email: z.string().min(1, "Staff email is required").email("Invalid email"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    role: z.string().min(1, "Staff role is required"),
-    title: z.string().min(1, "Staff title is required"),
-    paymentType: z.enum(["SALARY", "COMMISSION", "HOURLY"]),
-    salary: z.number().min(0, "Salary must be positive").optional(),
+    firstName: z.string().min(1, 'First name is required'),
+    lastName: z.string().min(1, 'Last name is required'),
+    mobilePhone: z.string().min(1, 'Staff phone is required'),
+    email: z.string().min(1, 'Staff email is required').email('Invalid email'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    role: z.string().min(1, 'Staff role is required'),
+    title: z.string().min(1, 'Staff title is required'),
+    paymentType: z.enum(['SALARY', 'COMMISSION', 'HOURLY']),
+    salary: z.number().min(0, 'Salary must be positive').optional(),
     baseSalary: z
       .number()
-      .min(0, "Base salary must be positive")
+      .min(0, 'Base salary must be positive')
       .optional(),
     commissionRate: z
       .number()
-      .min(0, "Commission rate must be positive")
-      .max(100, "Commission rate cannot exceed 100%")
+      .min(0, 'Commission rate must be positive')
+      .max(100, 'Commission rate cannot exceed 100%')
       .optional(),
     hourlyRate: z
       .number()
-      .min(0, "Hourly rate must be positive")
+      .min(0, 'Hourly rate must be positive')
       .optional(),
-    workHours: z.string().min(1, "Work hours are required"),
-    status: z.string().min(1, "Status is required"),
-    availability: z.string().min(1, "Availability is required"),
+    workHours: z.string().min(1, 'Work hours are required'),
+    status: z.string().min(1, 'Status is required'),
+    availability: z.string().min(1, 'Availability is required'),
   })
   .refine(
     (data) => {
-      if (data.paymentType === "SALARY" && data.salary === undefined) {
+      if (data.paymentType === 'SALARY' && data.salary === undefined) {
         return false;
       }
       if (
-        data.paymentType === "COMMISSION" &&
-        (data.baseSalary === undefined || data.commissionRate === undefined)
+        data.paymentType === 'COMMISSION'
+        && (data.baseSalary === undefined || data.commissionRate === undefined)
       ) {
         return false;
       }
-      if (data.paymentType === "HOURLY" && data.hourlyRate === undefined) {
+      if (data.paymentType === 'HOURLY' && data.hourlyRate === undefined) {
         return false;
       }
+
       return true;
     },
     {
-      message: "Required compensation fields are missing",
-    }
+      message: 'Required compensation fields are missing',
+    },
   );
 
 type FormData = z.infer<typeof schema>;
 
-export default function AddStaff() {
+export default function AddStaff () {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [paymentType, setPaymentType] = useState<
-    "SALARY" | "COMMISSION" | "HOURLY"
-  >("SALARY");
+    'SALARY' | 'COMMISSION' | 'HOURLY'
+  >('SALARY');
   const { toast } = useToast();
   const router = useRouter();
 
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      workHours: "40",
-      status: "active",
-      availability: "full-time",
-      paymentType: "SALARY",
+      workHours: '40',
+      status: 'active',
+      availability: 'full-time',
+      paymentType: 'SALARY',
       salary: 0,
     },
   });
@@ -115,13 +116,13 @@ export default function AddStaff() {
     setValue,
   } = methods;
 
-  const watchPaymentType = watch("paymentType");
+  const watchPaymentType = watch('paymentType');
 
   useEffect(() => {
-    setPaymentType(watchPaymentType || "SALARY");
+    setPaymentType(watchPaymentType || 'SALARY');
   }, [watchPaymentType]);
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit (formData: FormData) {
     setLoading(true);
     try {
       const staffData: any = {
@@ -139,18 +140,18 @@ export default function AddStaff() {
       };
 
       // Set appropriate payment fields based on payment type
-      if (formData.paymentType === "SALARY") {
+      if (formData.paymentType === 'SALARY') {
         staffData.salary = formData.salary;
-      } else if (formData.paymentType === "COMMISSION") {
+      } else if (formData.paymentType === 'COMMISSION') {
         staffData.baseSalary = formData.baseSalary;
         // We'll create the commission rate in a separate step
-      } else if (formData.paymentType === "HOURLY") {
+      } else if (formData.paymentType === 'HOURLY') {
         staffData.salary = formData.hourlyRate;
       }
 
       const staff = await createStaff(staffData);
 
-      if (staff && formData.paymentType === "COMMISSION") {
+      if (staff && formData.paymentType === 'COMMISSION') {
         // Create commission rate record if needed
         // This would typically be handled in the staffCrud.ts createStaff function
         // but we're simulating the complete flow here
@@ -160,16 +161,16 @@ export default function AddStaff() {
         setDialogOpen(false);
         router.refresh();
         toast({
-          title: "Success",
-          description: "Staff member added successfully",
-          variant: "default",
+          title: 'Success',
+          description: 'Staff member added successfully',
+          variant: 'default',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An error occurred while adding staff member.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'An error occurred while adding staff member.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -308,7 +309,7 @@ export default function AddStaff() {
                         <FormControl>
                           <div className="relative">
                             <Input
-                              type={showPassword ? "text" : "password"}
+                              type={showPassword ? 'text' : 'password'}
                               className="bg-white text-sm sm:text-base min-h-[44px] pr-10"
                               placeholder="Enter password"
                               {...field}
@@ -438,7 +439,7 @@ export default function AddStaff() {
                     )}
                   />
 
-                  {paymentType === "SALARY" && (
+                  {paymentType === 'SALARY' && (
                     <FormField
                       control={control}
                       name="salary"
@@ -465,7 +466,7 @@ export default function AddStaff() {
                     />
                   )}
 
-                  {paymentType === "COMMISSION" && (
+                  {paymentType === 'COMMISSION' && (
                     <>
                       <FormField
                         control={control}
@@ -518,7 +519,7 @@ export default function AddStaff() {
                     </>
                   )}
 
-                  {paymentType === "HOURLY" && (
+                  {paymentType === 'HOURLY' && (
                     <FormField
                       control={control}
                       name="hourlyRate"
@@ -660,7 +661,7 @@ export default function AddStaff() {
                     Creating...
                   </>
                 ) : (
-                  "Create Staff"
+                  'Create Staff'
                 )}
               </Button>
             </DialogFooter>

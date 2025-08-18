@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 import LoginPageClient from './LoginPageClient';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata (): Promise<Metadata> {
   return {
     title: 'Sign In | Phone & Electronics Repair Services',
     description: 'Access your repair services account to track repairs, manage appointments, and view repair history. Secure login with two-factor authentication for your protection.',
@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function SignInPage() {
+export default function SignInPage () {
   const signInStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -51,8 +51,6 @@ export default function SignInPage() {
   };
 
   return (
-    <>
-      <LoginPageClient />
-    </>
+    <LoginPageClient />
   );
 }

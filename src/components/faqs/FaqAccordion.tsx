@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { FAQ } from "@prisma/client";
-import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
-import { useState } from "react";
+import { FAQ } from '@prisma/client';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Minus } from 'lucide-react';
+import { useState } from 'react';
 
 interface FaqAccordionProps {
   faqs: FAQ[];
 }
 
-export default function FaqAccordion({ faqs }: FaqAccordionProps) {
+export default function FaqAccordion ({ faqs }: FaqAccordionProps) {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
 
   return (
@@ -20,8 +20,7 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
           className="rounded-lg border border-[#D1D3D4] bg-white/50 backdrop-blur-sm overflow-hidden hover:border-secondary transition-colors"
         >
           <button
-            onClick={() =>
-              setExpandedIndex(expandedIndex === index ? null : index)
+            onClick={() => setExpandedIndex(expandedIndex === index ? null : index)
             }
             className="flex w-full items-center justify-between p-4 text-left"
           >
@@ -36,7 +35,7 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
             {expandedIndex === index && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
+                animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >

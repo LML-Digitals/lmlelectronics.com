@@ -12,17 +12,17 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { Badge } from '../../ui/badge';
-import { 
-  User, 
-  Settings, 
-  LogOut, 
-  Shield, 
+import {
+  User,
+  Settings,
+  LogOut,
+  Shield,
   Crown,
   Building2,
-  Sparkles 
+  Sparkles,
 } from 'lucide-react';
 
-export function UserNav() {
+export function UserNav () {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
 
@@ -32,40 +32,40 @@ export function UserNav() {
 
   const getUserTypeIcon = () => {
     switch (userType) {
-      case 'user':
-        return <Crown className="h-3 w-3 text-amber-500" />;
-      case 'staff':
-        return <Shield className="h-3 w-3 text-blue-500" />;
-      case 'customer':
-        return <User className="h-3 w-3 text-green-500" />;
-      default:
-        return <User className="h-3 w-3 text-muted-foreground" />;
+    case 'user':
+      return <Crown className="h-3 w-3 text-amber-500" />;
+    case 'staff':
+      return <Shield className="h-3 w-3 text-blue-500" />;
+    case 'customer':
+      return <User className="h-3 w-3 text-green-500" />;
+    default:
+      return <User className="h-3 w-3 text-muted-foreground" />;
     }
   };
 
   const getUserTypeLabel = () => {
     switch (userType) {
-      case 'user':
-        return 'Administrator';
-      case 'staff':
-        return 'Staff Member';
-      case 'customer':
-        return 'Customer';
-      default:
-        return 'User';
+    case 'user':
+      return 'Administrator';
+    case 'staff':
+      return 'Staff Member';
+    case 'customer':
+      return 'Customer';
+    default:
+      return 'User';
     }
   };
 
   const getUserTypeColor = () => {
     switch (userType) {
-      case 'user':
-        return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800/30';
-      case 'staff':
-        return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800/30';
-      case 'customer':
-        return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-300 dark:border-green-800/30';
-      default:
-        return 'bg-muted text-muted-foreground border-border';
+    case 'user':
+      return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800/30';
+    case 'staff':
+      return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800/30';
+    case 'customer':
+      return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-300 dark:border-green-800/30';
+    default:
+      return 'bg-muted text-muted-foreground border-border';
     }
   };
 
@@ -96,8 +96,8 @@ export function UserNav() {
           </div>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        className="w-64 p-2 shadow-xl border-0 bg-popover/95 backdrop-blur supports-[backdrop-filter]:bg-popover/95" 
+      <DropdownMenuContent
+        className="w-64 p-2 shadow-xl border-0 bg-popover/95 backdrop-blur supports-[backdrop-filter]:bg-popover/95"
         align="end"
         sideOffset={8}
       >
@@ -119,8 +119,8 @@ export function UserNav() {
               <p className="text-xs text-muted-foreground leading-none">
                 {loading ? 'Loading...' : session?.user?.email || '...'}
               </p>
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant="outline"
                 className={`mt-1 w-fit text-xs px-2 py-0.5 ${getUserTypeColor()}`}
               >
                 <div className="flex items-center gap-1">

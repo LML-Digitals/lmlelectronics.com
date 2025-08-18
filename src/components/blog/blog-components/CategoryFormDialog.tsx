@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -19,17 +19,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 import {
   createBlogCategory,
   updateBlogCategory,
   CategoryData,
-} from "@/components/blog/services/blogCategoryCrud";
-import { BlogCategory } from "@prisma/client";
+} from '@/components/blog/services/blogCategoryCrud';
+import { BlogCategory } from '@prisma/client';
 
 interface CategoryFormDialogProps {
   isOpen: boolean;
@@ -39,11 +39,11 @@ interface CategoryFormDialogProps {
 }
 
 const formSchema = z.object({
-  name: z.string().min(1, "Category name is required"),
+  name: z.string().min(1, 'Category name is required'),
   description: z.string().optional(),
 });
 
-export function CategoryFormDialog({
+export function CategoryFormDialog ({
   isOpen,
   onClose,
   onSuccess,
@@ -56,16 +56,16 @@ export function CategoryFormDialog({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
     },
   });
 
   useEffect(() => {
     if (isOpen) {
       form.reset({
-        name: initialData?.name ?? "",
-        description: initialData?.description ?? "",
+        name: initialData?.name ?? '',
+        description: initialData?.description ?? '',
       });
     }
   }, [isOpen, initialData, form]);
@@ -74,22 +74,23 @@ export function CategoryFormDialog({
     setIsSubmitting(true);
     try {
       let result: BlogCategory;
+
       if (isEditMode && initialData?.id) {
         result = await updateBlogCategory(initialData.id, values);
-        toast({ title: "Success", description: "Category updated successfully." });
+        toast({ title: 'Success', description: 'Category updated successfully.' });
       } else {
         result = await createBlogCategory(values);
-        toast({ title: "Success", description: "Category created successfully." });
+        toast({ title: 'Success', description: 'Category created successfully.' });
       }
       onSuccess(result); // Notify parent component
       onClose(); // Close the dialog
     } catch (error) {
-      console.error("Failed to save category:", error);
+      console.error('Failed to save category:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
-          error instanceof Error ? error.message : "Failed to save category.",
+          error instanceof Error ? error.message : 'Failed to save category.',
       });
     } finally {
       setIsSubmitting(false);
@@ -101,7 +102,7 @@ export function CategoryFormDialog({
       <DialogContent className="max-w-[95vw] sm:max-w-[425px] max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">
-            {isEditMode ? "Edit Category" : "Create New Category"}
+            {isEditMode ? 'Edit Category' : 'Create New Category'}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -144,7 +145,7 @@ export function CategoryFormDialog({
                 </Button>
               </DialogClose>
               <Button type="submit" disabled={isSubmitting} className="min-h-[44px] w-full sm:w-auto">
-                {isSubmitting ? "Saving..." : isEditMode ? "Save Changes" : "Create Category"}
+                {isSubmitting ? 'Saving...' : isEditMode ? 'Save Changes' : 'Create Category'}
               </Button>
             </DialogFooter>
           </form>
@@ -152,4 +153,4 @@ export function CategoryFormDialog({
       </DialogContent>
     </Dialog>
   );
-} 
+}

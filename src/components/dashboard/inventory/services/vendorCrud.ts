@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 
-export async function getVendors() {
+export async function getVendors () {
   try {
     const vendors = await prisma.vendor.findMany({
       select: {
@@ -10,13 +10,14 @@ export async function getVendors() {
         name: true,
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     });
 
     return vendors;
   } catch (error) {
-    console.error("Error fetching vendors:", error);
+    console.error('Error fetching vendors:', error);
+
     return [];
   }
 }

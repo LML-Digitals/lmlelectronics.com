@@ -1,7 +1,7 @@
-import { getExchanges } from "@/components/dashboard/inventory/exchanges/services/exchangeCrud";
-import ExchangeTable from "@/components/dashboard/inventory/exchanges/ExchangeTable";
+import { getExchanges } from '@/components/dashboard/inventory/exchanges/services/exchangeCrud';
+import ExchangeTable from '@/components/dashboard/inventory/exchanges/ExchangeTable';
 
-async function ExchangesPage() {
+async function ExchangesPage () {
   const { data, error } = await getExchanges();
 
   return (

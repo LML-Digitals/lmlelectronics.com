@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { FileText } from 'lucide-react';
 
-export default async function TermHistoryPage({
+export default async function TermHistoryPage ({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -14,7 +14,7 @@ export default async function TermHistoryPage({
   const { slug } = await params;
   const term = await getTermHistory(slug);
 
-  if (!term) return notFound();
+  if (!term) { return notFound(); }
 
   return (
     <div className="space-y-4 sm:space-y-6 p-3 sm:p-4">

@@ -8,7 +8,7 @@ import prisma from '@/lib/prisma';
  * @param staffId ID of the staff member
  * @returns Array of reviews with related ticket and device information
  */
-export async function getStaffReviews(staffId: string) {
+export async function getStaffReviews (staffId: string) {
   try {
     // Get all tickets handled by this staff member
     const staffTickets = await prisma.ticket.findMany({
@@ -64,9 +64,9 @@ export async function getStaffReviews(staffId: string) {
  * @param reviewId ID of the review
  * @param isApproved New approval status
  */
-export async function updateReviewApproval(
+export async function updateReviewApproval (
   reviewId: number,
-  isApproved: boolean
+  isApproved: boolean,
 ) {
   try {
     const updatedReview = await prisma.review.update({

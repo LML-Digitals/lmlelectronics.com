@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,13 +8,13 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Trash2, AlertCircle, Loader2 } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { toast } from "@/components/ui/use-toast";
-import { InventoryItemWithRelations } from "./types/ItemType";
-import { deleteInventoryItem } from "./services/itemsCrud";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Trash2, AlertCircle, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from '@/components/ui/use-toast';
+import { InventoryItemWithRelations } from './types/ItemType';
+import { deleteInventoryItem } from './services/itemsCrud';
 
 type BulkDeleteDialogProps = {
   items: InventoryItemWithRelations[];
@@ -23,7 +23,7 @@ type BulkDeleteDialogProps = {
   onDeleted: () => void;
 };
 
-export function BulkDeleteDialog({
+export function BulkDeleteDialog ({
   items,
   open,
   onOpenChange,
@@ -35,25 +35,23 @@ export function BulkDeleteDialog({
     setIsDeleting(true);
     try {
       // Create an array of promises for each item's delete operation
-      const deletePromises = items.map(
-        async (item) => await deleteInventoryItem(item.id)
-      );
+      const deletePromises = items.map(async (item) => await deleteInventoryItem(item.id));
 
       // Wait for all delete operations to complete
       await Promise.all(deletePromises);
 
       toast({
-        title: "Items deleted",
+        title: 'Items deleted',
         description: `Successfully deleted ${items.length} items`,
       });
 
       onDeleted();
     } catch (error) {
-      console.error("Error deleting items:", error);
+      console.error('Error deleting items:', error);
       toast({
-        title: "Failed to delete items",
-        description: "There was an error deleting the items. Please try again.",
-        variant: "destructive",
+        title: 'Failed to delete items',
+        description: 'There was an error deleting the items. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsDeleting(false);

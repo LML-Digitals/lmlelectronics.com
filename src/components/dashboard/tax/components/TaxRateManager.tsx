@@ -71,7 +71,7 @@ const taxRateSchema = z.object({
 
 type TaxRateFormValues = z.infer<typeof taxRateSchema>;
 
-export default function TaxRateManager({
+export default function TaxRateManager ({
   taxRates,
   onTaxRatesChange,
 }: {
@@ -81,9 +81,7 @@ export default function TaxRateManager({
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingTaxRate, setEditingTaxRate] = useState<TaxRateType | null>(
-    null
-  );
+  const [editingTaxRate, setEditingTaxRate] = useState<TaxRateType | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [localTaxRates, setLocalTaxRates] = useState<TaxRateType[]>(taxRates);
@@ -136,7 +134,7 @@ export default function TaxRateManager({
   };
 
   const handleDelete = async () => {
-    if (!deletingId) return;
+    if (!deletingId) { return; }
 
     const result = await deleteTaxRate(deletingId);
 
@@ -167,8 +165,8 @@ export default function TaxRateManager({
       isActive: data.isActive,
     };
 
-    const result =
-      isEditing && data.id
+    const result
+      = isEditing && data.id
         ? await updateTaxRate(data.id, taxRateInput)
         : await createTaxRate(taxRateInput);
 
@@ -185,8 +183,8 @@ export default function TaxRateManager({
       toast({
         title: 'Error',
         description:
-          result.error ||
-          `Failed to ${isEditing ? 'update' : 'create'} tax rate`,
+          result.error
+          || `Failed to ${isEditing ? 'update' : 'create'} tax rate`,
         variant: 'destructive',
       });
     }

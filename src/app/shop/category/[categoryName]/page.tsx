@@ -1,25 +1,26 @@
-import Link from "next/link";
-import Image from "next/image";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import type { Metadata } from "next";
-import { formatSlug, decodeSlug } from "@/components/products/utils/formatSlug";
-import { truncate } from "@/components/products/utils/text";
-import { ChevronRight } from "lucide-react";
-import type { InventoryItemCategory, InventoryVariation } from "@/types/api";
-import ProductCard from "@/components/products/ProductCard";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import PageHero from "@/components/PageHero";
-import { getInventoryCategoryBySlug } from "@/components/dashboard/inventory/categories/services/itemCategoryCrud";
+import Link from 'next/link';
+import Image from 'next/image';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import type { Metadata } from 'next';
+import { formatSlug, decodeSlug } from '@/components/products/utils/formatSlug';
+import { truncate } from '@/components/products/utils/text';
+import { ChevronRight } from 'lucide-react';
+import type { InventoryItemCategory, InventoryVariation } from '@/types/api';
+import ProductCard from '@/components/products/ProductCard';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import PageHero from '@/components/PageHero';
+import { getInventoryCategoryBySlug } from '@/components/dashboard/inventory/categories/services/itemCategoryCrud';
 
 // Generate dynamic metadata
-export async function generateMetadata({
+export async function generateMetadata ({
   params,
 }: {
   params: Promise<{ categoryName: string }>;
 }): Promise<Metadata> {
   const { categoryName } = await params;
   const decodedName = decodeSlug(categoryName);
+
   return {
     title: `${decodedName} - High-Quality Parts & Accessories`,
     description: `Shop our collection of high-quality ${decodedName} parts and accessories. Find genuine replacement parts, components, and accessories with warranty and expert support.`,
@@ -27,35 +28,38 @@ export async function generateMetadata({
   };
 }
 
-async function fetchCategoryWithItems(categoryName: string) {
+async function fetchCategoryWithItems (categoryName: string) {
   try {
     const category = await getInventoryCategoryBySlug(categoryName);
+
     return { category, error: null };
   } catch (err) {
-    console.error("Error fetching category:", err);
+    console.error('Error fetching category:', err);
+
     return {
       category: null,
-      error: "Category not found or not available.",
+      error: 'Category not found or not available.',
     };
   }
 }
 
-async function fetchCategoryBreadcrumbs(categoryName: string) {
+async function fetchCategoryBreadcrumbs (categoryName: string) {
   try {
-    const response = await fetch(
-      `/api/inventory/categories/${categoryName}/breadcrumbs`
-    );
+    const response = await fetch(`/api/inventory/categories/${categoryName}/breadcrumbs`);
+
     if (!response.ok) {
       return [];
     }
+
     return await response.json();
   } catch (err) {
-    console.error("Error fetching breadcrumbs:", err);
+    console.error('Error fetching breadcrumbs:', err);
+
     return [];
   }
 }
 
-export default async function ProductCategoryPage({
+export default async function ProductCategoryPage ({
   params,
 }: {
   params: Promise<{ categoryName: string }>;
@@ -70,12 +74,12 @@ export default async function ProductCategoryPage({
           title="All Shop Items"
           subtitle="Find the perfect components and repair kits for your needs. High-quality parts for every fix."
           backgroundImage="/images/lml_box.webp"
-          breadcrumbs={[{ name: "Shop", href: "/shop" }]}
+          breadcrumbs={[{ name: 'Shop', href: '/shop' }]}
         />
         <div className="max-w-7xl mx-auto">
           <div className="container mx-auto px-4 py-8">
             <p className="text-red-500 text-center">
-              {error || "Category not found"}
+              {error || 'Category not found'}
             </p>
           </div>
         </div>
@@ -88,9 +92,9 @@ export default async function ProductCategoryPage({
       <PageHero
         title={category.name}
         subtitle={`Browse our extensive selection of ${category.name} products.`}
-        backgroundImage={category.image || "/images/lml_box.webp"}
+        backgroundImage={category.image || '/images/lml_box.webp'}
         breadcrumbs={[
-          { name: "Shop", href: "/shop" },
+          { name: 'Shop', href: '/shop' },
           {
             name: category.name,
             href: `/shop/category/${formatSlug(category.name)}`,
@@ -114,7 +118,7 @@ export default async function ProductCategoryPage({
                         <div className="aspect-square relative overflow-hidden">
                           <Image
                             src={
-                              child.image || "/images/product-placeholder.jpg"
+                              child.image || '/images/product-placeholder.jpg'
                             }
                             alt={child.name}
                             width={300}
@@ -151,9 +155,7 @@ export default async function ProductCategoryPage({
                       name: item.name,
                       description: item.description || undefined,
                       image: item.image,
-                      variations: item.variations.filter(
-                        (v) => v.visible
-                      ) as InventoryVariation[],
+                      variations: item.variations.filter((v) => v.visible) as InventoryVariation[],
                     }}
                   />
                 ))}

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import ItemsTable from "@/components/dashboard/inventory/items/ItemsTable";
-import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
-import { useEffect, useState, useTransition, useCallback } from "react";
-import { InventoryItemWithRelations } from "@/components/dashboard/inventory/items/types/ItemType";
-import { Button } from "@/components/ui/button";
+import ItemsTable from '@/components/dashboard/inventory/items/ItemsTable';
+import { getInventoryItems } from '@/components/dashboard/inventory/items/services/itemsCrud';
+import { useEffect, useState, useTransition, useCallback } from 'react';
+import { InventoryItemWithRelations } from '@/components/dashboard/inventory/items/types/ItemType';
+import { Button } from '@/components/ui/button';
 
-export default function Items() {
+export default function Items () {
   const [items, setItems] = useState<InventoryItemWithRelations[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -14,9 +14,10 @@ export default function Items() {
   const loadItems = async () => {
     try {
       const data = await getInventoryItems();
+
       setItems(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load items");
+      setError(err instanceof Error ? err.message : 'Failed to load items');
     }
   };
 

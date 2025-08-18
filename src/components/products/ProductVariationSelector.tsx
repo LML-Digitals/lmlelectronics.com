@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { toast } from "sonner";
-import { useCartStore } from "@/lib/stores/useCartStore";
-import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "lucide-react";
+import { useState } from 'react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { toast } from 'sonner';
+import { useCartStore } from '@/lib/stores/useCartStore';
+import { Button } from '@/components/ui/button';
+import { ShoppingCart } from 'lucide-react';
 
 type Variation = {
   id: string;
@@ -28,15 +28,13 @@ type ProductVariationSelectorProps = {
   };
 };
 
-export default function ProductVariationSelector({
+export default function ProductVariationSelector ({
   product,
 }: ProductVariationSelectorProps) {
   // Set first variation as default selected variation
-  const [selectedVariation, setSelectedVariation] = useState<Variation | null>(
-    product.variations && product.variations.length > 0
-      ? product.variations[0]
-      : null
-  );
+  const [selectedVariation, setSelectedVariation] = useState<Variation | null>(product.variations && product.variations.length > 0
+    ? product.variations[0]
+    : null);
 
   const { addItem } = useCartStore();
 
@@ -45,7 +43,7 @@ export default function ProductVariationSelector({
   };
 
   const handleAddToCart = () => {
-    if (!selectedVariation) return;
+    if (!selectedVariation) { return; }
 
     const price = selectedVariation.sellingPrice;
     const tax = selectedVariation.tax || 0;
@@ -54,19 +52,19 @@ export default function ProductVariationSelector({
     addItem({
       id: selectedVariation.id,
       name: selectedVariation.name || product.name,
-      type: "product",
-      description: product.description || "",
+      type: 'product',
+      description: product.description || '',
       price,
       profit: 0,
       discount: 0,
       shipping,
       tax,
-      image: selectedVariation.image || product.image || "",
+      image: selectedVariation.image || product.image || '',
       quantity: 1,
       total: price,
     });
 
-    toast.success("Added to cart", {
+    toast.success('Added to cart', {
       description: `${
         selectedVariation.name || product.name
       } has been added to your cart.`,
@@ -84,9 +82,9 @@ export default function ProductVariationSelector({
             <div className="relative aspect-square">
               <Image
                 src={
-                  selectedVariation?.image ||
-                  product.image ||
-                  "/images/product-placeholder.jpg"
+                  selectedVariation?.image
+                  || product.image
+                  || '/images/product-placeholder.jpg'
                 }
                 alt={selectedVariation?.name || product.name}
                 fill
@@ -100,17 +98,17 @@ export default function ProductVariationSelector({
         {/* Product Info */}
         <div className="flex-1">
           <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
-          {selectedVariation?.name &&
-            selectedVariation.name !== product.name && (
-              <h2 className="text-xl text-gray-600 mt-1">
-                {selectedVariation.name}
-              </h2>
-            )}
+          {selectedVariation?.name
+            && selectedVariation.name !== product.name && (
+            <h2 className="text-xl text-gray-600 mt-1">
+              {selectedVariation.name}
+            </h2>
+          )}
 
           {/* Price */}
           <div className="mt-4">
             <p className="text-3xl font-bold text-secondary">
-              ${selectedVariation?.sellingPrice?.toFixed(2) || "0.00"}
+              ${selectedVariation?.sellingPrice?.toFixed(2) || '0.00'}
             </p>
           </div>
 
@@ -126,10 +124,10 @@ export default function ProductVariationSelector({
                     className={`
                       px-4 py-2 rounded-lg border text-left min-w-[120px]
                       ${
-                        selectedVariation?.id === variation.id
-                          ? "border-blue-600 bg-blue-50 ring-2 ring-blue-300"
-                          : "border-gray-300 bg-white hover:border-blue-400"
-                      }
+                  selectedVariation?.id === variation.id
+                    ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300'
+                    : 'border-gray-300 bg-white hover:border-blue-400'
+                  }
                       transition
                     `}
                   >
@@ -146,7 +144,7 @@ export default function ProductVariationSelector({
           <div className="mt-6">
             <h3 className="font-medium">Details:</h3>
             <p className="text-gray-600 mt-1">
-              {product.description || "No detailed description available."}
+              {product.description || 'No detailed description available.'}
             </p>
           </div>
 

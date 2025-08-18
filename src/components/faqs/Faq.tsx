@@ -15,10 +15,8 @@ import { Label } from '@/components/ui/label';
 import FaqAccordion from './FaqAccordion';
 import FaqQuestionForm from './FaqQuestionForm';
 
-export default function Faq() {
-  const [categorizedFaqs, setCategorizedFaqs] = useState<Record<string, FAQ[]>>(
-    {}
-  );
+export default function Faq () {
+  const [categorizedFaqs, setCategorizedFaqs] = useState<Record<string, FAQ[]>>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -37,6 +35,7 @@ export default function Faq() {
     setIsLoading(true);
     try {
       const faqs = await getPublicFAQsByCategory();
+
       setCategorizedFaqs(faqs);
       setActiveCategory(Object.keys(faqs)[0] || null);
     } catch (error) {
@@ -50,6 +49,7 @@ export default function Faq() {
     setSearchQuery(query);
     if (query.trim()) {
       const results = await searchPublicFAQs(query);
+
       setCategorizedFaqs({ 'Search Results': results });
       setActiveCategory('Search Results');
     } else {
@@ -72,7 +72,7 @@ export default function Faq() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-secondary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-secondary" />
       </div>
     );
   }
@@ -124,10 +124,10 @@ export default function Faq() {
                   onClick={() => setActiveCategory(category)}
                   className={`px-4 py-1.5 rounded-full border transition-all duration-200 text-sm font-medium whitespace-nowrap
                     ${
-                      activeCategory === category
-                        ? 'border-yellow-400 bg-yellow-50 text-yellow-900 shadow-sm'
-                        : 'border-transparent text-gray-700 hover:border-yellow-200 hover:bg-yellow-50/50'
-                    }
+                activeCategory === category
+                  ? 'border-yellow-400 bg-yellow-50 text-yellow-900 shadow-sm'
+                  : 'border-transparent text-gray-700 hover:border-yellow-200 hover:bg-yellow-50/50'
+                }
                   `}
                 >
                   {category}

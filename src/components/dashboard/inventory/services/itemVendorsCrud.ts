@@ -43,7 +43,7 @@ type CreateVendorResponse = {
   status: string;
 };
 
-//Todo: Function to create a new location
+// Todo: Function to create a new location
 export const createVendor = async (data: {
   name: string;
 }): Promise<CreateVendorResponse> => {
@@ -71,7 +71,7 @@ type UpdateVendorResponse = {
 
 export const updateVendor = async (
   vendorId: number,
-  data: UpdateVendorInputs
+  data: UpdateVendorInputs,
 ): Promise<UpdateVendorResponse> => {
   try {
     const updatedVendor = await prisma.vendor.update({
@@ -92,9 +92,7 @@ export type DeleteLocationCrud = {
   message: string;
 };
 
-export const deleteVendorById = async (
-  vendorId: number
-): Promise<DeleteLocationCrud> => {
+export const deleteVendorById = async (vendorId: number): Promise<DeleteLocationCrud> => {
   try {
     const existingVendor = await prisma.vendor.findUnique({
       where: { id: vendorId },

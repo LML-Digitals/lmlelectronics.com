@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { FAQ } from "@prisma/client";
-import { getFAQs, searchFAQs, getFAQCategories } from "./Services/faqCrud";
-import FAQForm from "./FAQForm";
-import FAQList from "./FAQList";
-import FAQFilter from "./FAQFilter";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect, useCallback } from 'react';
+import { FAQ } from '@prisma/client';
+import { getFAQs, searchFAQs, getFAQCategories } from './Services/faqCrud';
+import FAQForm from './FAQForm';
+import FAQList from './FAQList';
+import FAQFilter from './FAQFilter';
+import { Button } from '@/components/ui/button';
 
-export default function FAQManagement() {
+export default function FAQManagement () {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
   const [filters, setFilters] = useState({
-    search: "",
-    category: "",
+    search: '',
+    category: '',
     isPublished: undefined as boolean | undefined,
   });
 
@@ -29,9 +29,10 @@ export default function FAQManagement() {
   const loadCategories = async () => {
     try {
       const categories = await getFAQCategories();
+
       setCategories(categories);
     } catch (error) {
-      console.error("Error loading categories:", error);
+      console.error('Error loading categories:', error);
     }
   };
 
@@ -41,11 +42,12 @@ export default function FAQManagement() {
       const results = await searchFAQs(
         filters.search,
         filters.category,
-        filters.isPublished
+        filters.isPublished,
       );
+
       setFaqs(results);
     } catch (error) {
-      console.error("Error searching FAQs:", error);
+      console.error('Error searching FAQs:', error);
     } finally {
       setIsLoading(false);
     }

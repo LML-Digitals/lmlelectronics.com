@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
-import { Button } from "@/components/ui/button";
-import { CheckCircle, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { CheckCircle, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface SquarePaymentFormProps {
   applicationId: string;
@@ -11,7 +11,7 @@ interface SquarePaymentFormProps {
   total: number;
   onPaymentSuccess: (token: string) => void;
   disabled?: boolean;
-  environment?: "sandbox" | "production";
+  environment?: 'sandbox' | 'production';
 }
 
 export interface SquarePaymentFormRef {
@@ -30,7 +30,7 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
   total,
   onPaymentSuccess,
   disabled = false,
-  environment = "sandbox",
+  environment = 'sandbox',
 }, ref) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
@@ -47,34 +47,38 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
       if (window.Square) {
         // console.log("Square SDK already loaded");
         setIsSDKLoaded(true);
+
         return;
       }
 
       // Validate required props
       if (!applicationId || !locationId) {
-        const error = "Missing required Square credentials";
+        const error = 'Missing required Square credentials';
+
         console.error(error, {
           applicationId: !!applicationId,
           locationId: !!locationId,
         });
         setSdkError(error);
         toast.error(error);
+
         return;
       }
 
       try {
         // Determine SDK URL based on environment
-        const sdkUrl =
-          environment === "production"
-            ? "https://web.squarecdn.com/v1/square.js"
-            : "https://sandbox-web.squarecdn.com/v1/square.js";
+        const sdkUrl
+          = environment === 'production'
+            ? 'https://web.squarecdn.com/v1/square.js'
+            : 'https://sandbox-web.squarecdn.com/v1/square.js';
 
         // console.log(`Loading Square SDK from: ${sdkUrl}`);
         // console.log(`Environment: ${environment}`);
         // console.log(`Application ID: ${applicationId}`);
         // console.log(`Location ID: ${locationId}`);
 
-        const script = document.createElement("script");
+        const script = document.createElement('script');
+
         script.src = sdkUrl;
         script.async = true;
 
@@ -84,9 +88,10 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
         };
 
         script.onerror = (error) => {
-          console.error("Failed to load Square SDK:", error);
-          const errorMsg =
-            "Failed to load Square payment SDK. Please check your internet connection.";
+          console.error('Failed to load Square SDK:', error);
+          const errorMsg
+            = 'Failed to load Square payment SDK. Please check your internet connection.';
+
           setSdkError(errorMsg);
           toast.error(errorMsg);
         };
@@ -94,9 +99,10 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
         // Add timeout for loading
         const timeout = setTimeout(() => {
           if (!window.Square) {
-            console.error("Square SDK loading timeout");
-            const errorMsg =
-              "Square SDK loading timeout. Please refresh the page.";
+            console.error('Square SDK loading timeout');
+            const errorMsg
+              = 'Square SDK loading timeout. Please refresh the page.';
+
             setSdkError(errorMsg);
             toast.error(errorMsg);
           }
@@ -110,8 +116,9 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
 
         document.head.appendChild(script);
       } catch (error) {
-        console.error("Error loading Square SDK:", error);
-        const errorMsg = "Failed to initialize Square payment system";
+        console.error('Error loading Square SDK:', error);
+        const errorMsg = 'Failed to initialize Square payment system';
+
         setSdkError(errorMsg);
         toast.error(errorMsg);
       }
@@ -137,28 +144,29 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
 
         // Initialize Square payments
         const payments = window.Square.payments(applicationId, locationId);
+
         paymentsInstance.current = payments;
 
         // Initialize card payment method
         const card = await payments.card({
           style: {
             input: {
-              fontSize: "16px",
-              color: "#374151",
+              fontSize: '16px',
+              color: '#374151',
             },
-            ".input-container": {
-              borderRadius: "8px",
-              borderColor: "#D1D5DB",
-              borderWidth: "1px",
+            '.input-container': {
+              borderRadius: '8px',
+              borderColor: '#D1D5DB',
+              borderWidth: '1px',
             },
-            ".input-container.is-focus": {
-              borderColor: "#3B82F6",
+            '.input-container.is-focus': {
+              borderColor: '#3B82F6',
             },
-            ".input-container.is-error": {
-              borderColor: "#EF4444",
+            '.input-container.is-error': {
+              borderColor: '#EF4444',
             },
-            ".message-text": {
-              color: "#EF4444",
+            '.message-text': {
+              color: '#EF4444',
             },
           },
         });
@@ -170,10 +178,11 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
 
         // console.log("Square payment form initialized successfully");
       } catch (error) {
-        console.error("Failed to initialize Square payments:", error);
+        console.error('Failed to initialize Square payments:', error);
         const errorMsg = `Failed to initialize payment form: ${
           error instanceof Error ? error.message : String(error)
         }`;
+
         setSdkError(errorMsg);
         toast.error(errorMsg);
       }
@@ -187,7 +196,7 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
         try {
           cardInstance.current.destroy();
         } catch (error) {
-          console.warn("Error destroying card instance:", error);
+          console.warn('Error destroying card instance:', error);
         }
       }
     };
@@ -195,7 +204,7 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
 
   // Expose handlePayment function to parent component
   const handlePayment = async () => {
-    if (!cardInstance.current || disabled) return;
+    if (!cardInstance.current || disabled) { return; }
 
     setIsLoading(true);
 
@@ -207,27 +216,28 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
 
       // console.log("Tokenization result:", result);
 
-      if (result.status === "OK") {
+      if (result.status === 'OK') {
         const token = result.token;
+
         setPaymentToken(token);
         onPaymentSuccess(token);
-        toast.success("Payment method verified successfully");
+        toast.success('Payment method verified successfully');
       } else {
         // Handle tokenization errors
-        let errorMessage = "Payment verification failed";
+        let errorMessage = 'Payment verification failed';
 
         if (result.errors && result.errors.length > 0) {
           errorMessage = result.errors
             .map((error: any) => error.detail || error.message)
-            .join(", ");
+            .join(', ');
         }
 
-        console.error("Tokenization failed:", result);
+        console.error('Tokenization failed:', result);
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.error("Payment tokenization error:", error);
-      toast.error("Failed to process payment method");
+      console.error('Payment tokenization error:', error);
+      toast.error('Failed to process payment method');
     } finally {
       setIsLoading(false);
     }
@@ -282,7 +292,7 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
         ref={cardRef}
         className="min-h-[200px] p-4 border border-gray-300 rounded-lg bg-white"
         style={{
-          minHeight: "200px",
+          minHeight: '200px',
         }}
       />
 

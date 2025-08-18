@@ -1,15 +1,15 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 
-export type BookingType = "In Store" | "Mobile" | "Mail In" | "Online";
-export type AppointmentType = "repair" | "service";
+export type BookingType = 'In Store' | 'Mobile' | 'Mail In' | 'Online';
+export type AppointmentType = 'repair' | 'service';
 export type ServiceType =
-  | "buy-sell-trade"
-  | "customization"
-  | "unlocks"
-  | "software"
-  | "cleaning"
-  | "recycling"
-  | "b2b";
+  | 'buy-sell-trade'
+  | 'customization'
+  | 'unlocks'
+  | 'software'
+  | 'cleaning'
+  | 'recycling'
+  | 'b2b';
 
 export interface RepairOption {
   id: string;
@@ -71,7 +71,7 @@ export interface CustomerFormData {
   termsAccepted: boolean;
   smsConsent: boolean;
   description?: string;
-  contactPreference?: "call" | "text" | "email";
+  contactPreference?: 'call' | 'text' | 'email';
 }
 
 export interface ShippingFormData {

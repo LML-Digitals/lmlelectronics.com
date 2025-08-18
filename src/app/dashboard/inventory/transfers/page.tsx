@@ -1,7 +1,7 @@
-import InternalTransfersTable from "@/components/dashboard/inventory/transfers/InternalTransfersTable";
-import { fetchInternalTransfers } from "@/components/dashboard/inventory/transfers/utils/fetchTransfers";
+import InternalTransfersTable from '@/components/dashboard/inventory/transfers/InternalTransfersTable';
+import { fetchInternalTransfers } from '@/components/dashboard/inventory/transfers/utils/fetchTransfers';
 
-async function TransfersPage() {
+async function TransfersPage () {
   const { transfers, error } = await fetchInternalTransfers();
 
   return (

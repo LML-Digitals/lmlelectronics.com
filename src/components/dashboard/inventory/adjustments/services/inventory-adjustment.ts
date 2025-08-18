@@ -1,12 +1,12 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 /**
  * Creates a new inventory adjustment
  */
-export async function createInventoryAdjustment(data: {
+export async function createInventoryAdjustment (data: {
   inventoryItemId: string;
   inventoryVariationId: string; // Added variation ID
   changeAmount: number;
@@ -29,10 +29,12 @@ export async function createInventoryAdjustment(data: {
       },
     });
 
-    revalidatePath("/dashboard/inventory/adjustments");
+    revalidatePath('/dashboard/inventory/adjustments');
+
     return { success: true, adjustment };
   } catch (error) {
-    console.error("Failed to create inventory adjustment:", error);
+    console.error('Failed to create inventory adjustment:', error);
+
     return { success: false, error };
   }
 }
@@ -40,9 +42,9 @@ export async function createInventoryAdjustment(data: {
 /**
  * Approves an existing inventory adjustment and updates stock
  */
-export async function approveInventoryAdjustment(
+export async function approveInventoryAdjustment (
   id: string,
-  approvedById: string
+  approvedById: string,
 ) {
   try {
     const adjustment = await prisma.inventoryAdjustment.findUnique({
@@ -50,48 +52,50 @@ export async function approveInventoryAdjustment(
     });
 
     if (!adjustment) {
-      throw new Error("Adjustment not found");
+      throw new Error('Adjustment not found');
     }
 
     // Update the adjustment status
     await prisma.inventoryAdjustment.update({
       where: { id },
       data: {
-      approved: true,
-      approvedById,
-      stockAfter: adjustment.stockBefore + adjustment.changeAmount,
+        approved: true,
+        approvedById,
+        stockAfter: adjustment.stockBefore + adjustment.changeAmount,
       },
     });
 
     // Get stock level for this specific variation and location
     const stockLevel = await prisma.inventoryStockLevel.findFirst({
       where: {
-      variationId: adjustment.inventoryVariationId,
-      locationId: adjustment.locationId,
+        variationId: adjustment.inventoryVariationId,
+        locationId: adjustment.locationId,
       },
     });
 
     if (stockLevel) {
       // Update the specific variation's stock at the given location
       await prisma.inventoryStockLevel.update({
-      where: { id: stockLevel.id, locationId: adjustment.locationId },
-      data: { stock: stockLevel.stock + adjustment.changeAmount },
+        where: { id: stockLevel.id, locationId: adjustment.locationId },
+        data: { stock: stockLevel.stock + adjustment.changeAmount },
       });
     } else {
       // If no stock level exists, create one with the specified location
       await prisma.inventoryStockLevel.create({
-      data: {
-        variationId: adjustment.inventoryVariationId,
-        locationId: adjustment.locationId,
-        stock: adjustment.changeAmount > 0 ? adjustment.changeAmount : 0,
-      },
+        data: {
+          variationId: adjustment.inventoryVariationId,
+          locationId: adjustment.locationId,
+          stock: adjustment.changeAmount > 0 ? adjustment.changeAmount : 0,
+        },
       });
     }
 
-    revalidatePath("/dashboard/inventory/adjustments");
+    revalidatePath('/dashboard/inventory/adjustments');
+
     return { success: true };
   } catch (error) {
-    console.error("Failed to approve inventory adjustment:", error);
+    console.error('Failed to approve inventory adjustment:', error);
+
     return { success: false, error };
   }
 }
@@ -99,7 +103,7 @@ export async function approveInventoryAdjustment(
 /**
  * Gets all inventory adjustments with pagination
  */
-export async function getInventoryAdjustments(page = 1, limit = 10) {
+export async function getInventoryAdjustments (page = 1, limit = 10) {
   try {
     const skip = (page - 1) * limit;
     const [adjustments, total] = await prisma.$transaction([
@@ -113,7 +117,7 @@ export async function getInventoryAdjustments(page = 1, limit = 10) {
           adjustedBy: true,
           approvedBy: true,
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
       }),
       prisma.inventoryAdjustment.count(),
     ]);
@@ -127,7 +131,8 @@ export async function getInventoryAdjustments(page = 1, limit = 10) {
 
     return { adjustments, pagination, success: true };
   } catch (error) {
-    console.error("Failed to get inventory adjustments:", error);
+    console.error('Failed to get inventory adjustments:', error);
+
     return { adjustments: [], pagination: null, success: false };
   }
 }
@@ -135,7 +140,7 @@ export async function getInventoryAdjustments(page = 1, limit = 10) {
 /**
  * Gets a single inventory adjustment by ID
  */
-export async function getInventoryAdjustment(id: string) {
+export async function getInventoryAdjustment (id: string) {
   try {
     const adjustment = await prisma.inventoryAdjustment.findUnique({
       where: { id },
@@ -149,7 +154,8 @@ export async function getInventoryAdjustment(id: string) {
 
     return adjustment;
   } catch (error) {
-    console.error("Failed to get inventory adjustment:", error);
+    console.error('Failed to get inventory adjustment:', error);
+
     return null;
   }
 }
@@ -159,9 +165,11 @@ export const deleteInventoryAdjustment = async (id: string) => {
     const data = await prisma.inventoryAdjustment.delete({
       where: { id },
     });
+
     return { success: true, data };
   } catch (error) {
-    console.error("Failed to delete inventory adjustment:", error);
+    console.error('Failed to delete inventory adjustment:', error);
+
     return { success: false, error };
   }
 };
@@ -173,7 +181,7 @@ export const updateInventoryAdjustment = async (
     changeAmount: number;
     inventoryItemId: string;
     inventoryVariationId: string;
-  }
+  },
 ) => {
   try {
     const data = await prisma.inventoryAdjustment.update({
@@ -185,9 +193,11 @@ export const updateInventoryAdjustment = async (
         inventoryVariationId: adjustmentData.inventoryVariationId,
       },
     });
+
     return { success: true, data };
   } catch (error) {
-    console.error("Failed to update inventory adjustment:", error);
+    console.error('Failed to update inventory adjustment:', error);
+
     return { success: false, error };
   }
 };

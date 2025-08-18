@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   BlogWithDetailsType,
   BlogWithTagsType,
-} from "@/components/blog/types/blogTypes";
-import BadgeComponent from "./BadgeComponent";
+} from '@/components/blog/types/blogTypes';
+import BadgeComponent from './BadgeComponent';
 
 type RelatedBlogCardProps = {
   blog: BlogWithDetailsType;
 };
 
-function RelatedBlogCard({ blog }: RelatedBlogCardProps) {
-  const encodedSlug = encodeURIComponent(blog.slug || "");
+function RelatedBlogCard ({ blog }: RelatedBlogCardProps) {
+  const encodedSlug = encodeURIComponent(blog.slug || '');
 
   const maxTagsToShow = 3;
   const displayedTags = blog.tags.slice(0, maxTagsToShow);
@@ -23,15 +23,15 @@ function RelatedBlogCard({ blog }: RelatedBlogCardProps) {
   const maxDescriptionLength = 150;
   const truncatedDescription = blog.description
     ? blog.description.length > maxDescriptionLength
-      ? blog.description.substring(0, maxDescriptionLength) + "..."
+      ? `${blog.description.substring(0, maxDescriptionLength)}...`
       : blog.description
-    : "";
+    : '';
 
   return (
     <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-all sm:max-w-[250px] md:max-w-[300px] lg:max-w-[350px] mx-auto">
       <Link href={`/blogs/${encodedSlug}`} className="group">
         <Image
-          src={blog.image || "/placeholder.png"}
+          src={blog.image || '/placeholder.png'}
           alt={blog.title}
           width={150}
           height={150}
@@ -44,10 +44,10 @@ function RelatedBlogCard({ blog }: RelatedBlogCardProps) {
           {blog.title}
         </h2>
         <p className="text-sm text-gray-600">
-          {new Date(blog.createdAt).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
+          {new Date(blog.createdAt).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
           })}
         </p>
 
@@ -61,9 +61,7 @@ function RelatedBlogCard({ blog }: RelatedBlogCardProps) {
         <div className="mt-auto flex flex-wrap gap-1">
           {displayedTags.map((tag) => (
             <Link
-              href={`/blogs/tags/${encodeURIComponent(
-                tag.name.toLowerCase().replace(/ /g, "-")
-              )}`}
+              href={`/blogs/tags/${encodeURIComponent(tag.name.toLowerCase().replace(/ /g, '-'))}`}
             >
               <span
                 key={tag.name}

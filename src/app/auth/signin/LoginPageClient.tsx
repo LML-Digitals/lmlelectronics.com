@@ -35,6 +35,7 @@ const LoginForm = () => {
       // Get redirect from URL if present
       const urlParams = new URLSearchParams(window.location.search);
       const redirect = urlParams.get('redirect');
+
       if (redirect) {
         setRedirectPath(redirect);
       }
@@ -45,17 +46,21 @@ const LoginForm = () => {
     e.preventDefault();
     if (!executeRecaptcha) {
       console.error('Execute recaptcha not yet available');
+
       return;
     }
 
     // Get the token and then update state
     const token = await executeRecaptcha('login');
+
     setCaptchaToken(token);
 
     startTransition(async () => {
       const staff = await getStaffByEmail(email);
+
       if (staff && staff.twoFactorEnabled && !code) {
         setStep('2fa');
+
         return;
       }
 
@@ -66,6 +71,7 @@ const LoginForm = () => {
         captcha: token,
         twoFaCode: code,
       });
+
       if (result?.error) {
         console.error('Error signing in:', result.error);
         setError(result.error);
@@ -239,4 +245,4 @@ const LoginPageClient = () => {
   );
 };
 
-export default LoginPageClient; 
+export default LoginPageClient;

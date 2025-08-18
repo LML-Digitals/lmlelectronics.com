@@ -1,29 +1,29 @@
-"use client";
-import { useState, useEffect, JSX } from "react";
-import Link from "next/link";
-import { BlogCategory } from "@prisma/client";
-import { getBlogCategories } from "@/components/blog/services/blogCategoryCrud";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Wrench, 
-  Smartphone, 
-  Monitor, 
-  Tablet, 
-  Laptop, 
-  Headphones, 
-  Camera, 
+'use client';
+import { useState, useEffect, JSX } from 'react';
+import Link from 'next/link';
+import { BlogCategory } from '@prisma/client';
+import { getBlogCategories } from '@/components/blog/services/blogCategoryCrud';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Wrench,
+  Smartphone,
+  Monitor,
+  Tablet,
+  Laptop,
+  Headphones,
+  Camera,
   Gamepad2,
   Settings,
   Shield,
   Zap,
   BookOpen,
   Lightbulb,
-  Cog
-} from "lucide-react";
+  Cog,
+} from 'lucide-react';
 
 // Utility function to capitalize the first letter of a string
-function capitalizeFirstLetter(word: string): string {
+function capitalizeFirstLetter (word: string): string {
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
@@ -48,21 +48,21 @@ const categoryIcons: Record<string, JSX.Element> = {
 
 // Color mapping for different categories
 const categoryColors: Record<string, string> = {
-  repair: "bg-blue-500 hover:bg-blue-600",
-  smartphone: "bg-green-500 hover:bg-green-600",
-  computer: "bg-purple-500 hover:bg-purple-600",
-  tablet: "bg-orange-500 hover:bg-orange-600",
-  laptop: "bg-indigo-500 hover:bg-indigo-600",
-  audio: "bg-pink-500 hover:bg-pink-600",
-  camera: "bg-red-500 hover:bg-red-600",
-  gaming: "bg-yellow-500 hover:bg-yellow-600",
-  service: "bg-teal-500 hover:bg-teal-600",
-  security: "bg-gray-500 hover:bg-gray-600",
-  tips: "bg-emerald-500 hover:bg-emerald-600",
-  guide: "bg-cyan-500 hover:bg-cyan-600",
-  tutorial: "bg-amber-500 hover:bg-amber-600",
-  tech: "bg-violet-500 hover:bg-violet-600",
-  maintenance: "bg-slate-500 hover:bg-slate-600",
+  repair: 'bg-blue-500 hover:bg-blue-600',
+  smartphone: 'bg-green-500 hover:bg-green-600',
+  computer: 'bg-purple-500 hover:bg-purple-600',
+  tablet: 'bg-orange-500 hover:bg-orange-600',
+  laptop: 'bg-indigo-500 hover:bg-indigo-600',
+  audio: 'bg-pink-500 hover:bg-pink-600',
+  camera: 'bg-red-500 hover:bg-red-600',
+  gaming: 'bg-yellow-500 hover:bg-yellow-600',
+  service: 'bg-teal-500 hover:bg-teal-600',
+  security: 'bg-gray-500 hover:bg-gray-600',
+  tips: 'bg-emerald-500 hover:bg-emerald-600',
+  guide: 'bg-cyan-500 hover:bg-cyan-600',
+  tutorial: 'bg-amber-500 hover:bg-amber-600',
+  tech: 'bg-violet-500 hover:bg-violet-600',
+  maintenance: 'bg-slate-500 hover:bg-slate-600',
 };
 
 const CategoryGrid = () => {
@@ -74,10 +74,11 @@ const CategoryGrid = () => {
     const fetchCategories = async () => {
       try {
         const fetchedCategories = await getBlogCategories();
+
         setCategories(fetchedCategories);
       } catch (err) {
-        console.error("Error fetching categories:", err);
-        setError("Failed to load categories");
+        console.error('Error fetching categories:', err);
+        setError('Failed to load categories');
       } finally {
         setIsLoading(false);
       }
@@ -88,28 +89,32 @@ const CategoryGrid = () => {
 
   const getCategoryIcon = (categoryName: string) => {
     const lowerName = categoryName.toLowerCase();
+
     for (const [key, icon] of Object.entries(categoryIcons)) {
       if (lowerName.includes(key)) {
         return icon;
       }
     }
+
     return <BookOpen className="h-6 w-6" />; // Default icon
   };
 
   const getCategoryColor = (categoryName: string) => {
     const lowerName = categoryName.toLowerCase();
+
     for (const [key, color] of Object.entries(categoryColors)) {
       if (lowerName.includes(key)) {
         return color;
       }
     }
-    return "bg-gray-500 hover:bg-gray-600"; // Default color
+
+    return 'bg-gray-500 hover:bg-gray-600'; // Default color
   };
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-secondary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-secondary" />
       </div>
     );
   }
@@ -132,7 +137,6 @@ const CategoryGrid = () => {
 
   return (
     <section className="w-full">
-  
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {categories.map((category) => (
@@ -191,4 +195,4 @@ const CategoryGrid = () => {
   );
 };
 
-export default CategoryGrid; 
+export default CategoryGrid;

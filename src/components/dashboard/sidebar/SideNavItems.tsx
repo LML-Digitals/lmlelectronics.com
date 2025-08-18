@@ -1,5 +1,5 @@
-import { SideNavItemGroup } from "./types/sidebarTypes";
-import { DashboardIcon } from "@radix-ui/react-icons";
+import { SideNavItemGroup } from './types/sidebarTypes';
+import { DashboardIcon } from '@radix-ui/react-icons';
 import {
   ArrowLeftRight,
   Boxes,
@@ -104,22 +104,22 @@ import {
   Cog,
   Truck as TruckIcon,
   Bug,
-} from "lucide-react";
+} from 'lucide-react';
 
 export const SIDENAV_ITEMS: SideNavItemGroup[] = [
   {
-    title: "Overview",
+    title: 'Overview',
     menuList: [
       {
-        title: "Dashboard",
-        path: "/dashboard",
-        role: ["all"],
+        title: 'Dashboard',
+        path: '/dashboard',
+        role: ['all'],
         icon: <DashboardIcon />,
       },
       {
-        title: "Analytics",
-        path: "/dashboard/analytics",
-        role: ["all"],
+        title: 'Analytics',
+        path: '/dashboard/analytics',
+        role: ['all'],
         icon: <BarChart3 size={16} />,
       },
       // {
@@ -137,7 +137,7 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
     ],
   },
   {
-    title: "Operations",
+    title: 'Operations',
     menuList: [
       // {
       //   title: "Repairs",
@@ -182,15 +182,15 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
       //   icon: <BadgeCheck size={16} />,
       // },
       {
-        title: "Price Checker",
-        path: "/dashboard/price-checker",
-        role: ["admin", "technician", "developer"],
+        title: 'Price Checker',
+        path: '/dashboard/price-checker',
+        role: ['admin', 'technician', 'developer'],
         icon: <Target size={16} />,
       },
       {
-        title: "Orders",
-        path: "/dashboard/pos/orders",
-        role: ["all"],
+        title: 'Orders',
+        path: '/dashboard/pos/orders',
+        role: ['all'],
         icon: <Receipt size={16} />,
       },
     ],
@@ -260,18 +260,18 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
   //   ],
   // },
   {
-    title: "Inventory & Products",
+    title: 'Inventory & Products',
     menuList: [
       {
-        title: "Inventory Items",
-        path: "/dashboard/inventory/items",
-        role: ["admin", "developer"],
+        title: 'Inventory Items',
+        path: '/dashboard/inventory/items',
+        role: ['admin', 'developer'],
         icon: <Boxes size={16} />,
       },
       {
-        title: "Bundles",
-        path: "/dashboard/inventory/bundles",
-        role: ["admin", "developer"],
+        title: 'Bundles',
+        path: '/dashboard/inventory/bundles',
+        role: ['admin', 'developer'],
         icon: <Package size={16} />,
       },
       // {
@@ -281,9 +281,9 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
       //   icon: <ClipboardList size={16} />,
       // },
       {
-        title: "Suppliers",
-        path: "/dashboard/inventory/suppliers",
-        role: ["admin", "developer"],
+        title: 'Suppliers',
+        path: '/dashboard/inventory/suppliers',
+        role: ['admin', 'developer'],
         icon: <Building size={16} />,
       },
       // {
@@ -299,62 +299,62 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
       //   icon: <PackageOpen size={16} />,
       // },
       {
-        title: "Warranty",
-        path: "/dashboard/warranty",
-        role: ["admin", "developer"],
+        title: 'Warranty',
+        path: '/dashboard/warranty',
+        role: ['admin', 'developer'],
         icon: <ShieldCheck size={16} />,
       },
       {
-        title: "Adjustments",
-        path: "/dashboard/inventory/adjustments",
-        role: ["admin", "developer"],
+        title: 'Adjustments',
+        path: '/dashboard/inventory/adjustments',
+        role: ['admin', 'developer'],
         icon: <RefreshCw size={16} />,
       },
       {
-        title: "Audits",
-        path: "/dashboard/inventory/audits",
-        role: ["admin", "developer"],
+        title: 'Audits',
+        path: '/dashboard/inventory/audits',
+        role: ['admin', 'developer'],
         icon: <FileCheck size={16} />,
       },
       {
-        title: "Returns",
-        path: "/dashboard/inventory/returns",
-        role: ["admin", "developer"],
+        title: 'Returns',
+        path: '/dashboard/inventory/returns',
+        role: ['admin', 'developer'],
         icon: <Archive size={16} />,
       },
       {
-        title: "Transfers",
-        path: "/dashboard/inventory/transfers",
-        role: ["admin", "developer"],
+        title: 'Transfers',
+        path: '/dashboard/inventory/transfers',
+        role: ['admin', 'developer'],
         icon: <ArrowLeftRight size={16} />,
       },
       {
-        title: "Exchanges",
-        path: "/dashboard/inventory/exchanges",
-        role: ["admin", "developer"],
+        title: 'Exchanges',
+        path: '/dashboard/inventory/exchanges',
+        role: ['admin', 'developer'],
         icon: <RefreshCw size={16} />,
       },
     ],
   },
   {
-    title: "Customers & Staff",
+    title: 'Customers & Staff',
     menuList: [
       {
-        title: "Customer Directory",
-        path: "/dashboard/customers",
-        role: ["all"],
+        title: 'Customer Directory',
+        path: '/dashboard/customers',
+        role: ['all'],
         icon: <Users size={16} />,
       },
       {
-        title: "Staff Directory",
-        path: "/dashboard/staff/directory",
-        role: ["all"],
+        title: 'Staff Directory',
+        path: '/dashboard/staff/directory',
+        role: ['all'],
         icon: <UsersIcon size={16} />,
       },
       {
-        title: "Locations",
-        path: "/dashboard/locations",
-        role: ["all"],
+        title: 'Locations',
+        path: '/dashboard/locations',
+        role: ['all'],
         icon: <MapPin size={16} />,
       },
       // {
@@ -513,18 +513,18 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
   //   ],
   // },
   {
-    title: "Education",
+    title: 'Education',
     menuList: [
       {
-        title: "Blogs",
-        path: "/dashboard/blogs",
-        role: ["all"],
+        title: 'Blogs',
+        path: '/dashboard/blogs',
+        role: ['all'],
         icon: <FileTextIcon size={16} />,
       },
       {
-        title: "Faqs",
-        path: "/dashboard/faqs",
-        role: ["all"],
+        title: 'Faqs',
+        path: '/dashboard/faqs',
+        role: ['all'],
         icon: <HelpCircle size={16} />,
       },
       // {
@@ -536,12 +536,12 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
     ],
   },
   {
-    title: "Tools & Resources",
+    title: 'Tools & Resources',
     menuList: [
       {
-        title: "Calculator",
-        path: "/dashboard/calculator",
-        role: ["all"],
+        title: 'Calculator',
+        path: '/dashboard/calculator',
+        role: ['all'],
         icon: <Calculator size={16} />,
       },
       // {
@@ -551,27 +551,27 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
       //   icon: <NotebookPen size={16} />,
       // },
       {
-        title: "Announcements",
-        path: "/dashboard/announcement",
-        role: ["all"],
+        title: 'Announcements',
+        path: '/dashboard/announcement',
+        role: ['all'],
         icon: <PartyPopper size={16} />,
       },
       {
-        title: "Image Library",
-        path: "/dashboard/image-library",
-        role: ["admin", "developer"],
+        title: 'Image Library',
+        path: '/dashboard/image-library',
+        role: ['admin', 'developer'],
         icon: <ImageIcon size={16} />,
       },
       {
-        title: "Tags Management",
-        path: "/dashboard/tags",
-        role: ["admin", "developer"],
+        title: 'Tags Management',
+        path: '/dashboard/tags',
+        role: ['admin', 'developer'],
         icon: <Tag size={16} />,
       },
       {
-        title: "Terms & Legal",
-        path: "/dashboard/terms",
-        role: ["all"],
+        title: 'Terms & Legal',
+        path: '/dashboard/terms',
+        role: ['all'],
         icon: <Scale size={16} />,
       },
       // {
@@ -583,18 +583,18 @@ export const SIDENAV_ITEMS: SideNavItemGroup[] = [
     ],
   },
   {
-    title: "Settings",
+    title: 'Settings',
     menuList: [
       {
-        title: "General Settings",
-        path: "/dashboard/settings",
-        role: ["all"],
+        title: 'General Settings',
+        path: '/dashboard/settings',
+        role: ['all'],
         icon: <Settings size={16} />,
       },
       {
-        title: "Shipping Settings",
-        path: "/dashboard/settings/shipping",
-        role: ["all"],
+        title: 'Shipping Settings',
+        path: '/dashboard/settings/shipping',
+        role: ['all'],
         icon: <Truck size={16} />,
       },
       // {

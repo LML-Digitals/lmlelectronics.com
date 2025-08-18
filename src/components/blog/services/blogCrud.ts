@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
-import { fetchSession } from "../../../lib/session";
-import { DataToBlog, DataToUpdate } from "@/components/blog/types/blogTypes";
-import { Blog, PrismaClient, BlogCategory } from "@prisma/client";
-import prisma from "@/lib/prisma";
-import { BlogWithDetailsType } from "@/components/blog/types/blogTypes";
-import { format } from "date-fns";
-import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
+import { fetchSession } from '../../../lib/session';
+import { DataToBlog, DataToUpdate } from '@/components/blog/types/blogTypes';
+import { Blog, PrismaClient, BlogCategory } from '@prisma/client';
+import prisma from '@/lib/prisma';
+import { BlogWithDetailsType } from '@/components/blog/types/blogTypes';
+import { format } from 'date-fns';
+import { revalidatePath } from 'next/cache';
+import { Prisma } from '@prisma/client';
 
 // Define a type including category for full blog details
 // Note: BlogWithAuthorAndTagsType already includes the base Blog, which has categoryId
@@ -18,7 +18,7 @@ export const getFeaturedBlog = async (): Promise<
   try {
     return await prisma.blog.findMany({
       where: { isFeatured: true },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       include: {
         author: {
           select: {
@@ -32,13 +32,14 @@ export const getFeaturedBlog = async (): Promise<
       },
     });
   } catch (error) {
-    console.error("Error fetching featured blog:", error);
+    console.error('Error fetching featured blog:', error);
     // During build time, return empty array instead of throwing
     if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV) {
-      console.warn("Database not available during build, returning empty featured blogs array");
+      console.warn('Database not available during build, returning empty featured blogs array');
+
       return [];
     }
-    throw new Error("Failed to fetch featured blog");
+    throw new Error('Failed to fetch featured blog');
   }
 };
 
@@ -46,7 +47,7 @@ export const getLatestBlog = async (): Promise<BlogWithDetailsType | null> => {
   try {
     return await prisma.blog.findFirst({
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
       include: {
         author: {
@@ -61,8 +62,8 @@ export const getLatestBlog = async (): Promise<BlogWithDetailsType | null> => {
       },
     });
   } catch (error) {
-    console.error("Error fetching Blog:", error);
-    throw new Error("Failed to fetch Blog");
+    console.error('Error fetching Blog:', error);
+    throw new Error('Failed to fetch Blog');
   }
 };
 
@@ -80,20 +81,20 @@ export const getBlogs = async (): Promise<BlogWithDetailsType[]> => {
         tags: true,
         category: true,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   } catch (error) {
-    console.error("Error fetching Blogs:", error);
-    throw new Error("Failed to fetch Blogs");
+    console.error('Error fetching Blogs:', error);
+    throw new Error('Failed to fetch Blogs');
   }
 };
 
 export const getPublishedBlogs = async (
-  page: number = 1,
-  limit: number = 10,
+  page = 1,
+  limit = 10,
   searchQuery?: string,
   selectedTag?: string,
-  selectedCategory?: string
+  selectedCategory?: string,
 ): Promise<{ blogs: BlogWithDetailsType[]; total: number }> => {
   try {
     const skip = (page - 1) * limit;
@@ -131,7 +132,7 @@ export const getPublishedBlogs = async (
     const [blogs, total] = await Promise.all([
       prisma.blog.findMany({
         where: whereClause,
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
         include: {
@@ -156,14 +157,12 @@ export const getPublishedBlogs = async (
       total,
     };
   } catch (error) {
-    console.error("Error fetching published blogs:", error);
-    throw new Error("Failed to fetch published blogs");
+    console.error('Error fetching published blogs:', error);
+    throw new Error('Failed to fetch published blogs');
   }
 };
 
-export const getBlogById = async (
-  blogId: number
-): Promise<BlogWithDetailsType | null> => {
+export const getBlogById = async (blogId: number): Promise<BlogWithDetailsType | null> => {
   try {
     return await prisma.blog.findUnique({
       where: {
@@ -182,14 +181,12 @@ export const getBlogById = async (
       },
     });
   } catch (error) {
-    console.error("Error fetching Blog:", error);
-    throw new Error("Failed to fetch Blog");
+    console.error('Error fetching Blog:', error);
+    throw new Error('Failed to fetch Blog');
   }
 };
 
-export const getBlogByName = async (
-  encodedName: string
-): Promise<BlogWithDetailsType | null> => {
+export const getBlogByName = async (encodedName: string): Promise<BlogWithDetailsType | null> => {
   try {
     const decodedName = decodeURIComponent(encodedName);
 
@@ -210,14 +207,12 @@ export const getBlogByName = async (
       },
     });
   } catch (error) {
-    console.error("Error fetching Blog:", error);
-    throw new Error("Failed to fetch Blog");
+    console.error('Error fetching Blog:', error);
+    throw new Error('Failed to fetch Blog');
   }
 };
 
-export const getBlogBySlug = async (
-  encodedName: string
-): Promise<BlogWithDetailsType | null> => {
+export const getBlogBySlug = async (encodedName: string): Promise<BlogWithDetailsType | null> => {
   try {
     const decodedName = decodeURIComponent(encodedName);
 
@@ -225,7 +220,7 @@ export const getBlogBySlug = async (
       where: {
         slug: {
           equals: decodedName,
-          mode: "insensitive",
+          mode: 'insensitive',
         },
       },
       include: {
@@ -241,19 +236,19 @@ export const getBlogBySlug = async (
       },
     });
   } catch (error) {
-    console.error("Error fetching Blog:", error);
-    throw new Error("Failed to fetch Blog");
+    console.error('Error fetching Blog:', error);
+    throw new Error('Failed to fetch Blog');
   }
 };
 
-export async function getBlogsByTagName(tagName: string) {
+export async function getBlogsByTagName (tagName: string) {
   return await prisma.blog.findMany({
     where: {
       tags: {
         some: {
           name: {
             equals: tagName,
-            mode: "insensitive",
+            mode: 'insensitive',
           },
         },
       },
@@ -269,18 +264,18 @@ export async function getBlogsByTagName(tagName: string) {
       tags: true,
       category: true,
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
   });
 }
 
-export async function getBlogsByCategory(categoryName: string) {
+export async function getBlogsByCategory (categoryName: string) {
   try {
     return await prisma.blog.findMany({
       where: {
         category: {
           name: {
             equals: categoryName,
-            mode: "insensitive",
+            mode: 'insensitive',
           },
         },
       },
@@ -295,32 +290,34 @@ export async function getBlogsByCategory(categoryName: string) {
         tags: true,
         category: true,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   } catch (error) {
-    console.error("Error fetching blogs by category:", error);
+    console.error('Error fetching blogs by category:', error);
     // During build time, return empty array instead of throwing
     if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV) {
-      console.warn("Database not available during build, returning empty blogs array for category:", categoryName);
+      console.warn('Database not available during build, returning empty blogs array for category:', categoryName);
+
       return [];
     }
-    throw new Error("Failed to fetch blogs by category");
+    throw new Error('Failed to fetch blogs by category');
   }
 }
 
-function generateSlug(title: string): string {
+function generateSlug (title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 }
 
 export const createBlog = async (blogData: DataToBlog) => {
   try {
     const session = await fetchSession();
+
     if (!session?.user?.id) {
-      throw new Error("User not authenticated");
+      throw new Error('User not authenticated');
     }
 
     // Verify staff exists
@@ -329,7 +326,7 @@ export const createBlog = async (blogData: DataToBlog) => {
     });
 
     if (!author) {
-      throw new Error("Invalid author ID");
+      throw new Error('Invalid author ID');
     }
 
     const slug = generateSlug(blogData.title);
@@ -340,10 +337,10 @@ export const createBlog = async (blogData: DataToBlog) => {
     });
 
     if (existingBlog) {
-      throw new Error("Blog with this title already exists");
+      throw new Error('Blog with this title already exists');
     }
 
-    const authorId: string = String(session.user.id);
+    const authorId = String(session.user.id);
     const { tagIds, ...rest } = blogData;
 
     // Create the blog with associated tags
@@ -366,8 +363,8 @@ export const createBlog = async (blogData: DataToBlog) => {
 
     return createdBlog;
   } catch (error) {
-    console.error("Error creating blog:", error);
-    throw new Error("Failed to create blog");
+    console.error('Error creating blog:', error);
+    throw new Error('Failed to create blog');
   }
 };
 
@@ -428,6 +425,7 @@ export const updateBlog = async (blogId: number, updatedData: DataToUpdate) => {
           category: true,
         },
       });
+
       // console.log("Server: Update successful with tags");
       return result;
     }
@@ -441,24 +439,23 @@ export const updateBlog = async (blogId: number, updatedData: DataToUpdate) => {
         category: true,
       },
     });
+
     // console.log("Server: Update successful without tags");
     return result;
   } catch (error) {
-    console.error("Server: Error updating blog:", error);
-    throw new Error(
-      error instanceof Error ? error.message : "Failed to update blog"
-    );
+    console.error('Server: Error updating blog:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to update blog');
   }
 };
 
-export async function updateBlogSlugs() {
+export async function updateBlogSlugs () {
   try {
     // Fetch all blogs
     const blogs = await prisma.blog.findMany();
 
     for (const blog of blogs) {
       // Skip blogs that already have a slug
-      if (blog.slug) continue;
+      if (blog.slug) { continue; }
 
       // Generate a slug from the blog title
       let slug = generateSlug(blog.title);
@@ -484,10 +481,12 @@ export async function updateBlogSlugs() {
       console.log(`Slug generated for blog ID ${blog.id}: ${slug}`);
     }
 
-    console.log("All blogs have been updated with slugs.");
+    console.log('All blogs have been updated with slugs.');
+
     return true;
   } catch (error) {
-    console.error("Error updating blog slugs:", error);
+    console.error('Error updating blog slugs:', error);
+
     return false;
   } finally {
     await prisma.$disconnect();
@@ -503,6 +502,7 @@ export const deleteBlog = async (blogId: number) => {
     });
   } catch (error) {
     console.error(error);
+
     return null;
   } finally {
     await prisma.$disconnect();
@@ -513,19 +513,22 @@ export const getBlogArchive = async () => {
   try {
     const blogs = await prisma.blog.findMany({
       where: { isPublished: true },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     const archive = blogs.reduce<Record<string, typeof blogs>>((acc, blog) => {
-      const key = format(blog.createdAt, "MMMM yyyy"); // e.g. 'April 2025'
+      const key = format(blog.createdAt, 'MMMM yyyy'); // e.g. 'April 2025'
+
       acc[key] = acc[key] || [];
       acc[key].push(blog);
+
       return acc;
     }, {});
+
     return archive;
   } catch (error) {
-    console.error("Error fetching blog archive:", error);
-    throw new Error("Failed to fetch blog archive");
+    console.error('Error fetching blog archive:', error);
+    throw new Error('Failed to fetch blog archive');
   }
 };
 
@@ -536,8 +539,8 @@ export const publishBlog = async (blogId: number) => {
       data: { isPublished: true },
     });
   } catch (error) {
-    console.error("Error publishing blog:", error);
-    throw new Error("Failed to publish blog");
+    console.error('Error publishing blog:', error);
+    throw new Error('Failed to publish blog');
   }
 };
 
@@ -548,7 +551,7 @@ export const unpublishBlog = async (blogId: number) => {
       data: { isPublished: false },
     });
   } catch (error) {
-    console.error("Error unpublishing blog:", error);
-    throw new Error("Failed to unpublish blog");
+    console.error('Error unpublishing blog:', error);
+    throw new Error('Failed to unpublish blog');
   }
 };

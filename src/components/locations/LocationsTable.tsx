@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   AlertCircle,
@@ -8,10 +8,10 @@ import {
   Loader2,
   CreditCard,
   Filter,
-} from "lucide-react";
-import { useState, useTransition } from "react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+} from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -19,13 +19,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { StoreLocation } from "@prisma/client";
-import { Badge } from "@/components/ui/badge";
-import { CreateLocationDialog } from "./CreateLocationDialog";
-import { EditLocationDialog } from "./EditLocationDialog";
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import { StoreLocation } from '@prisma/client';
+import { Badge } from '@/components/ui/badge';
+import { CreateLocationDialog } from './CreateLocationDialog';
+import { EditLocationDialog } from './EditLocationDialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,29 +35,30 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { deleteStoreLocation } from "./services/storeLocationCrud";
+} from '@/components/ui/select';
+import { deleteStoreLocation } from './services/storeLocationCrud';
 
 type LocationsTableProps = {
   locations: StoreLocation[];
 };
 
-export default function LocationsTable({ locations }: LocationsTableProps) {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+export default function LocationsTable ({ locations }: LocationsTableProps) {
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [isPending, startTransition] = useTransition();
   const [locationToDelete, setLocationToDelete] = useState<number | null>(null);
   const [isMapLoading, setIsMapLoading] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
     setSearch(inputValue);
   };
 
@@ -67,23 +68,23 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
 
   const filteredLocations = locations.filter((location) => {
     const searchTerm = search.toLowerCase();
-    const matchesSearch =
-      searchTerm === "" ||
-      location.name.toLowerCase().includes(searchTerm) ||
-      location.address?.toLowerCase().includes(searchTerm) ||
-      location.streetAddress?.toLowerCase().includes(searchTerm) ||
-      location.city?.toLowerCase().includes(searchTerm) ||
-      location.state?.toLowerCase().includes(searchTerm) ||
-      location.zip?.toLowerCase().includes(searchTerm) ||
-      location.countryCode?.toLowerCase().includes(searchTerm) ||
-      location.phone?.toLowerCase().includes(searchTerm) ||
-      location.email?.toLowerCase().includes(searchTerm) ||
-      location.squareLocationEnvKey?.toLowerCase().includes(searchTerm);
+    const matchesSearch
+      = searchTerm === ''
+      || location.name.toLowerCase().includes(searchTerm)
+      || location.address?.toLowerCase().includes(searchTerm)
+      || location.streetAddress?.toLowerCase().includes(searchTerm)
+      || location.city?.toLowerCase().includes(searchTerm)
+      || location.state?.toLowerCase().includes(searchTerm)
+      || location.zip?.toLowerCase().includes(searchTerm)
+      || location.countryCode?.toLowerCase().includes(searchTerm)
+      || location.phone?.toLowerCase().includes(searchTerm)
+      || location.email?.toLowerCase().includes(searchTerm)
+      || location.squareLocationEnvKey?.toLowerCase().includes(searchTerm);
 
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" && location.isActive) ||
-      (statusFilter === "inactive" && !location.isActive);
+    const matchesStatus
+      = statusFilter === 'all'
+      || (statusFilter === 'active' && location.isActive)
+      || (statusFilter === 'inactive' && !location.isActive);
 
     return matchesSearch && matchesStatus;
   });
@@ -99,15 +100,15 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
         const response = await deleteStoreLocation(id);
 
         toast({
-          title: "Success",
-          description: "Location deleted successfully",
+          title: 'Success',
+          description: 'Location deleted successfully',
         });
         window.location.reload();
       } catch (error) {
         toast({
-          title: "Error",
-          description: "Failed to delete location",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to delete location',
+          variant: 'destructive',
         });
       } finally {
         setLocationToDelete(null);
@@ -130,18 +131,18 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
       );
     }
 
-    const envValue =
-      process.env[location.squareLocationEnvKey as keyof NodeJS.ProcessEnv];
+    const envValue
+      = process.env[location.squareLocationEnvKey as keyof NodeJS.ProcessEnv];
     const friendlyNames: Record<string, string> = {
-      SQUARE_WEST_SEATTLE_LOCATION_ID: "West Seattle",
-      SQUARE_SEATTLE_LOCATION_ID: "Seattle",
-      SQUARE_NORTH_SEATTLE_LOCATION_ID: "North Seattle",
-      SQUARE_LOCATION_ID: "Default Location",
+      SQUARE_WEST_SEATTLE_LOCATION_ID: 'West Seattle',
+      SQUARE_SEATTLE_LOCATION_ID: 'Seattle',
+      SQUARE_NORTH_SEATTLE_LOCATION_ID: 'North Seattle',
+      SQUARE_LOCATION_ID: 'Default Location',
     };
 
-    const friendlyName =
-      friendlyNames[location.squareLocationEnvKey] ||
-      location.squareLocationEnvKey;
+    const friendlyName
+      = friendlyNames[location.squareLocationEnvKey]
+      || location.squareLocationEnvKey;
 
     return (
       <div className="flex items-center gap-2">
@@ -229,8 +230,8 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
                         <p className="text-base sm:text-lg font-medium">No locations found</p>
                         <p className="text-muted-foreground mt-1 text-sm sm:text-base">
                           {locations.length === 0
-                            ? "Start by adding your first location"
-                            : "No results matching your search and filters"}
+                            ? 'Start by adding your first location'
+                            : 'No results matching your search and filters'}
                         </p>
                       </div>
                     </div>
@@ -238,7 +239,7 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
                 </TableRow>
               ) : (
                 filteredLocations.map((location) => (
-                  <TableRow key={location.id} className={!location.isActive ? "opacity-75 bg-muted/30" : ""}>
+                  <TableRow key={location.id} className={!location.isActive ? 'opacity-75 bg-muted/30' : ''}>
                     <TableCell className="text-xs sm:text-sm font-medium">{location.name}</TableCell>
                     <TableCell className="text-xs sm:text-sm">
                       {location.streetAddress ? (
@@ -246,7 +247,7 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
                           <p>{location.streetAddress}</p>
                           <p className="text-xs text-muted-foreground">
                             {location.city}
-                            {location.state ? `, ${location.state}` : ""}{" "}
+                            {location.state ? `, ${location.state}` : ''}{' '}
                             {location.zip}
                             {location.countryCode && ` (${location.countryCode})`}
                           </p>
@@ -266,17 +267,17 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
                     <TableCell>{getSquareLocationDisplay(location)}</TableCell>
                     <TableCell>
                       <Badge
-                        variant={location.isActive ? "default" : "secondary"}
+                        variant={location.isActive ? 'default' : 'secondary'}
                         className="text-xs"
                       >
-                        {location.isActive ? "Active" : "Inactive"}
+                        {location.isActive ? 'Active' : 'Inactive'}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm">
-                      {new Date(location.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
+                      {new Date(location.createdAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
                       })}
                     </TableCell>
                     <TableCell>
@@ -287,10 +288,8 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
                           onClick={() => {
                             setIsMapLoading(location.id.toString());
                             window.open(
-                              `https://maps.google.com/maps?q=${encodeURIComponent(
-                                location.address!
-                              )}`,
-                              "_blank"
+                              `https://maps.google.com/maps?q=${encodeURIComponent(location.address)}`,
+                              '_blank',
                             );
                             setTimeout(() => setIsMapLoading(null), 1000);
                           }}
@@ -341,8 +340,7 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
           <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
             <AlertDialogCancel disabled={isPending} className="min-h-[44px]">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() =>
-                locationToDelete && handleDeleteLocation(locationToDelete)
+              onClick={() => locationToDelete && handleDeleteLocation(locationToDelete)
               }
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 min-h-[44px]"
               disabled={isPending}
@@ -353,7 +351,7 @@ export default function LocationsTable({ locations }: LocationsTableProps) {
                   Deleting...
                 </>
               ) : (
-                "Delete"
+                'Delete'
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

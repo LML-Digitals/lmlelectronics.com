@@ -1,4 +1,4 @@
-export function ImageIcon(props: any) {
+export function ImageIcon (props: any) {
   return (
     <svg
       {...props}

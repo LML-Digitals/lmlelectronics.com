@@ -1,35 +1,33 @@
-"use server";
-import prisma from "@/lib/prisma";
-import { FAQ, FAQSubmission } from "@prisma/client";
+'use server';
+import prisma from '@/lib/prisma';
+import { FAQ, FAQSubmission } from '@prisma/client';
 
 // FAQ Management
 export const getFAQs = async (): Promise<FAQ[]> => {
   try {
     return await prisma.fAQ.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   } catch (error) {
-    console.error("Error fetching FAQs:", error);
-    throw new Error("Failed to fetch FAQs");
+    console.error('Error fetching FAQs:', error);
+    throw new Error('Failed to fetch FAQs');
   }
 };
 
-export const createFAQ = async (
-  data: Omit<FAQ, "id" | "createdAt" | "updatedAt">
-) => {
+export const createFAQ = async (data: Omit<FAQ, 'id' | 'createdAt' | 'updatedAt'>) => {
   try {
     return await prisma.fAQ.create({
       data,
     });
   } catch (error) {
-    console.error("Error creating FAQ:", error);
-    throw new Error("Failed to create FAQ");
+    console.error('Error creating FAQ:', error);
+    throw new Error('Failed to create FAQ');
   }
 };
 
 export const updateFAQ = async (
   id: string,
-  data: Partial<Omit<FAQ, "id" | "createdAt" | "updatedAt">>
+  data: Partial<Omit<FAQ, 'id' | 'createdAt' | 'updatedAt'>>,
 ) => {
   try {
     return await prisma.fAQ.update({
@@ -37,8 +35,8 @@ export const updateFAQ = async (
       data,
     });
   } catch (error) {
-    console.error("Error updating FAQ:", error);
-    throw new Error("Failed to update FAQ");
+    console.error('Error updating FAQ:', error);
+    throw new Error('Failed to update FAQ');
   }
 };
 
@@ -48,29 +46,27 @@ export const deleteFAQ = async (id: string) => {
       where: { id },
     });
   } catch (error) {
-    console.error("Error deleting FAQ:", error);
-    throw new Error("Failed to delete FAQ");
+    console.error('Error deleting FAQ:', error);
+    throw new Error('Failed to delete FAQ');
   }
 };
 
 // FAQ Submissions Management
-export const getFAQSubmissions = async (
-  status?: string
-): Promise<FAQSubmission[]> => {
+export const getFAQSubmissions = async (status?: string): Promise<FAQSubmission[]> => {
   try {
     return await prisma.fAQSubmission.findMany({
       where: status ? { status } : undefined,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   } catch (error) {
-    console.error("Error fetching FAQ submissions:", error);
-    throw new Error("Failed to fetch FAQ submissions");
+    console.error('Error fetching FAQ submissions:', error);
+    throw new Error('Failed to fetch FAQ submissions');
   }
 };
 
 export const updateFAQSubmissionStatus = async (
   id: string,
-  status: "pending" | "approved" | "rejected"
+  status: 'pending' | 'approved' | 'rejected',
 ) => {
   try {
     return await prisma.fAQSubmission.update({
@@ -78,8 +74,8 @@ export const updateFAQSubmissionStatus = async (
       data: { status },
     });
   } catch (error) {
-    console.error("Error updating FAQ submission status:", error);
-    throw new Error("Failed to update FAQ submission status");
+    console.error('Error updating FAQ submission status:', error);
+    throw new Error('Failed to update FAQ submission status');
   }
 };
 
@@ -87,7 +83,7 @@ export const updateFAQSubmissionStatus = async (
 export const searchFAQs = async (
   query: string,
   category?: string,
-  isPublished?: boolean
+  isPublished?: boolean,
 ): Promise<FAQ[]> => {
   try {
     return await prisma.fAQ.findMany({
@@ -95,21 +91,21 @@ export const searchFAQs = async (
         AND: [
           query
             ? {
-                OR: [
-                  { question: { contains: query } },
-                  { answer: { contains: query } },
-                ],
-              }
+              OR: [
+                { question: { contains: query } },
+                { answer: { contains: query } },
+              ],
+            }
             : {},
           category ? { category } : {},
           isPublished !== undefined ? { isPublished } : {},
         ],
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   } catch (error) {
-    console.error("Error searching FAQs:", error);
-    throw new Error("Failed to search FAQs");
+    console.error('Error searching FAQs:', error);
+    throw new Error('Failed to search FAQs');
   }
 };
 
@@ -119,36 +115,34 @@ export const getFAQsByCategory = async (category: string): Promise<FAQ[]> => {
       where: {
         category: {
           equals: category,
-          mode: "insensitive",
+          mode: 'insensitive',
         },
         isPublished: true,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   } catch (error) {
-    console.error("Error fetching FAQs by category:", error);
-    throw new Error("Failed to fetch FAQs by category");
+    console.error('Error fetching FAQs by category:', error);
+    throw new Error('Failed to fetch FAQs by category');
   }
 };
 
 // Customer Submission
-export const createFAQSubmission = async (
-  data: {
+export const createFAQSubmission = async (data: {
     customerName: string | null;
     customerEmail: string | null;
     question: string;
-  }
-) => {
+  }) => {
   try {
     return await prisma.fAQSubmission.create({
       data: {
         ...data,
-        status: "pending",
+        status: 'pending',
       },
     });
   } catch (error) {
-    console.error("Error creating FAQ submission:", error);
-    throw new Error("Failed to create FAQ submission");
+    console.error('Error creating FAQ submission:', error);
+    throw new Error('Failed to create FAQ submission');
   }
 };
 
@@ -157,11 +151,12 @@ export const getFAQCategories = async (): Promise<string[]> => {
   try {
     const faqs = await prisma.fAQ.findMany({
       select: { category: true },
-      distinct: ["category"],
+      distinct: ['category'],
     });
+
     return faqs.map((faq) => faq.category);
   } catch (error) {
-    console.error("Error fetching FAQ categories:", error);
-    throw new Error("Failed to fetch FAQ categories");
+    console.error('Error fetching FAQ categories:', error);
+    throw new Error('Failed to fetch FAQ categories');
   }
 };

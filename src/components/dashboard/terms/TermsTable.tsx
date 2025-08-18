@@ -31,7 +31,7 @@ interface TermsTableProps {
   terms: TermWithVersions[];
 }
 
-export function TermsTable({ terms }: TermsTableProps) {
+export function TermsTable ({ terms }: TermsTableProps) {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -41,26 +41,26 @@ export function TermsTable({ terms }: TermsTableProps) {
   const getDisplayVersion = (term: TermWithVersions) => {
     // Prioritize the active version
     const activeVersion = term.versions.find((v) => v.isActive);
-    if (activeVersion) return activeVersion;
+
+    if (activeVersion) { return activeVersion; }
 
     // Otherwise, get the latest version by effective date
-    return term.versions.reduce((latest, current) =>
-      new Date(current.effectiveAt) > new Date(latest.effectiveAt)
-        ? current
-        : latest
-    );
+    return term.versions.reduce((latest, current) => new Date(current.effectiveAt) > new Date(latest.effectiveAt)
+      ? current
+      : latest);
   };
 
   const filteredTerms = terms.filter((term) => {
     const displayVersion = getDisplayVersion(term);
+
     return (
-      term.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      displayVersion?.version.toLowerCase().includes(searchTerm.toLowerCase())
+      term.title.toLowerCase().includes(searchTerm.toLowerCase())
+      || displayVersion?.version.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
 
   const handleDelete = async () => {
-    if (!selectedTermId) return;
+    if (!selectedTermId) { return; }
 
     setIsDeleting(true);
     try {
@@ -112,62 +112,63 @@ export function TermsTable({ terms }: TermsTableProps) {
               <TableHead className="text-xs sm:text-sm">Actions</TableHead>
             </TableRow>
           </TableHeader>
-        <TableBody>
-          {filteredTerms.map((term) => {
-            const displayVersion = getDisplayVersion(term);
-            if (!displayVersion) return null;
+          <TableBody>
+            {filteredTerms.map((term) => {
+              const displayVersion = getDisplayVersion(term);
 
-            return (
-              <TableRow key={term.id}>
-                <TableCell className="text-xs sm:text-sm">{term.title}</TableCell>
-                <TableCell className="text-xs sm:text-sm">{displayVersion.version}</TableCell>
-                <TableCell className="text-xs sm:text-sm">
-                  {displayVersion.effectiveAt.toLocaleDateString()}
-                </TableCell>
-                <TableCell className="text-xs sm:text-sm">
-                  {displayVersion.lastUpdated.toLocaleDateString()}
-                </TableCell>
-                <TableCell className="text-xs sm:text-sm">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      displayVersion.isActive
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}
-                  >
-                    {displayVersion.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </TableCell>
-                <TableCell className="text-xs sm:text-sm">
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Link href={`/dashboard/terms/${term.slug}/edit`}>
-                      <Button variant="outline" size="sm" className="min-h-[44px]">
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedTermId(term.id);
-                        setIsDeleteDialogOpen(true);
-                      }}
-                      className="min-h-[44px]"
+              if (!displayVersion) { return null; }
+
+              return (
+                <TableRow key={term.id}>
+                  <TableCell className="text-xs sm:text-sm">{term.title}</TableCell>
+                  <TableCell className="text-xs sm:text-sm">{displayVersion.version}</TableCell>
+                  <TableCell className="text-xs sm:text-sm">
+                    {displayVersion.effectiveAt.toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm">
+                    {displayVersion.lastUpdated.toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        displayVersion.isActive
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}
                     >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                    <Link href={`/dashboard/terms/${term.slug}/history`}>
-                      <Button variant="outline" size="sm" className="min-h-[44px]">
-                        <History className="h-4 w-4" />
+                      {displayVersion.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-xs sm:text-sm">
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Link href={`/dashboard/terms/${term.slug}/edit`}>
+                        <Button variant="outline" size="sm" className="min-h-[44px]">
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedTermId(term.id);
+                          setIsDeleteDialogOpen(true);
+                        }}
+                        className="min-h-[44px]"
+                      >
+                        <Trash className="h-4 w-4" />
                       </Button>
-                    </Link>
-                  </div>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+                      <Link href={`/dashboard/terms/${term.slug}/history`}>
+                        <Button variant="outline" size="sm" className="min-h-[44px]">
+                          <History className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
 
       <AlertDialog

@@ -34,15 +34,13 @@ type EditCategoryProps = {
   setDialogOpen: (open: boolean) => void;
 };
 
-export default function EditCategoryForm({
+export default function EditCategoryForm ({
   category,
   allCategories,
   setDialogOpen,
 }: EditCategoryProps) {
   const router = useRouter();
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    category.image || null
-  );
+  const [imagePreview, setImagePreview] = useState<string | null>(category.image || null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageChanged, setImageChanged] = useState(false);
 
@@ -72,11 +70,14 @@ export default function EditCategoryForm({
   // Handle image preview
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+
     if (files && files.length > 0) {
       const file = files[0];
+
       setImageFile(file);
       setImageChanged(true);
       const reader = new FileReader();
+
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
       };
@@ -112,7 +113,7 @@ export default function EditCategoryForm({
             // Upload new image using API endpoint
             const fileName = `category-${Date.now()}-${imageFile.name.replace(
               /\s+/g,
-              '-'
+              '-',
             )}`;
 
             const uploadResponse = await fetch(
@@ -120,7 +121,7 @@ export default function EditCategoryForm({
               {
                 method: 'POST',
                 body: imageFile,
-              }
+              },
             );
 
             if (!uploadResponse.ok) {
@@ -128,6 +129,7 @@ export default function EditCategoryForm({
             }
 
             const uploadResult = await uploadResponse.json();
+
             imageUrl = uploadResult.url;
           } else {
             // If image was removed (imageChanged but no imageFile)
@@ -195,8 +197,7 @@ export default function EditCategoryForm({
               <Label>Parent Category</Label>
               <Select
                 defaultValue={category.parentId?.toString() || 'none'}
-                onValueChange={(value) =>
-                  setValue('parentId', value === 'none' ? null : value)
+                onValueChange={(value) => setValue('parentId', value === 'none' ? null : value)
                 }
               >
                 <SelectTrigger className="mt-1.5">

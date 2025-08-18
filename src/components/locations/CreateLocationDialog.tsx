@@ -1,98 +1,92 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
-import { StoreLocation } from "@prisma/client";
+import React, { useState, useEffect } from 'react';
+import { StoreLocation } from '@prisma/client';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/components/ui/use-toast";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Plus,
   Trash,
   Upload,
-  X,
   HelpCircle,
   Loader2,
-  Trash2,
-  CreditCard,
-} from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
+} from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/tooltip';
+
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import LocationMap from "./LocationMap";
-import ListingsManager from "./ListingsManager";
-import SocialMediaManager from "./SocialMediaManager";
+} from '@/components/ui/select';
+import LocationMap from './LocationMap';
+import ListingsManager from './ListingsManager';
+import SocialMediaManager from './SocialMediaManager';
 import {
   DayHours,
   WeeklyHours,
   SocialMediaLink,
   ImageUpload,
   Listing,
-} from "./types/types";
-import { createStoreLocation } from "./services/storeLocationCrud";
+} from './types/types';
+import { createStoreLocation } from './services/storeLocationCrud';
 
 interface CreateLocationDialogProps {
   onSuccess?: () => void;
 }
 
-export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
+export function CreateLocationDialog ({ onSuccess }: CreateLocationDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isMapLoading, setIsMapLoading] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const { toast } = useToast();
-  const [addressError, setAddressError] = useState("");
-  const mapRef = useRef<HTMLIFrameElement>(null);
   const [images, setImages] = useState<ImageUpload[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
   // Initialize weekly hours
   const defaultHours: WeeklyHours = {
-    monday: { open: "09:00", close: "17:00", isClosed: false },
-    tuesday: { open: "09:00", close: "17:00", isClosed: false },
-    wednesday: { open: "09:00", close: "17:00", isClosed: false },
-    thursday: { open: "09:00", close: "17:00", isClosed: false },
-    friday: { open: "09:00", close: "17:00", isClosed: false },
-    saturday: { open: "10:00", close: "15:00", isClosed: false },
-    sunday: { open: "10:00", close: "15:00", isClosed: true },
+    monday: { open: '09:00', close: '17:00', isClosed: false },
+    tuesday: { open: '09:00', close: '17:00', isClosed: false },
+    wednesday: { open: '09:00', close: '17:00', isClosed: false },
+    thursday: { open: '09:00', close: '17:00', isClosed: false },
+    friday: { open: '09:00', close: '17:00', isClosed: false },
+    saturday: { open: '10:00', close: '15:00', isClosed: false },
+    sunday: { open: '10:00', close: '15:00', isClosed: true },
   };
 
   const [formData, setFormData] = useState<Partial<StoreLocation>>({
-    name: "",
-    address: "",
-    streetAddress: "",
-    city: "",
-    state: "",
-    zip: "",
-    countryCode: "US",
-    phone: "",
-    email: "",
-    squareLocationEnvKey: "",
+    name: '',
+    address: '',
+    streetAddress: '',
+    city: '',
+    state: '',
+    zip: '',
+    countryCode: 'US',
+    phone: '',
+    email: '',
+    squareLocationEnvKey: '',
     hours: defaultHours,
     images: [],
     listings: [],
@@ -103,42 +97,38 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
   const [weeklyHours, setWeeklyHours] = useState<WeeklyHours>(defaultHours);
   const [socialLinks, setSocialLinks] = useState<SocialMediaLink[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
-  const [entranceSteps, setEntranceSteps] = useState("");
-
-  const [newListing, setNewListing] = useState("");
+  const [entranceSteps, setEntranceSteps] = useState('');
 
   // Square location environment key options
   const squareLocationOptions = [
-    { value: "none", label: "Not configured" },
-    { value: "SQUARE_LOCATION_ID", label: "Default Location" },
+    { value: 'none', label: 'Not configured' },
+    { value: 'SQUARE_LOCATION_ID', label: 'Default Location' },
     {
-      value: "SQUARE_WEST_SEATTLE_LOCATION_ID",
-      label: "West Seattle",
+      value: 'SQUARE_WEST_SEATTLE_LOCATION_ID',
+      label: 'West Seattle',
     },
-    { value: "SQUARE_SEATTLE_LOCATION_ID", label: "Seattle" },
+    { value: 'SQUARE_SEATTLE_LOCATION_ID', label: 'Seattle' },
     {
-      value: "SQUARE_NORTH_SEATTLE_LOCATION_ID",
-      label: "North Seattle",
+      value: 'SQUARE_NORTH_SEATTLE_LOCATION_ID',
+      label: 'North Seattle',
     },
   ];
 
-  // Generate full address from address components
-  const generateFullAddress = () => {
-    const { streetAddress, city, state, zip, countryCode } = formData;
-    let fullAddress = "";
-
-    if (streetAddress) fullAddress += streetAddress;
-    if (city) fullAddress += fullAddress ? `, ${city}` : city;
-    if (state) fullAddress += fullAddress ? `, ${state}` : state;
-    if (zip) fullAddress += fullAddress ? ` ${zip}` : zip;
-    if (countryCode)
-      fullAddress += fullAddress ? `, ${countryCode}` : countryCode;
-
-    return fullAddress;
-  };
-
   // Update address whenever address components change
   useEffect(() => {
+    const generateFullAddress = () => {
+      const { streetAddress, city, state, zip, countryCode } = formData;
+      let fullAddress = '';
+
+      if (streetAddress) { fullAddress += streetAddress; }
+      if (city) { fullAddress += fullAddress ? `, ${city}` : city; }
+      if (state) { fullAddress += fullAddress ? `, ${state}` : state; }
+      if (zip) { fullAddress += fullAddress ? ` ${zip}` : zip; }
+      if (countryCode) { fullAddress += fullAddress ? `, ${countryCode}` : countryCode; }
+
+      return fullAddress;
+    };
+
     setFormData((prev) => ({
       ...prev,
       address: generateFullAddress(),
@@ -149,12 +139,13 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
     formData.state,
     formData.zip,
     formData.countryCode,
+    formData,
   ]);
 
   const handleHoursChange = (
     day: string,
     field: keyof DayHours,
-    value: string | boolean
+    value: string | boolean,
   ) => {
     setWeeklyHours((prev) => ({
       ...prev,
@@ -165,43 +156,43 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
   const uploadImage = async (file: File): Promise<string> => {
     try {
       const response = await fetch(`/api/upload?filename=${file.name}`, {
-        method: "POST",
+        method: 'POST',
         body: file,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to upload file.");
+        throw new Error('Failed to upload file.');
       }
 
       const newBlob = await response.json();
+
       return newBlob.url;
     } catch (error) {
-      console.error("Error uploading image:", error);
       toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to upload image',
+        variant: 'destructive',
       });
       throw error;
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsImageUploading(true);
     try {
-      const files = Array.from(e.target.files || []);
+      const files = Array.from(e.target.files ?? []);
       const newImages = files.map((file) => ({
         url: URL.createObjectURL(file),
         file,
         isNew: true,
       }));
+
       setImages([...images, ...newImages]);
-    } catch (error) {
-      console.error("Error handling image upload:", error);
+    } catch (_error) {
       toast({
-        title: "Error",
-        description: "Failed to process images",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to process images',
+        variant: 'destructive',
       });
     } finally {
       setIsImageUploading(false);
@@ -210,20 +201,6 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
 
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
-  };
-
-  const addListing = () => {
-    setListings([...listings, { name: "", link: "", icon: "" }]);
-  };
-
-  const removeListing = (index: number) => {
-    setListings(listings.filter((_, i) => i !== index));
-  };
-
-  const updateListing = (index: number, value: string) => {
-    const newListings = [...listings];
-    newListings[index].name = value;
-    setListings(newListings);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -238,7 +215,7 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
     setIsDragging(false);
   };
 
-  const handleDrop = async (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -251,13 +228,13 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
         file,
         isNew: true,
       }));
+
       setImages([...images, ...newImages]);
-    } catch (error) {
-      console.error("Error handling dropped images:", error);
+    } catch (_error) {
       toast({
-        title: "Error",
-        description: "Failed to process dropped images",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to process dropped images',
+        variant: 'destructive',
       });
     } finally {
       setIsImageUploading(false);
@@ -278,14 +255,14 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
 
       // const data = await response.json();
       const url = await uploadImage(file);
+
       // console.log("url", url);
       return url;
     } catch (error) {
-      console.error("Error uploading icon:", error);
       toast({
-        title: "Error",
-        description: "Failed to upload icon",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to upload icon',
+        variant: 'destructive',
       });
       throw error;
     }
@@ -297,14 +274,13 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
 
     try {
       // Upload new images first
-      const uploadedImages = await Promise.all(
-        images
-          .filter((img) => img.isNew && img.file)
-          .map(async (img) => {
-            const url = await uploadImage(img.file!);
-            return url;
-          })
-      );
+      const uploadedImages = await Promise.all(images
+        .filter((img) => img.isNew && img.file)
+        .map(async (img) => {
+          const url = await uploadImage(img.file);
+
+          return url;
+        }));
 
       // Serialize JSON fields
       const serializedData = {
@@ -313,7 +289,7 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
         images: JSON.stringify(uploadedImages),
         socialMedia: JSON.stringify(socialLinks),
         listings: JSON.stringify(listings),
-        entranceSteps: entranceSteps.trim() || null,
+        entranceSteps: entranceSteps.trim() ?? null,
       };
 
       // Call the server action
@@ -324,16 +300,15 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
       }
 
       toast({
-        description: "Location created successfully",
+        description: 'Location created successfully',
       });
 
       setIsOpen(false);
       onSuccess?.();
-    } catch (error) {
-      console.error("Error creating location:", error);
+    } catch (_error) {
       toast({
-        description: "Failed to create location",
-        variant: "destructive",
+        description: 'Failed to create location',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -357,7 +332,7 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-full pr-4">
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 sm:space-y-6">
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
                   <TabsTrigger value="basic" className="text-xs sm:text-sm">Basic Info</TabsTrigger>
@@ -372,9 +347,8 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                     <Input
                       id="name"
                       placeholder="e.g., Downtown Store"
-                      value={formData.name || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
+                      value={formData.name ?? ''}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })
                       }
                       required
                       className="text-sm sm:text-base min-h-[44px]"
@@ -387,12 +361,11 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                       <Input
                         id="streetAddress"
                         placeholder="123 Main St"
-                        value={formData.streetAddress || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            streetAddress: e.target.value,
-                          })
+                        value={formData.streetAddress ?? ''}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          streetAddress: e.target.value,
+                        })
                         }
                         required
                         className="text-sm sm:text-base min-h-[44px]"
@@ -405,9 +378,8 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                         <Input
                           id="city"
                           placeholder="New York"
-                          value={formData.city || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, city: e.target.value })
+                          value={formData.city ?? ''}
+                          onChange={(e) => setFormData({ ...formData, city: e.target.value })
                           }
                           required
                           className="text-sm sm:text-base min-h-[44px]"
@@ -418,9 +390,8 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                         <Input
                           id="state"
                           placeholder="NY"
-                          value={formData.state || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, state: e.target.value })
+                          value={formData.state ?? ''}
+                          onChange={(e) => setFormData({ ...formData, state: e.target.value })
                           }
                           required
                           className="text-sm sm:text-base min-h-[44px]"
@@ -434,9 +405,8 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                         <Input
                           id="zip"
                           placeholder="10001"
-                          value={formData.zip || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, zip: e.target.value })
+                          value={formData.zip ?? ''}
+                          onChange={(e) => setFormData({ ...formData, zip: e.target.value })
                           }
                           required
                           className="text-sm sm:text-base min-h-[44px]"
@@ -447,12 +417,11 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                         <Input
                           id="countryCode"
                           placeholder="US"
-                          value={formData.countryCode || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              countryCode: e.target.value,
-                            })
+                          value={formData.countryCode ?? ''}
+                          onChange={(e) => setFormData({
+                            ...formData,
+                            countryCode: e.target.value,
+                          })
                           }
                           required
                           className="text-sm sm:text-base min-h-[44px]"
@@ -464,13 +433,10 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                       <Label htmlFor="address" className="text-sm sm:text-base">Full Address</Label>
                       <Input
                         id="address"
-                        value={formData.address || ""}
+                        value={formData.address ?? ''}
                         disabled
-                        className={cn(addressError && "border-red-500", "text-sm sm:text-base min-h-[44px")}
+                        className="text-sm sm:text-base min-h-[44px]"
                       />
-                      {addressError && (
-                        <p className="text-xs sm:text-sm text-red-500">{addressError}</p>
-                      )}
                     </div>
 
                     {formData.address && (
@@ -490,9 +456,8 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                       id="phone"
                       type="tel"
                       placeholder="(555) 555-5555"
-                      value={formData.phone || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
+                      value={formData.phone ?? ''}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })
                       }
                       required
                       className="text-sm sm:text-base min-h-[44px]"
@@ -505,9 +470,8 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                       id="email"
                       type="email"
                       placeholder="store@example.com"
-                      value={formData.email || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
+                      value={formData.email ?? ''}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })
                       }
                       required
                       className="text-sm sm:text-base min-h-[44px]"
@@ -519,12 +483,11 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                       Square Location Environment Key
                     </Label>
                     <Select
-                      value={formData.squareLocationEnvKey || ""}
-                      onValueChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          squareLocationEnvKey: value,
-                        })
+                      value={formData.squareLocationEnvKey ?? ''}
+                      onValueChange={(value) => setFormData({
+                        ...formData,
+                        squareLocationEnvKey: value,
+                      })
                       }
                     >
                       <SelectTrigger className="text-sm sm:text-base min-h-[44px]">
@@ -544,8 +507,7 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                     <Switch
                       id="isActive"
                       checked={formData.isActive}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, isActive: checked })
+                      onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })
                       }
                     />
                     <Label htmlFor="isActive" className="text-sm sm:text-base">Active Location</Label>
@@ -575,8 +537,7 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                               <Label className="capitalize text-sm sm:text-base">{day}</Label>
                               <Switch
                                 checked={!hours.isClosed}
-                                onCheckedChange={(checked) =>
-                                  handleHoursChange(day, "isClosed", !checked)
+                                onCheckedChange={(checked) => handleHoursChange(day, 'isClosed', !checked)
                                 }
                               />
                             </div>
@@ -588,12 +549,11 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                                     id={`${day}-open`}
                                     type="time"
                                     value={hours.open}
-                                    onChange={(e) =>
-                                      handleHoursChange(
-                                        day,
-                                        "open",
-                                        e.target.value
-                                      )
+                                    onChange={(e) => handleHoursChange(
+                                      day,
+                                      'open',
+                                      e.target.value,
+                                    )
                                     }
                                     className="text-sm sm:text-base min-h-[44px]"
                                   />
@@ -604,12 +564,11 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                                     id={`${day}-close`}
                                     type="time"
                                     value={hours.close}
-                                    onChange={(e) =>
-                                      handleHoursChange(
-                                        day,
-                                        "close",
-                                        e.target.value
-                                      )
+                                    onChange={(e) => handleHoursChange(
+                                      day,
+                                      'close',
+                                      e.target.value,
+                                    )
                                     }
                                     className="text-sm sm:text-base min-h-[44px]"
                                   />
@@ -631,10 +590,10 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                           <Label
                             htmlFor="images"
                             className={cn(
-                              "relative flex flex-col items-center justify-center w-full h-24 sm:h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200",
+                              'relative flex flex-col items-center justify-center w-full h-24 sm:h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200',
                               isDragging
-                                ? "border-primary bg-primary/10"
-                                : "hover:bg-muted border-muted-foreground/25"
+                                ? 'border-primary bg-primary/10'
+                                : 'hover:bg-muted border-muted-foreground/25',
                             )}
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
@@ -648,18 +607,18 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
                               <Upload
                                 className={cn(
-                                  "h-6 w-6 sm:h-8 sm:w-8 mb-2 transition-colors duration-200",
+                                  'h-6 w-6 sm:h-8 sm:w-8 mb-2 transition-colors duration-200',
                                   isDragging
-                                    ? "text-primary"
-                                    : "text-muted-foreground"
+                                    ? 'text-primary'
+                                    : 'text-muted-foreground',
                                 )}
                               />
                               <p
                                 className={cn(
-                                  "text-xs sm:text-sm transition-colors duration-200",
+                                  'text-xs sm:text-sm transition-colors duration-200',
                                   isDragging
-                                    ? "text-primary"
-                                    : "text-muted-foreground"
+                                    ? 'text-primary'
+                                    : 'text-muted-foreground',
                                 )}
                               >
                                 Drag & drop images here, or click to select
@@ -679,7 +638,7 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                           {images.map((image, index) => (
                             <div
-                              key={index}
+                              key={`image-${image.url}-${index}`}
                               className="relative aspect-video rounded-lg overflow-hidden"
                             >
                               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -711,7 +670,7 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                       <SocialMediaManager
                         links={socialLinks}
                         onLinksChange={setSocialLinks}
-                        onIconUpload={handleIconUpload}
+                        onIconUpload={(file) => void handleIconUpload(file)}
                       />
 
                       <Separator />
@@ -719,7 +678,7 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                       <ListingsManager
                         listings={listings}
                         onListingsChange={setListings}
-                        onIconUpload={handleIconUpload}
+                        onIconUpload={(file) => void handleIconUpload(file)}
                       />
 
                       <div className="space-y-2">
@@ -754,7 +713,7 @@ export function CreateLocationDialog({ onSuccess }: CreateLocationDialogProps) {
                       Creating...
                     </>
                   ) : (
-                    "Create Location"
+                    'Create Location'
                   )}
                 </Button>
               </div>

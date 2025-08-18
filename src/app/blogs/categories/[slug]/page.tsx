@@ -68,11 +68,13 @@ export async function generateMetadata ({
 export async function generateStaticParams () {
   try {
     const categories = await getBlogCategories();
+
     return categories.map((category) => ({
       slug: encodeURIComponent(category.name.toLowerCase().replace(/ /g, '-')),
     }));
   } catch (error) {
     console.warn('Failed to fetch blog categories during build, using fallback:', error);
+
     // Return empty array to prevent build failure
     // The page will be generated dynamically at runtime
     return [];
@@ -96,6 +98,7 @@ export default async function CategoryPage ({
 
   try {
     const result = await getBlogsByCategory(decodedSlug);
+
     blogs = result;
     category = await getBlogCategoryByName(decodedSlug);
   } catch (error) {

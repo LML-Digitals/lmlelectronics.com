@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getOrderStats } from "@/components/dashboard/pos/orders/services/pos-orders";
-import { DollarSign, ShoppingCart, TrendingUp, CreditCard } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getOrderStats } from '@/components/dashboard/pos/orders/services/pos-orders';
+import { DollarSign, ShoppingCart, TrendingUp, CreditCard } from 'lucide-react';
 
-export async function OrdersStats() {
+export async function OrdersStats () {
   const result = await getOrderStats();
 
   if (!result.success || !result.data) {
@@ -30,8 +30,8 @@ export async function OrdersStats() {
     paymentMethodBreakdown,
   } = result.data;
 
-  const paidOrders = statusBreakdown["PAID"] || 0;
-  const refundedOrders = statusBreakdown["REFUNDED"] || 0;
+  const paidOrders = statusBreakdown['PAID'] || 0;
+  const refundedOrders = statusBreakdown['REFUNDED'] || 0;
 
   return (
     <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
@@ -43,7 +43,7 @@ export async function OrdersStats() {
         <CardContent>
           <div className="text-xl sm:text-2xl font-bold">
             $
-            {totalRevenue.toLocaleString("en-US", {
+            {totalRevenue.toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -79,7 +79,7 @@ export async function OrdersStats() {
         <CardContent>
           <div className="text-xl sm:text-2xl font-bold">
             $
-            {averageOrderValue.toLocaleString("en-US", {
+            {averageOrderValue.toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -98,8 +98,8 @@ export async function OrdersStats() {
             {Object.keys(paymentMethodBreakdown).length}
           </div>
           <p className="text-xs text-muted-foreground">
-            {paymentMethodBreakdown["Credit Card"] || 0} card,{" "}
-            {paymentMethodBreakdown["Cash"] || 0} cash
+            {paymentMethodBreakdown['Credit Card'] || 0} card,{' '}
+            {paymentMethodBreakdown['Cash'] || 0} cash
           </p>
         </CardContent>
       </Card>

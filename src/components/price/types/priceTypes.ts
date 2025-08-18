@@ -1,7 +1,7 @@
 export interface PriceItem {
   id: string;
   name: string;
-  type: "repair" | "product";
+  type: 'repair' | 'product';
   basePrice: number;
   finalPrice: number;
   discountAmount?: number;
@@ -100,4 +100,4 @@ export interface PriceSearchResult {
   items: PriceItem[];
   totalCount: number;
   hasMore: boolean;
-} 
+}

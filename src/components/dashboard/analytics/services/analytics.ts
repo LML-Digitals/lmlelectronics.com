@@ -1,46 +1,46 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { add, format, startOfMonth, endOfMonth, subMonths } from "date-fns";
+import prisma from '@/lib/prisma';
+import { add, format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
 // --- BEGIN NEW FUNCTION ---
-async function calculateRevenueFromSales(
-  period: string = "monthly",
+async function calculateRevenueFromSales (
+  period = 'monthly',
   customStartDate?: Date,
-  customEndDate?: Date
+  customEndDate?: Date,
 ) {
   const now = new Date();
   let startDate: Date;
   let endDate: Date = now;
 
-  if (period === "custom" && customStartDate) {
+  if (period === 'custom' && customStartDate) {
     startDate = customStartDate;
     endDate = customEndDate || now;
   } else {
     switch (period) {
-      case "weekly":
-        startDate = add(now, { days: -7 });
-        break;
-      case "monthly":
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
-        break;
-      case "quarterly":
-        startDate = add(now, { months: -3 });
-        break;
-      case "yearly":
-        startDate = add(now, { years: -1 });
-        break;
-      default:
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
+    case 'weekly':
+      startDate = add(now, { days: -7 });
+      break;
+    case 'monthly':
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+      break;
+    case 'quarterly':
+      startDate = add(now, { months: -3 });
+      break;
+    case 'yearly':
+      startDate = add(now, { years: -1 });
+      break;
+    default:
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
     }
   }
 
   // Get paid orders for the specified period
   const paidOrders = await prisma.order.findMany({
     where: {
-      status: "PAID",
+      status: 'PAID',
       createdAt: {
         gte: startDate,
         lte: endDate,
@@ -56,10 +56,10 @@ async function calculateRevenueFromSales(
   let incomeFromServices = 0;
   let incomeFromProducts = 0;
   let incomeFromCustom = 0;
-  let profitFromRepairs = 0;
-  let profitFromServices = 0;
-  let profitFromProducts = 0;
-  let profitFromCustom = 0;
+  const profitFromRepairs = 0;
+  const profitFromServices = 0;
+  const profitFromProducts = 0;
+  const profitFromCustom = 0;
 
   paidOrders.forEach((order) => {
     order.items.forEach((item) => {
@@ -68,31 +68,31 @@ async function calculateRevenueFromSales(
       // Profit should be calculated separately when cost data is available
 
       switch (item.itemType) {
-        case "repair":
-          incomeFromRepairs += itemTotal;
-          break;
-        case "service":
-          incomeFromServices += itemTotal;
-          break;
-        case "product":
-          incomeFromProducts += itemTotal;
-          break;
-        case "custom":
-          incomeFromCustom += itemTotal;
-          break;
-        default:
-          // Handle items without itemType by adding to products
-          incomeFromProducts += itemTotal;
-          break;
+      case 'repair':
+        incomeFromRepairs += itemTotal;
+        break;
+      case 'service':
+        incomeFromServices += itemTotal;
+        break;
+      case 'product':
+        incomeFromProducts += itemTotal;
+        break;
+      case 'custom':
+        incomeFromCustom += itemTotal;
+        break;
+      default:
+        // Handle items without itemType by adding to products
+        incomeFromProducts += itemTotal;
+        break;
       }
     });
   });
 
-  const totalIncome =
-    incomeFromRepairs +
-    incomeFromServices +
-    incomeFromProducts +
-    incomeFromCustom;
+  const totalIncome
+    = incomeFromRepairs
+    + incomeFromServices
+    + incomeFromProducts
+    + incomeFromCustom;
   // Note: Profit calculation set to 0 as OrderItem doesn't have cost/profit fields
   const totalProfit = 0;
 
@@ -112,42 +112,42 @@ async function calculateRevenueFromSales(
 // --- END NEW FUNCTION ---
 
 // Repair & Services Analytics
-export async function getRepairAnalytics(
-  period: string = "monthly",
+export async function getRepairAnalytics (
+  period = 'monthly',
   customStartDate?: Date,
-  customEndDate?: Date
+  customEndDate?: Date,
 ) {
   const now = new Date();
   let startDate: Date;
   let endDate: Date = now;
 
-  if (period === "custom" && customStartDate) {
+  if (period === 'custom' && customStartDate) {
     startDate = customStartDate;
     endDate = customEndDate || now;
   } else {
     switch (period) {
-      case "weekly":
-        startDate = add(now, { days: -7 });
-        break;
-      case "monthly":
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
-        break;
-      case "quarterly":
-        startDate = add(now, { months: -3 });
-        break;
-      case "yearly":
-        startDate = add(now, { years: -1 });
-        break;
-      default:
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
+    case 'weekly':
+      startDate = add(now, { days: -7 });
+      break;
+    case 'monthly':
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+      break;
+    case 'quarterly':
+      startDate = add(now, { months: -3 });
+      break;
+    case 'yearly':
+      startDate = add(now, { years: -1 });
+      break;
+    default:
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
     }
   }
 
   // Get revenue data using the new centralized function
-  const { incomeFromRepairs, incomeFromServices } =
-    await calculateRevenueFromSales(period, customStartDate, customEndDate);
+  const { incomeFromRepairs, incomeFromServices }
+    = await calculateRevenueFromSales(period, customStartDate, customEndDate);
 
   // === TICKET ANALYTICS ===
   const tickets = await prisma.ticket.findMany({
@@ -171,15 +171,9 @@ export async function getRepairAnalytics(
   });
 
   const totalTickets = tickets.length;
-  const completedTickets = tickets.filter(
-    (t: any) => t.status === "DONE"
-  ).length;
-  const pendingTickets = tickets.filter(
-    (t: any) => t.status === "PENDING"
-  ).length;
-  const cancelledTickets = tickets.filter(
-    (t: any) => t.status === "CANCELLED"
-  ).length;
+  const completedTickets = tickets.filter((t: any) => t.status === 'DONE').length;
+  const pendingTickets = tickets.filter((t: any) => t.status === 'PENDING').length;
+  const cancelledTickets = tickets.filter((t: any) => t.status === 'CANCELLED').length;
 
   // Calculate repair types distribution
   const repairTypes = tickets.reduce(
@@ -187,12 +181,14 @@ export async function getRepairAnalytics(
       ticket.repairDevices.forEach((device: any) => {
         device.repairOptions.forEach((repair: any) => {
           const repairTypeName = repair.repairType.name;
+
           acc[repairTypeName] = (acc[repairTypeName] || 0) + 1;
         });
       });
+
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   // Brand distribution
@@ -201,9 +197,10 @@ export async function getRepairAnalytics(
       ticket.repairDevices.forEach((device: any) => {
         acc[device.brand] = (acc[device.brand] || 0) + 1;
       });
+
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   // === QUOTE ANALYTICS ===
@@ -218,22 +215,19 @@ export async function getRepairAnalytics(
 
   const totalQuotes = quotes.length;
   const acceptedQuotes = quotes.filter((q: any) => q.convertedToTicket).length;
-  const expiredQuotes = quotes.filter(
-    (q: any) => !q.convertedToTicket && q.expiresAt < now
-  ).length;
-  const pendingQuotes = quotes.filter(
-    (q: any) => !q.convertedToTicket && q.expiresAt >= now
-  ).length;
-  const quoteConversionRate =
-    totalQuotes > 0 ? ((acceptedQuotes / totalQuotes) * 100).toFixed(2) : "0";
+  const expiredQuotes = quotes.filter((q: any) => !q.convertedToTicket && q.expiresAt < now).length;
+  const pendingQuotes = quotes.filter((q: any) => !q.convertedToTicket && q.expiresAt >= now).length;
+  const quoteConversionRate
+    = totalQuotes > 0 ? ((acceptedQuotes / totalQuotes) * 100).toFixed(2) : '0';
 
   // Quote brand distribution
   const quoteBrandDistribution = quotes.reduce(
     (acc: Record<string, number>, quote: any) => {
       acc[quote.brand] = (acc[quote.brand] || 0) + 1;
+
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   // === DIAGNOSTICS ANALYTICS ===
@@ -247,16 +241,12 @@ export async function getRepairAnalytics(
   });
 
   const totalDiagnostics = diagnostics.length;
-  const completedDiagnostics = diagnostics.filter(
-    (d: any) => d.status === "COMPLETED"
-  ).length;
-  const pendingDiagnostics = diagnostics.filter(
-    (d: any) => d.status === "PENDING"
-  ).length;
-  const diagnosticCompletionRate =
-    totalDiagnostics > 0
+  const completedDiagnostics = diagnostics.filter((d: any) => d.status === 'COMPLETED').length;
+  const pendingDiagnostics = diagnostics.filter((d: any) => d.status === 'PENDING').length;
+  const diagnosticCompletionRate
+    = totalDiagnostics > 0
       ? ((completedDiagnostics / totalDiagnostics) * 100).toFixed(2)
-      : "0";
+      : '0';
 
   return {
     // Ticket Analytics
@@ -267,7 +257,7 @@ export async function getRepairAnalytics(
       cancelled: cancelledTickets,
       completionRate: totalTickets
         ? ((completedTickets / totalTickets) * 100).toFixed(2)
-        : "0",
+        : '0',
       brandDistribution,
       repairTypes,
     },
@@ -300,36 +290,36 @@ export async function getRepairAnalytics(
 }
 
 // Communications Analytics
-export async function getCommunicationsAnalytics(
-  period: string = "monthly",
+export async function getCommunicationsAnalytics (
+  period = 'monthly',
   customStartDate?: Date,
-  customEndDate?: Date
+  customEndDate?: Date,
 ) {
   const now = new Date();
   let startDate: Date;
   let endDate: Date = now;
 
-  if (period === "custom" && customStartDate) {
+  if (period === 'custom' && customStartDate) {
     startDate = customStartDate;
     endDate = customEndDate || now;
   } else {
     switch (period) {
-      case "weekly":
-        startDate = add(now, { days: -7 });
-        break;
-      case "monthly":
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
-        break;
-      case "quarterly":
-        startDate = add(now, { months: -3 });
-        break;
-      case "yearly":
-        startDate = add(now, { years: -1 });
-        break;
-      default:
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
+    case 'weekly':
+      startDate = add(now, { days: -7 });
+      break;
+    case 'monthly':
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+      break;
+    case 'quarterly':
+      startDate = add(now, { months: -3 });
+      break;
+    case 'yearly':
+      startDate = add(now, { years: -1 });
+      break;
+    default:
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
     }
   }
 
@@ -383,25 +373,25 @@ export async function getCommunicationsAnalytics(
     },
   });
 
-  const emailOpenRate =
-    emails.filter((e: any) => e.analytics && e.analytics.opens > 0).length /
-      emails.length || 0;
-  const emailClickRate =
-    emails.filter((e: any) => e.analytics && e.analytics.clicks > 0).length /
-      emails.length || 0;
+  const emailOpenRate
+    = emails.filter((e: any) => e.analytics && e.analytics.opens > 0).length
+      / emails.length || 0;
+  const emailClickRate
+    = emails.filter((e: any) => e.analytics && e.analytics.clicks > 0).length
+      / emails.length || 0;
 
   // Calculate notifications read rate
   const notificationsReadRate = notifications.length
-    ? (notifications.filter((n: any) => n.isRead).length /
-        notifications.length) *
-      100
+    ? (notifications.filter((n: any) => n.isRead).length
+        / notifications.length)
+      * 100
     : 0;
 
   // Calculate active announcements percentage
   const activeAnnouncementsRate = announcements.length
-    ? (announcements.filter((a: any) => a.isActive).length /
-        announcements.length) *
-      100
+    ? (announcements.filter((a: any) => a.isActive).length
+        / announcements.length)
+      * 100
     : 0;
 
   return {
@@ -415,23 +405,21 @@ export async function getCommunicationsAnalytics(
     },
     texts: {
       total: textMessages.length,
-      sent: textMessages.filter((t: any) => t.direction === "OUTBOUND").length,
-      received: textMessages.filter((t: any) => t.direction === "INBOUND")
+      sent: textMessages.filter((t: any) => t.direction === 'OUTBOUND').length,
+      received: textMessages.filter((t: any) => t.direction === 'INBOUND')
         .length,
-      deliveryRate: textMessages.filter((t: any) => t.direction === "OUTBOUND")
+      deliveryRate: textMessages.filter((t: any) => t.direction === 'OUTBOUND')
         .length
-        ? (textMessages.filter(
-            (t: any) => t.direction === "OUTBOUND" && t.status === "DELIVERED"
-          ).length /
-            textMessages.filter((t: any) => t.direction === "OUTBOUND")
-              .length) *
-          100
+        ? (textMessages.filter((t: any) => t.direction === 'OUTBOUND' && t.status === 'DELIVERED').length
+            / textMessages.filter((t: any) => t.direction === 'OUTBOUND')
+              .length)
+          * 100
         : 0,
     },
     emails: {
       total: emails.length,
-      sent: emails.filter((e: any) => e.status === "SENT").length,
-      failed: emails.filter((e: any) => e.status === "FAILED").length,
+      sent: emails.filter((e: any) => e.status === 'SENT').length,
+      failed: emails.filter((e: any) => e.status === 'FAILED').length,
       openRate: emailOpenRate * 100,
       clickRate: emailClickRate * 100,
     },
@@ -443,15 +431,17 @@ export async function getCommunicationsAnalytics(
       // Group by type
       byType: notifications.reduce((acc: Record<string, number>, n: any) => {
         acc[n.type] = (acc[n.type] || 0) + 1;
+
         return acc;
       }, {}),
       // Group by priority
       byPriority: notifications.reduce(
         (acc: Record<string, number>, n: any) => {
           acc[n.priority] = (acc[n.priority] || 0) + 1;
+
           return acc;
         },
-        {}
+        {},
       ),
     },
     announcements: {
@@ -462,12 +452,9 @@ export async function getCommunicationsAnalytics(
       latest:
         announcements.length > 0
           ? announcements
-              .sort(
-                (a: any, b: any) =>
-                  new Date(b.createdAt).getTime() -
-                  new Date(a.createdAt).getTime()
-              )
-              .slice(0, 5)
+            .sort((a: any, b: any) => new Date(b.createdAt).getTime()
+                  - new Date(a.createdAt).getTime())
+            .slice(0, 5)
           : [],
     },
     period,
@@ -476,42 +463,42 @@ export async function getCommunicationsAnalytics(
 }
 
 // Inventory & POS Analytics
-export async function getInventoryAnalytics(
-  period: string = "monthly",
+export async function getInventoryAnalytics (
+  period = 'monthly',
   customStartDate?: Date,
-  customEndDate?: Date
+  customEndDate?: Date,
 ) {
   const now = new Date();
   let startDate: Date;
   let endDate: Date = now;
 
-  if (period === "custom" && customStartDate) {
+  if (period === 'custom' && customStartDate) {
     startDate = customStartDate;
     endDate = customEndDate || now;
   } else {
     switch (period) {
-      case "weekly":
-        startDate = add(now, { days: -7 });
-        break;
-      case "monthly":
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
-        break;
-      case "quarterly":
-        startDate = add(now, { months: -3 });
-        break;
-      case "yearly":
-        startDate = add(now, { years: -1 });
-        break;
-      default:
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
+    case 'weekly':
+      startDate = add(now, { days: -7 });
+      break;
+    case 'monthly':
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+      break;
+    case 'quarterly':
+      startDate = add(now, { months: -3 });
+      break;
+    case 'yearly':
+      startDate = add(now, { years: -1 });
+      break;
+    default:
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
     }
   }
 
   // Get revenue data using the new centralized function
-  const { incomeFromProducts, profitFromProducts } =
-    await calculateRevenueFromSales(period, customStartDate, customEndDate);
+  const { incomeFromProducts, profitFromProducts }
+    = await calculateRevenueFromSales(period, customStartDate, customEndDate);
 
   // Get inventory items and categories
   const inventoryItems = await prisma.inventoryItem.findMany({
@@ -753,14 +740,15 @@ export async function getInventoryAnalytics(
   const totalValue = inventoryItems.reduce((sum: number, item: any) => {
     const variationsTotal = item.variations.reduce(
       (varSum: number, variation: any) => varSum + variation.sellingPrice,
-      0
+      0,
     );
+
     return sum + variationsTotal;
   }, 0);
 
-  const avgProductValue =
-    totalValue /
-    inventoryItems.reduce((sum, item) => sum + item.variations.length, 0);
+  const avgProductValue
+    = totalValue
+    / inventoryItems.reduce((sum, item) => sum + item.variations.length, 0);
 
   // REMOVED OLD PROFIT CALCULATION - now using accurate calculation from orders
   // const totalProfit = sales.reduce(
@@ -773,43 +761,30 @@ export async function getInventoryAnalytics(
   // Revenue and profit metrics now come from calculateRevenueFromSales
   const totalProductRevenue = incomeFromProducts;
   const totalProductProfit = profitFromProducts;
-  const productProfitMargin =
-    totalProductRevenue > 0
+  const productProfitMargin
+    = totalProductRevenue > 0
       ? (totalProductProfit / totalProductRevenue) * 100
       : 0;
 
   // Calculate order metrics
-  const pendingOrders = orders.filter(
-    (o: any) => o.status === "PENDING"
-  ).length;
-  const completedOrders = orders.filter(
-    (o: any) => o.status === "COMPLETED"
-  ).length;
-  const cancelledOrders = orders.filter(
-    (o: any) => o.status === "CANCELLED"
-  ).length;
+  const pendingOrders = orders.filter((o: any) => o.status === 'PENDING').length;
+  const completedOrders = orders.filter((o: any) => o.status === 'COMPLETED').length;
+  const cancelledOrders = orders.filter((o: any) => o.status === 'CANCELLED').length;
 
   // Calculate refund metrics
-  const approvedRefunds = refunds.filter(
-    (r: any) => r.status === "APPROVED"
-  ).length;
-  const pendingRefunds = refunds.filter(
-    (r: any) => r.status === "PENDING"
-  ).length;
-  const deniedRefunds = refunds.filter(
-    (r: any) => r.status === "DENIED"
-  ).length;
+  const approvedRefunds = refunds.filter((r: any) => r.status === 'APPROVED').length;
+  const pendingRefunds = refunds.filter((r: any) => r.status === 'PENDING').length;
+  const deniedRefunds = refunds.filter((r: any) => r.status === 'DENIED').length;
   const totalRefundAmount = refunds.reduce(
     (sum: number, r: any) => sum + r.amount,
-    0
+    0,
   );
 
   // Calculate active rental metrics
   const activeRentals = rentalDevices.reduce(
-    (sum: number, device: any) =>
-      sum +
-      device.rentalOrders.filter((o: any) => o.status === "ACTIVE").length,
-    0
+    (sum: number, device: any) => sum
+      + device.rentalOrders.filter((o: any) => o.status === 'ACTIVE').length,
+    0,
   );
 
   // Calculate invoice metrics
@@ -826,9 +801,10 @@ export async function getInventoryAnalytics(
             item.categories.forEach((category: any) => {
               acc[category.name] = (acc[category.name] || 0) + 1;
             });
+
             return acc;
           },
-          {}
+          {},
         ),
       },
       totalValue: totalValue,
@@ -838,19 +814,21 @@ export async function getInventoryAnalytics(
       adjustmentReasons: adjustments.reduce(
         (acc: Record<string, number>, adjustment: any) => {
           acc[adjustment.reason] = (acc[adjustment.reason] || 0) + 1;
+
           return acc;
         },
-        {}
+        {},
       ),
       discrepancies: audits.reduce(
         (sum: number, audit: any) => sum + Math.abs(audit.discrepancy),
-        0
+        0,
       ),
       lowStockItems: lowStockItems.length,
       returns: {
         total: returns.length,
         byReason: returns.reduce((acc: Record<string, number>, ret: any) => {
           acc[ret.reason] = (acc[ret.reason] || 0) + 1;
+
           return acc;
         }, {}),
       },
@@ -858,7 +836,7 @@ export async function getInventoryAnalytics(
         total: transfers.length,
         quantity: transfers.reduce(
           (sum: number, transfer: any) => sum + transfer.quantity,
-          0
+          0,
         ),
       },
       exchanges: {
@@ -867,33 +845,32 @@ export async function getInventoryAnalytics(
     },
     purchaseOrders: {
       total: purchaseOrders.length,
-      pending: purchaseOrders.filter((po: any) => po.status === "PENDING")
+      pending: purchaseOrders.filter((po: any) => po.status === 'PENDING')
         .length,
-      approved: purchaseOrders.filter((po: any) => po.status === "APPROVED")
+      approved: purchaseOrders.filter((po: any) => po.status === 'APPROVED')
         .length,
-      received: purchaseOrders.filter((po: any) => po.status === "RECEIVED")
+      received: purchaseOrders.filter((po: any) => po.status === 'RECEIVED')
         .length,
-      cancelled: purchaseOrders.filter((po: any) => po.status === "CANCELLED")
+      cancelled: purchaseOrders.filter((po: any) => po.status === 'CANCELLED')
         .length,
       totalSpent: purchaseOrders.reduce(
         (sum: number, po: any) => sum + po.totalCost,
-        0
+        0,
       ),
       bySupplier: purchaseOrders.reduce(
         (acc: Record<string, number>, po: any) => {
           acc[po.supplier.name] = (acc[po.supplier.name] || 0) + 1;
+
           return acc;
         },
-        {}
+        {},
       ),
     },
     suppliers: {
       total: suppliers.length,
       active: suppliers.filter((s: any) => s.purchaseOrders.length > 0).length,
       topSuppliers: suppliers
-        .sort(
-          (a: any, b: any) => b.purchaseOrders.length - a.purchaseOrders.length
-        )
+        .sort((a: any, b: any) => b.purchaseOrders.length - a.purchaseOrders.length)
         .slice(0, 5)
         .map((s: any) => ({
           name: s.name,
@@ -906,43 +883,38 @@ export async function getInventoryAnalytics(
       available: rentalDevices.filter((rd: any) => rd.isAvailable).length,
       activeRentals: activeRentals,
       revenue: rentalDevices.reduce(
-        (sum: number, device: any) =>
-          sum +
-          device.rentalOrders.reduce(
-            (orderSum: number, order: any) =>
-              orderSum +
-              (order.payments?.reduce(
-                (paymentSum: number, payment: any) =>
-                  paymentSum + payment.amount,
-                0
+        (sum: number, device: any) => sum
+          + device.rentalOrders.reduce(
+            (orderSum: number, order: any) => orderSum
+              + (order.payments?.reduce(
+                (paymentSum: number, payment: any) => paymentSum + payment.amount,
+                0,
               ) || 0),
-            0
+            0,
           ),
-        0
+        0,
       ),
     },
     specialParts: {
       total: specialParts.length,
-      pending: specialParts.filter((sp: any) => sp.status === "PENDING").length,
-      completed: specialParts.filter((sp: any) => sp.status === "COMPLETED")
+      pending: specialParts.filter((sp: any) => sp.status === 'PENDING').length,
+      completed: specialParts.filter((sp: any) => sp.status === 'COMPLETED')
         .length,
       totalValue: specialParts.reduce(
         (sum: number, sp: any) => sum + sp.total,
-        0
+        0,
       ),
     },
     warranty: {
       totalPolicies: insurancePolicies.length,
-      activePolicies: insurancePolicies.filter(
-        (p: any) => p.status === "active"
-      ).length,
+      activePolicies: insurancePolicies.filter((p: any) => p.status === 'active').length,
       claims: insurancePolicies.reduce(
         (sum: number, policy: any) => sum + policy.claims.length,
-        0
+        0,
       ),
       revenue: insurancePolicies.reduce(
         (sum: number, policy: any) => sum + Number(policy.premiumAmount),
-        0
+        0,
       ),
     },
     pos: {
@@ -954,7 +926,7 @@ export async function getInventoryAnalytics(
         completionRate:
           orders.length > 0 ? (completedOrders / orders.length) * 100 : 0,
       },
-      
+
       refunds: {
         total: refunds.length,
         approved: approvedRefunds,
@@ -969,10 +941,11 @@ export async function getInventoryAnalytics(
         active: discounts.filter((d: any) => d.isActive).length,
         usageCount: discounts.reduce(
           (sum: number, discount: any) => sum + discount.count,
-          0
+          0,
         ),
         byType: discounts.reduce((acc: Record<string, number>, d: any) => {
           acc[d.type] = (acc[d.type] || 0) + 1;
+
           return acc;
         }, {}),
       },
@@ -990,36 +963,36 @@ export async function getInventoryAnalytics(
 }
 
 // Customer & Staff Analytics
-export async function getCustomerAnalytics(
-  period: string = "monthly",
+export async function getCustomerAnalytics (
+  period = 'monthly',
   customStartDate?: Date,
-  customEndDate?: Date
+  customEndDate?: Date,
 ) {
   const now = new Date();
   let startDate: Date;
   let endDate: Date = now;
 
-  if (period === "custom" && customStartDate) {
+  if (period === 'custom' && customStartDate) {
     startDate = customStartDate;
     endDate = customEndDate || now;
   } else {
     switch (period) {
-      case "weekly":
-        startDate = add(now, { days: -7 });
-        break;
-      case "monthly":
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
-        break;
-      case "quarterly":
-        startDate = add(now, { months: -3 });
-        break;
-      case "yearly":
-        startDate = add(now, { years: -1 });
-        break;
-      default:
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
+    case 'weekly':
+      startDate = add(now, { days: -7 });
+      break;
+    case 'monthly':
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+      break;
+    case 'quarterly':
+      startDate = add(now, { months: -3 });
+      break;
+    case 'yearly':
+      startDate = add(now, { years: -1 });
+      break;
+    default:
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
     }
   }
 
@@ -1093,26 +1066,28 @@ export async function getCustomerAnalytics(
   const bookingStatusCounts = bookingDetails.reduce(
     (acc: Record<string, number>, booking: any) => {
       const status = booking.status;
+
       acc[status] = (acc[status] || 0) + 1;
+
       return acc;
     },
-    {}
+    {},
   );
 
   const bookingTypeCounts = bookingDetails.reduce(
     (acc: Record<string, number>, booking: any) => {
       const type = booking.bookingType;
+
       acc[type] = (acc[type] || 0) + 1;
+
       return acc;
     },
-    {}
+    {},
   );
 
-  const convertedBookings = bookingDetails.filter(
-    (b: any) => b.convertedToTicket
-  ).length;
-  const conversionRate =
-    bookings > 0 ? (convertedBookings / bookings) * 100 : 0;
+  const convertedBookings = bookingDetails.filter((b: any) => b.convertedToTicket).length;
+  const conversionRate
+    = bookings > 0 ? (convertedBookings / bookings) * 100 : 0;
 
   // Get mail-ins
   const mailIns = await prisma.mailIn.count({
@@ -1142,17 +1117,17 @@ export async function getCustomerAnalytics(
   const mailInStatusCounts = mailInDetails.reduce(
     (acc: Record<string, number>, mailIn: any) => {
       const status = mailIn.status;
+
       acc[status] = (acc[status] || 0) + 1;
+
       return acc;
     },
-    {}
+    {},
   );
 
-  const convertedMailIns = mailInDetails.filter(
-    (m: any) => m.convertedToTicket
-  ).length;
-  const mailInConversionRate =
-    mailIns > 0 ? (convertedMailIns / mailIns) * 100 : 0;
+  const convertedMailIns = mailInDetails.filter((m: any) => m.convertedToTicket).length;
+  const mailInConversionRate
+    = mailIns > 0 ? (convertedMailIns / mailIns) * 100 : 0;
 
   // Get tickets
   const ticketsData = await prisma.ticket.findMany({
@@ -1178,15 +1153,17 @@ export async function getCustomerAnalytics(
   const ticketStatusCounts = ticketsData.reduce(
     (acc: Record<string, number>, ticket: any) => {
       const status = ticket.status;
+
       acc[status] = (acc[status] || 0) + 1;
+
       return acc;
     },
-    {}
+    {},
   );
 
   const completedTickets = ticketsData.filter((t: any) => t.completed).length;
-  const ticketCompletionRate =
-    tickets > 0 ? (completedTickets / tickets) * 100 : 0;
+  const ticketCompletionRate
+    = tickets > 0 ? (completedTickets / tickets) * 100 : 0;
 
   // Get store credit data
   const storeCreditData = await prisma.storeCredit.findMany({
@@ -1206,28 +1183,26 @@ export async function getCustomerAnalytics(
   const totalStoreCredits = storeCreditData.length;
   const totalCreditBalance = storeCreditData.reduce(
     (sum: number, credit: any) => sum + credit.balance,
-    0
+    0,
   );
-  const averageCreditBalance =
-    totalStoreCredits > 0 ? totalCreditBalance / totalStoreCredits : 0;
+  const averageCreditBalance
+    = totalStoreCredits > 0 ? totalCreditBalance / totalStoreCredits : 0;
 
   const recentTransactions = storeCreditData.reduce(
     (count: number, credit: any) => count + credit.transactions.length,
-    0
+    0,
   );
   const earnTransactions = storeCreditData.reduce(
-    (count: number, credit: any) =>
-      count +
-      credit.transactions.filter((t: any) => t.transactionType === "earn")
+    (count: number, credit: any) => count
+      + credit.transactions.filter((t: any) => t.transactionType === 'earn')
         .length,
-    0
+    0,
   );
   const deductTransactions = storeCreditData.reduce(
-    (count: number, credit: any) =>
-      count +
-      credit.transactions.filter((t: any) => t.transactionType === "deduct")
+    (count: number, credit: any) => count
+      + credit.transactions.filter((t: any) => t.transactionType === 'deduct')
         .length,
-    0
+    0,
   );
 
   // Get loyalty program data
@@ -1255,48 +1230,47 @@ export async function getCustomerAnalytics(
   // Calculate loyalty metrics
   const totalPoints = loyaltyPrograms.reduce(
     (sum: number, program: any) => sum + program.points,
-    0
+    0,
   );
 
   const activeMembers = loyaltyPrograms.length;
 
   const allActivities = loyaltyPrograms.reduce(
     (acc: any[], program: any) => [...acc, ...program.activities],
-    []
+    [],
   );
 
   const pointsRedeemed = allActivities
-    .filter((activity: any) => activity.type === "REDEEMED")
+    .filter((activity: any) => activity.type === 'REDEEMED')
     .reduce((sum: number, activity: any) => sum + activity.points, 0);
 
-  const membersWhoRedeemed = loyaltyPrograms.filter(
-    (program: any) => program.redemptions.length > 0
-  ).length;
+  const membersWhoRedeemed = loyaltyPrograms.filter((program: any) => program.redemptions.length > 0).length;
 
-  const redemptionRate =
-    activeMembers > 0 ? Math.round((membersWhoRedeemed / activeMembers) * 100) : 0;
+  const redemptionRate
+    = activeMembers > 0 ? Math.round((membersWhoRedeemed / activeMembers) * 100) : 0;
 
   // Build monthly stats for loyalty
   const months = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
-  
+
   const monthlyStats = months.slice(0, now.getMonth() + 1).map((month, index) => {
     const monthStart = new Date(now.getFullYear(), index, 1);
     const monthEnd = new Date(now.getFullYear(), index + 1, 0);
 
     const monthActivities = allActivities.filter((activity: any) => {
       const activityDate = new Date(activity.createdAt);
+
       return activityDate >= monthStart && activityDate <= monthEnd;
     });
 
     const pointsEarned = monthActivities
-      .filter((activity: any) => activity.type === "EARNED")
+      .filter((activity: any) => activity.type === 'EARNED')
       .reduce((sum: number, activity: any) => sum + activity.points, 0);
 
     const monthPointsRedeemed = monthActivities
-      .filter((activity: any) => activity.type === "REDEEMED")
+      .filter((activity: any) => activity.type === 'REDEEMED')
       .reduce((sum: number, activity: any) => sum + activity.points, 0);
 
     return {
@@ -1321,35 +1295,39 @@ export async function getCustomerAnalytics(
 
   // Calculate review metrics
   const totalReviews = reviewsData.length;
-  const averageRating =
-    totalReviews > 0
+  const averageRating
+    = totalReviews > 0
       ? reviewsData.reduce(
-          (sum: number, review: any) => sum + review.rating,
-          0
-        ) / totalReviews
+        (sum: number, review: any) => sum + review.rating,
+        0,
+      ) / totalReviews
       : 0;
 
   const reviewsBySource = reviewsData.reduce(
     (acc: Record<string, number>, review: any) => {
       const source = review.reviewSource.name;
+
       acc[source] = (acc[source] || 0) + 1;
+
       return acc;
     },
-    {}
+    {},
   );
 
   const reviewsByRating = reviewsData.reduce(
     (acc: Record<string, number>, review: any) => {
       const rating = review.rating.toString();
+
       acc[rating] = (acc[rating] || 0) + 1;
+
       return acc;
     },
-    {}
+    {},
   );
 
   // Staff productivity
   const staffTickets = await prisma.ticket.groupBy({
-    by: ["staffId"],
+    by: ['staffId'],
     where: {
       createdAt: {
         gte: startDate,
@@ -1384,26 +1362,25 @@ export async function getCustomerAnalytics(
 
   const staffProductivity = staffTickets.map((st: any) => {
     const staff = staffWithTickets.find((s: any) => s.id === st.staffId);
+
     return {
       staffId: st.staffId,
-      staffName: staff ? `${staff.firstName} ${staff.lastName}` : "Unknown",
-      role: staff?.role || "Unknown",
-      availability: staff?.availability || "Unknown",
+      staffName: staff ? `${staff.firstName} ${staff.lastName}` : 'Unknown',
+      role: staff?.role || 'Unknown',
+      availability: staff?.availability || 'Unknown',
       ticketCount: st._count,
       commentCount: staff?._count.ticketComments || 0,
       noteCount: staff?._count.notes || 0,
       experienceYears: staff
-        ? Math.floor(
-            (new Date().getTime() - new Date(staff.createdAt).getTime()) /
-              (1000 * 60 * 60 * 24 * 365)
-          )
+        ? Math.floor((new Date().getTime() - new Date(staff.createdAt).getTime())
+              / (1000 * 60 * 60 * 24 * 365))
         : 0,
     };
   });
 
   // Get role distribution
   const roleDistribution = await prisma.staff.groupBy({
-    by: ["role"],
+    by: ['role'],
     _count: true,
     where: {
       isActive: true,
@@ -1412,7 +1389,7 @@ export async function getCustomerAnalytics(
 
   // Get availability distribution
   const availabilityDistribution = await prisma.staff.groupBy({
-    by: ["availability"],
+    by: ['availability'],
     _count: true,
     where: {
       isActive: true,
@@ -1490,36 +1467,36 @@ export async function getCustomerAnalytics(
 }
 
 // Financial Analytics
-export async function getFinancialAnalytics(
-  period: string = "monthly",
+export async function getFinancialAnalytics (
+  period = 'monthly',
   customStartDate?: Date,
-  customEndDate?: Date
+  customEndDate?: Date,
 ) {
   const now = new Date();
   let startDate: Date;
   let endDate: Date = now;
 
-  if (period === "custom" && customStartDate) {
+  if (period === 'custom' && customStartDate) {
     startDate = customStartDate;
     endDate = customEndDate || now;
   } else {
     switch (period) {
-      case "weekly":
-        startDate = add(now, { days: -7 });
-        break;
-      case "monthly":
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
-        break;
-      case "quarterly":
-        startDate = add(now, { months: -3 });
-        break;
-      case "yearly":
-        startDate = add(now, { years: -1 });
-        break;
-      default:
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
+    case 'weekly':
+      startDate = add(now, { days: -7 });
+      break;
+    case 'monthly':
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+      break;
+    case 'quarterly':
+      startDate = add(now, { months: -3 });
+      break;
+    case 'yearly':
+      startDate = add(now, { years: -1 });
+      break;
+    default:
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
     }
   }
 
@@ -1537,9 +1514,9 @@ export async function getFinancialAnalytics(
     },
   });
 
-  const paidBills = bills.filter((b: any) => b.status === "PAID");
-  const unpaidBills = bills.filter((b: any) => b.status === "UNPAID");
-  const overdueBills = bills.filter((b: any) => b.status === "OVERDUE");
+  const paidBills = bills.filter((b: any) => b.status === 'PAID');
+  const unpaidBills = bills.filter((b: any) => b.status === 'UNPAID');
+  const overdueBills = bills.filter((b: any) => b.status === 'OVERDUE');
 
   // Get payroll data
   const payroll = await prisma.payroll.findMany({
@@ -1553,7 +1530,7 @@ export async function getFinancialAnalytics(
 
   const totalPayroll = payroll.reduce(
     (sum: number, p: any) => sum + p.netPay,
-    0
+    0,
   );
 
   // Get goals data
@@ -1587,13 +1564,15 @@ export async function getFinancialAnalytics(
 
   // Category breakdown for goals
   const categoryBreakdown = goals.reduce((acc: Record<string, any>, goal: any) => {
-    const category = goal.goalCategory?.name || "Uncategorized";
+    const category = goal.goalCategory?.name || 'Uncategorized';
+
     if (!acc[category]) {
       acc[category] = { count: 0, totalTarget: 0, totalCurrent: 0 };
     }
     acc[category].count += 1;
     acc[category].totalTarget += goal.targetAmount;
     acc[category].totalCurrent += goal.currentAmount;
+
     return acc;
   }, {} as Record<string, any>);
 
@@ -1602,33 +1581,31 @@ export async function getFinancialAnalytics(
 
   // Calculate monthly comparison (current period vs previous period)
   // Adjust the comparison period to be the same length as the selected period
-  const periodLengthInDays = Math.ceil(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const periodLengthInDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
   const previousPeriodStart = new Date(startDate);
-  previousPeriodStart.setDate(
-    previousPeriodStart.getDate() - periodLengthInDays
-  );
+
+  previousPeriodStart.setDate(previousPeriodStart.getDate() - periodLengthInDays);
   const previousPeriodEnd = new Date(startDate);
+
   previousPeriodEnd.setDate(previousPeriodEnd.getDate() - 1);
 
   // Previous transactions - Transactions feature has been removed
   const previousIncome = 0;
   const previousExpenses = 0;
 
-  const incomeChange =
-    previousIncome > 0
+  const incomeChange
+    = previousIncome > 0
       ? ((income - previousIncome) / previousIncome) * 100
       : income > 0
-      ? 100
-      : 0;
+        ? 100
+        : 0;
 
-  const expenseChange =
-    previousExpenses > 0
+  const expenseChange
+    = previousExpenses > 0
       ? ((expenses - previousExpenses) / previousExpenses) * 100
       : expenses > 0
-      ? 100
-      : 0;
+        ? 100
+        : 0;
 
   return {
     overview: {
@@ -1676,36 +1653,36 @@ export async function getFinancialAnalytics(
 }
 
 // Location Analytics
-export async function getLocationAnalytics(
-  period: string = "monthly",
+export async function getLocationAnalytics (
+  period = 'monthly',
   customStartDate?: Date,
-  customEndDate?: Date
+  customEndDate?: Date,
 ) {
   const now = new Date();
   let startDate: Date;
   let endDate: Date = now;
 
-  if (period === "custom" && customStartDate) {
+  if (period === 'custom' && customStartDate) {
     startDate = customStartDate;
     endDate = customEndDate || now;
   } else {
     switch (period) {
-      case "weekly":
-        startDate = add(now, { days: -7 });
-        break;
-      case "monthly":
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
-        break;
-      case "quarterly":
-        startDate = add(now, { months: -3 });
-        break;
-      case "yearly":
-        startDate = add(now, { years: -1 });
-        break;
-      default:
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
+    case 'weekly':
+      startDate = add(now, { days: -7 });
+      break;
+    case 'monthly':
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+      break;
+    case 'quarterly':
+      startDate = add(now, { months: -3 });
+      break;
+    case 'yearly':
+      startDate = add(now, { years: -1 });
+      break;
+    default:
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
     }
   }
 
@@ -1729,15 +1706,16 @@ export async function getLocationAnalytics(
   const ticketsByLocation = tickets.reduce(
     (acc: Record<string, number>, ticket: any) => {
       acc[ticket.location] = (acc[ticket.location] || 0) + 1;
+
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   // Get revenue by location using paid orders
   const paidOrders = await prisma.order.findMany({
     where: {
-      status: "PAID",
+      status: 'PAID',
       createdAt: {
         gte: startDate,
         lte: endDate,
@@ -1751,46 +1729,46 @@ export async function getLocationAnalytics(
 
   const salesByLocation = paidOrders.reduce(
     (acc: Record<string, number>, order: any) => {
-      const locationName = order.storeLocation?.name || "Unknown";
+      const locationName = order.storeLocation?.name || 'Unknown';
       const orderTotal = order.items.reduce(
         (sum: number, item: any) => sum + item.price * item.quantity,
-        0
+        0,
       );
+
       acc[locationName] = (acc[locationName] || 0) + orderTotal;
+
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   // Get inventory levels by location
-  const inventoryByLocation = await Promise.all(
-    locations.map(async (location: any) => {
-      const stockLevels = await prisma.inventoryStockLevel.findMany({
-        where: {
-          locationId: location.id,
-        },
-        include: {
-          variation: true,
-        },
-      });
-
-      const totalStock = stockLevels.reduce(
-        (sum: number, sl: any) => sum + sl.stock,
-        0
-      );
-      const totalValue = stockLevels.reduce((sum: number, sl: any) => {
-        return sum + sl.stock * (sl.variation.sellingPrice || 0);
-      }, 0);
-
-      return {
+  const inventoryByLocation = await Promise.all(locations.map(async (location: any) => {
+    const stockLevels = await prisma.inventoryStockLevel.findMany({
+      where: {
         locationId: location.id,
-        locationName: location.name,
-        totalStock,
-        totalValue,
-        lowStockCount: stockLevels.filter((sl: any) => sl.stock < 5).length,
-      };
-    })
-  );
+      },
+      include: {
+        variation: true,
+      },
+    });
+
+    const totalStock = stockLevels.reduce(
+      (sum: number, sl: any) => sum + sl.stock,
+      0,
+    );
+    const totalValue = stockLevels.reduce((sum: number, sl: any) => {
+      return sum + sl.stock * (sl.variation.sellingPrice || 0);
+    }, 0);
+
+    return {
+      locationId: location.id,
+      locationName: location.name,
+      totalStock,
+      totalValue,
+      lowStockCount: stockLevels.filter((sl: any) => sl.stock < 5).length,
+    };
+  }));
 
   return {
     ticketsByLocation,
@@ -1804,10 +1782,10 @@ export async function getLocationAnalytics(
 
 // Get transaction analytics
 // Transaction analytics removed - Transactions feature has been deleted
-export async function getTransactionAnalytics(
-  period: string = "monthly",
+export async function getTransactionAnalytics (
+  period = 'monthly',
   customStartDate?: Date,
-  customEndDate?: Date
+  customEndDate?: Date,
 ) {
   return {
     transactions: [],
@@ -1827,10 +1805,10 @@ export async function getTransactionAnalytics(
 }
 
 // Get analytics for all feature areas
-export async function getComprehensiveAnalytics(
-  period: string = "monthly",
+export async function getComprehensiveAnalytics (
+  period = 'monthly',
   customStartDate?: Date,
-  customEndDate?: Date
+  customEndDate?: Date,
 ) {
   // Get all analytics concurrently
   const [
@@ -1859,11 +1837,11 @@ export async function getComprehensiveAnalytics(
   const totalRepairRevenue = revenueFromSales.incomeFromRepairs || 0;
   const totalCustomRevenue = revenueFromSales.incomeFromCustom || 0;
 
-  const overallBusinessRevenue =
-    totalServiceRevenue +
-    totalSalesRevenue +
-    totalRepairRevenue +
-    totalCustomRevenue;
+  const overallBusinessRevenue
+    = totalServiceRevenue
+    + totalSalesRevenue
+    + totalRepairRevenue
+    + totalCustomRevenue;
 
   // Calculate service distribution percentages for the business
   const serviceDistribution = {

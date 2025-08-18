@@ -4,7 +4,7 @@ export interface QuaggaConfig {
     type: string;
     target: HTMLDivElement; // More specific type than HTMLElement
     constraints: {
-      facingMode: "user" | "environment"; // Specific values only
+      facingMode: 'user' | 'environment'; // Specific values only
       width: { min: number; ideal: number; max: number };
       height: { min: number; ideal: number; max: number };
       aspectRatio: { min: number; max: number };
@@ -17,7 +17,7 @@ export interface QuaggaConfig {
     };
   };
   locator: {
-    patchSize: "x-small" | "small" | "medium" | "large" | "x-large";
+    patchSize: 'x-small' | 'small' | 'medium' | 'large' | 'x-large';
     halfSample: boolean;
   };
   numOfWorkers: number;
@@ -30,14 +30,14 @@ export interface QuaggaConfig {
 }
 
 export type QuaggaReaderType =
-  | "ean_reader"
-  | "ean_8_reader"
-  | "code_128_reader"
-  | "code_39_reader"
-  | "upc_reader"
-  | "upc_e_reader"
-  | "codabar_reader"
-  | "i2of5_reader";
+  | 'ean_reader'
+  | 'ean_8_reader'
+  | 'code_128_reader'
+  | 'code_39_reader'
+  | 'upc_reader'
+  | 'upc_e_reader'
+  | 'codabar_reader'
+  | 'i2of5_reader';
 
 export interface QuaggaError {
   name: string;

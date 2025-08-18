@@ -1,35 +1,35 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState, useEffect } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { DateRangePicker } from "@/components/ui/DateRangePicker";
-import { getComprehensiveAnalytics } from "./services/analytics";
-import { InventoryAnalytics } from "./sections/InventoryAnalytics";
-import { LocationAnalytics } from "./sections/LocationAnalytics";
-import StaffOverview from "./sections/StaffAnalytics";
+} from '@/components/ui/select';
+import { DateRangePicker } from '@/components/ui/DateRangePicker';
+import { getComprehensiveAnalytics } from './services/analytics';
+import { InventoryAnalytics } from './sections/InventoryAnalytics';
+import { LocationAnalytics } from './sections/LocationAnalytics';
+import StaffOverview from './sections/StaffAnalytics';
 
-import InventoryOverview from "./sections/InventoryOverview";
-import { Loader2 } from "lucide-react";
-import { addDays, subDays } from "date-fns";
-import { DateRange } from "react-day-picker";
-import { Smartphone, Laptop, Wrench, CheckCircle2 } from "lucide-react";
+import InventoryOverview from './sections/InventoryOverview';
+import { Loader2 } from 'lucide-react';
+import { addDays, subDays } from 'date-fns';
+import { DateRange } from 'react-day-picker';
+import { Smartphone, Laptop, Wrench, CheckCircle2 } from 'lucide-react';
 
-export default function Analytics() {
-  const [period, setPeriod] = useState<string>("monthly");
+export default function Analytics () {
+  const [period, setPeriod] = useState<string>('monthly');
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [useCustomDateRange, setUseCustomDateRange] = useState<boolean>(false);
@@ -43,18 +43,19 @@ export default function Analytics() {
       setLoading(true);
       try {
         let analyticsData;
+
         if (useCustomDateRange && dateRange.from && dateRange.to) {
           analyticsData = await getComprehensiveAnalytics(
-            "custom",
+            'custom',
             dateRange.from,
-            dateRange.to
+            dateRange.to,
           );
         } else {
           analyticsData = await getComprehensiveAnalytics(period);
         }
         setData(analyticsData);
       } catch (error) {
-        console.error("Failed to fetch analytics data:", error);
+        console.error('Failed to fetch analytics data:', error);
       } finally {
         setLoading(false);
       }
@@ -65,11 +66,11 @@ export default function Analytics() {
 
   const handlePeriodChange = (value: string) => {
     setPeriod(value);
-    setUseCustomDateRange(value === "custom");
+    setUseCustomDateRange(value === 'custom');
   };
 
   const handleDateRangeChange = (range: DateRange | undefined) => {
-    if (range && range.from) {
+    if (range?.from) {
       setDateRange(range);
       setUseCustomDateRange(true);
     }
@@ -110,7 +111,7 @@ export default function Analytics() {
               </SelectContent>
             </Select>
 
-            {period === "custom" && (
+            {period === 'custom' && (
               <DateRangePicker
                 dateRange={dateRange}
                 onDateRangeChange={handleDateRangeChange}

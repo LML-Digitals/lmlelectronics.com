@@ -48,7 +48,7 @@ export interface ReceiptModalProps {
   };
 }
 
-export default function ReceiptModal({
+export default function ReceiptModal ({
   isOpen,
   onClose,
   orderData,
@@ -58,10 +58,10 @@ export default function ReceiptModal({
   // Format the order date
   const formattedDate = orderData.orderDate
     ? new Date(orderData.orderDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
     : format(new Date(), 'MMMM dd, yyyy');
 
   const handlePrint = () => {
@@ -122,38 +122,38 @@ export default function ReceiptModal({
               <p className="font-medium">{orderData.customerName}</p>
             </div>
 
-            {orderData.deliveryMethod === 'shipping' &&
-            orderData.shippingAddress ? (
-              <div className="space-y-1">
-                <div className="flex items-center text-muted-foreground">
-                  <Truck className="mr-2 h-4 w-4" />
-                  <span>Shipping Address</span>
+            {orderData.deliveryMethod === 'shipping'
+            && orderData.shippingAddress ? (
+                <div className="space-y-1">
+                  <div className="flex items-center text-muted-foreground">
+                    <Truck className="mr-2 h-4 w-4" />
+                    <span>Shipping Address</span>
+                  </div>
+                  <p className="font-medium">
+                    {orderData.shippingAddress.fullName}
+                  </p>
+                  <p>{orderData.shippingAddress.addressLine1}</p>
+                  {orderData.shippingAddress.addressLine2 && (
+                    <p>{orderData.shippingAddress.addressLine2}</p>
+                  )}
+                  <p>
+                    {orderData.shippingAddress.city},{' '}
+                    {orderData.shippingAddress.state}{' '}
+                    {orderData.shippingAddress.zipCode}
+                  </p>
+                  <p>Phone: {orderData.shippingAddress.phone}</p>
                 </div>
-                <p className="font-medium">
-                  {orderData.shippingAddress.fullName}
-                </p>
-                <p>{orderData.shippingAddress.addressLine1}</p>
-                {orderData.shippingAddress.addressLine2 && (
-                  <p>{orderData.shippingAddress.addressLine2}</p>
-                )}
-                <p>
-                  {orderData.shippingAddress.city},{' '}
-                  {orderData.shippingAddress.state}{' '}
-                  {orderData.shippingAddress.zipCode}
-                </p>
-                <p>Phone: {orderData.shippingAddress.phone}</p>
-              </div>
-            ) : (
-              <div className="space-y-1">
-                <div className="flex items-center text-muted-foreground">
-                  <Home className="mr-2 h-4 w-4" />
-                  <span>Pickup Location</span>
+              ) : (
+                <div className="space-y-1">
+                  <div className="flex items-center text-muted-foreground">
+                    <Home className="mr-2 h-4 w-4" />
+                    <span>Pickup Location</span>
+                  </div>
+                  <p className="font-medium">LML Repair Store</p>
+                  <p>1234 Main Street</p>
+                  <p>Seattle, WA 98101</p>
                 </div>
-                <p className="font-medium">LML Repair Store</p>
-                <p>1234 Main Street</p>
-                <p>Seattle, WA 98101</p>
-              </div>
-            )}
+              )}
 
             <div className="space-y-1">
               <div className="flex items-center text-muted-foreground">

@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 
-export default function StaffProfilePage() {
+export default function StaffProfilePage () {
   const params = useParams();
   const { staffId } = params as { staffId: string };
   const [staff, setStaff] = useState<Staff | null>(null);
@@ -27,22 +27,25 @@ export default function StaffProfilePage() {
       const { notes } = isAdmin
         ? await getStaffNotes(staffId)
         : { notes: [] as Note[] };
+
       setStaff(staff);
       setNotes(notes);
     };
+
     fetchStaff();
   }, [staffId]);
 
-  if (!staff)
+  if (!staff) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <CircleDashed className="h-8 w-8 animate-spin" />
       </div>
     );
+  }
 
   return (
-      <div>
-        <StaffProfileTabs staff={staff} isAdmin={isAdmin} />
-      </div>
+    <div>
+      <StaffProfileTabs staff={staff} isAdmin={isAdmin} />
+    </div>
   );
 }

@@ -1,20 +1,20 @@
-"use client";
-import React, { useState } from "react";
-import Filters, { FiltersState } from "@/components/products/Filters";
-import ProductListing from "@/components/products/ProductListing";
+'use client';
+import React, { useState } from 'react';
+import Filters, { FiltersState } from '@/components/products/Filters';
+import ProductListing from '@/components/products/ProductListing';
 
 const SORT_OPTIONS = [
-  { value: "popularity", label: "Popularity" },
-  { value: "newest", label: "Newest" },
-  { value: "price_desc", label: "Price (High–Low)" },
-  { value: "price_asc", label: "Price (Low–High)" },
-  { value: "alpha_asc", label: "Alphabetical (A–Z)" },
-  { value: "alpha_desc", label: "Alphabetical (Z–A)" },
+  { value: 'popularity', label: 'Popularity' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'price_desc', label: 'Price (High–Low)' },
+  { value: 'price_asc', label: 'Price (Low–High)' },
+  { value: 'alpha_asc', label: 'Alphabetical (A–Z)' },
+  { value: 'alpha_desc', label: 'Alphabetical (Z–A)' },
 ];
 
-export default function ProductsClientPage({ categories }: { categories: { id: string; name: string }[] }) {
+export default function ProductsClientPage ({ categories }: { categories: { id: string; name: string }[] }) {
   const [filters, setFilters] = useState<FiltersState>({});
-  const [sort, setSort] = useState<string>("alpha_asc");
+  const [sort, setSort] = useState<string>('alpha_asc');
   const [resultsCount, setResultsCount] = useState<number>(0);
 
   const handleClearAll = () => setFilters({});
@@ -59,4 +59,4 @@ export default function ProductsClientPage({ categories }: { categories: { id: s
       </div>
     </div>
   );
-} 
+}

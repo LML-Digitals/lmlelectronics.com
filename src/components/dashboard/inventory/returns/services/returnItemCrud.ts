@@ -1,9 +1,9 @@
-"use server";
-"use server";
+'use server';
+'use server';
 
-import prisma from "@/lib/prisma";
-import { ItemReturnExtended } from "@/types/type";
-import { fetchSession } from "@/lib/session";
+import prisma from '@/lib/prisma';
+import { ItemReturnExtended } from '@/types/type';
+import { fetchSession } from '@/lib/session';
 export const getReturnedItems = async (): Promise<ItemReturnExtended[]> => {
   try {
     return (await prisma.inventoryReturn.findMany({
@@ -32,17 +32,15 @@ export const getReturnedItems = async (): Promise<ItemReturnExtended[]> => {
         },
       },
       orderBy: {
-        returnedAt: "desc",
+        returnedAt: 'desc',
       },
     })) as any[];
   } catch (error) {
-    throw new Error("Failed to fetch returned items");
+    throw new Error('Failed to fetch returned items');
   }
 };
 
-export const getReturnedItemById = async (
-  returnedItemId: string
-): Promise<ItemReturnExtended | null> => {
+export const getReturnedItemById = async (returnedItemId: string): Promise<ItemReturnExtended | null> => {
   try {
     const item = await prisma.inventoryReturn.findUnique({
       where: {
@@ -76,8 +74,8 @@ export const getReturnedItemById = async (
 
     return item as ItemReturnExtended | null;
   } catch (error) {
-    throw new Error("Failed to fetch returned item");
-    throw new Error("Failed to fetch returned item");
+    throw new Error('Failed to fetch returned item');
+    throw new Error('Failed to fetch returned item');
   }
 };
 
@@ -85,11 +83,11 @@ type dataToSave = {
   inventoryItemId: string;
   locationId: string;
   reason:
-    | "Defective Item"
-    | "Repair Issues"
-    | "Change of Mind"
-    | "Customer Dissatisfaction"
-    | "Shop Dissatisfaction"
+    | 'Defective Item'
+    | 'Repair Issues'
+    | 'Change of Mind'
+    | 'Customer Dissatisfaction'
+    | 'Shop Dissatisfaction'
     | string;
   variationId: string;
   returningParty: string;
@@ -107,11 +105,9 @@ type createItemReturnResponse = {
   status: string;
 };
 
-export const createReturnedItem = async (
-  data: dataToSave
-): Promise<createItemReturnResponse> => {
+export const createReturnedItem = async (data: dataToSave): Promise<createItemReturnResponse> => {
   try {
-    //Todo: Save the returned item to the database
+    // Todo: Save the returned item to the database
     const returnedItem = await prisma.inventoryReturn.create({
       data: {
         inventoryItemId: data.inventoryItemId,
@@ -120,15 +116,15 @@ export const createReturnedItem = async (
         inventoryVariationId: data.variationId,
         returningParty: data.returningParty,
         returnedAt: data.returnedAt ? data.returnedAt : new Date(),
-        request: data.request ? data.request : "",
+        request: data.request ? data.request : '',
         quantity: Number(data.quantity),
-        supplier: data.supplier ? data.supplier : "",
-        customerId: data.customerId ? data.customerId : "",
+        supplier: data.supplier ? data.supplier : '',
+        customerId: data.customerId ? data.customerId : '',
         amount: data.amount ? data.amount : 0,
       },
     });
 
-    //Todo: Add comments to the returned item
+    // Todo: Add comments to the returned item
     if (data.comments && data.comments.length > 0) {
       await prisma.comment.createMany({
         data: data.comments.map((comment) => ({
@@ -139,12 +135,12 @@ export const createReturnedItem = async (
     }
 
     return {
-      message: "Returned item created successfully",
-      status: "success",
+      message: 'Returned item created successfully',
+      status: 'success',
     };
   } catch (error: any) {
     console.log(error);
-    throw new Error("Failed to create returned item");
+    throw new Error('Failed to create returned item');
   }
 };
 
@@ -163,11 +159,11 @@ type dataToUpdate = {
   locationId?: string;
   variationId?: string;
   reason?:
-    | "Defective Item"
-    | "Repair Issues"
-    | "Change of Mind"
-    | "Customer Dissatisfaction"
-    | "Shop Dissatisfaction"
+    | 'Defective Item'
+    | 'Repair Issues'
+    | 'Change of Mind'
+    | 'Customer Dissatisfaction'
+    | 'Shop Dissatisfaction'
     | string;
   returningParty?: string;
   returnedAt?: Date;
@@ -187,7 +183,7 @@ type updateItemReturnResponse = {
 
 export const updateReturnedItem = async (
   itemReturnId: string,
-  data: dataToUpdate
+  data: dataToUpdate,
 ): Promise<updateItemReturnResponse> => {
   try {
     const returnedItem = await prisma.inventoryReturn.findUnique({
@@ -201,8 +197,8 @@ export const updateReturnedItem = async (
     });
 
     if (!returnedItem) {
-      throw new Error("Returned item not found");
-      throw new Error("Returned item not found");
+      throw new Error('Returned item not found');
+      throw new Error('Returned item not found');
     }
 
     await prisma.inventoryReturn.update({
@@ -244,13 +240,13 @@ export const updateReturnedItem = async (
     }
 
     return {
-      message: "Returned item updated successfully",
-      status: "success",
+      message: 'Returned item updated successfully',
+      status: 'success',
     };
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to update returned item");
-    throw new Error("Failed to update returned item");
+    throw new Error('Failed to update returned item');
+    throw new Error('Failed to update returned item');
   }
 };
 
@@ -258,9 +254,7 @@ type DeleteReturnResponse = {
   status: string;
 };
 
-export const deleteReturn = async (
-  itemReturnId: string
-): Promise<DeleteReturnResponse> => {
+export const deleteReturn = async (itemReturnId: string): Promise<DeleteReturnResponse> => {
   try {
     // const existingReturnRecord = await prisma.inventoryReturn.findUnique({
     //   where: {
@@ -275,35 +269,37 @@ export const deleteReturn = async (
     //   throw new Error('Return item record not found');
     // }
 
-    //Todo: Delete related comments
+    // Todo: Delete related comments
     await prisma.comment.deleteMany({
       where: {
         inventoryReturnId: itemReturnId,
       },
     });
 
-    //Todo:  Delete the item return record
+    // Todo:  Delete the item return record
     await prisma.inventoryReturn.delete({
       where: {
         id: itemReturnId,
       },
     });
 
-    return { status: "success" };
+    return { status: 'success' };
   } catch (error) {
-    console.error("Error deleting return record:", error);
-    return { status: "error" };
+    console.error('Error deleting return record:', error);
+
+    return { status: 'error' };
   }
 };
 
-export async function updateReturnStatus(
+export async function updateReturnStatus (
   returnId: string,
-  status: "approved" | "rejected"
+  status: 'approved' | 'rejected',
 ) {
   const session = await fetchSession();
   const staffId = session?.user?.id;
+
   if (!staffId) {
-    throw new Error("Staff ID is required for this operation");
+    throw new Error('Staff ID is required for this operation');
   }
   try {
     const updateReturn = await prisma.inventoryReturn.update({
@@ -315,7 +311,7 @@ export async function updateReturnStatus(
       },
     });
 
-    if (status === "approved") {
+    if (status === 'approved') {
       const stockLevel = await prisma.inventoryStockLevel.findFirst({
         where: {
           variationId: updateReturn.inventoryVariationId,
@@ -348,8 +344,8 @@ export async function updateReturnStatus(
 
         // Update the isPaid status to true
         if (
-          updateReturn.returningParty === "customer" &&
-          updateReturn.request === "credit"
+          updateReturn.returningParty === 'customer'
+          && updateReturn.request === 'credit'
         ) {
           // const result = await addStoreCredit({
           //   customerId: updateReturn.customerId || "",
@@ -365,15 +361,16 @@ export async function updateReturnStatus(
         }
       }
     }
-    return { status: "success" };
+
+    return { status: 'success' };
   } catch (error) {
-    console.error("Error updating return status:", error);
-    return { status: "error" };
+    console.error('Error updating return status:', error);
+
+    return { status: 'error' };
   }
 }
 
-
-export async function markReturnAsPaid(returnId: string) {
+export async function markReturnAsPaid (returnId: string) {
   try {
     const updatedReturn = await prisma.inventoryReturn.update({
       where: { id: returnId },
@@ -382,7 +379,8 @@ export async function markReturnAsPaid(returnId: string) {
 
     return { success: true, data: updatedReturn };
   } catch (error) {
-    console.error("Error marking return as paid:", error);
-    return { success: false, error: "Failed to mark return as paid" };
+    console.error('Error marking return as paid:', error);
+
+    return { success: false, error: 'Failed to mark return as paid' };
   }
 }

@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { fetchSession } from "@/lib/session";
+import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+import { fetchSession } from '@/lib/session';
 import type {
   Order,
   OrderItem,
@@ -12,16 +12,16 @@ import type {
   InventoryVariation,
   Refund,
   ShippingAddress,
-} from "@prisma/client";
+} from '@prisma/client';
 
 export type OrderWithDetails = Order & {
-  customer: Pick<Customer, "id" | "firstName" | "lastName" | "email" | "phone"> & {
+  customer: Pick<Customer, 'id' | 'firstName' | 'lastName' | 'email' | 'phone'> & {
     shippingAddress?: ShippingAddress;
   };
-  staff: Pick<Staff, "id" | "firstName" | "lastName">;
-  storeLocation: Pick<StoreLocation, "id" | "name">;
+  staff: Pick<Staff, 'id' | 'firstName' | 'lastName'>;
+  storeLocation: Pick<StoreLocation, 'id' | 'name'>;
   items: (OrderItem & {
-    inventoryVariation?: Pick<InventoryVariation, "id" | "name" | "sku"> | null;
+    inventoryVariation?: Pick<InventoryVariation, 'id' | 'name' | 'sku'> | null;
   })[];
   refunds: Refund[];
   _count: {
@@ -42,7 +42,7 @@ export type OrdersSearchFilters = {
 };
 
 // Get all orders with search and filtering
-export async function getOrders(filters: OrdersSearchFilters = {}): Promise<{
+export async function getOrders (filters: OrdersSearchFilters = {}): Promise<{
   success: boolean;
   data?: {
     orders: OrderWithDetails[];
@@ -57,16 +57,17 @@ export async function getOrders(filters: OrdersSearchFilters = {}): Promise<{
 }> {
   try {
     const session = await fetchSession();
-    if (!session?.user || session.user.userType !== "staff") {
-      return { success: false, error: "Unauthorized" };
+
+    if (!session?.user || session.user.userType !== 'staff') {
+      return { success: false, error: 'Unauthorized' };
     }
 
     const {
       page = 1,
       limit = 20,
-      search = "",
-      status = "",
-      paymentMethod = "",
+      search = '',
+      status = '',
+      paymentMethod = '',
       dateFrom,
       dateTo,
       locationId,
@@ -75,18 +76,18 @@ export async function getOrders(filters: OrdersSearchFilters = {}): Promise<{
     const skip = (page - 1) * limit;
 
     // Build where clause
-    let whereClause: any = {};
+    const whereClause: any = {};
 
     // Search by customer name, email, or order ID
     if (search) {
       whereClause.OR = [
-        { id: { contains: search, mode: "insensitive" } },
+        { id: { contains: search, mode: 'insensitive' } },
         {
           customer: {
             OR: [
-              { firstName: { contains: search, mode: "insensitive" } },
-              { lastName: { contains: search, mode: "insensitive" } },
-              { email: { contains: search, mode: "insensitive" } },
+              { firstName: { contains: search, mode: 'insensitive' } },
+              { lastName: { contains: search, mode: 'insensitive' } },
+              { email: { contains: search, mode: 'insensitive' } },
             ],
           },
         },
@@ -167,7 +168,7 @@ export async function getOrders(filters: OrdersSearchFilters = {}): Promise<{
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       skip,
       take: limit,
     });
@@ -187,21 +188,23 @@ export async function getOrders(filters: OrdersSearchFilters = {}): Promise<{
       },
     };
   } catch (error) {
-    console.error("Error fetching orders:", error);
-    return { success: false, error: "Failed to fetch orders" };
+    console.error('Error fetching orders:', error);
+
+    return { success: false, error: 'Failed to fetch orders' };
   }
 }
 
 // Get single order with full details
-export async function getOrderById(orderId: string): Promise<{
+export async function getOrderById (orderId: string): Promise<{
   success: boolean;
   data?: OrderWithDetails;
   error?: string;
 }> {
   try {
     const session = await fetchSession();
-    if (!session?.user || session.user.userType !== "staff") {
-      return { success: false, error: "Unauthorized" };
+
+    if (!session?.user || session.user.userType !== 'staff') {
+      return { success: false, error: 'Unauthorized' };
     }
 
     const order = await prisma.order.findUnique({
@@ -243,10 +246,10 @@ export async function getOrderById(orderId: string): Promise<{
               },
             },
           },
-          orderBy: { id: "asc" },
+          orderBy: { id: 'asc' },
         },
         refunds: {
-          orderBy: { createdAt: "desc" },
+          orderBy: { createdAt: 'desc' },
         },
         _count: {
           select: {
@@ -258,7 +261,7 @@ export async function getOrderById(orderId: string): Promise<{
     });
 
     if (!order) {
-      return { success: false, error: "Order not found" };
+      return { success: false, error: 'Order not found' };
     }
 
     return {
@@ -266,16 +269,17 @@ export async function getOrderById(orderId: string): Promise<{
       data: order as OrderWithDetails,
     };
   } catch (error) {
-    console.error("Error fetching order:", error);
-    return { success: false, error: "Failed to fetch order" };
+    console.error('Error fetching order:', error);
+
+    return { success: false, error: 'Failed to fetch order' };
   }
 }
 
 // Process refund for an order
-export async function processRefund(
+export async function processRefund (
   orderId: string,
   amount: number,
-  reason?: string
+  reason?: string,
 ): Promise<{
   success: boolean;
   data?: Refund;
@@ -283,8 +287,9 @@ export async function processRefund(
 }> {
   try {
     const session = await fetchSession();
-    if (!session?.user || session.user.userType !== "staff") {
-      return { success: false, error: "Unauthorized" };
+
+    if (!session?.user || session.user.userType !== 'staff') {
+      return { success: false, error: 'Unauthorized' };
     }
 
     // Get the order to validate
@@ -296,24 +301,24 @@ export async function processRefund(
     });
 
     if (!order) {
-      return { success: false, error: "Order not found" };
+      return { success: false, error: 'Order not found' };
     }
 
     // Calculate total refunded amount
     const totalRefunded = order.refunds.reduce(
       (sum, refund) => sum + refund.amount,
-      0
+      0,
     );
 
     // Check if refund amount is valid
     if (amount <= 0) {
-      return { success: false, error: "Refund amount must be greater than 0" };
+      return { success: false, error: 'Refund amount must be greater than 0' };
     }
 
     if (totalRefunded + amount > order.total) {
       return {
         success: false,
-        error: "Refund amount exceeds order total",
+        error: 'Refund amount exceeds order total',
       };
     }
 
@@ -332,9 +337,9 @@ export async function processRefund(
       let newStatus = order.status;
 
       if (newTotalRefunded >= order.total) {
-        newStatus = "REFUNDED";
+        newStatus = 'REFUNDED';
       } else if (newTotalRefunded > 0) {
-        newStatus = "PARTIALLY_REFUNDED";
+        newStatus = 'PARTIALLY_REFUNDED';
       }
 
       await tx.order.update({
@@ -345,21 +350,22 @@ export async function processRefund(
       return refund;
     });
 
-    revalidatePath("/dashboard/pos/orders");
+    revalidatePath('/dashboard/pos/orders');
     revalidatePath(`/dashboard/pos/orders/${orderId}`);
 
     return { success: true, data: result };
   } catch (error) {
-    console.error("Error processing refund:", error);
-    return { success: false, error: "Failed to process refund" };
+    console.error('Error processing refund:', error);
+
+    return { success: false, error: 'Failed to process refund' };
   }
 }
 
 // Get order summary statistics
-export async function getOrderStats(
+export async function getOrderStats (
   locationId?: number,
   dateFrom?: Date,
-  dateTo?: Date
+  dateTo?: Date,
 ): Promise<{
   success: boolean;
   data?: {
@@ -373,11 +379,12 @@ export async function getOrderStats(
 }> {
   try {
     const session = await fetchSession();
-    if (!session?.user || session.user.userType !== "staff") {
-      return { success: false, error: "Unauthorized" };
+
+    if (!session?.user || session.user.userType !== 'staff') {
+      return { success: false, error: 'Unauthorized' };
     }
 
-    let whereClause: any = {};
+    const whereClause: any = {};
 
     if (locationId) {
       whereClause.storeLocationId = locationId;
@@ -393,8 +400,8 @@ export async function getOrderStats(
       }
     }
 
-    const [totalOrders, revenueData, statusBreakdown, paymentMethodBreakdown] =
-      await Promise.all([
+    const [totalOrders, revenueData, statusBreakdown, paymentMethodBreakdown]
+      = await Promise.all([
         prisma.order.count({ where: whereClause }),
 
         prisma.order.aggregate({
@@ -404,13 +411,13 @@ export async function getOrderStats(
         }),
 
         prisma.order.groupBy({
-          by: ["status"],
+          by: ['status'],
           where: whereClause,
           _count: { status: true },
         }),
 
         prisma.order.groupBy({
-          by: ["paymentMethod"],
+          by: ['paymentMethod'],
           where: whereClause,
           _count: { paymentMethod: true },
         }),
@@ -418,11 +425,13 @@ export async function getOrderStats(
 
     const statusCounts = statusBreakdown.reduce((acc, item) => {
       acc[item.status] = item._count.status;
+
       return acc;
     }, {} as Record<string, number>);
 
     const paymentCounts = paymentMethodBreakdown.reduce((acc, item) => {
-      acc[item.paymentMethod || "Unknown"] = item._count.paymentMethod;
+      acc[item.paymentMethod || 'Unknown'] = item._count.paymentMethod;
+
       return acc;
     }, {} as Record<string, number>);
 
@@ -437,21 +446,23 @@ export async function getOrderStats(
       },
     };
   } catch (error) {
-    console.error("Error fetching order stats:", error);
-    return { success: false, error: "Failed to fetch order statistics" };
+    console.error('Error fetching order stats:', error);
+
+    return { success: false, error: 'Failed to fetch order statistics' };
   }
 }
 
 // Get recent orders (for dashboard widgets)
-export async function getRecentOrders(limit = 5): Promise<{
+export async function getRecentOrders (limit = 5): Promise<{
   success: boolean;
   data?: OrderWithDetails[];
   error?: string;
 }> {
   try {
     const session = await fetchSession();
-    if (!session?.user || session.user.userType !== "staff") {
-      return { success: false, error: "Unauthorized" };
+
+    if (!session?.user || session.user.userType !== 'staff') {
+      return { success: false, error: 'Unauthorized' };
     }
 
     const orders = await prisma.order.findMany({
@@ -497,7 +508,7 @@ export async function getRecentOrders(limit = 5): Promise<{
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       take: limit,
     });
 
@@ -506,8 +517,9 @@ export async function getRecentOrders(limit = 5): Promise<{
       data: orders as OrderWithDetails[],
     };
   } catch (error) {
-    console.error("Error fetching recent orders:", error);
-    return { success: false, error: "Failed to fetch recent orders" };
+    console.error('Error fetching recent orders:', error);
+
+    return { success: false, error: 'Failed to fetch recent orders' };
   }
 }
 

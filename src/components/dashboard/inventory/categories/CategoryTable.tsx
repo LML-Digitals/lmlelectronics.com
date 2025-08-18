@@ -48,7 +48,7 @@ export type CategoryWithChildren = {
   description: string;
 };
 
-function CategoryTable({ categories }: { categories: CategoryWithChildren[] }) {
+function CategoryTable ({ categories }: { categories: CategoryWithChildren[] }) {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
@@ -56,15 +56,14 @@ function CategoryTable({ categories }: { categories: CategoryWithChildren[] }) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
     setSearch(inputValue);
   };
 
   const toggleExpand = (categoryId: string) => {
-    setExpandedCategories((prev) =>
-      prev.includes(categoryId)
-        ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId]
-    );
+    setExpandedCategories((prev) => prev.includes(categoryId)
+      ? prev.filter((id) => id !== categoryId)
+      : [...prev, categoryId]);
   };
 
   // Trigger refresh after changes
@@ -91,6 +90,7 @@ function CategoryTable({ categories }: { categories: CategoryWithChildren[] }) {
         rootCategories.push(currentCategory);
       } else {
         const parentCategory = categoryMap.get(category.parentId);
+
         if (parentCategory) {
           parentCategory.children.push(currentCategory);
         }
@@ -106,18 +106,19 @@ function CategoryTable({ categories }: { categories: CategoryWithChildren[] }) {
   const filteredCategories = categoryTree.filter((category) => {
     const matchesSearch = (cat: CategoryWithChildren): boolean => {
       return (
-        cat.name.toLowerCase().includes(search.toLowerCase()) ||
-        cat.description.toLowerCase().includes(search.toLowerCase()) ||
-        cat.children.some(matchesSearch)
+        cat.name.toLowerCase().includes(search.toLowerCase())
+        || cat.description.toLowerCase().includes(search.toLowerCase())
+        || cat.children.some(matchesSearch)
       );
     };
+
     return search.toLowerCase() === '' || matchesSearch(category);
   });
 
   const renderCategoryRow = (
     category: CategoryWithChildren,
     depth = 0,
-    parentExpanded = true
+    parentExpanded = true,
   ): React.JSX.Element[] => {
     const isExpanded = expandedCategories.includes(category.id);
     const hasChildren = category.children.length > 0;
@@ -126,129 +127,127 @@ function CategoryTable({ categories }: { categories: CategoryWithChildren[] }) {
     const rows: React.JSX.Element[] = [];
 
     if (isVisible) {
-      rows.push(
-        <TableRow key={category.id} className="">
-          <TableCell className="lg:w-96">
-            <div
-              className="flex items-center gap-3"
-              style={{ paddingLeft: `${depth * 24}px` }}
-            >
-              {/* Expand/Collapse button - OUTSIDE the dialog trigger */}
-              {hasChildren ? (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleExpand(category.id);
-                  }}
-                  className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md transition-colors"
-                >
-                  {isExpanded ? (
-                    <ChevronDown size={16} />
-                  ) : (
-                    <ChevronRight size={16} />
-                  )}
-                </button>
-              ) : (
-                <span className="w-[32px]" />
-              )}
-
-              {/* Category name and icon - INSIDE the dialog trigger */}
-              <CategoryDetailsDialog
-                category={category}
-                onItemAdded={handleDataChange}
-                categories={categories}
-              >
-                <div className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 rounded p-1 flex-grow">
-                  {category.image ? (
-                    <div className="relative h-6 w-6 rounded-full overflow-hidden">
-                      <Image
-                        src={category.image || '/placeholder.svg'}
-                        alt={category.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : isExpanded && hasChildren ? (
-                    <FolderOpen size={18} />
-                  ) : (
-                    <Folder size={18} />
-                  )}
-                  <span className="font-medium">{category.name}</span>
-                </div>
-              </CategoryDetailsDialog>
-            </div>
-          </TableCell>
-
-          {/* Description column */}
-          <TableCell className="max-w-xs">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <p className="truncate text-sm text-gray-600">
-                    {category.description || (
-                      <span className="text-xs italic">No description</span>
-                    )}
-                  </p>
-                </TooltipTrigger>
-                {category.description && (
-                  <TooltipContent>
-                    <p className="max-w-xs">{category.description}</p>
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </TooltipProvider>
-          </TableCell>
-
-          {/* Structure column */}
-          <TableCell>
+      rows.push(<TableRow key={category.id} className="">
+        <TableCell className="lg:w-96">
+          <div
+            className="flex items-center gap-3"
+            style={{ paddingLeft: `${depth * 24}px` }}
+          >
+            {/* Expand/Collapse button - OUTSIDE the dialog trigger */}
             {hasChildren ? (
-              <span className="px-2 py-1 text-xs font-medium bg-green-50 text-green-700 rounded-full">
-                {category.children.length}{' '}
-                {category.children.length === 1
-                  ? 'subcategory'
-                  : 'subcategories'}
-              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleExpand(category.id);
+                }}
+                className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md transition-colors"
+              >
+                {isExpanded ? (
+                  <ChevronDown size={16} />
+                ) : (
+                  <ChevronRight size={16} />
+                )}
+              </button>
             ) : (
-              <span className="text-xs italic">No subcategories</span>
+              <span className="w-[32px]" />
             )}
-          </TableCell>
 
-          {/* Items column */}
-          <TableCell>
-            {category.items.length > 0 ? (
-              <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
-                {category.items.length}{' '}
-                {category.items.length === 1 ? 'item' : 'items'}
-              </span>
-            ) : (
-              <span className="text-xs italic">No items</span>
-            )}
-          </TableCell>
-
-          {/* Visibility column */}
-          <TableCell>
-            {category.visible !== false ? (
-              <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-green-50 text-green-700 rounded-full w-fit">
-                <Eye size={12} />
-                <span>Visible</span>
+            {/* Category name and icon - INSIDE the dialog trigger */}
+            <CategoryDetailsDialog
+              category={category}
+              onItemAdded={handleDataChange}
+              categories={categories}
+            >
+              <div className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 rounded p-1 flex-grow">
+                {category.image ? (
+                  <div className="relative h-6 w-6 rounded-full overflow-hidden">
+                    <Image
+                      src={category.image || '/placeholder.svg'}
+                      alt={category.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : isExpanded && hasChildren ? (
+                  <FolderOpen size={18} />
+                ) : (
+                  <Folder size={18} />
+                )}
+                <span className="font-medium">{category.name}</span>
               </div>
-            ) : (
-              <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full w-fit">
-                <EyeOff size={12} />
-                <span>Hidden</span>
-              </div>
-            )}
-          </TableCell>
+            </CategoryDetailsDialog>
+          </div>
+        </TableCell>
 
-          {/* Actions column */}
-          <TableCell>
-            <div className="flex items-center gap-4">
-              <EditCategoryDialog categoryId={category.id} />
-              <DeleteItemCategory itemCategoryId={category.id} />
+        {/* Description column */}
+        <TableCell className="max-w-xs">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="truncate text-sm text-gray-600">
+                  {category.description || (
+                    <span className="text-xs italic">No description</span>
+                  )}
+                </p>
+              </TooltipTrigger>
+              {category.description && (
+                <TooltipContent>
+                  <p className="max-w-xs">{category.description}</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
+        </TableCell>
+
+        {/* Structure column */}
+        <TableCell>
+          {hasChildren ? (
+            <span className="px-2 py-1 text-xs font-medium bg-green-50 text-green-700 rounded-full">
+              {category.children.length}{' '}
+              {category.children.length === 1
+                ? 'subcategory'
+                : 'subcategories'}
+            </span>
+          ) : (
+            <span className="text-xs italic">No subcategories</span>
+          )}
+        </TableCell>
+
+        {/* Items column */}
+        <TableCell>
+          {category.items.length > 0 ? (
+            <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
+              {category.items.length}{' '}
+              {category.items.length === 1 ? 'item' : 'items'}
+            </span>
+          ) : (
+            <span className="text-xs italic">No items</span>
+          )}
+        </TableCell>
+
+        {/* Visibility column */}
+        <TableCell>
+          {category.visible !== false ? (
+            <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-green-50 text-green-700 rounded-full w-fit">
+              <Eye size={12} />
+              <span>Visible</span>
             </div>
-          </TableCell>
-        </TableRow>
-      );
+          ) : (
+            <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full w-fit">
+              <EyeOff size={12} />
+              <span>Hidden</span>
+            </div>
+          )}
+        </TableCell>
+
+        {/* Actions column */}
+        <TableCell>
+          <div className="flex items-center gap-4">
+            <EditCategoryDialog categoryId={category.id} />
+            <DeleteItemCategory itemCategoryId={category.id} />
+          </div>
+        </TableCell>
+      </TableRow>);
 
       // Recursively render children if expanded
       if (hasChildren && isExpanded) {
@@ -316,9 +315,7 @@ function CategoryTable({ categories }: { categories: CategoryWithChildren[] }) {
           <TableBody>
             {filteredCategories.length > 0 ? (
               <>
-                {filteredCategories.flatMap((category) =>
-                  renderCategoryRow(category, 0, true)
-                )}
+                {filteredCategories.flatMap((category) => renderCategoryRow(category, 0, true))}
               </>
             ) : (
               <TableRow>

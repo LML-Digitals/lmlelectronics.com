@@ -1,15 +1,15 @@
-import { Suspense } from "react";
+import { Suspense } from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { OrdersSearchAndFilters } from "@/components/dashboard/pos/orders/OrdersSearchAndFilters";
-import { OrdersList } from "@/components/dashboard/pos/orders/OrdersList";
-import { OrdersStats } from "@/components/dashboard/pos/orders/OrdersStats";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@/components/ui/card';
+import { OrdersSearchAndFilters } from '@/components/dashboard/pos/orders/OrdersSearchAndFilters';
+import { OrdersList } from '@/components/dashboard/pos/orders/OrdersList';
+import { OrdersStats } from '@/components/dashboard/pos/orders/OrdersStats';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface PageProps {
   searchParams: Promise<{
@@ -23,9 +23,9 @@ interface PageProps {
   }>;
 }
 
-export default async function POSOrdersPage({ searchParams }: PageProps) {
-  const { page, search, status, paymentMethod, dateFrom, dateTo, locationId } =
-    await searchParams;
+export default async function POSOrdersPage ({ searchParams }: PageProps) {
+  const { page, search, status, paymentMethod, dateFrom, dateTo, locationId }
+    = await searchParams;
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -76,7 +76,7 @@ export default async function POSOrdersPage({ searchParams }: PageProps) {
   );
 }
 
-function OrdersStatsSkeleton() {
+function OrdersStatsSkeleton () {
   return (
     <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
@@ -95,7 +95,7 @@ function OrdersStatsSkeleton() {
   );
 }
 
-function OrdersListSkeleton() {
+function OrdersListSkeleton () {
   return (
     <div className="space-y-3 sm:space-y-4">
       {Array.from({ length: 5 }).map((_, i) => (

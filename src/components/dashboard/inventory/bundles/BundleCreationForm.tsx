@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { X, Plus, Search, Package } from "lucide-react";
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { X, Plus, Search, Package } from 'lucide-react';
 import {
   createBundle,
   createBundleVariation,
-} from "@/components/dashboard/inventory/bundles/services/bundles";
-import { toast } from "@/components/ui/use-toast";
+} from '@/components/dashboard/inventory/bundles/services/bundles';
+import { toast } from '@/components/ui/use-toast';
 
 interface InventoryVariation {
   id: string;
@@ -62,7 +62,7 @@ interface BundleCreationFormProps {
   variations: InventoryVariation[];
 }
 
-export default function BundleCreationForm({
+export default function BundleCreationForm ({
   categories,
   suppliers,
   variations,
@@ -73,39 +73,36 @@ export default function BundleCreationForm({
 
   // Bundle basic info
   const [bundleInfo, setBundleInfo] = useState({
-    name: "",
-    description: "",
-    image: "",
+    name: '',
+    description: '',
+    image: '',
     categoryIds: [] as string[],
     supplierId: undefined as number | undefined,
   });
 
   // Bundle variation info
   const [variationInfo, setVariationInfo] = useState({
-    sku: "",
-    name: "",
+    sku: '',
+    name: '',
     sellingPrice: 0,
-    image: "",
+    image: '',
   });
 
   // Bundle components
   const [components, setComponents] = useState<BundleComponent[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedVariation, setSelectedVariation] =
-    useState<InventoryVariation | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedVariation, setSelectedVariation]
+    = useState<InventoryVariation | null>(null);
   const [componentQuantity, setComponentQuantity] = useState(1);
 
   // Filter available variations (exclude bundles and already added components)
-  const availableVariations = variations.filter(
-    (v) =>
-      !v.inventoryItem.isBundle &&
-      !components.some((c) => c.componentVariationId === v.id) &&
-      (v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        v.sku.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const availableVariations = variations.filter((v) => !v.inventoryItem.isBundle
+      && !components.some((c) => c.componentVariationId === v.id)
+      && (v.name.toLowerCase().includes(searchTerm.toLowerCase())
+        || v.sku.toLowerCase().includes(searchTerm.toLowerCase())));
 
   const handleAddComponent = () => {
-    if (!selectedVariation) return;
+    if (!selectedVariation) { return; }
 
     const newComponent: BundleComponent = {
       componentVariationId: selectedVariation.id,
@@ -118,7 +115,7 @@ export default function BundleCreationForm({
     setComponents([...components, newComponent]);
     setSelectedVariation(null);
     setComponentQuantity(1);
-    setSearchTerm("");
+    setSearchTerm('');
   };
 
   const handleRemoveComponent = (index: number) => {
@@ -127,12 +124,14 @@ export default function BundleCreationForm({
 
   const handleUpdateQuantity = (index: number, quantity: number) => {
     const updated = [...components];
+
     updated[index].quantity = quantity;
     setComponents(updated);
   };
 
   const handleToggleHighlight = (index: number) => {
     const updated = [...components];
+
     updated[index].isHighlight = !updated[index].isHighlight;
     setComponents(updated);
   };
@@ -145,16 +144,17 @@ export default function BundleCreationForm({
 
   const handleSubmit = async () => {
     if (
-      !bundleInfo.name ||
-      !variationInfo.sku ||
-      !variationInfo.name ||
-      components.length === 0
+      !bundleInfo.name
+      || !variationInfo.sku
+      || !variationInfo.name
+      || components.length === 0
     ) {
       toast({
-        title: "Error",
+        title: 'Error',
         description:
-          "Please fill in all required fields and add at least one component",
+          'Please fill in all required fields and add at least one component',
       });
+
       return;
     }
 
@@ -185,15 +185,15 @@ export default function BundleCreationForm({
       }
 
       toast({
-        title: "Success",
-        description: "Bundle created successfully!",
+        title: 'Success',
+        description: 'Bundle created successfully!',
       });
-      router.push("/dashboard/inventory/bundles");
+      router.push('/dashboard/inventory/bundles');
     } catch (error) {
       toast({
-        title: "Error",
+        title: 'Error',
         description:
-          error instanceof Error ? error.message : "Failed to create bundle",
+          error instanceof Error ? error.message : 'Failed to create bundle',
       });
     } finally {
       setIsLoading(false);
@@ -206,14 +206,14 @@ export default function BundleCreationForm({
       <div className="flex items-center space-x-4">
         <div
           className={`flex items-center space-x-2 ${
-            step >= 1 ? "text-blue-600" : "text-gray-400"
+            step >= 1 ? 'text-blue-600' : 'text-gray-400'
           }`}
         >
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
               step >= 1
-                ? "bg-blue-600 border-blue-600 text-white"
-                : "border-gray-300"
+                ? 'bg-blue-600 border-blue-600 text-white'
+                : 'border-gray-300'
             }`}
           >
             1
@@ -223,14 +223,14 @@ export default function BundleCreationForm({
         <div className="flex-1 h-px bg-gray-300" />
         <div
           className={`flex items-center space-x-2 ${
-            step >= 2 ? "text-blue-600" : "text-gray-400"
+            step >= 2 ? 'text-blue-600' : 'text-gray-400'
           }`}
         >
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
               step >= 2
-                ? "bg-blue-600 border-blue-600 text-white"
-                : "border-gray-300"
+                ? 'bg-blue-600 border-blue-600 text-white'
+                : 'border-gray-300'
             }`}
           >
             2
@@ -240,14 +240,14 @@ export default function BundleCreationForm({
         <div className="flex-1 h-px bg-gray-300" />
         <div
           className={`flex items-center space-x-2 ${
-            step >= 3 ? "text-blue-600" : "text-gray-400"
+            step >= 3 ? 'text-blue-600' : 'text-gray-400'
           }`}
         >
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
               step >= 3
-                ? "bg-blue-600 border-blue-600 text-white"
-                : "border-gray-300"
+                ? 'bg-blue-600 border-blue-600 text-white'
+                : 'border-gray-300'
             }`}
           >
             3
@@ -270,8 +270,7 @@ export default function BundleCreationForm({
               <Input
                 id="name"
                 value={bundleInfo.name}
-                onChange={(e) =>
-                  setBundleInfo((prev) => ({ ...prev, name: e.target.value }))
+                onChange={(e) => setBundleInfo((prev) => ({ ...prev, name: e.target.value }))
                 }
                 placeholder="e.g., iPhone 14 Screen Repair Kit"
               />
@@ -282,11 +281,10 @@ export default function BundleCreationForm({
               <Textarea
                 id="description"
                 value={bundleInfo.description}
-                onChange={(e) =>
-                  setBundleInfo((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
+                onChange={(e) => setBundleInfo((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
                 }
                 placeholder="Describe what's included in this bundle..."
                 rows={3}
@@ -298,8 +296,7 @@ export default function BundleCreationForm({
               <Input
                 id="image"
                 value={bundleInfo.image}
-                onChange={(e) =>
-                  setBundleInfo((prev) => ({ ...prev, image: e.target.value }))
+                onChange={(e) => setBundleInfo((prev) => ({ ...prev, image: e.target.value }))
                 }
                 placeholder="https://example.com/image.jpg"
               />
@@ -309,8 +306,7 @@ export default function BundleCreationForm({
               <div className="space-y-2">
                 <Label>Category</Label>
                 <Select
-                  onValueChange={(value) =>
-                    setBundleInfo((prev) => ({ ...prev, categoryIds: [value] }))
+                  onValueChange={(value) => setBundleInfo((prev) => ({ ...prev, categoryIds: [value] }))
                   }
                 >
                   <SelectTrigger>
@@ -329,11 +325,10 @@ export default function BundleCreationForm({
               <div className="space-y-2">
                 <Label>Supplier</Label>
                 <Select
-                  onValueChange={(value) =>
-                    setBundleInfo((prev) => ({
-                      ...prev,
-                      supplierId: parseInt(value),
-                    }))
+                  onValueChange={(value) => setBundleInfo((prev) => ({
+                    ...prev,
+                    supplierId: parseInt(value),
+                  }))
                   }
                 >
                   <SelectTrigger>
@@ -377,11 +372,10 @@ export default function BundleCreationForm({
                 <Input
                   id="sku"
                   value={variationInfo.sku}
-                  onChange={(e) =>
-                    setVariationInfo((prev) => ({
-                      ...prev,
-                      sku: e.target.value,
-                    }))
+                  onChange={(e) => setVariationInfo((prev) => ({
+                    ...prev,
+                    sku: e.target.value,
+                  }))
                   }
                   placeholder="e.g., KIT-IP14-SCR"
                 />
@@ -392,11 +386,10 @@ export default function BundleCreationForm({
                 <Input
                   id="variation-name"
                   value={variationInfo.name}
-                  onChange={(e) =>
-                    setVariationInfo((prev) => ({
-                      ...prev,
-                      name: e.target.value,
-                    }))
+                  onChange={(e) => setVariationInfo((prev) => ({
+                    ...prev,
+                    name: e.target.value,
+                  }))
                   }
                   placeholder="e.g., Standard Kit"
                 />
@@ -411,11 +404,10 @@ export default function BundleCreationForm({
                 step="0.01"
                 min="0"
                 value={variationInfo.sellingPrice}
-                onChange={(e) =>
-                  setVariationInfo((prev) => ({
-                    ...prev,
-                    sellingPrice: parseFloat(e.target.value) || 0,
-                  }))
+                onChange={(e) => setVariationInfo((prev) => ({
+                  ...prev,
+                  sellingPrice: parseFloat(e.target.value) || 0,
+                }))
                 }
                 placeholder="0.00"
               />
@@ -426,11 +418,10 @@ export default function BundleCreationForm({
               <Input
                 id="variation-image"
                 value={variationInfo.image}
-                onChange={(e) =>
-                  setVariationInfo((prev) => ({
-                    ...prev,
-                    image: e.target.value,
-                  }))
+                onChange={(e) => setVariationInfo((prev) => ({
+                  ...prev,
+                  image: e.target.value,
+                }))
                 }
                 placeholder="https://example.com/variation-image.jpg"
               />
@@ -483,8 +474,7 @@ export default function BundleCreationForm({
                     type="number"
                     min="1"
                     value={componentQuantity}
-                    onChange={(e) =>
-                      setComponentQuantity(parseInt(e.target.value) || 1)
+                    onChange={(e) => setComponentQuantity(parseInt(e.target.value) || 1)
                     }
                   />
                 </div>
@@ -511,8 +501,8 @@ export default function BundleCreationForm({
                         key={variation.id}
                         className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${
                           selectedVariation?.id === variation.id
-                            ? "bg-blue-50"
-                            : ""
+                            ? 'bg-blue-50'
+                            : ''
                         }`}
                         onClick={() => setSelectedVariation(variation)}
                       >
@@ -528,10 +518,10 @@ export default function BundleCreationForm({
                               ${variation.sellingPrice}
                             </p>
                             <p className="text-sm text-gray-500">
-                              Stock:{" "}
+                              Stock:{' '}
                               {variation.stockLevels.reduce(
                                 (sum, level) => sum + level.stock,
-                                0
+                                0,
                               )}
                             </p>
                           </div>
@@ -589,11 +579,10 @@ export default function BundleCreationForm({
                           type="number"
                           min="1"
                           value={component.quantity}
-                          onChange={(e) =>
-                            handleUpdateQuantity(
-                              index,
-                              parseInt(e.target.value) || 1
-                            )
+                          onChange={(e) => handleUpdateQuantity(
+                            index,
+                            parseInt(e.target.value) || 1,
+                          )
                           }
                           className="w-20"
                         />
@@ -602,7 +591,7 @@ export default function BundleCreationForm({
                           size="sm"
                           onClick={() => handleToggleHighlight(index)}
                         >
-                          {component.isHighlight ? "Unhighlight" : "Highlight"}
+                          {component.isHighlight ? 'Unhighlight' : 'Highlight'}
                         </Button>
                         <Button
                           variant="destructive"
@@ -641,7 +630,7 @@ export default function BundleCreationForm({
               onClick={handleSubmit}
               disabled={isLoading || components.length === 0}
             >
-              {isLoading ? "Creating Bundle..." : "Create Bundle"}
+              {isLoading ? 'Creating Bundle...' : 'Create Bundle'}
             </Button>
           </div>
         </div>

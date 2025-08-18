@@ -7,7 +7,7 @@ type RelatedBlogsSectionProps = {
   blogs: BlogWithDetailsType[];
 };
 
-function RelatedBlogsSection({ blogs }: RelatedBlogsSectionProps) {
+function RelatedBlogsSection ({ blogs }: RelatedBlogsSectionProps) {
   return (
     <div className="mt-12 md:mt-16 lg:mt-20 px-4 max-w-[1450px] mx-auto">
       <h1 className="text-center text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">

@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 
-export async function getInventoryVariations() {
+export async function getInventoryVariations () {
   try {
     const variations = await prisma.inventoryVariation.findMany({
       select: {
@@ -16,13 +16,14 @@ export async function getInventoryVariations() {
         visible: true,
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     });
 
     return variations;
   } catch (error) {
-    console.error("Error fetching inventory variations:", error);
+    console.error('Error fetching inventory variations:', error);
+
     return [];
   }
 }

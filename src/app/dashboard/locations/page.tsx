@@ -5,7 +5,7 @@ import LocationsTable from '@/components/locations/LocationsTable';
 import { StoreLocation } from '@prisma/client';
 import { getStoreLocations } from '@/components/locations/services/storeLocationCrud';
 
-export default function LocationsPage() {
+export default function LocationsPage () {
   const [locations, setLocations] = useState<StoreLocation[]>([]);
   const [error, setError] = useState<string | null>(null);
 

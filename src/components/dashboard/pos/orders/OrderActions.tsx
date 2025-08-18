@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -11,32 +11,32 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   processRefund,
   // syncOrderWithSquare,
-} from "@/components/dashboard/pos/orders/services/pos-orders";
+} from '@/components/dashboard/pos/orders/services/pos-orders';
 import {
   emailReceipt,
   printReceipt,
-} from "@/components/dashboard/pos/orders/services/pos-receipts";
-import { toast } from "@/components/ui/use-toast";
-import { Printer, Mail, RefreshCw, DollarSign, RefreshCcw } from "lucide-react";
-import { useRouter } from "next/navigation";
-import type { OrderWithDetails } from "@/components/dashboard/pos/orders/services/pos-orders";
+} from '@/components/dashboard/pos/orders/services/pos-receipts';
+import { toast } from '@/components/ui/use-toast';
+import { Printer, Mail, RefreshCw, DollarSign, RefreshCcw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import type { OrderWithDetails } from '@/components/dashboard/pos/orders/services/pos-orders';
 
 interface OrderActionsProps {
   order: OrderWithDetails;
 }
 
-export function OrderActions({ order }: OrderActionsProps) {
+export function OrderActions ({ order }: OrderActionsProps) {
   const router = useRouter();
   const [isRefunding, setIsRefunding] = useState(false);
-  const [refundAmount, setRefundAmount] = useState("");
-  const [refundReason, setRefundReason] = useState("");
+  const [refundAmount, setRefundAmount] = useState('');
+  const [refundReason, setRefundReason] = useState('');
   const [isRefundDialogOpen, setIsRefundDialogOpen] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
   const [isEmailing, setIsEmailing] = useState(false);
@@ -44,13 +44,13 @@ export function OrderActions({ order }: OrderActionsProps) {
 
   const totalRefunded = order.refunds.reduce(
     (sum, refund) => sum + refund.amount,
-    0
+    0,
   );
   const maxRefundAmount = order.total - totalRefunded;
-  const canRefund = maxRefundAmount > 0 && order.status !== "REFUNDED";
-  const canSync =
-    order.squareTxnId &&
-    (order.status === "PENDING" || order.status === "INVOICED");
+  const canRefund = maxRefundAmount > 0 && order.status !== 'REFUNDED';
+  const canSync
+    = order.squareTxnId
+    && (order.status === 'PENDING' || order.status === 'INVOICED');
 
   const handlePrintReceipt = async () => {
     setIsPrinting(true);
@@ -62,14 +62,15 @@ export function OrderActions({ order }: OrderActionsProps) {
         // In a real implementation, you would send the print commands to the printer
         // For now, we'll show the receipt data in a new window for printing
         if (result.receiptData) {
-          const printWindow = window.open("", "_blank");
+          const printWindow = window.open('', '_blank');
+
           if (printWindow) {
             printWindow.document.write(`
               <html>
                 <head>
                   <title>Receipt - Order ${order.id
-                    .slice(-8)
-                    .toUpperCase()}</title>
+    .slice(-8)
+    .toUpperCase()}</title>
                   <style>
                     body { font-family: 'Courier New', monospace; font-size: 12px; margin: 20px; }
                     .receipt { max-width: 300px; margin: 0 auto; }
@@ -88,64 +89,50 @@ export function OrderActions({ order }: OrderActionsProps) {
                       <div>${result.receiptData.location.phone}</div>
                     </div>
                     <div class="line"><span>Order #:</span><span>${
-                      result.receiptData.orderId
-                    }</span></div>
+  result.receiptData.orderId
+}</span></div>
                     <div class="line"><span>Date:</span><span>${
-                      result.receiptData.date
-                    }</span></div>
+  result.receiptData.date
+}</span></div>
                     <div class="line"><span>Customer:</span><span>${
-                      result.receiptData.customer.name
-                    }</span></div>
+  result.receiptData.customer.name
+}</span></div>
                     <div class="line"><span>Staff:</span><span>${
-                      result.receiptData.staff
-                    }</span></div>
+  result.receiptData.staff
+}</span></div>
                     <hr>
                     ${result.receiptData.items
-                      .map(
-                        (item: any) => `
+    .map((item: any) => `
                       <div class="line"><span>${
-                        item.description
-                      }</span><span></span></div>
+  item.description
+}</span><span></span></div>
                       <div class="line"><span>&nbsp;&nbsp;${
-                        item.quantity
-                      } x $${item.price.toFixed(
-                          2
-                        )}</span><span>$${item.total.toFixed(2)}</span></div>
-                    `
-                      )
-                      .join("")}
+  item.quantity
+} x $${item.price.toFixed(2)}</span><span>$${item.total.toFixed(2)}</span></div>
+                    `)
+    .join('')}
                     <hr>
-                    <div class="line"><span>Subtotal:</span><span>$${result.receiptData.totals.subtotal.toFixed(
-                      2
-                    )}</span></div>
+                    <div class="line"><span>Subtotal:</span><span>$${result.receiptData.totals.subtotal.toFixed(2)}</span></div>
                     ${
-                      result.receiptData.totals.tax > 0
-                        ? `<div class="line"><span>Tax:</span><span>$${result.receiptData.totals.tax.toFixed(
-                            2
-                          )}</span></div>`
-                        : ""
-                    }
+  result.receiptData.totals.tax > 0
+    ? `<div class="line"><span>Tax:</span><span>$${result.receiptData.totals.tax.toFixed(2)}</span></div>`
+    : ''
+}
                     ${
-                      result.receiptData.totals.discount > 0
-                        ? `<div class="line"><span>Discount:</span><span>-$${result.receiptData.totals.discount.toFixed(
-                            2
-                          )}</span></div>`
-                        : ""
-                    }
+  result.receiptData.totals.discount > 0
+    ? `<div class="line"><span>Discount:</span><span>-$${result.receiptData.totals.discount.toFixed(2)}</span></div>`
+    : ''
+}
                     ${
-                      result.receiptData.totals.tip > 0
-                        ? `<div class="line"><span>Tip:</span><span>$${result.receiptData.totals.tip.toFixed(
-                            2
-                          )}</span></div>`
-                        : ""
-                    }
-                    <div class="line total"><span>TOTAL:</span><span>$${result.receiptData.totals.total.toFixed(
-                      2
-                    )}</span></div>
+  result.receiptData.totals.tip > 0
+    ? `<div class="line"><span>Tip:</span><span>$${result.receiptData.totals.tip.toFixed(2)}</span></div>`
+    : ''
+}
+                    <div class="line total"><span>TOTAL:</span><span>$${result.receiptData.totals.total.toFixed(2)}</span></div>
                     <hr>
                     <div class="line"><span>Payment:</span><span>${
-                      result.receiptData.paymentMethod
-                    }</span></div>
+  result.receiptData.paymentMethod
+}</span></div>
                     <div style="text-align: center; margin-top: 20px;">
                       <div>Thank you for your business!</div>
                       <div>Visit us at lmlrepair.com</div>
@@ -160,21 +147,21 @@ export function OrderActions({ order }: OrderActionsProps) {
         }
 
         toast({
-          title: "Receipt ready for printing",
-          description: "A print dialog has been opened",
+          title: 'Receipt ready for printing',
+          description: 'A print dialog has been opened',
         });
       } else {
         toast({
-          title: "Failed to prepare receipt",
-          description: result.error || "Unable to prepare receipt for printing",
-          variant: "destructive",
+          title: 'Failed to prepare receipt',
+          description: result.error || 'Unable to prepare receipt for printing',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Print error",
-        description: "An unexpected error occurred while preparing the receipt",
-        variant: "destructive",
+        title: 'Print error',
+        description: 'An unexpected error occurred while preparing the receipt',
+        variant: 'destructive',
       });
     } finally {
       setIsPrinting(false);
@@ -189,21 +176,21 @@ export function OrderActions({ order }: OrderActionsProps) {
 
       if (result.success) {
         toast({
-          title: "Receipt sent successfully",
+          title: 'Receipt sent successfully',
           description: `Receipt has been sent to ${order.customer.email}`,
         });
       } else {
         toast({
-          title: "Failed to send receipt",
-          description: result.error || "Unable to send email receipt",
-          variant: "destructive",
+          title: 'Failed to send receipt',
+          description: result.error || 'Unable to send email receipt',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Email error",
-        description: "An unexpected error occurred while sending the receipt",
-        variant: "destructive",
+        title: 'Email error',
+        description: 'An unexpected error occurred while sending the receipt',
+        variant: 'destructive',
       });
     } finally {
       setIsEmailing(false);
@@ -213,19 +200,21 @@ export function OrderActions({ order }: OrderActionsProps) {
   const handleRefund = async () => {
     if (!refundAmount || parseFloat(refundAmount) <= 0) {
       toast({
-        title: "Please enter a valid refund amount",
-        description: "The refund amount must be greater than 0",
-        variant: "destructive",
+        title: 'Please enter a valid refund amount',
+        description: 'The refund amount must be greater than 0',
+        variant: 'destructive',
       });
+
       return;
     }
 
     if (parseFloat(refundAmount) > maxRefundAmount) {
       toast({
         title: `Refund amount cannot exceed $${maxRefundAmount.toFixed(2)}`,
-        description: "The refund amount must be less than the total amount",
-        variant: "destructive",
+        description: 'The refund amount must be less than the total amount',
+        variant: 'destructive',
       });
+
       return;
     }
 
@@ -235,30 +224,30 @@ export function OrderActions({ order }: OrderActionsProps) {
       const result = await processRefund(
         order.id,
         parseFloat(refundAmount),
-        refundReason || undefined
+        refundReason || undefined,
       );
 
       if (result.success) {
         toast({
           title: `Refund of $${refundAmount} processed successfully`,
-          description: "The refund has been processed successfully",
+          description: 'The refund has been processed successfully',
         });
         setIsRefundDialogOpen(false);
-        setRefundAmount("");
-        setRefundReason("");
+        setRefundAmount('');
+        setRefundReason('');
         router.refresh();
       } else {
         toast({
-          title: result.error || "Failed to process refund",
-          description: "The refund has not been processed",
-          variant: "destructive",
+          title: result.error || 'Failed to process refund',
+          description: 'The refund has not been processed',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "An unexpected error occurred",
-        description: "The refund has not been processed",
-        variant: "destructive",
+        title: 'An unexpected error occurred',
+        description: 'The refund has not been processed',
+        variant: 'destructive',
       });
     } finally {
       setIsRefunding(false);
@@ -278,7 +267,7 @@ export function OrderActions({ order }: OrderActionsProps) {
           disabled={isPrinting}
         >
           <Printer className="mr-2 h-4 w-4" />
-          {isPrinting ? "Preparing..." : "Print Receipt"}
+          {isPrinting ? 'Preparing...' : 'Print Receipt'}
         </Button>
 
         <Button
@@ -288,7 +277,7 @@ export function OrderActions({ order }: OrderActionsProps) {
           disabled={isEmailing}
         >
           <Mail className="mr-2 h-4 w-4" />
-          {isEmailing ? "Sending..." : "Email Receipt"}
+          {isEmailing ? 'Sending...' : 'Email Receipt'}
         </Button>
 
         <Dialog open={isRefundDialogOpen} onOpenChange={setIsRefundDialogOpen}>
@@ -372,7 +361,7 @@ export function OrderActions({ order }: OrderActionsProps) {
                 onClick={handleRefund}
                 disabled={isRefunding || !refundAmount}
               >
-                {isRefunding ? "Processing..." : "Process Refund"}
+                {isRefunding ? 'Processing...' : 'Process Refund'}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -380,9 +369,9 @@ export function OrderActions({ order }: OrderActionsProps) {
 
         {!canRefund && (
           <p className="text-xs text-muted-foreground mt-2">
-            {order.status === "REFUNDED"
-              ? "This order has been fully refunded"
-              : "No refundable amount remaining"}
+            {order.status === 'REFUNDED'
+              ? 'This order has been fully refunded'
+              : 'No refundable amount remaining'}
           </p>
         )}
       </CardContent>

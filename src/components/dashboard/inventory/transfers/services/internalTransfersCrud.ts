@@ -1,14 +1,14 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 import {
   InventoryTransfer,
   InventoryItem,
   InventoryVariation,
   StoreLocation,
   InventoryStockLevel,
-} from "@prisma/client";
-import { fetchSession } from "@/lib/session";
+} from '@prisma/client';
+import { fetchSession } from '@/lib/session';
 
 export type ExtendedInventoryTransfer = InventoryTransfer & {
   fromLocation: StoreLocation;
@@ -42,14 +42,12 @@ export const getInventoryTransfers = async (): Promise<
       },
     });
   } catch (error) {
-    console.error("Error fetching inventory transfers:", error);
-    throw new Error("Failed to fetch inventory transfers");
+    console.error('Error fetching inventory transfers:', error);
+    throw new Error('Failed to fetch inventory transfers');
   }
 };
 
-export const getInventoryTransferById = async (
-  inventoryTransferId: string
-): Promise<InventoryTransfer | null> => {
+export const getInventoryTransferById = async (inventoryTransferId: string): Promise<InventoryTransfer | null> => {
   try {
     const transfer = await prisma.inventoryTransfer.findUnique({
       where: {
@@ -69,8 +67,8 @@ export const getInventoryTransferById = async (
 
     return transfer; // Return single InventoryTransfer or null if not found
   } catch (error) {
-    console.error("Error fetching inventory transfer by ID:", error);
-    throw new Error("Failed to fetch inventory transfer by ID");
+    console.error('Error fetching inventory transfer by ID:', error);
+    throw new Error('Failed to fetch inventory transfer by ID');
   }
 };
 
@@ -87,9 +85,7 @@ type createInventoryResponse = {
   status: string;
 };
 
-export const createInventoryTransfer = async (
-  data: CreateInventoryTransferInput
-): Promise<createInventoryResponse> => {
+export const createInventoryTransfer = async (data: CreateInventoryTransferInput): Promise<createInventoryResponse> => {
   console.log(data);
 
   const {
@@ -101,12 +97,13 @@ export const createInventoryTransfer = async (
   } = data;
 
   const quantityInt = parseInt(quantity);
+
   try {
     // Create the inventory transfer record
     await prisma.inventoryTransfer.create({
       data: {
         inventoryItemId: inventoryItemId,
-        status: "Pending",
+        status: 'Pending',
         inventoryVariationId: InventoryVariationId,
         quantity: quantityInt,
         transferDate: new Date(),
@@ -115,10 +112,10 @@ export const createInventoryTransfer = async (
       },
     });
 
-    return { message: "Inventory Transfer Created", status: "success" };
+    return { message: 'Inventory Transfer Created', status: 'success' };
   } catch (error) {
-    console.error("Error creating inventory transfer:", error);
-    throw new Error("Failed to create inventory transfer");
+    console.error('Error creating inventory transfer:', error);
+    throw new Error('Failed to create inventory transfer');
   }
 };
 
@@ -137,7 +134,7 @@ type updateInventoryResponse = {
 
 export const updateInventoryTransfer = async (
   inventoryTransferId: string,
-  data: UpdateInventoryTransferInput
+  data: UpdateInventoryTransferInput,
 ): Promise<updateInventoryResponse> => {
   const {
     inventoryItemId,
@@ -148,16 +145,14 @@ export const updateInventoryTransfer = async (
   } = data;
 
   try {
-    const isExistInventoryTransfers = await prisma.inventoryTransfer.findUnique(
-      {
-        where: {
-          id: inventoryTransferId,
-        },
-      }
-    );
+    const isExistInventoryTransfers = await prisma.inventoryTransfer.findUnique({
+      where: {
+        id: inventoryTransferId,
+      },
+    });
 
     if (!isExistInventoryTransfers) {
-      throw Error("Transfer not found ");
+      throw Error('Transfer not found ');
     }
 
     await prisma.inventoryTransfer.update({
@@ -183,10 +178,10 @@ export const updateInventoryTransfer = async (
       },
     });
 
-    return { message: "Inventory Transfer Updated", status: "success" };
+    return { message: 'Inventory Transfer Updated', status: 'success' };
   } catch (error) {
-    console.error("Error updating inventory transfer:", error);
-    throw new Error("Failed to update inventory transfer");
+    console.error('Error updating inventory transfer:', error);
+    throw new Error('Failed to update inventory transfer');
   }
 };
 
@@ -194,9 +189,7 @@ type DeleteInventoryResponse = {
   status: string;
 };
 
-export const deleteInventoryTransfer = async (
-  transferId: string
-): Promise<DeleteInventoryResponse> => {
+export const deleteInventoryTransfer = async (transferId: string): Promise<DeleteInventoryResponse> => {
   try {
     const existingTransfer = await prisma.inventoryTransfer.findUnique({
       where: {
@@ -205,20 +198,21 @@ export const deleteInventoryTransfer = async (
     });
 
     if (!existingTransfer) {
-      throw new Error("Inventory transfer item record not found");
+      throw new Error('Inventory transfer item record not found');
     }
 
-    //Todo:  Delete the item return record
+    // Todo:  Delete the item return record
     await prisma.inventoryTransfer.delete({
       where: {
         id: transferId,
       },
     });
 
-    return { status: "success" };
+    return { status: 'success' };
   } catch (error) {
-    console.error("Error deleting transfer record:", error);
-    return { status: "error" };
+    console.error('Error deleting transfer record:', error);
+
+    return { status: 'error' };
   }
 };
 
@@ -227,13 +221,14 @@ export const deleteInventoryTransfer = async (
  */
 export const updateTransferWithStockAdjustment = async (
   transferId: string,
-  newStatus: string
+  newStatus: string,
 ): Promise<{ status: string; message: string }> => {
   try {
     const session = await fetchSession();
     const staffId = session?.user?.id;
+
     if (!staffId) {
-      return { status: "error", message: "Staff ID not found" };
+      return { status: 'error', message: 'Staff ID not found' };
     }
     // Get the current transfer with all necessary relations
     const transfer = await prisma.inventoryTransfer.findUnique({
@@ -245,14 +240,14 @@ export const updateTransferWithStockAdjustment = async (
     });
 
     if (!transfer) {
-      return { status: "error", message: "Transfer not found" };
+      return { status: 'error', message: 'Transfer not found' };
     }
 
     const previousStatus = transfer.status;
 
     // If status is not changing, do nothing
     if (previousStatus === newStatus) {
-      return { status: "info", message: "No status change detected" };
+      return { status: 'info', message: 'No status change detected' };
     }
 
     // Begin a transaction to ensure data integrity
@@ -266,7 +261,7 @@ export const updateTransferWithStockAdjustment = async (
         });
 
         // Only adjust stock if moving to or from "Completed" status
-        if (newStatus === "Completed" || previousStatus === "Completed") {
+        if (newStatus === 'Completed' || previousStatus === 'Completed') {
           const variationId = transfer.inventoryVariationId;
           const inventoryItemId = transfer.inventoryItemId;
           const quantity = transfer.quantity;
@@ -292,10 +287,10 @@ export const updateTransferWithStockAdjustment = async (
             },
           });
 
-          if (newStatus === "Completed") {
+          if (newStatus === 'Completed') {
             // Ensure from location has enough stock
             if (!fromStockLevel || fromStockLevel.stock < quantity) {
-              throw new Error("Insufficient stock in source location");
+              throw new Error('Insufficient stock in source location');
             }
 
             // Record the stock before updating
@@ -388,10 +383,10 @@ export const updateTransferWithStockAdjustment = async (
             }
 
             return {
-              status: "success",
-              message: "Transfer completed and stock adjusted",
+              status: 'success',
+              message: 'Transfer completed and stock adjusted',
             };
-          } else if (previousStatus === "Completed") {
+          } else if (previousStatus === 'Completed') {
             // Reverse the stock changes if moving from completed to another status
 
             // Record the stock before updating
@@ -457,32 +452,31 @@ export const updateTransferWithStockAdjustment = async (
                 },
               });
             } else {
-              throw new Error(
-                "Cannot reverse transfer, insufficient stock in destination location"
-              );
+              throw new Error('Cannot reverse transfer, insufficient stock in destination location');
             }
 
             return {
-              status: "success",
+              status: 'success',
               message: `Transfer status updated to ${newStatus} and stock adjustments reversed`,
             };
           }
         }
 
         return {
-          status: "success",
+          status: 'success',
           message: `Transfer status updated to ${newStatus}`,
         };
       },
       {
         timeout: 10000, // Increase timeout to 10 seconds (10000 ms)
-      }
+      },
     );
   } catch (error: any) {
-    console.error("Error updating transfer and stock:", error);
+    console.error('Error updating transfer and stock:', error);
+
     return {
-      status: "error",
-      message: error.message || "Failed to update transfer and adjust stock",
+      status: 'error',
+      message: error.message || 'Failed to update transfer and adjust stock',
     };
   }
 };

@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { MessageCircle, HelpCircle } from "lucide-react";
-import Link from "next/link";
+import Image from 'next/image';
+import { MessageCircle, HelpCircle } from 'lucide-react';
+import Link from 'next/link';
 
 const FAQDetailsSection = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
+
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -39,7 +40,7 @@ const FAQDetailsSection = () => {
                     Frequently Asked Questions
                   </div>
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                    Need more{" "}
+                    Need more{' '}
                     <span className="text-secondary drop-shadow-sm">
                       information?
                     </span>
@@ -96,4 +97,4 @@ const FAQDetailsSection = () => {
   );
 };
 
-export default FAQDetailsSection; 
+export default FAQDetailsSection;

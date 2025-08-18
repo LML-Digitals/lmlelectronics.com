@@ -2,8 +2,9 @@ import { MetadataRoute } from 'next';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://lmlelectronics.com';
 
-function sanitizeSlug(text: string): string {
-  if (!text) return '';
+function sanitizeSlug (text: string): string {
+  if (!text) { return ''; }
+
   return text
     .toLowerCase()
     .replace(/[^a-z0-9-]/g, '-')
@@ -11,7 +12,7 @@ function sanitizeSlug(text: string): string {
     .replace(/^-|-$/g, '');
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default async function sitemap (): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [];
 
   // Static routes
@@ -62,7 +63,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
     },
   ];
-  
+
   for (const route of staticRoutes) {
     routes.push({
       url: `${baseUrl}/${route.path}`.replace(/\/$/, ''),
@@ -75,8 +76,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch categories
   try {
     const catRes = await fetch(`${baseUrl}/api/inventory/categories`);
+
     if (catRes.ok) {
       const categories = await catRes.json();
+
       for (const cat of categories) {
         if (cat.visible && !cat.parentId && cat.name !== 'Tickets') {
           routes.push({
@@ -95,10 +98,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch products
   try {
     const prodRes = await fetch(`${baseUrl}/api/inventory/items`);
+
     if (prodRes.ok) {
       const products = await prodRes.json();
+
       for (const prod of products) {
-        if (prod.variations && prod.variations.some((v: any) => v.visible)) {
+        if (prod.variations?.some((v: any) => v.visible)) {
           routes.push({
             url: `${baseUrl}/shop/${prod.id}`,
             lastModified: new Date(),
@@ -113,4 +118,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   return routes;
-} 
+}

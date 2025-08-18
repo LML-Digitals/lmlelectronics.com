@@ -1,14 +1,14 @@
-"use client";
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { updateStaff } from "../services/staffCrud";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Edit, Pencil, Camera, Trash2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
+'use client';
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { updateStaff } from '../services/staffCrud';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input';
+import { Edit, Pencil, Camera, Trash2 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -17,15 +17,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/common/top-dialog/TopDialog";
-import bcrypt from "bcryptjs";
+} from '@/components/common/top-dialog/TopDialog';
+import bcrypt from 'bcryptjs';
 import {
   Form,
   FormField,
   FormItem,
   FormLabel,
   FormControl,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -34,23 +34,23 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Staff } from "@prisma/client";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Label } from "@/components/ui/label";
-import { User, Briefcase } from "lucide-react";
-import Image from "next/image";
-import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
-import type { UploadResponse } from "@/lib/types/upload";
+} from '@/components/ui/select';
+import { Staff } from '@prisma/client';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Label } from '@/components/ui/label';
+import { User, Briefcase } from 'lucide-react';
+import Image from 'next/image';
+import { Card } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
+import type { UploadResponse } from '@/lib/types/upload';
 
 const schema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  phone: z.string().min(1, "Mobile phone is required"),
-  email: z.string().min(1, "Staff email is required").email("Invalid email"),
-  title: z.string().min(1, "Staff title is required"),
-  role: z.string().min(1, "Staff role is required"),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  phone: z.string().min(1, 'Mobile phone is required'),
+  email: z.string().min(1, 'Staff email is required').email('Invalid email'),
+  title: z.string().min(1, 'Staff title is required'),
+  role: z.string().min(1, 'Staff role is required'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -73,12 +73,12 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
   useEffect(() => {
     if (Staff) {
       methods.reset({
-        firstName: Staff?.firstName || "",
-        lastName: Staff?.lastName || "",
-        phone: Staff?.phone || "",
-        email: Staff?.email || "",
-        title: Staff?.jobTitle || "",
-        role: Staff?.role || "",
+        firstName: Staff?.firstName || '',
+        lastName: Staff?.lastName || '',
+        phone: Staff?.phone || '',
+        email: Staff?.email || '',
+        title: Staff?.jobTitle || '',
+        role: Staff?.role || '',
       });
     }
   }, [Staff, methods]);
@@ -94,20 +94,23 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
   const onSubmit = async (formData: FormData) => {
     setLoading(true);
     let imageUrl: string | null = null;
+
     try {
       if (image && image instanceof File) {
         const response = await fetch(`/api/upload?filename=${image.name}`, {
-          method: "POST",
+          method: 'POST',
           body: image,
         });
+
         if (!response.ok) {
-          throw new Error("Failed to upload file.");
+          throw new Error('Failed to upload file.');
         }
         const newBlob = (await response.json()) as UploadResponse;
+
         imageUrl = newBlob.url;
       }
       if (!Staff) {
-        throw new Error("Staff not found");
+        throw new Error('Staff not found');
       }
       await updateStaff(Staff?.id, {
         firstName: formData.firstName,
@@ -121,32 +124,32 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
 
       router.refresh();
       toast({
-        title: "Success",
-        description: "Profile updated successfully",
-        variant: "default",
+        title: 'Success',
+        description: 'Profile updated successfully',
+        variant: 'default',
       });
       setDialogOpen(false);
       window.location.reload();
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Email already exists. Try again with a different email.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Email already exists. Try again with a different email.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+
     if (file && file instanceof File) {
       // Add your image upload logic here
       setImage(file);
-      //Todo: Create a preview URL for the selected image
+      // Todo: Create a preview URL for the selected image
       const previewURL = URL.createObjectURL(file);
+
       setPreview(previewURL);
     }
   };
@@ -179,7 +182,7 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
               <div className="relative group">
                 <Avatar className="h-32 w-32 border-4 border-white shadow-lg">
                   <AvatarImage
-                    src={Staff?.profileImage || "/default-avatar.png"}
+                    src={Staff?.profileImage || '/default-avatar.png'}
                     className="object-cover"
                   />
                   <AvatarFallback className="bg-gray-100 text-gray-900 text-2xl">
@@ -247,7 +250,7 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
                   <FormField
                     control={control}
                     name="firstName"
-                    defaultValue={Staff?.firstName || ""}
+                    defaultValue={Staff?.firstName || ''}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-medium">
@@ -271,7 +274,7 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
                   <FormField
                     control={control}
                     name="lastName"
-                    defaultValue={Staff?.lastName || ""}
+                    defaultValue={Staff?.lastName || ''}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-medium">Last Name</FormLabel>
@@ -293,7 +296,7 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
                   <FormField
                     control={control}
                     name="email"
-                    defaultValue={Staff?.email || ""}
+                    defaultValue={Staff?.email || ''}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-medium">
@@ -318,7 +321,7 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
                   <FormField
                     control={control}
                     name="phone"
-                    defaultValue={Staff?.phone || ""}
+                    defaultValue={Staff?.phone || ''}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-medium">
@@ -352,7 +355,7 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
                   <FormField
                     control={control}
                     name="title"
-                    defaultValue={Staff?.jobTitle || ""}
+                    defaultValue={Staff?.jobTitle || ''}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="font-medium">Job Title</FormLabel>
@@ -387,7 +390,7 @@ const EditProfile = ({ Staff }: EditStaffProps) => {
                       Saving Changes...
                     </div>
                   ) : (
-                    "Save Changes"
+                    'Save Changes'
                   )}
                 </Button>
               </DialogFooter>

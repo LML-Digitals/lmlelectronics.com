@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 
 export type AdjustmentsProps = Prisma.InventoryAdjustmentGetPayload<{
   include: {
@@ -8,5 +8,5 @@ export type AdjustmentsProps = Prisma.InventoryAdjustmentGetPayload<{
     adjustedBy: true;
     approvedBy: true;
   };
-  orderBy: { createdAt: "desc" };
+  orderBy: { createdAt: 'desc' };
 }>;

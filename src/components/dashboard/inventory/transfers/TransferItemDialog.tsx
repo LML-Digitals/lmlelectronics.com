@@ -46,7 +46,7 @@ type CreateInputs = {
   toLocationId: string;
 };
 
-export default function TransferItemDialog() {
+export default function TransferItemDialog () {
   const { toast } = useToast();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -70,8 +70,8 @@ export default function TransferItemDialog() {
   const [inventoryError, setInventoryError] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
 
-  const [selectedItem, setSelectedItem] =
-    useState<InventoryItemWithRelations | null>(null);
+  const [selectedItem, setSelectedItem]
+    = useState<InventoryItemWithRelations | null>(null);
   const [inventoryLoading, setInventoryLoading] = useState<boolean>(false);
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
   const [variations, setVariations] = useState<any[]>([]);
@@ -86,7 +86,7 @@ export default function TransferItemDialog() {
   }, [open]);
 
   const fetchData = async () => {
-    if (inventoryItems.length > 0 && locations.length > 0) return;
+    if (inventoryItems.length > 0 && locations.length > 0) { return; }
 
     try {
       setInventoryLoading(true);
@@ -95,6 +95,7 @@ export default function TransferItemDialog() {
         getInventoryItems(),
         getItemStoreLocations(),
       ]);
+
       setInventoryItems(items);
       setLocations(locs);
     } catch (error) {
@@ -121,19 +122,15 @@ export default function TransferItemDialog() {
 
   useEffect(() => {
     if (variations.length > 0) {
-      const selectedVariation = variations.find(
-        (vr) => vr.id === Number(getValues('InventoryVariationId'))
-      );
+      const selectedVariation = variations.find((vr) => vr.id === Number(getValues('InventoryVariationId')));
 
       if (selectedVariation) {
-        setFromVariationLocations(
-          selectedVariation.stockLevels.map((sl: any) => ({
-            id: sl.id,
-            stock: sl.stock,
-            locationId: sl.locationId,
-            location: sl.location,
-          }))
-        );
+        setFromVariationLocations(selectedVariation.stockLevels.map((sl: any) => ({
+          id: sl.id,
+          stock: sl.stock,
+          locationId: sl.locationId,
+          location: sl.location,
+        })));
       } else {
         setFromVariationLocations([]);
       }
@@ -142,6 +139,7 @@ export default function TransferItemDialog() {
 
   const handleItemChange = (itemId: string) => {
     const selectedItem = inventoryItems.find((item) => item.id === itemId);
+
     setSelectedItem(selectedItem || null);
   };
 
@@ -149,14 +147,12 @@ export default function TransferItemDialog() {
     const selectedVariation = variations.find((vr) => vr.id === variationId);
 
     if (selectedVariation) {
-      setFromVariationLocations(
-        selectedVariation.stockLevels.map((sl: any) => ({
-          id: sl.id,
-          stock: sl.stock,
-          locationId: sl.locationId,
-          location: sl.location,
-        }))
-      );
+      setFromVariationLocations(selectedVariation.stockLevels.map((sl: any) => ({
+        id: sl.id,
+        stock: sl.stock,
+        locationId: sl.locationId,
+        location: sl.location,
+      })));
     } else {
       setFromVariationLocations([]);
     }
@@ -168,35 +164,37 @@ export default function TransferItemDialog() {
         type: 'manual',
         message: "You can't transfer this variation to the same location.",
       });
+
       return;
     }
 
-    const locationStockLevel = fromVariationLocations.find(
-      (sl) => sl.locationId === Number(data.fromLocationId)
-    );
+    const locationStockLevel = fromVariationLocations.find((sl) => sl.locationId === Number(data.fromLocationId));
 
     if (!locationStockLevel) {
       setError('fromLocationId', {
         type: 'manual',
         message: 'This variation is not available in the selected location',
       });
+
       return;
     }
 
-    const inValidVariationQuantity =
-      locationStockLevel.stock < Number(data.quantity);
+    const inValidVariationQuantity
+      = locationStockLevel.stock < Number(data.quantity);
 
     if (inValidVariationQuantity) {
       setError('quantity', {
         type: 'manual',
         message: `Insufficient quantity, try less you have (${locationStockLevel.stock}) in the from location selected`,
       });
+
       return;
     }
 
     startTransition(async () => {
       try {
         const res = await createInventoryTransfer(data);
+
         if (res.status === 'success') {
           toast({
             title: 'Success',

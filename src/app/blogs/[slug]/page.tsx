@@ -39,9 +39,9 @@ export async function generateMetadata ({
     const categoryName = category?.name || '';
 
     const pageTitle = metaTitle || `${title} | Blog`;
-    const pageDescription =
-      metaDesc ||
-      `${title} - ${tagNames} blog post by ${authorName}. ${content.substring(
+    const pageDescription
+      = metaDesc
+      || `${title} - ${tagNames} blog post by ${authorName}. ${content.substring(
         0,
         150,
       )}...`;
@@ -54,16 +54,17 @@ export async function generateMetadata ({
     };
   } catch (err) {
     console.error('Error fetching post metadata:', err);
-    return;
   }
 }
 
 async function fetchPostBySlug (blogTitle: string) {
   try {
     const post: any = await getBlogBySlug(blogTitle);
+
     return { post, error: null };
   } catch (err) {
     console.error('Error fetching post:', err);
+
     return {
       post: null,
       error: 'Failed to load post. Please try again later.',
@@ -76,22 +77,26 @@ export default async function OneBlog ({ params }: ParamsProps) {
   const { post, error } = await fetchPostBySlug(slug);
 
   const convertToEmbedUrl = (url: string | null | undefined) => {
-    if (!url) return '';
+    if (!url) { return ''; }
     try {
       const urlObj = new URL(url);
       let videoId = urlObj.searchParams.get('v');
+
       if (!videoId && urlObj.hostname === 'youtu.be') {
         videoId = urlObj.pathname.substring(1);
       }
       videoId = videoId?.split('?')[0] ?? null;
-      if (!videoId) return '';
+      if (!videoId) { return ''; }
+
       return `https://www.youtube.com/embed/${videoId}`;
     } catch (e) {
       if (url.includes('youtu.be/')) {
         const videoId = url.split('youtu.be/')[1]?.split('?')[0];
+
         return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
       }
       console.error('Error parsing youtube URL:', e);
+
       return '';
     }
   };

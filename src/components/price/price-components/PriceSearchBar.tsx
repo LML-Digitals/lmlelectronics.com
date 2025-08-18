@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useState, useCallback } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useState, useCallback } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { PriceSearchParams } from "../types/priceTypes";
-import { Search, Filter, HelpCircle } from "lucide-react";
-import { debounce } from "lodash";
+} from '@/components/ui/tooltip';
+import { PriceSearchParams } from '../types/priceTypes';
+import { Search, Filter, HelpCircle } from 'lucide-react';
+import { debounce } from 'lodash';
 
 interface PriceSearchBarProps {
   onSearch: (params: PriceSearchParams) => void;
@@ -29,12 +29,10 @@ export const PriceSearchBar: React.FC<PriceSearchBarProps> = ({
   onSearch,
   initialParams = {},
 }) => {
-  const [query, setQuery] = useState(initialParams.query || "");
-  const [type, setType] = useState<"all" | "repair" | "product">(
-    initialParams.type || "all"
-  );
+  const [query, setQuery] = useState(initialParams.query || '');
+  const [type, setType] = useState<'all' | 'repair' | 'product'>(initialParams.type || 'all');
   const [sort, setSort] = useState<
-    "price-asc" | "price-desc" | "name-asc" | "name-desc" | undefined
+    'price-asc' | 'price-desc' | 'name-asc' | 'name-desc' | undefined
   >(initialParams.sort);
 
   // Debounce the search to avoid too many requests
@@ -42,7 +40,7 @@ export const PriceSearchBar: React.FC<PriceSearchBarProps> = ({
     debounce((params: PriceSearchParams) => {
       onSearch(params);
     }, 300),
-    [onSearch]
+    [onSearch],
   );
 
   const handleSearch = () => {
@@ -57,6 +55,7 @@ export const PriceSearchBar: React.FC<PriceSearchBarProps> = ({
 
   const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
+
     setQuery(newQuery);
 
     // Auto-search after typing
@@ -68,7 +67,8 @@ export const PriceSearchBar: React.FC<PriceSearchBarProps> = ({
   };
 
   const handleTypeChange = (value: string) => {
-    const newType = value as "all" | "repair" | "product";
+    const newType = value as 'all' | 'repair' | 'product';
+
     setType(newType);
 
     // Auto-search after changing type
@@ -80,10 +80,10 @@ export const PriceSearchBar: React.FC<PriceSearchBarProps> = ({
   };
 
   const handleSortChange = (value: string) => {
-    const newSort =
-      value === "default"
+    const newSort
+      = value === 'default'
         ? undefined
-        : (value as "price-asc" | "price-desc" | "name-asc" | "name-desc");
+        : (value as 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc');
 
     setSort(newSort);
 
@@ -159,7 +159,7 @@ export const PriceSearchBar: React.FC<PriceSearchBarProps> = ({
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Select value={sort || "default"} onValueChange={handleSortChange}>
+              <Select value={sort || 'default'} onValueChange={handleSortChange}>
                 <SelectTrigger className="h-8 text-xs w-[120px]">
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>

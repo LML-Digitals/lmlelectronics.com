@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -12,24 +12,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   updateTerm,
   addTermVersion,
   getTermVersions,
-} from "@/components/terms/services/termsCrud";
-import { useToast } from "@/components/ui/use-toast";
-import { TermWithVersions } from "@/lib/types";
-import { TermVersion } from "@prisma/client";
-import dynamic from "next/dynamic";
+} from '@/components/terms/services/termsCrud';
+import { useToast } from '@/components/ui/use-toast';
+import { TermWithVersions } from '@/lib/types';
+import { TermVersion } from '@prisma/client';
+import dynamic from 'next/dynamic';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -38,59 +38,55 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 
-const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
 });
 
-import "easymde/dist/easymde.min.css";
+import 'easymde/dist/easymde.min.css';
 
 const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  major: z.number().min(0, "Major version must be 0 or greater"),
-  minor: z.number().min(0, "Minor version must be 0 or greater"),
-  patch: z.number().min(0, "Patch version must be 0 or greater"),
-  newContent: z.string().min(1, "Content is required"),
-  newEffectiveAt: z.string().min(1, "Effective date is required"),
+  title: z.string().min(1, 'Title is required'),
+  major: z.number().min(0, 'Major version must be 0 or greater'),
+  minor: z.number().min(0, 'Minor version must be 0 or greater'),
+  patch: z.number().min(0, 'Patch version must be 0 or greater'),
+  newContent: z.string().min(1, 'Content is required'),
+  newEffectiveAt: z.string().min(1, 'Effective date is required'),
 });
 
 interface EditTermsFormProps {
   term: TermWithVersions;
 }
 
-export function EditTermsForm({ term }: EditTermsFormProps) {
+export function EditTermsForm ({ term }: EditTermsFormProps) {
   const { toast } = useToast();
-  const [selectedVersionId, setSelectedVersionId] = useState<string | null>(
-    null
-  );
+  const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
   const [allVersions, setAllVersions] = useState<TermVersion[]>(term.versions);
   const [versionConflict, setVersionConflict] = useState<string | null>(null);
   const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getLatestVersion = () => {
-    if (allVersions.length === 0) return null;
+    if (allVersions.length === 0) { return null; }
 
-    return allVersions.reduce((latest, version) =>
-      new Date(version.effectiveAt) > new Date(latest.effectiveAt)
-        ? version
-        : latest
-    );
+    return allVersions.reduce((latest, version) => new Date(version.effectiveAt) > new Date(latest.effectiveAt)
+      ? version
+      : latest);
   };
 
   const getHighestVersion = () => {
-    if (allVersions.length === 0) return null;
+    if (allVersions.length === 0) { return null; }
 
     return allVersions.reduce((highest, version) => {
-      const [major, minor, patch] = version.version.split(".").map(Number);
+      const [major, minor, patch] = version.version.split('.').map(Number);
       const [highestMajor, highestMinor, highestPatch] = highest.version
-        .split(".")
+        .split('.')
         .map(Number);
 
-      if (major > highestMajor) return version;
-      if (minor > highestMinor) return version;
-      if (patch > highestPatch) return version;
+      if (major > highestMajor) { return version; }
+      if (minor > highestMinor) { return version; }
+      if (patch > highestPatch) { return version; }
 
       return highest;
     });
@@ -98,7 +94,7 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
 
   const initialVersion = getLatestVersion();
   const [major, minor, patch] = initialVersion?.version
-    .split(".")
+    .split('.')
     .map(Number) || [0, 0, 0];
 
   const form = useForm({
@@ -108,9 +104,9 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
       major,
       minor,
       patch,
-      newContent: initialVersion?.content || "",
+      newContent: initialVersion?.content || '',
       newEffectiveAt:
-        initialVersion?.effectiveAt.toISOString().split("T")[0] || "",
+        initialVersion?.effectiveAt.toISOString().split('T')[0] || '',
     },
   });
 
@@ -118,23 +114,25 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
     const fetchVersions = async () => {
       try {
         const versions = await getTermVersions(term.id);
+
         setAllVersions(versions);
         const latest = getLatestVersion();
+
         if (latest) {
           setSelectedVersionId(latest.id.toString());
-          form.setValue("major", parseInt(latest.version.split(".")[0], 10));
-          form.setValue("minor", parseInt(latest.version.split(".")[1], 10));
-          form.setValue("patch", parseInt(latest.version.split(".")[2], 10));
-          form.setValue("newContent", latest.content);
+          form.setValue('major', parseInt(latest.version.split('.')[0], 10));
+          form.setValue('minor', parseInt(latest.version.split('.')[1], 10));
+          form.setValue('patch', parseInt(latest.version.split('.')[2], 10));
+          form.setValue('newContent', latest.content);
           form.setValue(
-            "newEffectiveAt",
-            latest.effectiveAt.toISOString().split("T")[0]
+            'newEffectiveAt',
+            latest.effectiveAt.toISOString().split('T')[0],
           );
         }
       } catch (error) {
         toast({
-          title: "Error",
-          description: "Failed to fetch versions.",
+          title: 'Error',
+          description: 'Failed to fetch versions.',
         });
       }
     };
@@ -144,27 +142,25 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
 
   const handleVersionSelect = (versionId: string) => {
     setSelectedVersionId(versionId);
-    const selectedVersion = allVersions.find(
-      (v) => v.id.toString() === versionId
-    );
+    const selectedVersion = allVersions.find((v) => v.id.toString() === versionId);
 
     if (selectedVersion) {
       form.setValue(
-        "major",
-        parseInt(selectedVersion.version.split(".")[0], 10)
+        'major',
+        parseInt(selectedVersion.version.split('.')[0], 10),
       );
       form.setValue(
-        "minor",
-        parseInt(selectedVersion.version.split(".")[1], 10)
+        'minor',
+        parseInt(selectedVersion.version.split('.')[1], 10),
       );
       form.setValue(
-        "patch",
-        parseInt(selectedVersion.version.split(".")[2], 10)
+        'patch',
+        parseInt(selectedVersion.version.split('.')[2], 10),
       );
-      form.setValue("newContent", selectedVersion.content);
+      form.setValue('newContent', selectedVersion.content);
       form.setValue(
-        "newEffectiveAt",
-        selectedVersion.effectiveAt.toISOString().split("T")[0]
+        'newEffectiveAt',
+        selectedVersion.effectiveAt.toISOString().split('T')[0],
       );
     }
   };
@@ -180,24 +176,23 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
       if (existingVersion) {
         setVersionConflict(newVersion);
         setShowOverwriteDialog(true);
+
         return;
       }
 
       await performVersionUpdate({ ...values, newVersion });
     } catch (error) {
       toast({
-        title: "Error",
+        title: 'Error',
         description:
-          error instanceof Error ? error.message : "Failed to update term",
+          error instanceof Error ? error.message : 'Failed to update term',
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const performVersionUpdate = async (
-    values: z.infer<typeof formSchema> & { newVersion: string }
-  ) => {
+  const performVersionUpdate = async (values: z.infer<typeof formSchema> & { newVersion: string }) => {
     try {
       // Update main term title
       await updateTerm(term.id, { title: values.title });
@@ -212,21 +207,21 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
       // Update local state with new versions
       const updatedVersions = await getTermVersions(term.id);
 
-      const newVersionData = updatedVersions.find(
-        (v) => v.version === values.newVersion
-      );
+      const newVersionData = updatedVersions.find((v) => v.version === values.newVersion);
+
       if (newVersionData) {
         setSelectedVersionId(newVersionData.id.toString());
       }
       setAllVersions(updatedVersions);
 
       toast({
-        title: "Success",
-        description: "New version created successfully!",
+        title: 'Success',
+        description: 'New version created successfully!',
       });
 
       // Reset form values to the updated data
-      const [major, minor, patch] = values.newVersion.split(".").map(Number);
+      const [major, minor, patch] = values.newVersion.split('.').map(Number);
+
       form.reset({
         title: values.title,
         major,
@@ -236,36 +231,37 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
         newEffectiveAt: values.newEffectiveAt,
       });
     } catch (error) {
-      throw new Error("Failed to create new version. Please try again.");
+      throw new Error('Failed to create new version. Please try again.');
     }
   };
 
   const handleOverwriteConfirm = async () => {
-    if (!versionConflict) return;
+    if (!versionConflict) { return; }
 
     try {
       // Get the Highest version from allVersions
       const highestVersion = getHighestVersion();
-      if (!highestVersion) throw new Error("No latest version found.");
+
+      if (!highestVersion) { throw new Error('No latest version found.'); }
 
       // Parse the latest version
-      let [major, minor, patch] = highestVersion.version.split(".").map(Number);
+      let [major, minor, patch] = highestVersion.version.split('.').map(Number);
 
       // Increment patch version
       patch += 1;
       const newVersion = `${major}.${minor}.${patch}`;
 
       // Update form values
-      form.setValue("major", major);
-      form.setValue("minor", minor);
-      form.setValue("patch", patch);
+      form.setValue('major', major);
+      form.setValue('minor', minor);
+      form.setValue('patch', patch);
 
       // Proceed with creating the new version
       await performVersionUpdate({ ...form.getValues(), newVersion });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create new version.",
+        title: 'Error',
+        description: 'Failed to create new version.',
       });
     } finally {
       setShowOverwriteDialog(false);
@@ -297,18 +293,15 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
 
               <Select
                 onValueChange={handleVersionSelect}
-                value={selectedVersionId || ""}
+                value={selectedVersionId || ''}
               >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select version to modify" />
                 </SelectTrigger>
                 <SelectContent>
                   {allVersions
-                    .sort(
-                      (a, b) =>
-                        new Date(b.effectiveAt).getTime() -
-                        new Date(a.effectiveAt).getTime()
-                    )
+                    .sort((a, b) => new Date(b.effectiveAt).getTime()
+                        - new Date(a.effectiveAt).getTime())
                     .map((version) => (
                       <SelectItem
                         key={version.id}
@@ -316,7 +309,7 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
                       >
                         {version.version} (
                         {version.effectiveAt.toLocaleDateString()})
-                        {version.isActive && " ★"}
+                        {version.isActive && ' ★'}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -334,11 +327,10 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
                       <Input
                         type="number"
                         min={0}
-                        {...form.register("major", {
+                        {...form.register('major', {
                           valueAsNumber: true,
                         })}
-                        onChange={(e) =>
-                          form.setValue("major", parseInt(e.target.value, 10))
+                        onChange={(e) => form.setValue('major', parseInt(e.target.value, 10))
                         }
                         className="w-20"
                       />
@@ -346,11 +338,10 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
                       <Input
                         type="number"
                         min={0}
-                        {...form.register("minor", {
+                        {...form.register('minor', {
                           valueAsNumber: true,
                         })}
-                        onChange={(e) =>
-                          form.setValue("minor", parseInt(e.target.value, 10))
+                        onChange={(e) => form.setValue('minor', parseInt(e.target.value, 10))
                         }
                         className="w-20"
                       />
@@ -358,11 +349,10 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
                       <Input
                         type="number"
                         min={0}
-                        {...form.register("patch", {
+                        {...form.register('patch', {
                           valueAsNumber: true,
                         })}
-                        onChange={(e) =>
-                          form.setValue("patch", parseInt(e.target.value, 10))
+                        onChange={(e) => form.setValue('patch', parseInt(e.target.value, 10))
                         }
                         className="w-20"
                       />
@@ -378,7 +368,7 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
               name="newEffectiveAt"
               render={({ field }) => (
                 <FormItem className="mt-4">
-                  {" "}
+                  {' '}
                   {/* Add padding here */}
                   <FormLabel>Effective Date</FormLabel>
                   <FormControl>
@@ -394,7 +384,7 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
               name="newContent"
               render={({ field }) => (
                 <FormItem className="mt-4">
-                  {" "}
+                  {' '}
                   {/* Add padding here */}
                   <FormLabel>Content</FormLabel>
                   <FormControl>
@@ -417,7 +407,7 @@ export function EditTermsForm({ term }: EditTermsFormProps) {
           </div>
 
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Create New Version"}
+            {isSubmitting ? 'Creating...' : 'Create New Version'}
           </Button>
         </form>
       </Form>

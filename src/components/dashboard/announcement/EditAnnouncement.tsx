@@ -1,5 +1,5 @@
-"use client";
-import { useState, useEffect } from "react";
+'use client';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -7,23 +7,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/common/top-dialog/TopDialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "../../ui/input";
-import { updateAnnouncement } from "@/components/dashboard/announcement/services/announcementCrud";
-import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from '@/components/common/top-dialog/TopDialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '../../ui/input';
+import { updateAnnouncement } from '@/components/dashboard/announcement/services/announcementCrud';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormField,
   FormItem,
   FormLabel,
   FormControl,
-} from "@/components/ui/form";
-import { useRouter } from "next/navigation";
-import { Pencil, Edit } from "lucide-react";
-import { useToast } from "../../ui/use-toast";
+} from '@/components/ui/form';
+import { useRouter } from 'next/navigation';
+import { Pencil, Edit } from 'lucide-react';
+import { useToast } from '../../ui/use-toast';
 
 interface EditAnnouncementProps {
   announcementId: number;
@@ -35,7 +35,7 @@ interface EditAnnouncementProps {
 }
 
 const schema = z.object({
-  content: z.string().min(1, "Content is required"),
+  content: z.string().min(1, 'Content is required'),
   buttonText: z.string().nullable(),
   buttonLink: z.string().nullable(),
   isActive: z.boolean().optional(),
@@ -43,7 +43,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-function EditAnnouncement({
+function EditAnnouncement ({
   announcementId,
   content,
   buttonText,
@@ -60,8 +60,8 @@ function EditAnnouncement({
     resolver: zodResolver(schema),
     defaultValues: {
       content: content,
-      buttonText: buttonText || "",
-      buttonLink: buttonLink || "",
+      buttonText: buttonText || '',
+      buttonLink: buttonLink || '',
       isActive: isActive,
     },
   });
@@ -69,8 +69,8 @@ function EditAnnouncement({
   useEffect(() => {
     methods.reset({
       content: content,
-      buttonText: buttonText || "",
-      buttonLink: buttonLink || "",
+      buttonText: buttonText || '',
+      buttonLink: buttonLink || '',
       isActive: isActive,
     });
   }, [content, buttonText, buttonLink, isActive, methods]);
@@ -82,7 +82,7 @@ function EditAnnouncement({
     formState: { errors },
   } = methods;
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit (formData: FormData) {
     try {
       setLoading(true);
       const updatedAnnouncements = await updateAnnouncement(announcementId, {
@@ -100,8 +100,8 @@ function EditAnnouncement({
       router.refresh();
     } catch (error) {
       toast({
-        title: "An error occurred",
-        description: "Please try again.",
+        title: 'An error occurred',
+        description: 'Please try again.',
       });
       setLoading(false);
     }
@@ -142,7 +142,7 @@ function EditAnnouncement({
                 <FormItem>
                   <FormLabel className="text-sm sm:text-base">Button Text (Optional)</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ""} className="text-sm sm:text-base" />
+                    <Input {...field} value={field.value || ''} className="text-sm sm:text-base" />
                   </FormControl>
                   {errors.buttonText && <p className="text-xs sm:text-sm text-red-500">{errors.buttonText.message}</p>}
                 </FormItem>
@@ -158,7 +158,7 @@ function EditAnnouncement({
                   <FormControl>
                     <Input
                       {...field}
-                      value={field.value || ""}
+                      value={field.value || ''}
                       placeholder="e.g., /services"
                       className="text-sm sm:text-base"
                     />
@@ -188,7 +188,7 @@ function EditAnnouncement({
 
             <DialogFooter>
               <Button type="submit" disabled={loading} className="min-h-[44px] text-sm sm:text-base">
-                {loading ? "Loading" : "Save changes"}
+                {loading ? 'Loading' : 'Save changes'}
               </Button>
             </DialogFooter>
           </form>

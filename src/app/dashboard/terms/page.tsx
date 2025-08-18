@@ -1,12 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { TermsTable } from "@/components/dashboard/terms/TermsTable";
-import { getTerms } from "@/components/terms/services/termsCrud";
-import { TermWithVersions } from "@/lib/types";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
+import { TermsTable } from '@/components/dashboard/terms/TermsTable';
+import { getTerms } from '@/components/terms/services/termsCrud';
+import { TermWithVersions } from '@/lib/types';
 
-export default async function TermsPage() {
+export default async function TermsPage () {
   let terms: TermWithVersions[] = [];
   let error = null;
 
@@ -14,7 +14,7 @@ export default async function TermsPage() {
     terms = await getTerms();
   } catch (err) {
     console.error(err);
-    error = "Check your internet connection.";
+    error = 'Check your internet connection.';
   }
 
   return (

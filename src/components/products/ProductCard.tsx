@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useCartStore } from "@/lib/stores/useCartStore";
-import { toast } from "sonner";
-import type { InventoryItem, InventoryVariation } from "@/types/api";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { ShoppingCart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useCartStore } from '@/lib/stores/useCartStore';
+import { toast } from 'sonner';
+import type { InventoryItem, InventoryVariation } from '@/types/api';
 
 type ProductCardProps = {
   product: {
@@ -20,7 +20,7 @@ type ProductCardProps = {
   };
 };
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard ({ product }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { addItem } = useCartStore();
 
@@ -31,7 +31,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!defaultVariation) return;
+    if (!defaultVariation) { return; }
 
     const price = defaultVariation.sellingPrice;
     const tax = defaultVariation.tax || 0;
@@ -40,25 +40,25 @@ export default function ProductCard({ product }: ProductCardProps) {
     addItem({
       id: defaultVariation.id,
       name: product.name,
-      type: "product",
-      description: product.description || "",
+      type: 'product',
+      description: product.description || '',
       price,
       profit: 0,
       discount: 0,
       shipping,
       tax,
-      image: product.image || "",
+      image: product.image || '',
       quantity: 1,
       total: price,
     });
 
-    toast.success("Added to cart", {
+    toast.success('Added to cart', {
       description: `${product.name} has been added to your cart.`,
       duration: 3000,
     });
   };
 
-  if (!defaultVariation) return null;
+  if (!defaultVariation) { return null; }
 
   return (
     <Link href={`/shop/${product.id}`} className="block">
@@ -69,7 +69,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       >
         <div className="relative aspect-square mb-3 overflow-hidden rounded-md">
           <Image
-            src={product.image || "/images/product-placeholder.jpg"}
+            src={product.image || '/images/product-placeholder.jpg'}
             alt={product.name}
             fill
             className="object-cover"

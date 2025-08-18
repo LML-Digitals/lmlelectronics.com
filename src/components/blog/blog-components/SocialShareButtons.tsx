@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -10,7 +10,7 @@ import {
   TwitterIcon,
   LinkedinIcon,
   EmailIcon,
-} from "react-share";
+} from 'react-share';
 
 interface SocialShareButtonsProps {
   url: string;

@@ -1,7 +1,7 @@
-import { authOptions } from "@/lib/config/authOptions";
-import { Session, getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import StaffDashboard from "@/components/dashboard/staff/StaffDashboard";
+import { authOptions } from '@/lib/config/authOptions';
+import { Session, getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import StaffDashboard from '@/components/dashboard/staff/StaffDashboard';
 import {
   BarChart3,
   TrendingUp,
@@ -15,12 +15,14 @@ import {
   DollarSign,
   Target,
   Award,
-} from "lucide-react";
+} from 'lucide-react';
 
-export default async function Dashboard() {
+export default async function Dashboard () {
   const staffInSession: Session | null = await getServerSession(authOptions);
+
   if (!staffInSession) {
-    redirect("/");
+    redirect('/');
+
     return;
   }
   const user = staffInSession.user;
@@ -28,17 +30,18 @@ export default async function Dashboard() {
   // Get current time for greeting
   const currentHour = new Date().getHours();
   const getGreeting = () => {
-    if (currentHour < 12) return "Good morning";
-    if (currentHour < 17) return "Good afternoon";
-    return "Good evening";
+    if (currentHour < 12) { return 'Good morning'; }
+    if (currentHour < 17) { return 'Good afternoon'; }
+
+    return 'Good evening';
   };
 
   // Get current date for display
-  const currentDate = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 
   return (
@@ -59,10 +62,10 @@ export default async function Dashboard() {
                 </div>
                 <div>
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-                    {getGreeting()},{" "}
-                    {user.name?.split(" ")[0] ||
-                      user.email?.split("@")[0] ||
-                      "User"}
+                    {getGreeting()},{' '}
+                    {user.name?.split(' ')[0]
+                      || user.email?.split('@')[0]
+                      || 'User'}
                   </h1>
                   <p className="text-sm sm:text-base text-muted-foreground flex items-center gap-2 mt-1">
                     <Calendar className="h-4 w-4" />

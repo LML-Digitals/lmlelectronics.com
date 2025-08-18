@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   Package,
   ShoppingCart,
@@ -13,11 +13,11 @@ import {
   Truck,
   Shield,
   RefreshCw,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Table,
   TableBody,
@@ -25,9 +25,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useCartStore } from "@/lib/stores/useCartStore";
-import { toast } from "sonner";
+} from '@/components/ui/table';
+import { useCartStore } from '@/lib/stores/useCartStore';
+import { toast } from 'sonner';
 
 export interface BundleDetailsProps {
   bundle: {
@@ -62,7 +62,7 @@ export interface BundleDetailsProps {
   };
 }
 
-export default function BundleDetails({ bundle }: BundleDetailsProps) {
+export default function BundleDetails ({ bundle }: BundleDetailsProps) {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { addItem } = useCartStore();
@@ -72,24 +72,25 @@ export default function BundleDetails({ bundle }: BundleDetailsProps) {
   // Calculate savings
   const componentTotal = bundle.bundleComponents.reduce(
     (sum, comp) => sum + comp.componentVariation.sellingPrice * comp.quantity,
-    0
+    0,
   );
   const bundlePrice = mainVariation?.sellingPrice || 0;
   const savings = componentTotal - bundlePrice;
-  const savingsPercent =
-    componentTotal > 0 ? (savings / componentTotal) * 100 : 0;
+  const savingsPercent
+    = componentTotal > 0 ? (savings / componentTotal) * 100 : 0;
 
   // Get stock info
   const getStockInfo = () => {
-    if (typeof bundle.calculatedStock === "number") {
+    if (typeof bundle.calculatedStock === 'number') {
       return bundle.calculatedStock;
     }
     if (Array.isArray(bundle.calculatedStock)) {
       return bundle.calculatedStock.reduce(
         (total: number, stock: any) => total + stock.availableStock,
-        0
+        0,
       );
     }
+
     return 0;
   };
 
@@ -98,19 +99,22 @@ export default function BundleDetails({ bundle }: BundleDetailsProps) {
 
   // Sort components by display order, with highlights first
   const sortedComponents = [...bundle.bundleComponents].sort((a, b) => {
-    if (a.isHighlight && !b.isHighlight) return -1;
-    if (!a.isHighlight && b.isHighlight) return 1;
+    if (a.isHighlight && !b.isHighlight) { return -1; }
+    if (!a.isHighlight && b.isHighlight) { return 1; }
+
     return a.displayOrder - b.displayOrder;
   });
 
   const handleAddToCart = () => {
     if (stock === 0) {
       toast.error(`${bundle.name} is currently out of stock.`);
+
       return;
     }
 
     if (selectedQuantity > stock) {
       toast.error(`Only ${stock} units available. Please reduce the quantity.`);
+
       return;
     }
 
@@ -119,16 +123,16 @@ export default function BundleDetails({ bundle }: BundleDetailsProps) {
       addItem({
         id: mainVariation.id,
         name: bundle.name,
-        type: "bundle",
+        type: 'bundle',
         description:
-          bundle.description ||
-          `Bundle with ${bundle.bundleComponents.length} components`,
+          bundle.description
+          || `Bundle with ${bundle.bundleComponents.length} components`,
         price: bundlePrice,
         profit: 0,
         discount: 0,
         shipping: 0,
         tax: 0,
-        image: bundle.image || "",
+        image: bundle.image || '',
       });
     }
 
@@ -267,19 +271,16 @@ export default function BundleDetails({ bundle }: BundleDetailsProps) {
                 <select
                   id="quantity"
                   value={selectedQuantity}
-                  onChange={(e) =>
-                    setSelectedQuantity(parseInt(e.target.value))
+                  onChange={(e) => setSelectedQuantity(parseInt(e.target.value))
                   }
                   className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-secondary"
                   disabled={stock === 0}
                 >
-                  {Array.from({ length: maxQuantity }, (_, i) => i + 1).map(
-                    (num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    )
-                  )}
+                  {Array.from({ length: maxQuantity }, (_, i) => i + 1).map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -291,7 +292,7 @@ export default function BundleDetails({ bundle }: BundleDetailsProps) {
                   size="lg"
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
-                  {stock > 0 ? "Add to Cart" : "Out of Stock"}
+                  {stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                 </Button>
               </div>
             </div>
@@ -380,8 +381,8 @@ export default function BundleDetails({ bundle }: BundleDetailsProps) {
                           <TableCell className="font-medium">
                             $
                             {(
-                              component.componentVariation.sellingPrice *
-                              component.quantity
+                              component.componentVariation.sellingPrice
+                              * component.quantity
                             ).toFixed(2)}
                           </TableCell>
                         </TableRow>

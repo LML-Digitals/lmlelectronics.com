@@ -1,40 +1,38 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   PriceItem,
   PriceSearchParams,
   PriceSearchResult,
-} from "../types/priceTypes";
-import { searchPrices } from "../services/priceService";
-import PriceSearchBar from "./PriceSearchBar";
-import PriceItemAccordion from "./PriceItemAccordion";
-import { Loader2, Search, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { formatSlug } from "@/utils/formatSlug";
+} from '../types/priceTypes';
+import { searchPrices } from '../services/priceService';
+import PriceSearchBar from './PriceSearchBar';
+import PriceItemAccordion from './PriceItemAccordion';
+import { Loader2, Search, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { formatSlug } from '@/utils/formatSlug';
 
 interface PriceSearchProps {
   onSelectPrice?: (item: PriceItem) => void;
-  initialType?: "all" | "repair" | "product";
+  initialType?: 'all' | 'repair' | 'product';
   showTitle?: boolean;
   isCalculator?: boolean;
 }
 
 export const PriceSearch: React.FC<PriceSearchProps> = ({
   onSelectPrice,
-  initialType = "all",
+  initialType = 'all',
   showTitle = true,
   isCalculator,
 }) => {
   const router = useRouter();
   const [searchParams, setSearchParams] = useState<PriceSearchParams>({
-    query: "",
+    query: '',
     type: initialType,
   });
-  const [searchResults, setSearchResults] = useState<PriceSearchResult | null>(
-    null
-  );
+  const [searchResults, setSearchResults] = useState<PriceSearchResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -44,9 +42,10 @@ export const PriceSearch: React.FC<PriceSearchProps> = ({
     setSearchError(null);
 
     // Don't search if query is empty
-    if (!params.query || params.query.trim() === "") {
+    if (!params.query || params.query.trim() === '') {
       setSearchResults(null);
       setHasSearched(false);
+
       return;
     }
 
@@ -55,9 +54,10 @@ export const PriceSearch: React.FC<PriceSearchProps> = ({
 
     try {
       const results = await searchPrices(params);
+
       setSearchResults(results);
     } catch (error) {
-      setSearchError("An error occurred while searching. Please try again.");
+      setSearchError('An error occurred while searching. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -76,27 +76,25 @@ export const PriceSearch: React.FC<PriceSearchProps> = ({
 
   const handleViewDetails = (item: PriceItem) => {
     // Navigate to details page based on item type
-    if (item.type === "repair") {
+    if (item.type === 'repair') {
       if (item.navigationInfo) {
-        const { brandName, seriesName, modelName, deviceTypeName } =
-          item.navigationInfo;
+        const { brandName, seriesName, modelName, deviceTypeName }
+          = item.navigationInfo;
 
         if (brandName && modelName && deviceTypeName) {
-          const series = seriesName || "All Series";
-          const url = `/dashboard/repairs/${formatSlug(
-            deviceTypeName
-          )}/${formatSlug(brandName)}/${formatSlug(series)}/${formatSlug(
-            modelName
-          )}`;
+          const series = seriesName || 'All Series';
+          const url = `/dashboard/repairs/${formatSlug(deviceTypeName)}/${formatSlug(brandName)}/${formatSlug(series)}/${formatSlug(modelName)}`;
+
           router.push(url);
+
           return;
         }
       }
 
-      router.push("/dashboard/repairs");
+      router.push('/dashboard/repairs');
     } else {
       // For inventory items/products - redirect to main inventory items page
-      router.push("/dashboard/inventory/items");
+      router.push('/dashboard/inventory/items');
     }
   };
 

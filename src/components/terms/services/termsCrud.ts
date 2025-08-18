@@ -100,14 +100,13 @@ export const getTermsBySlug = async (slug: string) => {
 };
 
 // Get all versions of a term
-export const getTermVersions = async (
-  termId: number,
-): Promise<TermVersion[]> => {
+export const getTermVersions = async (termId: number): Promise<TermVersion[]> => {
   try {
     const term = await prisma.terms.findUnique({
       where: { id: termId },
       include: { versions: true },
     });
+
     return term?.versions ?? [];
   } catch (error) {
     console.error('Error fetching term versions:', error);
@@ -137,6 +136,7 @@ export const createTerm = async (termData: {
 }) => {
   try {
     const session = await fetchSession();
+
     if (!session?.user?.id) {
       throw new Error('User not authenticated');
     }
@@ -199,9 +199,7 @@ export const addTermVersion = async (
     });
 
     if (existingVersion) {
-      throw new Error(
-        `Version ${versionData.version} already exists for term ${termId}`
-      );
+      throw new Error(`Version ${versionData.version} already exists for term ${termId}`);
     }
 
     // Create a new version
@@ -247,7 +245,7 @@ export const activateVersion = async (versionId: number) => {
 // Deactivate a specific version of a term
 export const deactivateTermVersion = async (
   termId: number,
-  version: string
+  version: string,
 ) => {
   try {
     return await prisma.termVersion.updateMany({
@@ -281,7 +279,7 @@ export const getTermHistory = async (slug: string) => {
 export const markTermsAsAccepted = async (
   customerId: string,
   termId: number,
-  versionId: number
+  versionId: number,
 ) => {
   try {
     await prisma.customerTermsAcceptance.create({
@@ -302,7 +300,7 @@ export const updateTerm = async (
   termId: number,
   updatedData: {
     title?: string;
-  }
+  },
 ) => {
   try {
     let slug: string | undefined;

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { StoreLocation } from "@prisma/client";
-import { MapPin, Phone, Mail, Clock, ExternalLink } from "lucide-react";
-import { getStoreLocations } from "./services/storeLocationCrud";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { StoreLocation } from '@prisma/client';
+import { MapPin, Phone, Mail, Clock, ExternalLink } from 'lucide-react';
+import { getStoreLocations } from './services/storeLocationCrud';
 
 type DayHours = {
   open: string;
@@ -13,16 +13,17 @@ type DayHours = {
   isClosed: boolean;
 };
 
-export function isStoreOpen(hours: Record<string, DayHours>): boolean {
-  if (!hours) return false;
+export function isStoreOpen (hours: Record<string, DayHours>): boolean {
+  if (!hours) { return false; }
 
   const now = new Date();
   const today = now
-    .toLocaleDateString("en-US", { weekday: "long" })
+    .toLocaleDateString('en-US', { weekday: 'long' })
     .toLowerCase();
 
   const todayHours = hours[today];
-  if (!todayHours || todayHours.isClosed) return false;
+
+  if (!todayHours || todayHours.isClosed) { return false; }
 
   // Convert current time to minutes since midnight for easier comparison
   const currentHour = now.getHours();
@@ -30,8 +31,8 @@ export function isStoreOpen(hours: Record<string, DayHours>): boolean {
   const currentTimeInMinutes = currentHour * 60 + currentMinute;
 
   // Convert store hours to minutes since midnight
-  const [openHour, openMinute] = todayHours.open.split(":").map(Number);
-  const [closeHour, closeMinute] = todayHours.close.split(":").map(Number);
+  const [openHour, openMinute] = todayHours.open.split(':').map(Number);
+  const [closeHour, closeMinute] = todayHours.close.split(':').map(Number);
   const openTimeInMinutes = openHour * 60 + openMinute;
   const closeTimeInMinutes = closeHour * 60 + closeMinute;
 
@@ -45,30 +46,32 @@ export function isStoreOpen(hours: Record<string, DayHours>): boolean {
       // Current time is before closing time on the next day
       return true;
     }
+
     return false;
   }
 
   // Normal case where closing time is on the same day
   return (
-    currentTimeInMinutes >= openTimeInMinutes &&
-    currentTimeInMinutes <= closeTimeInMinutes
+    currentTimeInMinutes >= openTimeInMinutes
+    && currentTimeInMinutes <= closeTimeInMinutes
   );
 }
 
-export default function LocationsList() {
+export default function LocationsList () {
   const [locations, setLocations] = useState<StoreLocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchLocations() {
+    async function fetchLocations () {
       try {
         const data = await getStoreLocations();
+
         console.log('Active locations loaded:', data.length);
         console.log('Location names:', data.map(loc => loc.name));
         setLocations(data);
       } catch (err) {
-        setError("Failed to load locations. Please try again later.");
+        setError('Failed to load locations. Please try again later.');
         console.error(err);
       } finally {
         setLoading(false);
@@ -78,10 +81,8 @@ export default function LocationsList() {
     fetchLocations();
   }, []);
 
-  if (loading)
-    return <div className="text-center py-10">Loading locations...</div>;
-  if (error)
-    return <div className="text-center py-10 text-red-500">{error}</div>;
+  if (loading) { return <div className="text-center py-10">Loading locations...</div>; }
+  if (error) { return <div className="text-center py-10 text-red-500">{error}</div>; }
 
   return (
     <div className="mt-20">
@@ -97,23 +98,23 @@ export default function LocationsList() {
   );
 }
 
-function LocationCard({ location }: { location: StoreLocation }) {
+function LocationCard ({ location }: { location: StoreLocation }) {
   return (
     <Link href={`/locations/${location.slug || location.id}`}>
       <div className="bg-white border border-secondary rounded-3xl shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer flex flex-col items-center p-8 h-full">
         <div className="flex justify-center items-center mb-6 w-48 h-48 relative">
           <Image
             src={
-              typeof location.images === "string"
-                ? JSON.parse(location.images)[0] || "/placeholder-store.jpg"
+              typeof location.images === 'string'
+                ? JSON.parse(location.images)[0] || '/placeholder-store.jpg'
                 : Array.isArray(location.images) && location.images.length > 0
-                ? location.images[0]
-                : "/placeholder-store.jpg"
+                  ? location.images[0]
+                  : '/placeholder-store.jpg'
             }
             alt={location.name}
             fill
             className="object-contain rounded-xl"
-            style={{ position: "absolute" }}
+            style={{ position: 'absolute' }}
           />
         </div>
         <h2 className="text-lg font-bold text-center text-gray-800 mt-auto">

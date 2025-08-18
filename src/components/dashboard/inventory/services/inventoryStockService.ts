@@ -1,7 +1,7 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { toast } from "@/components/ui/use-toast";
+import prisma from '@/lib/prisma';
+import { toast } from '@/components/ui/use-toast';
 
 export interface StockItem {
   id: string;
@@ -19,9 +19,7 @@ export interface StockItemsResponse {
   error?: string;
 }
 
-export async function getLowStockItems(
-  threshold: number = 5
-): Promise<StockItemsResponse> {
+export async function getLowStockItems (threshold = 5): Promise<StockItemsResponse> {
   try {
     const lowStockItems = await prisma.inventoryStockLevel.findMany({
       where: {
@@ -46,19 +44,19 @@ export async function getLowStockItems(
         location: true,
       },
       orderBy: {
-        stock: "asc",
+        stock: 'asc',
       },
       take: 20, // Limit to 20 items
     });
 
     const formattedItems: StockItem[] = lowStockItems.map((level) => ({
       id: level.id,
-      name: `${level.variation.inventoryItem?.name || "Unknown Item"} - ${
+      name: `${level.variation.inventoryItem?.name || 'Unknown Item'} - ${
         level.variation.name
       }`,
       sku: level.variation.sku,
       category:
-        level.variation.inventoryItem?.categories[0]?.name || "Uncategorized",
+        level.variation.inventoryItem?.categories[0]?.name || 'Uncategorized',
       location: level.location.name,
       stock: level.stock,
       value: level.stock * (level.purchaseCost || 0),
@@ -69,15 +67,16 @@ export async function getLowStockItems(
       data: formattedItems,
     };
   } catch (error) {
-    console.error("Error fetching low stock items:", error);
+    console.error('Error fetching low stock items:', error);
+
     return {
       success: false,
-      error: "Failed to load low stock items",
+      error: 'Failed to load low stock items',
     };
   }
 }
 
-export async function getOutOfStockItems(): Promise<StockItemsResponse> {
+export async function getOutOfStockItems (): Promise<StockItemsResponse> {
   try {
     const outOfStockItems = await prisma.inventoryStockLevel.findMany({
       where: {
@@ -99,19 +98,19 @@ export async function getOutOfStockItems(): Promise<StockItemsResponse> {
         location: true,
       },
       orderBy: {
-        updatedAt: "desc",
+        updatedAt: 'desc',
       },
       take: 20,
     });
 
     const formattedItems: StockItem[] = outOfStockItems.map((level) => ({
       id: level.id,
-      name: `${level.variation.inventoryItem?.name || "Unknown Item"} - ${
+      name: `${level.variation.inventoryItem?.name || 'Unknown Item'} - ${
         level.variation.name
       }`,
       sku: level.variation.sku,
       category:
-        level.variation.inventoryItem?.categories[0]?.name || "Uncategorized",
+        level.variation.inventoryItem?.categories[0]?.name || 'Uncategorized',
       location: level.location.name,
       stock: 0,
       value: 0,
@@ -122,10 +121,11 @@ export async function getOutOfStockItems(): Promise<StockItemsResponse> {
       data: formattedItems,
     };
   } catch (error) {
-    console.error("Error fetching out of stock items:", error);
+    console.error('Error fetching out of stock items:', error);
+
     return {
       success: false,
-      error: "Failed to load out of stock items",
+      error: 'Failed to load out of stock items',
     };
   }
 }

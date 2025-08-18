@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import {
   Package,
   Pencil,
@@ -16,21 +16,21 @@ import {
   ShoppingBag,
   Printer,
   Eye,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import type { InventoryItemWithRelations } from "./types/ItemType";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { deleteInventoryItem } from "./services/itemsCrud";
-import { EditItemDialog } from "./EditItemDialog";
-import Image from "next/image";
-import { CategoryWithChildren } from "../categories/types/types";
-import { cn } from "@/lib/utils";
-import { DeleteItemDialog } from "./DeleteItemDialog";
-import { VariationDetailsDialog } from "./VariationDetailsDialog";
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import type { InventoryItemWithRelations } from './types/ItemType';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { useState, useEffect } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import { deleteInventoryItem } from './services/itemsCrud';
+import { EditItemDialog } from './EditItemDialog';
+import Image from 'next/image';
+import { CategoryWithChildren } from '../categories/types/types';
+import { cn } from '@/lib/utils';
+import { DeleteItemDialog } from './DeleteItemDialog';
+import { VariationDetailsDialog } from './VariationDetailsDialog';
 
 interface ItemDetailsDialogProps {
   item: InventoryItemWithRelations;
@@ -43,7 +43,7 @@ interface ItemDetailsDialogProps {
   locations: { id: number; name: string }[];
 }
 
-export function ItemDetailsDialog({
+export function ItemDetailsDialog ({
   item,
   selectedVariation,
   open,
@@ -58,32 +58,26 @@ export function ItemDetailsDialog({
   const { toast } = useToast();
 
   const totalStock = item.variations.reduce(
-    (total, variation) =>
-      total +
-      variation.stockLevels.reduce((sum, level) => sum + level.stock, 0),
-    0
+    (total, variation) => total
+      + variation.stockLevels.reduce((sum, level) => sum + level.stock, 0),
+    0,
   );
 
   const getStockLevelColor = (stock: number): string => {
-    if (stock <= 0) return "text-destructive";
-    if (stock < 5) return "text-amber-500";
-    return "text-emerald-600";
+    if (stock <= 0) { return 'text-destructive'; }
+    if (stock < 5) { return 'text-amber-500'; }
+
+    return 'text-emerald-600';
   };
 
   // Use selectedVariation if provided
-  const [selectedVariationId, setSelectedVariationId] = useState<string | null>(
-    selectedVariation?.id || null
-  );
+  const [selectedVariationId, setSelectedVariationId] = useState<string | null>(selectedVariation?.id || null);
 
   // Modify the existing state for the active tab
-  const [activeTab, setActiveTab] = useState(
-    selectedVariation ? "variations" : "details"
-  );
+  const [activeTab, setActiveTab] = useState(selectedVariation ? 'variations' : 'details');
 
   // Find the variation in the item's variations if we have a selectedVariationId
-  const initialVariation = item.variations.find(
-    (v) => v.id === selectedVariationId
-  );
+  const initialVariation = item.variations.find((v) => v.id === selectedVariationId);
 
   // When selectedVariation changes, update the selectedVariationId
   useEffect(() => {
@@ -199,7 +193,7 @@ export function ItemDetailsDialog({
                         className="px-2 py-0.5 text-xs"
                         style={{
                           backgroundColor: tag.color || undefined,
-                          color: tag.color ? "white" : undefined,
+                          color: tag.color ? 'white' : undefined,
                         }}
                       >
                         {tag.name}
@@ -238,12 +232,12 @@ export function ItemDetailsDialog({
                         </span>
                         <span className="text-xs">
                           {item.warrantyType.duration === 0
-                            ? "Lifetime"
+                            ? 'Lifetime'
                             : `${item.warrantyType.duration} ${
-                                item.warrantyType.duration === 1
-                                  ? "month"
-                                  : "months"
-                              }`}
+                              item.warrantyType.duration === 1
+                                ? 'month'
+                                : 'months'
+                            }`}
                         </span>
                       </div>
                     </div>
@@ -322,10 +316,9 @@ export function ItemDetailsDialog({
                             <span>{variation.name}</span>
                             <Badge variant="outline" className="font-normal">
                               {variation.stockLevels.reduce(
-                                (sum: number, level: { stock: number }) =>
-                                  sum + level.stock,
-                                0
-                              )}{" "}
+                                (sum: number, level: { stock: number }) => sum + level.stock,
+                                0,
+                              )}{' '}
                               total
                             </Badge>
                           </h4>
@@ -346,9 +339,9 @@ export function ItemDetailsDialog({
                                   <div className="flex items-center gap-6">
                                     <span
                                       className={cn(
-                                        "text-sm font-medium flex items-center",
-                                        "text-sm font-medium flex items-center",
-                                        getStockLevelColor(level.stock)
+                                        'text-sm font-medium flex items-center',
+                                        'text-sm font-medium flex items-center',
+                                        getStockLevelColor(level.stock),
                                       )}
                                     >
                                       {level.stock} units
@@ -417,7 +410,7 @@ interface VariationCardProps {
   onRefresh: () => void;
 }
 
-function VariationCard({
+function VariationCard ({
   variation,
   locations,
   isSelected = false,
@@ -426,7 +419,7 @@ function VariationCard({
   return (
     <Card
       className={`overflow-hidden transition-all hover:shadow-md ${
-        isSelected ? "border-blue-500 border-2" : ""
+        isSelected ? 'border-blue-500 border-2' : ''
       }`}
     >
       <CardContent className="p-0">
@@ -450,13 +443,13 @@ function VariationCard({
               <Badge variant="outline" className="ml-2">
                 {variation.stockLevels.reduce(
                   (sum: number, level: { stock: number }) => sum + level.stock,
-                  0
-                )}{" "}
+                  0,
+                )}{' '}
                 in stock
               </Badge>
             </div>
             <p className="text-sm text-slate-500 mt-1">
-              SKU: {variation.sku || "Not set"}
+              SKU: {variation.sku || 'Not set'}
             </p>
             {variation.barcode && (
               <p className="text-sm text-slate-500 mt-1">
@@ -465,7 +458,7 @@ function VariationCard({
             )}
             <div className="flex justify-between items-center mt-2">
               <div className="text-sm font-medium">
-                ${variation.sellingPrice?.toFixed(2) || "0.00"}
+                ${variation.sellingPrice?.toFixed(2) || '0.00'}
               </div>
               <div className="flex space-x-2">
                 <VariationDetailsDialog

@@ -1,26 +1,24 @@
-"use server";
+'use server';
 
-import prisma from "@/lib/prisma";
-import { Announcement } from "@prisma/client";
-import { PartialBy } from "@/types/type";
+import prisma from '@/lib/prisma';
+import { Announcement } from '@prisma/client';
+import { PartialBy } from '@/types/type';
 
 export const getAnnouncement = async (): Promise<Announcement[]> => {
   try {
     return await prisma.announcement.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   } catch (error) {
-    console.error("Error fetching announcement:", error);
-    throw new Error("Failed to fetch Announcement");
+    console.error('Error fetching announcement:', error);
+    throw new Error('Failed to fetch Announcement');
   }
 };
 
-export const createAnnouncement = async (
-  announcementData: PartialBy<Announcement, "id">
-) => {
+export const createAnnouncement = async (announcementData: PartialBy<Announcement, 'id'>) => {
   try {
-    const { isActive, buttonText, buttonLink, ...dataWithoutIsActive } =
-      announcementData;
+    const { isActive, buttonText, buttonLink, ...dataWithoutIsActive }
+      = announcementData;
     const createdAnnouncement = await prisma.announcement.create({
       data: {
         ...dataWithoutIsActive,
@@ -41,14 +39,14 @@ export const createAnnouncement = async (
       });
     }
   } catch (error) {
-    console.error("Error creating announcement:", error);
-    throw new Error("Failed to create announcement");
+    console.error('Error creating announcement:', error);
+    throw new Error('Failed to create announcement');
   }
 };
 
 export const updateAnnouncement = async (
   announcementId: number,
-  updatedData: PartialBy<Announcement, "id">
+  updatedData: PartialBy<Announcement, 'id'>,
 ) => {
   try {
     // First, update the target announcement
@@ -70,11 +68,11 @@ export const updateAnnouncement = async (
     }
 
     return await prisma.announcement.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   } catch (error) {
-    console.error("Error updating Announcement:", error);
-    throw new Error("Failed to update Announcement");
+    console.error('Error updating Announcement:', error);
+    throw new Error('Failed to update Announcement');
   }
 };
 
@@ -86,7 +84,7 @@ export const deleteAnnouncement = async (announcementId: number) => {
       },
     });
   } catch (error) {
-    console.error("Error deleting announcement:", error);
+    console.error('Error deleting announcement:', error);
   } finally {
     await prisma.$disconnect();
   }

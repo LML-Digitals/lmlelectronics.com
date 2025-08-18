@@ -1,5 +1,5 @@
-"use client";
-import { useState } from "react";
+'use client';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -7,25 +7,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/common/top-dialog/TopDialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "../../ui/input";
-import { createAnnouncement } from "@/components/dashboard/announcement/services/announcementCrud";
-import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from '@/components/common/top-dialog/TopDialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '../../ui/input';
+import { createAnnouncement } from '@/components/dashboard/announcement/services/announcementCrud';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormField,
   FormItem,
   FormLabel,
   FormControl,
-} from "@/components/ui/form";
-import { useRouter } from "next/navigation";
-import { useToast } from "../../ui/use-toast";
+} from '@/components/ui/form';
+import { useRouter } from 'next/navigation';
+import { useToast } from '../../ui/use-toast';
 
 const schema = z.object({
-  content: z.string().min(1, "Content is required"),
+  content: z.string().min(1, 'Content is required'),
   buttonText: z.string().optional(),
   buttonLink: z.string().optional(),
   Active: z.boolean().optional(),
@@ -49,7 +49,7 @@ const AddAnnouncement = () => {
     formState: { errors },
   } = methods;
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit (formData: FormData) {
     try {
       setLoading(true);
       await createAnnouncement({
@@ -66,8 +66,8 @@ const AddAnnouncement = () => {
       reset();
     } catch (error) {
       toast({
-        title: "An error occurred",
-        description: "Please try again.",
+        title: 'An error occurred',
+        description: 'Please try again.',
       });
       setLoading(false);
     }
@@ -154,7 +154,7 @@ const AddAnnouncement = () => {
 
             <DialogFooter>
               <Button type="submit" disabled={loading} variant="default" className="min-h-[44px] text-sm sm:text-base">
-                {loading ? "Loading" : "Save"}
+                {loading ? 'Loading' : 'Save'}
               </Button>
             </DialogFooter>
           </form>

@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import * as Dialog from "@radix-ui/react-dialog";
+import * as Dialog from '@radix-ui/react-dialog';
 import {
   ChevronDown,
   ChevronUp,
   Filter,
   SlidersHorizontal,
   X,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { useState } from "react";
-import type { CategoryWithChildren } from "@/components/dashboard/inventory/categories/types/types";
-import { Label } from "@/components/ui/label";
-import * as Slider from "@radix-ui/react-slider";
-import React from "react";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useState } from 'react';
+import type { CategoryWithChildren } from '@/components/dashboard/inventory/categories/types/types';
+import { Label } from '@/components/ui/label';
+import * as Slider from '@radix-ui/react-slider';
+import React from 'react';
 
 // Add new types for filter sections
 type FilterSection = {
@@ -26,33 +26,33 @@ type FilterSection = {
 
 const filterSections: FilterSection[] = [
   {
-    id: "location",
-    title: "Location",
-    description: "Filter by store location",
+    id: 'location',
+    title: 'Location',
+    description: 'Filter by store location',
     count: 0,
   },
   {
-    id: "suppliers",
-    title: "suppliers",
-    description: "Filter by supplier/suppliers",
+    id: 'suppliers',
+    title: 'suppliers',
+    description: 'Filter by supplier/suppliers',
     count: 0,
   },
   {
-    id: "category",
-    title: "Category",
-    description: "Filter by item category",
+    id: 'category',
+    title: 'Category',
+    description: 'Filter by item category',
     count: 0,
   },
   {
-    id: "stock",
-    title: "Stock Level",
-    description: "Filter by stock availability",
+    id: 'stock',
+    title: 'Stock Level',
+    description: 'Filter by stock availability',
     count: 0,
   },
   {
-    id: "price",
-    title: "Price Range",
-    description: "Filter by purchase cost",
+    id: 'price',
+    title: 'Price Range',
+    description: 'Filter by purchase cost',
     count: 0,
   },
 ];
@@ -74,7 +74,7 @@ interface AllFiltersDialogProps {
   priceRange: [number, number];
 }
 
-export function AllFiltersDialog({
+export function AllFiltersDialog ({
   categories,
   suppliers,
   locations,
@@ -94,11 +94,9 @@ export function AllFiltersDialog({
 
   // Toggle active filter in dropdown view
   const toggleFilter = (filterId: string) => {
-    setActiveFilters((prev) =>
-      prev.includes(filterId)
-        ? prev.filter((id) => id !== filterId)
-        : [...prev, filterId]
-    );
+    setActiveFilters((prev) => prev.includes(filterId)
+      ? prev.filter((id) => id !== filterId)
+      : [...prev, filterId]);
   };
 
   // Update counts based on selected filters
@@ -111,18 +109,18 @@ export function AllFiltersDialog({
 
   const getSelectedCount = (filterId: string) => {
     switch (filterId) {
-      case "location":
-        return selectedLocation ? 1 : 0;
-      case "suppliers":
-        return selectedSupplier ? 1 : 0;
-      case "category":
-        return selectedCategory ? 1 : 0;
-      case "stock":
-        return stockRange[0] > 0 || stockRange[1] < 100 ? 1 : 0;
-      case "price":
-        return priceRange[0] > 0 || priceRange[1] < 10000 ? 1 : 0;
-      default:
-        return 0;
+    case 'location':
+      return selectedLocation ? 1 : 0;
+    case 'suppliers':
+      return selectedSupplier ? 1 : 0;
+    case 'category':
+      return selectedCategory ? 1 : 0;
+    case 'stock':
+      return stockRange[0] > 0 || stockRange[1] < 100 ? 1 : 0;
+    case 'price':
+      return priceRange[0] > 0 || priceRange[1] < 10000 ? 1 : 0;
+    default:
+      return 0;
     }
   };
 
@@ -187,7 +185,7 @@ export function AllFiltersDialog({
 
                     {activeFilters.includes(section.id) && (
                       <div className="p-4">
-                        {section.id === "location" && (
+                        {section.id === 'location' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-2">
                               {locations.map((location) => (
@@ -201,14 +199,13 @@ export function AllFiltersDialog({
                                       id={`location-${location.id}`}
                                       name="location"
                                       checked={selectedLocation === location.id}
-                                      onChange={() =>
-                                        onLocationChange(location.id)
+                                      onChange={() => onLocationChange(location.id)
                                       }
                                       className="appearance-none w-5 h-5 border border-gray-300 rounded bg-white checked:bg-gray-500 checked:border-gray-500"
                                     />
                                     <div className="absolute pointer-events-none w-5 h-5 flex items-center justify-center">
                                       {selectedLocation === location.id && (
-                                        <div className="w-2 h-2 bg-white rounded"></div>
+                                        <div className="w-2 h-2 bg-white rounded" />
                                       )}
                                     </div>
                                   </div>
@@ -234,7 +231,7 @@ export function AllFiltersDialog({
                           </div>
                         )}
 
-                        {section.id === "suppliers" && (
+                        {section.id === 'suppliers' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-2">
                               {suppliers.map((supplier) => (
@@ -248,14 +245,13 @@ export function AllFiltersDialog({
                                       id={`suppliers-${supplier.id}`}
                                       name="suppliers"
                                       checked={selectedSupplier === supplier.id}
-                                      onChange={() =>
-                                        onSuppliersChange(supplier.id)
+                                      onChange={() => onSuppliersChange(supplier.id)
                                       }
                                       className="appearance-none w-5 h-5 border border-gray-300 rounded bg-white checked:bg-gray-500 checked:border-gray-500"
                                     />
                                     <div className="absolute pointer-events-none w-5 h-5 flex items-center justify-center">
                                       {selectedSupplier === supplier.id && (
-                                        <div className="w-2 h-2 bg-white rounded"></div>
+                                        <div className="w-2 h-2 bg-white rounded" />
                                       )}
                                     </div>
                                   </div>
@@ -281,7 +277,7 @@ export function AllFiltersDialog({
                           </div>
                         )}
 
-                        {section.id === "category" && (
+                        {section.id === 'category' && (
                           <div className="space-y-4">
                             <CategorySelector
                               categories={categories}
@@ -301,7 +297,7 @@ export function AllFiltersDialog({
                           </div>
                         )}
 
-                        {section.id === "stock" && (
+                        {section.id === 'stock' && (
                           <div className="space-y-6">
                             <div className="space-y-6">
                               <Slider.Root
@@ -358,7 +354,7 @@ export function AllFiltersDialog({
                           </div>
                         )}
 
-                        {section.id === "price" && (
+                        {section.id === 'price' && (
                           <div className="space-y-6">
                             <div className="space-y-6">
                               <Slider.Root
@@ -400,8 +396,7 @@ export function AllFiltersDialog({
                                 </Button>
                                 <Button
                                   variant="outline"
-                                  onClick={() =>
-                                    onPriceRangeChange([501, 2000])
+                                  onClick={() => onPriceRangeChange([501, 2000])
                                   }
                                 >
                                   High-end ($501-$2000)
@@ -444,7 +439,7 @@ export function AllFiltersDialog({
 }
 
 // Replace RecursiveCategorySelect with this improved CategorySelector component
-function CategorySelector({
+function CategorySelector ({
   categories,
   selectedCategory,
   onSelect,
@@ -456,11 +451,9 @@ function CategorySelector({
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
   const toggleCategory = (categoryId: string) => {
-    setExpandedCategories((current) =>
-      current.includes(categoryId)
-        ? current.filter((id) => id !== categoryId)
-        : [...current, categoryId]
-    );
+    setExpandedCategories((current) => current.includes(categoryId)
+      ? current.filter((id) => id !== categoryId)
+      : [...current, categoryId]);
   };
 
   return (
@@ -480,7 +473,7 @@ function CategorySelector({
   );
 }
 
-function CategoryItem({
+function CategoryItem ({
   category,
   selectedCategory,
   onSelect,
@@ -504,8 +497,8 @@ function CategoryItem({
       <div
         className={`flex items-center justify-between py-1.5 px-2 rounded-md ${
           isSelected
-            ? "bg-gray-200 text-gray-900"
-            : "hover:bg-gray-100 text-gray-700"
+            ? 'bg-gray-200 text-gray-900'
+            : 'hover:bg-gray-100 text-gray-700'
         }`}
         style={{ paddingLeft: `${level * 12 + 8}px` }}
       >
@@ -547,7 +540,7 @@ function CategoryItem({
             />
             <div className="absolute pointer-events-none w-4 h-4 flex items-center justify-center">
               {isSelected && (
-                <div className="w-1.5 h-1.5 bg-white rounded"></div>
+                <div className="w-1.5 h-1.5 bg-white rounded" />
               )}
             </div>
           </div>

@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { FAQ } from "@prisma/client";
-import { createFAQ, updateFAQ } from "./Services/faqCrud";
+import { useState } from 'react';
+import { FAQ } from '@prisma/client';
+import { createFAQ, updateFAQ } from './Services/faqCrud';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface FAQFormProps {
   faq?: FAQ | null;
@@ -32,23 +32,21 @@ interface FAQFormProps {
   onSuccess: () => void;
 }
 
-export default function FAQForm({
+export default function FAQForm ({
   faq,
-  initialQuestion = "",
+  initialQuestion = '',
   categories,
   onClose,
   onSuccess,
 }: FAQFormProps) {
   const [formData, setFormData] = useState({
     question: faq?.question || initialQuestion,
-    answer: faq?.answer || "",
-    category: faq?.category || "",
+    answer: faq?.answer || '',
+    category: faq?.category || '',
     isPublished: faq?.isPublished || false,
   });
 
-  const [categoryType, setCategoryType] = useState<"existing" | "new">(
-    categories.includes(faq?.category || "") ? "existing" : "new"
-  );
+  const [categoryType, setCategoryType] = useState<'existing' | 'new'>(categories.includes(faq?.category || '') ? 'existing' : 'new');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +58,7 @@ export default function FAQForm({
       }
       onSuccess();
     } catch (error) {
-      console.error("Error saving FAQ:", error);
+      console.error('Error saving FAQ:', error);
     }
   };
 
@@ -68,7 +66,7 @@ export default function FAQForm({
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-w-[95vw] sm:max-w-2xl w-full mx-2 sm:mx-auto">
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg">{faq ? "Edit FAQ" : "Create FAQ"}</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">{faq ? 'Edit FAQ' : 'Create FAQ'}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
@@ -78,8 +76,7 @@ export default function FAQForm({
               id="question"
               placeholder="Enter your question"
               value={formData.question}
-              onChange={(e) =>
-                setFormData({ ...formData, question: e.target.value })
+              onChange={(e) => setFormData({ ...formData, question: e.target.value })
               }
               required
               className="text-sm sm:text-base min-h-[44px]"
@@ -92,8 +89,7 @@ export default function FAQForm({
               id="answer"
               placeholder="Enter the answer"
               value={formData.answer}
-              onChange={(e) =>
-                setFormData({ ...formData, answer: e.target.value })
+              onChange={(e) => setFormData({ ...formData, answer: e.target.value })
               }
               required
               className="text-sm sm:text-base min-h-[100px]"
@@ -104,9 +100,9 @@ export default function FAQForm({
             <Label className="text-sm sm:text-base">Category</Label>
             <RadioGroup
               value={categoryType}
-              onValueChange={(value: "existing" | "new") => {
+              onValueChange={(value: 'existing' | 'new') => {
                 setCategoryType(value);
-                setFormData({ ...formData, category: "" });
+                setFormData({ ...formData, category: '' });
               }}
               className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0"
             >
@@ -120,11 +116,10 @@ export default function FAQForm({
               </div>
             </RadioGroup>
 
-            {categoryType === "existing" ? (
+            {categoryType === 'existing' ? (
               <Select
-                value={formData.category || ""}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, category: value })
+                value={formData.category || ''}
+                onValueChange={(value) => setFormData({ ...formData, category: value })
                 }
               >
                 <SelectTrigger className="min-h-[44px] text-sm sm:text-base">
@@ -137,7 +132,7 @@ export default function FAQForm({
                     </SelectItem>
                   ) : (
                     categories
-                      .filter((category) => category && category.trim() !== "")
+                      .filter((category) => category && category.trim() !== '')
                       .map((category) => (
                         <SelectItem key={category} value={category} className="text-sm sm:text-base">
                           {category}
@@ -150,8 +145,7 @@ export default function FAQForm({
               <Input
                 placeholder="Enter new category"
                 value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })
                 }
                 required
                 className="text-sm sm:text-base min-h-[44px]"
@@ -163,8 +157,7 @@ export default function FAQForm({
             <Checkbox
               id="published"
               checked={formData.isPublished}
-              onCheckedChange={(checked) =>
-                setFormData({ ...formData, isPublished: checked as boolean })
+              onCheckedChange={(checked) => setFormData({ ...formData, isPublished: checked as boolean })
               }
             />
             <Label htmlFor="published" className="text-sm sm:text-base">Published</Label>
@@ -174,7 +167,7 @@ export default function FAQForm({
             <Button type="button" variant="outline" onClick={onClose} className="min-h-[44px] text-sm sm:text-base">
               Cancel
             </Button>
-            <Button type="submit" className="min-h-[44px] text-sm sm:text-base">{faq ? "Update" : "Create"}</Button>
+            <Button type="submit" className="min-h-[44px] text-sm sm:text-base">{faq ? 'Update' : 'Create'}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

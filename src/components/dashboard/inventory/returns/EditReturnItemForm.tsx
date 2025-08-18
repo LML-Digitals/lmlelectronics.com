@@ -1,33 +1,33 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
-import { getItemStoreLocations } from "@/components/dashboard/inventory/location/services/itemLocationCrud";
-import { updateReturnedItem } from "@/components/dashboard/inventory/returns/services/returnItemCrud";
-import { StoreLocation, Vendor as Supplier } from "@prisma/client";
-import { Loader2, Plus, Trash2, Check, ChevronsUpDown } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useToast } from "../../../ui/use-toast";
-import { InventoryItemWithRelations } from "../items/types/ItemType";
-import { ItemReturnExtended } from "@/types/type";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { getInventoryItems } from '@/components/dashboard/inventory/items/services/itemsCrud';
+import { getItemStoreLocations } from '@/components/dashboard/inventory/location/services/itemLocationCrud';
+import { updateReturnedItem } from '@/components/dashboard/inventory/returns/services/returnItemCrud';
+import { StoreLocation, Vendor as Supplier } from '@prisma/client';
+import { Loader2, Plus, Trash2, Check, ChevronsUpDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useTransition } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useToast } from '../../../ui/use-toast';
+import { InventoryItemWithRelations } from '../items/types/ItemType';
+import { ItemReturnExtended } from '@/types/type';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 import {
   Dialog,
   DialogClose,
@@ -37,12 +37,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 import {
   Command,
   CommandEmpty,
@@ -50,17 +50,17 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { getSuppliers } from "@/components/dashboard/inventory/supplier/services/supplierCrud";
-import { getCustomers } from "@/components/dashboard/customers/services/customerCrud";
-import { Customer } from "@prisma/client";
+} from '@/components/ui/command';
+import { getSuppliers } from '@/components/dashboard/inventory/supplier/services/supplierCrud';
+import { getCustomers } from '@/components/dashboard/customers/services/customerCrud';
+import { Customer } from '@prisma/client';
 
 type EditFormData = {
   reason: string;
   returnedAt: Date | string;
-  request?: "refund" | "credit";
+  request?: 'refund' | 'credit';
   // status: string;
-  returningParty: "customer" | "shop";
+  returningParty: 'customer' | 'shop';
   supplier?: string;
   quantity: string;
   amount: string;
@@ -76,7 +76,7 @@ interface EditReturnFormContentProps {
   closeDialog: () => void;
 }
 
-function EditReturnFormContent({
+function EditReturnFormContent ({
   returnedItem,
   closeDialog,
 }: EditReturnFormContentProps) {
@@ -115,13 +115,13 @@ function EditReturnFormContent({
   const [customerPopoverOpen, setCustomerPopoverOpen] = useState(false);
 
   // Watch form values for conditional rendering
-  const selectedItemId = watch("inventoryItemId");
-  const selectedVariationId = watch("variationId");
-  const comments = watch("comments") || [];
-  const returningParty = watch("returningParty");
+  const selectedItemId = watch('inventoryItemId');
+  const selectedVariationId = watch('variationId');
+  const comments = watch('comments') || [];
+  const returningParty = watch('returningParty');
 
   // Get today's date in YYYY-MM-DD format for the max attribute
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     // Create a flag to track if the component is still mounted
@@ -142,88 +142,87 @@ function EditReturnFormContent({
           getCustomers(),
         ]);
 
-        if (!isMounted) return;
+        if (!isMounted) { return; }
 
         // Handle inventory items result
-        if (itemsPromise.status === "fulfilled") {
+        if (itemsPromise.status === 'fulfilled') {
           setInventoryItems(itemsPromise.value);
         } else {
-          setInventoryError("Error fetching inventory items");
+          setInventoryError('Error fetching inventory items');
         }
 
         // Handle locations result
-        if (locationsPromise.status === "fulfilled") {
+        if (locationsPromise.status === 'fulfilled') {
           setLocations(locationsPromise.value);
         } else {
-          setLocationsError("Error fetching locations");
+          setLocationsError('Error fetching locations');
         }
 
         // Handle suppliers result
-        if (suppliersPromise.status === "fulfilled") {
+        if (suppliersPromise.status === 'fulfilled') {
           const fetchedSuppliers = suppliersPromise.value;
+
           setSuppliers(Array.isArray(fetchedSuppliers) ? fetchedSuppliers : []);
         } else {
-          setSuppliersError("Error fetching suppliers");
+          setSuppliersError('Error fetching suppliers');
         }
 
         // Handle customers result
-        if (customersPromise.status === "fulfilled") {
+        if (customersPromise.status === 'fulfilled') {
           setCustomers(customersPromise.value);
         } else {
-          setCustomersError("Error fetching customers");
+          setCustomersError('Error fetching customers');
         }
 
         // Initialize form with returnedItem data only after resources are loaded
         if (returnedItem) {
           // Set form values
-          setValue("reason", returnedItem.reason);
+          setValue('reason', returnedItem.reason);
           setValue(
-            "returningParty",
-            returnedItem.returningParty as "customer" | "shop"
+            'returningParty',
+            returnedItem.returningParty as 'customer' | 'shop',
           );
           setValue(
-            "request",
-            returnedItem?.request as "refund" | "credit" | undefined
+            'request',
+            returnedItem?.request as 'refund' | 'credit' | undefined,
           );
-          setValue("locationId", String(returnedItem.locationId));
-          setValue("variationId", String(returnedItem.inventoryVariationId));
-          setValue("quantity", String(returnedItem.quantity));
-          setValue("inventoryItemId", String(returnedItem.inventoryItemId));
-          setValue("amount", String(returnedItem.amount || ""));
+          setValue('locationId', String(returnedItem.locationId));
+          setValue('variationId', String(returnedItem.inventoryVariationId));
+          setValue('quantity', String(returnedItem.quantity));
+          setValue('inventoryItemId', String(returnedItem.inventoryItemId));
+          setValue('amount', String(returnedItem.amount || ''));
           // Format the date correctly for the input type='date'
           if (returnedItem.returnedAt) {
             const formattedDate = new Date(returnedItem.returnedAt)
               .toISOString()
-              .split("T")[0];
-            setValue("returnedAt", formattedDate);
+              .split('T')[0];
+
+            setValue('returnedAt', formattedDate);
           }
 
           // Set customerId if it exists and party is customer
           if (
-            returnedItem.returningParty === "customer" &&
-            returnedItem.customerId
+            returnedItem.returningParty === 'customer'
+            && returnedItem.customerId
           ) {
-            setValue("customerId", returnedItem.customerId);
+            setValue('customerId', returnedItem.customerId);
           }
           // Set supplier if it exists and party is shop
-          if (returnedItem.returningParty === "shop" && returnedItem.supplier) {
-            setValue("supplier", returnedItem.supplier);
+          if (returnedItem.returningParty === 'shop' && returnedItem.supplier) {
+            setValue('supplier', returnedItem.supplier);
           }
 
           if (returnedItem.Comment && returnedItem.Comment.length > 0) {
             setValue(
-              "comments",
-              returnedItem.Comment.map((comment: any) => comment.text)
+              'comments',
+              returnedItem.Comment.map((comment: any) => comment.text),
             );
             setShowComments(true);
           }
 
           // Set selected item and variations
-          if (itemsPromise.status === "fulfilled") {
-            const itemData = itemsPromise.value.find(
-              (item: InventoryItemWithRelations) =>
-                item.id === returnedItem.inventoryItemId
-            );
+          if (itemsPromise.status === 'fulfilled') {
+            const itemData = itemsPromise.value.find((item: InventoryItemWithRelations) => item.id === returnedItem.inventoryItemId);
 
             if (itemData) {
               setSelectedItem(itemData);
@@ -235,9 +234,9 @@ function EditReturnFormContent({
         console.log(error);
         if (isMounted) {
           toast({
-            title: "Error",
-            description: "Failed to load data",
-            variant: "destructive",
+            title: 'Error',
+            description: 'Failed to load data',
+            variant: 'destructive',
           });
         }
       } finally {
@@ -261,9 +260,8 @@ function EditReturnFormContent({
   }, [returnedItem, setValue, toast]);
 
   const handleItemChange = (itemId: string) => {
-    const selectedItem = inventoryItems.find(
-      (item: InventoryItemWithRelations) => item.id === itemId
-    );
+    const selectedItem = inventoryItems.find((item: InventoryItemWithRelations) => item.id === itemId);
+
     setSelectedItem(selectedItem || null);
     if (selectedItem) {
       setVariations(selectedItem.variations);
@@ -274,20 +272,22 @@ function EditReturnFormContent({
 
   const onSubmit = async (data: EditFormData) => {
     // Add validation for customer/supplier based on party
-    if (data.returningParty === "customer" && !data.customerId) {
+    if (data.returningParty === 'customer' && !data.customerId) {
       toast({
-        title: "Missing Information",
-        description: "Please select a customer.",
-        variant: "destructive",
+        title: 'Missing Information',
+        description: 'Please select a customer.',
+        variant: 'destructive',
       });
+
       return;
     }
-    if (data.returningParty === "shop" && !data.supplier) {
+    if (data.returningParty === 'shop' && !data.supplier) {
       toast({
-        title: "Missing Information",
-        description: "Please select a supplier.",
-        variant: "destructive",
+        title: 'Missing Information',
+        description: 'Please select a supplier.',
+        variant: 'destructive',
       });
+
       return;
     }
 
@@ -300,18 +300,20 @@ function EditReturnFormContent({
         // Validate parsed numbers
         if (isNaN(quantityValue) || quantityValue <= 0) {
           toast({
-            title: "Invalid Input",
-            description: "Quantity must be a positive whole number.",
-            variant: "destructive",
+            title: 'Invalid Input',
+            description: 'Quantity must be a positive whole number.',
+            variant: 'destructive',
           });
+
           return;
         }
         if (isNaN(amountValue) || amountValue <= 0) {
           toast({
-            title: "Invalid Input",
-            description: "Amount must be a positive number.",
-            variant: "destructive",
+            title: 'Invalid Input',
+            description: 'Amount must be a positive number.',
+            variant: 'destructive',
           });
+
           return;
         }
 
@@ -323,16 +325,16 @@ function EditReturnFormContent({
           amount: amountValue,
           locationId: data.locationId,
           comments:
-            data.comments?.filter((comment) => comment.trim() !== "") || [],
+            data.comments?.filter((comment) => comment.trim() !== '') || [],
           variationId: data.variationId,
           inventoryItemId: data.inventoryItemId,
           // Conditional fields based on returning party
-          ...(data.returningParty === "customer" && {
+          ...(data.returningParty === 'customer' && {
             customerId: data.customerId,
             request: data.request,
             supplier: data.supplier || undefined, // Explicitly nullify supplier if party is customer
           }),
-          ...(data.returningParty === "shop" && {
+          ...(data.returningParty === 'shop' && {
             supplier: data.supplier,
             customerId: data.customerId || undefined, // Explicitly nullify customer if party is shop
             request: data.request, // Explicitly nullify request if party is shop
@@ -343,26 +345,26 @@ function EditReturnFormContent({
 
         const res = await updateReturnedItem(returnedItem.id, payload);
 
-        if (res.status === "success") {
+        if (res.status === 'success') {
           toast({
-            title: "Return Updated",
-            description: "Return details updated successfully.",
+            title: 'Return Updated',
+            description: 'Return details updated successfully.',
           });
           router.refresh();
           closeDialog(); // Close the dialog on success
         } else {
           toast({
-            title: "Update Failed",
-            description: (res as any).message || "Failed to update return.",
-            variant: "destructive",
+            title: 'Update Failed',
+            description: (res as any).message || 'Failed to update return.',
+            variant: 'destructive',
           });
         }
       } catch (error: any) {
-        console.error("Error updating return:", error);
+        console.error('Error updating return:', error);
         toast({
-          title: "Error",
-          description: error.message || "An unexpected error occurred.",
-          variant: "destructive",
+          title: 'Error',
+          description: error.message || 'An unexpected error occurred.',
+          variant: 'destructive',
         });
       }
     });
@@ -426,7 +428,7 @@ function EditReturnFormContent({
                   <Controller
                     control={control}
                     name="inventoryItemId"
-                    rules={{ required: "Item selection is required" }}
+                    rules={{ required: 'Item selection is required' }}
                     render={({ field }) => (
                       <Popover
                         open={itemPopoverOpen}
@@ -438,17 +440,15 @@ function EditReturnFormContent({
                             role="combobox"
                             aria-expanded={itemPopoverOpen}
                             className={cn(
-                              "w-full justify-between",
-                              !field.value && "text-muted-foreground",
-                              formErrors.inventoryItemId &&
-                                "border-red-500 focus:ring-red-500"
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground',
+                              formErrors.inventoryItemId
+                                && 'border-red-500 focus:ring-red-500',
                             )}
                           >
                             {field.value
-                              ? inventoryItems.find(
-                                  (item) => item.id === field.value
-                                )?.name
-                              : "Select item"}
+                              ? inventoryItems.find((item) => item.id === field.value)?.name
+                              : 'Select item'}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </PopoverTrigger>
@@ -470,10 +470,10 @@ function EditReturnFormContent({
                                   >
                                     <Check
                                       className={cn(
-                                        "mr-2 h-4 w-4",
+                                        'mr-2 h-4 w-4',
                                         field.value === item.id
-                                          ? "opacity-100"
-                                          : "opacity-0"
+                                          ? 'opacity-100'
+                                          : 'opacity-0',
                                       )}
                                     />
                                     {item.name}
@@ -502,7 +502,7 @@ function EditReturnFormContent({
                   <Controller
                     control={control}
                     name="variationId"
-                    rules={{ required: "Variation selection is required" }}
+                    rules={{ required: 'Variation selection is required' }}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -510,9 +510,9 @@ function EditReturnFormContent({
                       >
                         <SelectTrigger
                           className={cn(
-                            "w-full",
-                            formErrors.variationId &&
-                              "border-red-500 focus:ring-red-500"
+                            'w-full',
+                            formErrors.variationId
+                              && 'border-red-500 focus:ring-red-500',
                           )}
                         >
                           <SelectValue placeholder="Select a variation" />
@@ -558,7 +558,7 @@ function EditReturnFormContent({
                   <Controller
                     control={control}
                     name="locationId"
-                    rules={{ required: "Location is required" }}
+                    rules={{ required: 'Location is required' }}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -566,9 +566,9 @@ function EditReturnFormContent({
                       >
                         <SelectTrigger
                           className={cn(
-                            "w-full",
-                            formErrors.locationId &&
-                              "border-red-500 focus:ring-red-500"
+                            'w-full',
+                            formErrors.locationId
+                              && 'border-red-500 focus:ring-red-500',
                           )}
                         >
                           <SelectValue placeholder="Select location" />
@@ -603,14 +603,12 @@ function EditReturnFormContent({
                   id="quantity"
                   type="number"
                   placeholder="Enter quantity"
-                  className={cn(
-                    formErrors.quantity && "border-red-500 focus:ring-red-500"
-                  )}
-                  {...register("quantity", {
-                    required: "Quantity is required",
+                  className={cn(formErrors.quantity && 'border-red-500 focus:ring-red-500')}
+                  {...register('quantity', {
+                    required: 'Quantity is required',
                     min: {
                       value: 1,
-                      message: "Quantity must be at least 1",
+                      message: 'Quantity must be at least 1',
                     },
                   })}
                 />
@@ -637,14 +635,14 @@ function EditReturnFormContent({
                 <Controller
                   control={control}
                   name="returningParty"
-                  rules={{ required: "Returning party is required" }}
+                  rules={{ required: 'Returning party is required' }}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger
                         className={cn(
-                          "w-full",
-                          formErrors.returningParty &&
-                            "border-red-500 focus:ring-red-500"
+                          'w-full',
+                          formErrors.returningParty
+                            && 'border-red-500 focus:ring-red-500',
                         )}
                       >
                         <SelectValue placeholder="Select party" />
@@ -664,7 +662,7 @@ function EditReturnFormContent({
               </div>
 
               {/* Customer Select (Conditional) */}
-              {returningParty === "customer" && (
+              {returningParty === 'customer' && (
                 <div className="space-y-2">
                   <Label htmlFor="customerId" className="text-sm font-medium">
                     Customer <span className="text-red-500">*</span>
@@ -684,8 +682,8 @@ function EditReturnFormContent({
                       name="customerId"
                       rules={{
                         required:
-                          returningParty === "customer"
-                            ? "Customer is required when returning to customer"
+                          returningParty === 'customer'
+                            ? 'Customer is required when returning to customer'
                             : false,
                       }}
                       render={({ field }) => (
@@ -699,22 +697,18 @@ function EditReturnFormContent({
                               role="combobox"
                               aria-expanded={customerPopoverOpen}
                               className={cn(
-                                "w-full justify-between text-left h-10",
-                                !field.value && "text-muted-foreground",
-                                formErrors.customerId &&
-                                  "border-red-500 focus:ring-red-500"
+                                'w-full justify-between text-left h-10',
+                                !field.value && 'text-muted-foreground',
+                                formErrors.customerId
+                                  && 'border-red-500 focus:ring-red-500',
                               )}
                             >
                               <span className="truncate">
                                 {field.value
-                                  ? customers.find(
-                                      (customer) => customer.id === field.value
-                                    )?.firstName +
-                                    " " +
-                                    customers.find(
-                                      (customer) => customer.id === field.value
-                                    )?.lastName
-                                  : "Select customer"}
+                                  ? `${customers.find((customer) => customer.id === field.value)?.firstName
+                                  } ${
+                                    customers.find((customer) => customer.id === field.value)?.lastName}`
+                                  : 'Select customer'}
                               </span>
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
@@ -728,8 +722,8 @@ function EditReturnFormContent({
                                   {customers.map((customer) => (
                                     <CommandItem
                                       key={customer.id}
-                                      value={`${customer.firstName || ""} ${
-                                        customer.lastName || ""
+                                      value={`${customer.firstName || ''} ${
+                                        customer.lastName || ''
                                       } ${customer.email}`}
                                       onSelect={() => {
                                         field.onChange(customer.id);
@@ -739,20 +733,20 @@ function EditReturnFormContent({
                                     >
                                       <Check
                                         className={cn(
-                                          "mr-2 h-4 w-4",
+                                          'mr-2 h-4 w-4',
                                           field.value === customer.id
-                                            ? "opacity-100"
-                                            : "opacity-0"
+                                            ? 'opacity-100'
+                                            : 'opacity-0',
                                         )}
                                       />
                                       <div className="flex flex-col">
                                         <span className="text-sm font-medium">
-                                          {customer.firstName ||
-                                          customer.lastName
-                                            ? `${customer.firstName || ""} ${
-                                                customer.lastName || ""
-                                              }`.trim()
-                                            : "No Name"}
+                                          {customer.firstName
+                                          || customer.lastName
+                                            ? `${customer.firstName || ''} ${
+                                              customer.lastName || ''
+                                            }`.trim()
+                                            : 'No Name'}
                                         </span>
                                         <span className="text-xs text-muted-foreground">
                                           {customer.email}
@@ -777,7 +771,7 @@ function EditReturnFormContent({
               )}
 
               {/* Supplier Select (Conditional) */}
-              {returningParty === "shop" && (
+              {returningParty === 'shop' && (
                 <div className="space-y-2">
                   <Label htmlFor="supplier" className="text-sm font-medium">
                     Supplier <span className="text-red-500">*</span>
@@ -797,8 +791,8 @@ function EditReturnFormContent({
                       name="supplier"
                       rules={{
                         required:
-                          returningParty === "shop"
-                            ? "Supplier is required when returning to shop"
+                          returningParty === 'shop'
+                            ? 'Supplier is required when returning to shop'
                             : false,
                       }}
                       render={({ field }) => (
@@ -808,9 +802,9 @@ function EditReturnFormContent({
                         >
                           <SelectTrigger
                             className={cn(
-                              "w-full",
-                              formErrors.supplier &&
-                                "border-red-500 focus:ring-red-500"
+                              'w-full',
+                              formErrors.supplier
+                                && 'border-red-500 focus:ring-red-500',
                             )}
                           >
                             <SelectValue placeholder="Select supplier" />
@@ -840,7 +834,7 @@ function EditReturnFormContent({
               {/* Status Select (remains here) */}
               {/* <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                
+
               </div> */}
             </div>
 
@@ -855,11 +849,9 @@ function EditReturnFormContent({
                   id="returnedAt"
                   type="date"
                   max={today} // Assuming 'today' is defined as in Create form
-                  className={cn(
-                    formErrors.returnedAt && "border-red-500 focus:ring-red-500"
-                  )}
-                  {...register("returnedAt", {
-                    required: "Return date is required",
+                  className={cn(formErrors.returnedAt && 'border-red-500 focus:ring-red-500')}
+                  {...register('returnedAt', {
+                    required: 'Return date is required',
                   })}
                 />
                 {formErrors.returnedAt && (
@@ -870,7 +862,7 @@ function EditReturnFormContent({
               </div>
 
               {/* MOVED: Request Type (Conditional) */}
-              {returningParty === "customer" && (
+              {returningParty === 'customer' && (
                 <div className="space-y-2">
                   <Label htmlFor="request" className="text-sm font-medium">
                     Request Type <span className="text-red-500">*</span>
@@ -880,20 +872,20 @@ function EditReturnFormContent({
                     name="request"
                     rules={{
                       required:
-                        returningParty === "customer"
-                          ? "Request type is required"
+                        returningParty === 'customer'
+                          ? 'Request type is required'
                           : false,
                     }}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value || "refund"}
+                        value={field.value || 'refund'}
                       >
                         <SelectTrigger
                           className={cn(
-                            "w-full",
-                            formErrors.request &&
-                              "border-red-500 focus:ring-red-500"
+                            'w-full',
+                            formErrors.request
+                              && 'border-red-500 focus:ring-red-500',
                           )}
                         >
                           <SelectValue placeholder="Select request type" />
@@ -929,15 +921,17 @@ function EditReturnFormContent({
                     min="0.01"
                     placeholder="0.00"
                     className={cn(
-                      "pl-7", // Add padding for the $ sign
-                      formErrors.amount && "border-red-500 focus:ring-red-500"
+                      'pl-7', // Add padding for the $ sign
+                      formErrors.amount && 'border-red-500 focus:ring-red-500',
                     )}
-                    {...register("amount", {
-                      required: "Return amount is required",
+                    {...register('amount', {
+                      required: 'Return amount is required',
                       validate: (value) => {
                         const num = parseFloat(value);
-                        if (isNaN(num)) return "Please enter a valid number";
-                        if (num <= 0) return "Amount must be positive";
+
+                        if (isNaN(num)) { return 'Please enter a valid number'; }
+                        if (num <= 0) { return 'Amount must be positive'; }
+
                         return true;
                       },
                     })}
@@ -959,14 +953,14 @@ function EditReturnFormContent({
                   id="reason"
                   placeholder="Why is the item being returned?"
                   className={cn(
-                    "min-h-[80px]",
-                    formErrors.reason && "border-red-500 focus:ring-red-500"
+                    'min-h-[80px]',
+                    formErrors.reason && 'border-red-500 focus:ring-red-500',
                   )}
-                  {...register("reason", {
-                    required: "Reason is required",
+                  {...register('reason', {
+                    required: 'Reason is required',
                     minLength: {
                       value: 5,
-                      message: "Please provide a more detailed reason",
+                      message: 'Please provide a more detailed reason',
                     },
                   })}
                 />
@@ -991,7 +985,7 @@ function EditReturnFormContent({
               onClick={() => setShowComments(!showComments)}
               className="text-sm"
             >
-              {showComments ? "Hide Comments" : "Add Comments"}
+              {showComments ? 'Hide Comments' : 'Add Comments'}
             </Button>
           </div>
 
@@ -1012,6 +1006,7 @@ function EditReturnFormContent({
                           className="flex-1"
                           onChange={(e) => {
                             const newComments = [...field.value];
+
                             newComments[index] = e.target.value;
                             field.onChange(newComments);
                           }}
@@ -1026,6 +1021,7 @@ function EditReturnFormContent({
                                 className="h-9 w-9 text-red-600 hover:text-red-700 hover:bg-red-100"
                                 onClick={() => {
                                   const newComments = [...field.value];
+
                                   newComments.splice(index, 1);
                                   field.onChange(newComments);
                                 }}
@@ -1048,7 +1044,7 @@ function EditReturnFormContent({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => field.onChange([...(field.value || []), ""])}
+                    onClick={() => field.onChange([...(field.value || []), ''])}
                     className="mt-2 flex items-center gap-1"
                   >
                     <Plus size={14} />
@@ -1075,7 +1071,7 @@ function EditReturnFormContent({
             {isPending || isSubmitting ? (
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
             ) : null}
-            {isPending || isSubmitting ? "Saving..." : "Save Changes"}
+            {isPending || isSubmitting ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogFooter>
       </form>
@@ -1084,7 +1080,7 @@ function EditReturnFormContent({
 }
 
 // New default export Dialog component
-export default function EditReturnItemDialog({
+export default function EditReturnItemDialog ({
   returnedItem,
   trigger,
 }: {

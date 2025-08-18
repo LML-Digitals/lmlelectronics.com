@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import { AlertTriangle, RefreshCw, Bug } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React from 'react';
+import { AlertTriangle, RefreshCw, Bug } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -18,17 +18,17 @@ interface ErrorBoundaryProps {
 }
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
+  constructor (props: ErrorBoundaryProps) {
     super(props);
     this.state = {
       hasError: false,
       error: null,
       errorInfo: null,
-      errorId: "",
+      errorId: '',
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+  static getDerivedStateFromError (error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
       error,
@@ -36,24 +36,24 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch (error: Error, errorInfo: React.ErrorInfo) {
     // Log detailed error information to console
     console.group(`🚨 Client-Side Error (${this.state.errorId})`);
-    console.error("Error:", error);
-    console.error("Error Stack:", error.stack);
-    console.error("Component Stack:", errorInfo.componentStack);
-    console.error("Error Info:", errorInfo);
-    
+    console.error('Error:', error);
+    console.error('Error Stack:', error.stack);
+    console.error('Component Stack:', errorInfo.componentStack);
+    console.error('Error Info:', errorInfo);
+
     // Log additional context
-    console.log("URL:", window.location.href);
-    console.log("User Agent:", navigator.userAgent);
-    console.log("Timestamp:", new Date().toISOString());
-    console.log("Session Storage:", Object.keys(sessionStorage));
-    console.log("Local Storage:", Object.keys(localStorage));
-    
+    console.log('URL:', window.location.href);
+    console.log('User Agent:', navigator.userAgent);
+    console.log('Timestamp:', new Date().toISOString());
+    console.log('Session Storage:', Object.keys(sessionStorage));
+    console.log('Local Storage:', Object.keys(localStorage));
+
     // Check for common issues
     this.diagnoseCommonIssues(error, errorInfo);
-    
+
     console.groupEnd();
 
     // Update state with error info
@@ -65,42 +65,42 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     this.reportError(error, errorInfo);
   }
 
-  private diagnoseCommonIssues(error: Error, errorInfo: React.ErrorInfo) {
-    console.group("🔍 Common Issue Diagnosis");
-    
+  private diagnoseCommonIssues (error: Error, errorInfo: React.ErrorInfo) {
+    console.group('🔍 Common Issue Diagnosis');
+
     // Check for hydration errors
-    if (error.message.includes("hydration") || error.message.includes("Hydration")) {
-      console.warn("⚠️  Potential hydration mismatch detected");
-      console.log("This often happens when server and client render different content");
+    if (error.message.includes('hydration') || error.message.includes('Hydration')) {
+      console.warn('⚠️  Potential hydration mismatch detected');
+      console.log('This often happens when server and client render different content');
     }
 
     // Check for authentication issues
-    if (error.message.includes("auth") || error.message.includes("session")) {
-      console.warn("⚠️  Potential authentication/session issue detected");
+    if (error.message.includes('auth') || error.message.includes('session')) {
+      console.warn('⚠️  Potential authentication/session issue detected');
     }
 
     // Check for API errors
-    if (error.message.includes("fetch") || error.message.includes("API")) {
-      console.warn("⚠️  Potential API/network issue detected");
+    if (error.message.includes('fetch') || error.message.includes('API')) {
+      console.warn('⚠️  Potential API/network issue detected');
     }
 
     // Check for component rendering issues
-    if (errorInfo.componentStack?.includes("render") || error.message.includes("render")) {
-      console.warn("⚠️  Potential component rendering issue detected");
+    if (errorInfo.componentStack?.includes('render') || error.message.includes('render')) {
+      console.warn('⚠️  Potential component rendering issue detected');
     }
 
     // Check for state management issues
-    if (error.message.includes("state") || error.message.includes("useState")) {
-      console.warn("⚠️  Potential state management issue detected");
+    if (error.message.includes('state') || error.message.includes('useState')) {
+      console.warn('⚠️  Potential state management issue detected');
     }
 
     console.groupEnd();
   }
 
-  private reportError(error: Error, errorInfo: React.ErrorInfo) {
+  private reportError (error: Error, errorInfo: React.ErrorInfo) {
     // You can integrate with error reporting services here
     // Example: Sentry, LogRocket, etc.
-    
+
     const errorReport = {
       errorId: this.state.errorId,
       message: error.message,
@@ -112,8 +112,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     };
 
     // Log to console for development
-    if (process.env.NODE_ENV === "development") {
-      console.log("📊 Error Report:", errorReport);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📊 Error Report:', errorReport);
     }
 
     // You can send this to your error tracking service
@@ -125,15 +125,16 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       hasError: false,
       error: null,
       errorInfo: null,
-      errorId: "",
+      errorId: '',
     });
   };
 
-  render() {
+  render () {
     if (this.state.hasError) {
       // Use custom fallback if provided
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback;
+
         return (
           <FallbackComponent
             error={this.state.error!}
@@ -170,7 +171,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
                 </p>
               </div>
 
-              {process.env.NODE_ENV === "development" && this.state.error && (
+              {process.env.NODE_ENV === 'development' && this.state.error && (
                 <details className="bg-red-50 p-4 rounded-lg">
                   <summary className="cursor-pointer text-sm font-medium text-red-800 mb-2">
                     Error Details (Development Only)
@@ -225,4 +226,4 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 }
 
-export default ErrorBoundary; 
+export default ErrorBoundary;

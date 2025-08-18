@@ -62,6 +62,7 @@ export async function POST (request: Request): Promise<NextResponse> {
 
     if (error) {
       console.error('Supabase storage upload error:', error);
+
       return NextResponse.json(
         { message: 'Failed to upload image to storage' },
         { status: 500 },
@@ -75,6 +76,7 @@ export async function POST (request: Request): Promise<NextResponse> {
 
     if (!publicUrlData) {
       console.error('Failed to generate public URL');
+
       return NextResponse.json(
         { message: 'Failed to generate public URL' },
         { status: 500 },
@@ -102,6 +104,7 @@ export async function POST (request: Request): Promise<NextResponse> {
     return response;
   } catch (error) {
     console.error('Upload error:', error);
+
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 },

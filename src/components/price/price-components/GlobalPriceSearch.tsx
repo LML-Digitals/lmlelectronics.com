@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DollarSign } from "lucide-react";
-import { PriceItem } from "../types/priceTypes";
-import { useToast } from "@/components/ui/use-toast";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { DollarSign } from 'lucide-react';
+import { PriceItem } from '../types/priceTypes';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import dynamic from "next/dynamic";
+} from '@/components/ui/tooltip';
+import dynamic from 'next/dynamic';
 
 // Dynamically import the PriceCheckerPage to avoid SSR issues
-const PriceCheckerPage = dynamic(() => import("@/app/dashboard/price-checker/page"), { ssr: false });
+const PriceCheckerPage = dynamic(() => import('@/app/dashboard/price-checker/page'), { ssr: false });
 
 export const GlobalPriceSearch: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -33,7 +33,7 @@ export const GlobalPriceSearch: React.FC = () => {
 
     // Show a toast notification
     toast({
-      title: "Price copied to clipboard",
+      title: 'Price copied to clipboard',
       description: `${item.name}: $${item.finalPrice.toFixed(2)}`,
       duration: 3000,
     });

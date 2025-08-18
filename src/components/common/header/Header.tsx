@@ -1,7 +1,7 @@
-"use client";
-import { useResponsiveSidebar } from "@/hooks/useSidebarToggle";
-import classNames from "classnames";
-import { motion } from "framer-motion";
+'use client';
+import { useResponsiveSidebar } from '@/hooks/useSidebarToggle';
+import classNames from 'classnames';
+import { motion } from 'framer-motion';
 import {
   Calculator,
   ChevronsLeft,
@@ -15,31 +15,31 @@ import {
   Clock,
   TrendingUp,
   Activity,
-} from "lucide-react";
-import { useTheme } from "next-themes";
-import { ThemeSwitcher } from "./ThemeSwitcher";
-import { UserNav } from "./UserNav";
-import Link from "next/link";
+} from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { ThemeSwitcher } from './ThemeSwitcher';
+import { UserNav } from './UserNav';
+import Link from 'next/link';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/popover';
+import { useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { AlertCircle } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/utils';
 
-import { useSearch } from "@/hooks/useSearch";
-import { Loader2 } from "lucide-react";
-import { GlobalPriceSearch } from "@/components/price/price-components/GlobalPriceSearch";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { useSearch } from '@/hooks/useSearch';
+import { Loader2 } from 'lucide-react';
+import { GlobalPriceSearch } from '@/components/price/price-components/GlobalPriceSearch';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 
-function Header() {
+function Header () {
   const {
     toggleCollapse,
     invokeToggleCollapse,
@@ -52,7 +52,7 @@ function Header() {
   const { theme } = useTheme();
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
@@ -60,7 +60,7 @@ function Header() {
 
   const searchResults = [
     {
-      group: "Pages",
+      group: 'Pages',
       items: results?.map((result) => ({
         id: result.id,
         name: result.name,
@@ -75,33 +75,33 @@ function Header() {
   };
 
   const headerStyle = classNames(
-    "sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 sm:px-6 shadow-sm",
+    'sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 sm:px-6 shadow-sm',
     {
       // Adjust padding for desktop sidebar
-      "md:pl-6": !toggleCollapse,
-      "md:pl-4": toggleCollapse,
-    }
+      'md:pl-6': !toggleCollapse,
+      'md:pl-4': toggleCollapse,
+    },
   );
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
     };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
+
+    document.addEventListener('keydown', down);
+
+    return () => document.removeEventListener('keydown', down);
   }, []);
 
   // Filter results based on search query
   const filteredResults = searchQuery
     ? searchResults.map((group) => ({
-        ...group,
-        items: group.items.filter((item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase())
-        ),
-      }))
+      ...group,
+      items: group.items.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase())),
+    }))
     : searchResults;
 
   // Ensure we have valid results to display
@@ -179,16 +179,16 @@ function Header() {
               type="search"
               placeholder="Search anything... (⌘K)"
               className={cn(
-                "w-full rounded-lg bg-muted/50 border-0 pl-10 pr-4 py-2.5 transition-all duration-200 focus:bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary/20",
-                isMobile ? "text-sm" : "text-sm",
-                searchQuery ? "rounded-b-none" : "",
-                "hover:bg-muted/70 focus:hover:bg-background"
+                'w-full rounded-lg bg-muted/50 border-0 pl-10 pr-4 py-2.5 transition-all duration-200 focus:bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary/20',
+                isMobile ? 'text-sm' : 'text-sm',
+                searchQuery ? 'rounded-b-none' : '',
+                'hover:bg-muted/70 focus:hover:bg-background',
               )}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => {
                 setIsSearchExpanded(true);
-                if (searchQuery) setShowResults(true);
+                if (searchQuery) { setShowResults(true); }
               }}
               onBlur={() => {
                 setIsSearchExpanded(false);
@@ -244,7 +244,7 @@ function Header() {
                                 onClick={() => {
                                   window.location.href = item.href;
                                   setShowResults(false);
-                                  setSearchQuery("");
+                                  setSearchQuery('');
                                   setIsSearchExpanded(false);
                                 }}
                                 className="w-full flex items-center gap-3 px-2 py-1.5 text-sm rounded-sm hover:bg-muted/50 transition-colors duration-150 text-left"
@@ -272,7 +272,7 @@ function Header() {
         {/* Right side actions - enhanced styling */}
         <div className="flex items-center gap-2">
           {/* Quick stats for staff */}
-          {session?.user?.userType === "staff" && (
+          {session?.user?.userType === 'staff' && (
             <div className="hidden lg:flex items-center gap-3 mr-2">
               <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/30">
                 <Activity className="h-3 w-3 text-green-600 dark:text-green-400" />
@@ -290,16 +290,15 @@ function Header() {
             <ThemeSwitcher />
           </div>
 
-
           {/* Staff-only tools - enhanced styling */}
-          {session?.user?.userType === "staff" && (
+          {session?.user?.userType === 'staff' && (
             <>
               <div className="hidden lg:block">
                 <GlobalPriceSearch />
               </div>
-              <Link href={"/dashboard/calculator"} className="hidden sm:block">
-                <Button 
-                  variant="ghost" 
+              <Link href={'/dashboard/calculator'} className="hidden sm:block">
+                <Button
+                  variant="ghost"
                   size="icon"
                   className="hover:bg-muted/60 transition-colors duration-200"
                   title="Calculator"

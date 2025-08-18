@@ -11,7 +11,7 @@ import {
 import { CategoryWithChildren } from './CategoryTable';
 import { useState } from 'react';
 
-export function AddCategoryDialog({ categories }: { categories: CategoryWithChildren[] }) {
+export function AddCategoryDialog ({ categories }: { categories: CategoryWithChildren[] }) {
   const [open, setOpen] = useState(false);
 
   return (

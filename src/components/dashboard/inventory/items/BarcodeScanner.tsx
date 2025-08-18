@@ -15,7 +15,7 @@ interface BarcodeScannerProps {
   onStop: () => void;
 }
 
-export function BarcodeScanner({
+export function BarcodeScanner ({
   onScanSuccess,
   onScanError,
   isStarted,
@@ -48,7 +48,7 @@ export function BarcodeScanner({
   };
 
   useEffect(() => {
-    if (!isStarted || !scannerRef.current || isInitialized) return;
+    if (!isStarted || !scannerRef.current || isInitialized) { return; }
 
     try {
       const config: QuaggaConfig = {
@@ -90,8 +90,8 @@ export function BarcodeScanner({
       Quagga.init(config, (err: QuaggaError | null) => {
         if (err) {
           console.error('Scanner init error:', err);
-          if (onScanError)
-            onScanError(err.message || 'Scanner initialization failed');
+          if (onScanError) { onScanError(err.message || 'Scanner initialization failed'); }
+
           return;
         }
 
@@ -101,6 +101,7 @@ export function BarcodeScanner({
         // Modified detection handler that stops camera after successful scan
         Quagga.onDetected((result: QuaggaResult) => {
           const code = result.codeResult?.code;
+
           if (code && code !== lastResult) {
             // Update last result immediately
             setLastResult(code);
@@ -115,7 +116,7 @@ export function BarcodeScanner({
       });
     } catch (error) {
       console.error('Scanner setup error:', error);
-      if (onScanError) onScanError('Failed to setup scanner');
+      if (onScanError) { onScanError('Failed to setup scanner'); }
     }
 
     // Cleanup function

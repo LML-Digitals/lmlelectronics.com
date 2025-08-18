@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
-import ProductCard from "./ProductCard";
-import type { InventoryItem } from "@/types/api";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
+import { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
+import ProductCard from './ProductCard';
+import type { InventoryItem } from '@/types/api';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import { getInventoryItems } from '@/components/dashboard/inventory/items/services/itemsCrud';
 
 interface ProductListingProps {
   filters?: any;
@@ -13,41 +13,35 @@ interface ProductListingProps {
   setResultsCount?: (count: number) => void;
 }
 
-function sortProducts(
+function sortProducts (
   products: InventoryItem[],
-  sort: string
+  sort: string,
 ): InventoryItem[] {
   switch (sort) {
-    case "price_asc":
-      return [...products].sort(
-        (a, b) =>
-          (a.variations[0]?.sellingPrice ?? 0) -
-          (b.variations[0]?.sellingPrice ?? 0)
-      );
-    case "price_desc":
-      return [...products].sort(
-        (a, b) =>
-          (b.variations[0]?.sellingPrice ?? 0) -
-          (a.variations[0]?.sellingPrice ?? 0)
-      );
-    case "alpha_asc":
-      return [...products].sort((a, b) => a.name.localeCompare(b.name));
-    case "alpha_desc":
-      return [...products].sort((a, b) => b.name.localeCompare(a.name));
+  case 'price_asc':
+    return [...products].sort((a, b) => (a.variations[0]?.sellingPrice ?? 0)
+          - (b.variations[0]?.sellingPrice ?? 0));
+  case 'price_desc':
+    return [...products].sort((a, b) => (b.variations[0]?.sellingPrice ?? 0)
+          - (a.variations[0]?.sellingPrice ?? 0));
+  case 'alpha_asc':
+    return [...products].sort((a, b) => a.name.localeCompare(b.name));
+  case 'alpha_desc':
+    return [...products].sort((a, b) => b.name.localeCompare(a.name));
     // Add more cases as needed
-    default:
-      return products;
+  default:
+    return products;
   }
 }
 
-export default function ProductListing({
+export default function ProductListing ({
   filters = {},
-  sort = "alpha_asc",
+  sort = 'alpha_asc',
   setResultsCount,
 }: ProductListingProps) {
   const [products, setProducts] = useState<InventoryItem[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<InventoryItem[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,14 +55,13 @@ export default function ProductListing({
         // We should only return items that are visible and have stock.
         const visibleItems = items
           .map((item) => {
-            const variations = item.variations.filter(
-              (v) => v.visible && v.stockLevels.some((sl) => sl.stock > 0)
-            );
+            const variations = item.variations.filter((v) => v.visible && v.stockLevels.some((sl) => sl.stock > 0));
 
             if (variations.length > 0 || item.isBundle) {
               // Always include bundles regardless of stock
               return { ...item, variations };
             }
+
             return null;
           })
           .filter((item) => item !== null);
@@ -76,14 +69,12 @@ export default function ProductListing({
         // Filter out items that should not appear in Featured Products
         const filteredItems = items.filter((item) => {
           const itemsToHide = [
-            "Protective Case",
-            "Screen Protectors",
-            "Chargers",
+            'Protective Case',
+            'Screen Protectors',
+            'Chargers',
           ];
 
-          const shouldHide = itemsToHide.some((name) =>
-            item.name.toLowerCase().includes(name.toLowerCase())
-          );
+          const shouldHide = itemsToHide.some((name) => item.name.toLowerCase().includes(name.toLowerCase()));
 
           return !shouldHide && item.variations.some((v) => v.visible);
         });
@@ -92,8 +83,8 @@ export default function ProductListing({
         setFilteredProducts(filteredItems);
         setError(null);
       } catch (err) {
-        console.error("Error fetching products:", err);
-        setError("Failed to load products. Please try again later.");
+        console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -104,18 +95,18 @@ export default function ProductListing({
 
   // Filter products based on search term
   useEffect(() => {
-    if (searchTerm.trim() === "") {
+    if (searchTerm.trim() === '') {
       setFilteredProducts(products);
     } else {
-      const filtered = products.filter((product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const filtered = products.filter((product) => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
       setFilteredProducts(filtered);
     }
   }, [searchTerm, products]);
 
   // Apply sorting and update results count
   const sortedProducts = sortProducts(filteredProducts, sort);
+
   useEffect(() => {
     if (setResultsCount) {
       setResultsCount(sortedProducts.length);
@@ -129,7 +120,7 @@ export default function ProductListing({
   if (loading) {
     return (
       <div className="py-16 text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
         <p className="mt-4 text-gray-600">Loading products...</p>
       </div>
     );

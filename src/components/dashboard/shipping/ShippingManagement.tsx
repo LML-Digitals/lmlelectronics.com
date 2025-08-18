@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Trash2, Edit2, Plus, RefreshCw, DollarSign } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Trash2, Edit2, Plus, RefreshCw, DollarSign } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -25,7 +25,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Table,
   TableBody,
@@ -33,7 +33,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
 type ShippingRate = {
   id: string;
@@ -52,7 +52,7 @@ type ShippingRateForm = {
   isActive: boolean;
 };
 
-export function ShippingManagement() {
+export function ShippingManagement () {
   const [shippingRates, setShippingRates] = useState<ShippingRate[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -63,13 +63,13 @@ export function ShippingManagement() {
   }>({ open: false, rate: null });
 
   const [formData, setFormData] = useState<ShippingRateForm>({
-    state: "",
-    stateName: "",
+    state: '',
+    stateName: '',
     rate: 5.99,
     isActive: true,
   });
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [filterActive, setFilterActive] = useState<boolean | null>(null);
 
   // Fetch shipping rates
@@ -77,8 +77,8 @@ export function ShippingManagement() {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (filterActive !== null)
-        params.append("isActive", filterActive.toString());
+
+      if (filterActive !== null) { params.append('isActive', filterActive.toString()); }
 
       const response = await fetch(`/api/shipping?${params}`);
       const data = await response.json();
@@ -87,16 +87,16 @@ export function ShippingManagement() {
         setShippingRates(data.shippingRates);
       } else {
         toast({
-          title: "Error",
-          description: data.error || "Failed to fetch shipping rates",
-          variant: "destructive",
+          title: 'Error',
+          description: data.error || 'Failed to fetch shipping rates',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to fetch shipping rates",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to fetch shipping rates',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -107,27 +107,27 @@ export function ShippingManagement() {
   const initializeDefaultRates = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/shipping?action=initialize");
+      const response = await fetch('/api/shipping?action=initialize');
       const data = await response.json();
 
       if (data.success) {
         toast({
-          title: "Success",
-          description: data.message || "Default shipping rates initialized",
+          title: 'Success',
+          description: data.message || 'Default shipping rates initialized',
         });
         fetchShippingRates();
       } else {
         toast({
-          title: "Error",
-          description: data.error || "Failed to initialize default rates",
-          variant: "destructive",
+          title: 'Error',
+          description: data.error || 'Failed to initialize default rates',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to initialize default rates",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to initialize default rates',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -139,13 +139,13 @@ export function ShippingManagement() {
     e.preventDefault();
 
     try {
-      const method = editingRate ? "PUT" : "POST";
+      const method = editingRate ? 'PUT' : 'POST';
       const body = editingRate ? { ...formData, id: editingRate.id } : formData;
 
-      const response = await fetch("/api/shipping", {
+      const response = await fetch('/api/shipping', {
         method,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(body),
       });
@@ -154,11 +154,11 @@ export function ShippingManagement() {
 
       if (data.success) {
         toast({
-          title: "Success",
+          title: 'Success',
           description:
           editingRate
-            ? "Shipping rate updated successfully"
-            : "Shipping rate created successfully"
+            ? 'Shipping rate updated successfully'
+            : 'Shipping rate created successfully',
         });
         setShowForm(false);
         setEditingRate(null);
@@ -166,16 +166,16 @@ export function ShippingManagement() {
         fetchShippingRates();
       } else {
         toast({
-          title: "Error",
-          description: data.error || "Failed to save shipping rate",
-          variant: "destructive",
+          title: 'Error',
+          description: data.error || 'Failed to save shipping rate',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save shipping rate",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save shipping rate',
+        variant: 'destructive',
       });
     }
   };
@@ -184,29 +184,29 @@ export function ShippingManagement() {
   const handleDelete = async (rate: ShippingRate) => {
     try {
       const response = await fetch(`/api/shipping?id=${rate.id}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
 
       const data = await response.json();
 
       if (data.success) {
         toast({
-          title: "Success",
-          description: "Shipping rate deleted successfully",
+          title: 'Success',
+          description: 'Shipping rate deleted successfully',
         });
         fetchShippingRates();
       } else {
         toast({
-          title: "Error",
-          description: data.error || "Failed to delete shipping rate",
-          variant: "destructive",
+          title: 'Error',
+          description: data.error || 'Failed to delete shipping rate',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to delete shipping rate",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to delete shipping rate',
+        variant: 'destructive',
       });
     }
   };
@@ -214,8 +214,8 @@ export function ShippingManagement() {
   // Reset form
   const resetForm = () => {
     setFormData({
-      state: "",
-      stateName: "",
+      state: '',
+      stateName: '',
       rate: 5.99,
       isActive: true,
     });
@@ -242,13 +242,13 @@ export function ShippingManagement() {
 
   // Filter shipping rates
   const filteredRates = shippingRates.filter((rate) => {
-    const matchesSearch =
-      searchTerm === "" ||
-      rate.stateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rate.state.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch
+      = searchTerm === ''
+      || rate.stateName.toLowerCase().includes(searchTerm.toLowerCase())
+      || rate.state.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesFilter =
-      filterActive === null || rate.isActive === filterActive;
+    const matchesFilter
+      = filterActive === null || rate.isActive === filterActive;
 
     return matchesSearch && matchesFilter;
   });
@@ -261,10 +261,10 @@ export function ShippingManagement() {
     averageRate:
       shippingRates.length > 0
         ? (
-            shippingRates.reduce((sum, rate) => sum + rate.rate, 0) /
-            shippingRates.length
-          ).toFixed(2)
-        : "0.00",
+          shippingRates.reduce((sum, rate) => sum + rate.rate, 0)
+            / shippingRates.length
+        ).toFixed(2)
+        : '0.00',
   };
 
   useEffect(() => {
@@ -337,19 +337,19 @@ export function ShippingManagement() {
             </div>
             <div className="flex gap-2">
               <Button
-                variant={filterActive === null ? "default" : "outline"}
+                variant={filterActive === null ? 'default' : 'outline'}
                 onClick={() => setFilterActive(null)}
               >
                 All
               </Button>
               <Button
-                variant={filterActive === true ? "default" : "outline"}
+                variant={filterActive === true ? 'default' : 'outline'}
                 onClick={() => setFilterActive(true)}
               >
                 Active
               </Button>
               <Button
-                variant={filterActive === false ? "default" : "outline"}
+                variant={filterActive === false ? 'default' : 'outline'}
                 onClick={() => setFilterActive(false)}
               >
                 Inactive
@@ -405,9 +405,9 @@ export function ShippingManagement() {
                       <TableCell>${rate.rate.toFixed(2)}</TableCell>
                       <TableCell>
                         <Badge
-                          variant={rate.isActive ? "default" : "secondary"}
+                          variant={rate.isActive ? 'default' : 'secondary'}
                         >
-                          {rate.isActive ? "Active" : "Inactive"}
+                          {rate.isActive ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -425,8 +425,7 @@ export function ShippingManagement() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() =>
-                              setDeleteDialog({ open: true, rate })
+                            onClick={() => setDeleteDialog({ open: true, rate })
                             }
                           >
                             <Trash2 className="h-4 w-4" />
@@ -447,7 +446,7 @@ export function ShippingManagement() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingRate ? "Edit Shipping Rate" : "Add Shipping Rate"}
+              {editingRate ? 'Edit Shipping Rate' : 'Add Shipping Rate'}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -458,11 +457,10 @@ export function ShippingManagement() {
                   id="state"
                   placeholder="e.g., CA"
                   value={formData.state}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      state: e.target.value.toUpperCase(),
-                    })
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    state: e.target.value.toUpperCase(),
+                  })
                   }
                   required
                   maxLength={2}
@@ -474,8 +472,7 @@ export function ShippingManagement() {
                   id="stateName"
                   placeholder="e.g., California"
                   value={formData.stateName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, stateName: e.target.value })
+                  onChange={(e) => setFormData({ ...formData, stateName: e.target.value })
                   }
                   required
                 />
@@ -490,11 +487,10 @@ export function ShippingManagement() {
                 min="0"
                 placeholder="5.99"
                 value={formData.rate}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    rate: parseFloat(e.target.value) || 0,
-                  })
+                onChange={(e) => setFormData({
+                  ...formData,
+                  rate: parseFloat(e.target.value) || 0,
+                })
                 }
                 required
               />
@@ -503,8 +499,7 @@ export function ShippingManagement() {
               <Switch
                 id="isActive"
                 checked={formData.isActive}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, isActive: checked })
+                onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })
                 }
               />
               <Label htmlFor="isActive">Active</Label>
@@ -513,7 +508,7 @@ export function ShippingManagement() {
               <Button type="button" variant="outline" onClick={handleCloseForm}>
                 Cancel
               </Button>
-              <Button type="submit">{editingRate ? "Update" : "Create"}</Button>
+              <Button type="submit">{editingRate ? 'Update' : 'Create'}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -528,7 +523,7 @@ export function ShippingManagement() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the shipping rate for{" "}
+              This will permanently delete the shipping rate for{' '}
               <strong>{deleteDialog.rate?.stateName}</strong>. This action
               cannot be undone.
             </AlertDialogDescription>

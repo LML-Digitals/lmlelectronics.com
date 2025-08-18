@@ -1,36 +1,36 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 import {
   Loader2,
   ShoppingCart,
   CheckCircle,
   CreditCard,
   ArrowLeft,
-} from "lucide-react";
-import { useCartStore } from "@/lib/stores/useCartStore";
+} from 'lucide-react';
+import { useCartStore } from '@/lib/stores/useCartStore';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { StoreLocation } from "@/types/api";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import { calculateTax } from "@/lib/config/tax";
-import { calculateShipping } from "@/lib/config/shipping";
-import SquarePaymentForm, { SquarePaymentFormRef } from "./SquarePaymentForm";
-import { sendOrderConfirmationEmail } from "@/lib/email/sendOrderConfirmation";
-import { getStoreLocations } from "@/components/locations/services/storeLocationCrud";
-import { createOrderFromCheckout } from "@/app/actions/checkout";
+} from '@/components/ui/select';
+import { StoreLocation } from '@/types/api';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import { calculateTax } from '@/lib/config/tax';
+import { calculateShipping } from '@/lib/config/shipping';
+import SquarePaymentForm, { SquarePaymentFormRef } from './SquarePaymentForm';
+import { sendOrderConfirmationEmail } from '@/lib/email/sendOrderConfirmation';
+import { getStoreLocations } from '@/components/locations/services/storeLocationCrud';
+import { createOrderFromCheckout } from '@/app/actions/checkout';
 
 interface CustomerFormData {
   firstName: string;
@@ -57,7 +57,7 @@ const CheckoutClient = () => {
   } = useCartStore();
 
   const [loading, setLoading] = useState(false);
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState('');
   const [locations, setLocations] = useState<StoreLocation[]>([]);
   const [paymentToken, setPaymentToken] = useState<string | null>(null);
   const [orderCompleted, setOrderCompleted] = useState(false);
@@ -65,16 +65,16 @@ const CheckoutClient = () => {
 
   // Form states
   const [customerForm, setCustomerForm] = useState<CustomerFormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    fullName: "",
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    state: "",
-    zipCode: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    fullName: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    state: '',
+    zipCode: '',
   });
 
   // Calculate totals
@@ -85,10 +85,11 @@ const CheckoutClient = () => {
     const updateTax = async () => {
       try {
         const taxAmount = await calculateTax(subtotal);
+
         setCalculatedTax(taxAmount);
       } catch (error) {
-        console.error("Error calculating tax:", error);
-        toast.error("Failed to calculate tax");
+        console.error('Error calculating tax:', error);
+        toast.error('Failed to calculate tax');
         setCalculatedTax(0);
       }
     };
@@ -103,16 +104,15 @@ const CheckoutClient = () => {
   // Calculate shipping when state changes
   useEffect(() => {
     const updateShipping = async () => {
-      if (!customerForm.state) return;
+      if (!customerForm.state) { return; }
 
       try {
-        const shippingCost = await calculateShipping(
-          customerForm.state.toUpperCase()
-        );
+        const shippingCost = await calculateShipping(customerForm.state.toUpperCase());
+
         setCalculatedShipping(shippingCost);
       } catch (error) {
-        console.error("Error calculating shipping:", error);
-        toast.error("Failed to calculate shipping");
+        console.error('Error calculating shipping:', error);
+        toast.error('Failed to calculate shipping');
         setCalculatedShipping(0);
       }
     };
@@ -121,6 +121,7 @@ const CheckoutClient = () => {
   }, [customerForm.state, setCalculatedShipping]);
 
   let total = subtotal + calculatedTax + calculatedShipping;
+
   total = Math.max(0, total);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -129,15 +130,17 @@ const CheckoutClient = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       const data = await getStoreLocations();
+
       setLocations(data as unknown as StoreLocation[]);
     };
+
     fetchLocations();
   }, []);
 
   // Redirect if cart is empty (but not during order completion)
   useEffect(() => {
     if (items.length === 0 && !orderCompleted) {
-      router.push("/cart");
+      router.push('/cart');
     }
   }, [items.length, router, orderCompleted]);
 
@@ -163,8 +166,7 @@ const CheckoutClient = () => {
           await paymentFormRef.current.handlePayment();
           // The onPaymentSuccess callback will set the paymentToken and trigger placeOrder
         } catch (error) {
-          console.error("Payment verification failed:", error);
-          return;
+          console.error('Payment verification failed:', error);
         }
       }
     } else {
@@ -177,25 +179,29 @@ const CheckoutClient = () => {
   const placeOrder = async (token?: string) => {
     // Use the provided token if passed (from payment success), otherwise use state
     const paymentTokenToUse = token || paymentToken;
+
     if (!paymentTokenToUse) {
-      toast.error("Please complete payment to place order");
+      toast.error('Please complete payment to place order');
+
       return;
     }
 
     // Form validation
     const requiredFields = {
-      firstName: "First name",
-      lastName: "Last name",
-      email: "Email",
-      phone: "Phone",
-      addressLine1: "Address",
-      city: "City",
-      state: "State",
-      zipCode: "Zip code",
+      firstName: 'First name',
+      lastName: 'Last name',
+      email: 'Email',
+      phone: 'Phone',
+      addressLine1: 'Address',
+      city: 'City',
+      state: 'State',
+      zipCode: 'Zip code',
     };
+
     for (const [field, label] of Object.entries(requiredFields)) {
       if (!customerForm[field as keyof CustomerFormData]) {
         toast.error(`${label} is required`);
+
         return;
       }
     }
@@ -204,7 +210,7 @@ const CheckoutClient = () => {
     try {
       const checkoutData = {
         items,
-        paymentMethod: "Square",
+        paymentMethod: 'Square',
         paymentToken: paymentTokenToUse,
         customerId: null,
         shippingAddress: {
@@ -215,7 +221,7 @@ const CheckoutClient = () => {
           state: customerForm.state,
           zipCode: customerForm.zipCode,
           phone: customerForm.phone,
-          shippingMethod: "Standard",
+          shippingMethod: 'Standard',
           shippingRate: calculatedShipping,
         },
         customerData: {
@@ -233,11 +239,12 @@ const CheckoutClient = () => {
 
       const checkoutDataWithPayment = {
         ...checkoutData,
-        paymentMethod: "Square Card",
+        paymentMethod: 'Square Card',
       };
 
       const result = await createOrderFromCheckout(checkoutDataWithPayment);
       const data = result;
+
       toast.success(`Order #${data.orderId} has been created`);
 
       // Send order confirmation email
@@ -249,11 +256,8 @@ const CheckoutClient = () => {
           orderDetailsHtml: `
             <ul style='padding-left:20px;'>
               ${items
-                .map(
-                  (item) =>
-                    `<li>${item.quantity} × ${item.name} - $${item.total.toFixed(2)}</li>`
-                )
-                .join("")}
+    .map((item) => `<li>${item.quantity} × ${item.name} - $${item.total.toFixed(2)}</li>`)
+    .join('')}
             </ul>
             <p style='font-weight:bold;'>Shipping: $${calculatedShipping.toFixed(2)}</p>
             <p style='font-weight:bold;'>Tax: $${calculatedTax.toFixed(2)}</p>
@@ -261,7 +265,7 @@ const CheckoutClient = () => {
           `,
         });
       } catch (emailErr) {
-        console.error("Failed to send confirmation email:", emailErr);
+        console.error('Failed to send confirmation email:', emailErr);
       }
 
       // Set order completed flag to prevent cart redirect
@@ -269,10 +273,8 @@ const CheckoutClient = () => {
       clearCart();
       router.push(`/orders/${data.orderId}`);
     } catch (error) {
-      console.error("Error placing order:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to place order"
-      );
+      console.error('Error placing order:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to place order');
     } finally {
       setLoading(false);
     }
@@ -323,11 +325,10 @@ const CheckoutClient = () => {
                     <Input
                       id="firstName"
                       value={customerForm.firstName}
-                      onChange={(e) =>
-                        setCustomerForm({
-                          ...customerForm,
-                          firstName: e.target.value,
-                        })
+                      onChange={(e) => setCustomerForm({
+                        ...customerForm,
+                        firstName: e.target.value,
+                      })
                       }
                       className="mt-1"
                       placeholder="John"
@@ -344,11 +345,10 @@ const CheckoutClient = () => {
                     <Input
                       id="lastName"
                       value={customerForm.lastName}
-                      onChange={(e) =>
-                        setCustomerForm({
-                          ...customerForm,
-                          lastName: e.target.value,
-                        })
+                      onChange={(e) => setCustomerForm({
+                        ...customerForm,
+                        lastName: e.target.value,
+                      })
                       }
                       className="mt-1"
                       placeholder="Doe"
@@ -368,11 +368,10 @@ const CheckoutClient = () => {
                     id="email"
                     type="email"
                     value={customerForm.email}
-                    onChange={(e) =>
-                      setCustomerForm({
-                        ...customerForm,
-                        email: e.target.value,
-                      })
+                    onChange={(e) => setCustomerForm({
+                      ...customerForm,
+                      email: e.target.value,
+                    })
                     }
                     className="mt-1"
                     placeholder="john@example.com"
@@ -391,11 +390,10 @@ const CheckoutClient = () => {
                     id="phone"
                     type="tel"
                     value={customerForm.phone}
-                    onChange={(e) =>
-                      setCustomerForm({
-                        ...customerForm,
-                        phone: e.target.value,
-                      })
+                    onChange={(e) => setCustomerForm({
+                      ...customerForm,
+                      phone: e.target.value,
+                    })
                     }
                     className="mt-1"
                     placeholder="(555) 123-4567"
@@ -421,11 +419,10 @@ const CheckoutClient = () => {
                     <Input
                       id="addressLine1"
                       value={customerForm.addressLine1}
-                      onChange={(e) =>
-                        setCustomerForm({
-                          ...customerForm,
-                          addressLine1: e.target.value,
-                        })
+                      onChange={(e) => setCustomerForm({
+                        ...customerForm,
+                        addressLine1: e.target.value,
+                      })
                       }
                       className="mt-1"
                       placeholder="123 Main Street"
@@ -443,11 +440,10 @@ const CheckoutClient = () => {
                     <Input
                       id="addressLine2"
                       value={customerForm.addressLine2}
-                      onChange={(e) =>
-                        setCustomerForm({
-                          ...customerForm,
-                          addressLine2: e.target.value,
-                        })
+                      onChange={(e) => setCustomerForm({
+                        ...customerForm,
+                        addressLine2: e.target.value,
+                      })
                       }
                       className="mt-1"
                       placeholder="Apt 4B"
@@ -465,11 +461,10 @@ const CheckoutClient = () => {
                       <Input
                         id="city"
                         value={customerForm.city}
-                        onChange={(e) =>
-                          setCustomerForm({
-                            ...customerForm,
-                            city: e.target.value,
-                          })
+                        onChange={(e) => setCustomerForm({
+                          ...customerForm,
+                          city: e.target.value,
+                        })
                         }
                         className="mt-1"
                         placeholder="New York"
@@ -505,11 +500,10 @@ const CheckoutClient = () => {
                     <Input
                       id="zipCode"
                       value={customerForm.zipCode}
-                      onChange={(e) =>
-                        setCustomerForm({
-                          ...customerForm,
-                          zipCode: e.target.value,
-                        })
+                      onChange={(e) => setCustomerForm({
+                        ...customerForm,
+                        zipCode: e.target.value,
+                      })
                       }
                       className="mt-1"
                       placeholder="10001"
@@ -520,7 +514,6 @@ const CheckoutClient = () => {
               </CardContent>
             </Card>
 
-            
           </div>
 
           {/* Right Column - Order Summary & Payment - 30% */}
@@ -600,10 +593,10 @@ const CheckoutClient = () => {
                     <SquarePaymentForm
                       ref={paymentFormRef}
                       applicationId={
-                        process.env.NEXT_PUBLIC_SQUARE_APP_ID || ""
+                        process.env.NEXT_PUBLIC_SQUARE_APP_ID || ''
                       }
                       locationId={
-                        process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID || ""
+                        process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID || ''
                       }
                       total={total}
                       onPaymentSuccess={(token) => {
@@ -614,8 +607,8 @@ const CheckoutClient = () => {
                       disabled={loading}
                       environment={
                         (process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT as
-                          | "sandbox"
-                          | "production") || "sandbox"
+                          | 'sandbox'
+                          | 'production') || 'sandbox'
                       }
                     />
 

@@ -1,14 +1,14 @@
 import { EditTermsForm } from '@/components/dashboard/terms/EditTermsForm';
 import { getTermsBySlug } from '@/components/terms/services/termsCrud';
 
-export default async function EditTermPage({
+export default async function EditTermPage ({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
   const term = await getTermsBySlug(slug);
-  
+
   if (!term) {
     return <div>Term not found</div>;
   }

@@ -13,7 +13,7 @@ interface ListingsManagerProps {
   onIconUpload: (file: File) => Promise<string>;
 }
 
-export default function ListingsManager({
+export default function ListingsManager ({
   listings,
   onListingsChange,
   onIconUpload,
@@ -25,6 +25,7 @@ export default function ListingsManager({
     try {
       const iconUrl = await onIconUpload(file);
       const newListings = [...listings];
+
       newListings[index] = { ...newListings[index], icon: iconUrl };
       onListingsChange(newListings);
     } catch (error) {
@@ -48,9 +49,10 @@ export default function ListingsManager({
   const updateListing = (
     index: number,
     field: keyof Listing,
-    value: string
+    value: string,
   ) => {
     const newListings = [...listings];
+
     newListings[index] = { ...newListings[index], [field]: value };
     onListingsChange(newListings);
   };
@@ -86,7 +88,8 @@ export default function ListingsManager({
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
-                    if (file) handleIconUpload(index, file);
+
+                    if (file) { handleIconUpload(index, file); }
                   }}
                   disabled={isUploading}
                 />

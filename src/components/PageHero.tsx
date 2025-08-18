@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { ChevronRight } from 'lucide-react';
 
 interface Breadcrumb {
   name: string;
@@ -24,7 +24,7 @@ const PageHero: React.FC<PageHeroProps> = ({
   backgroundImage,
   breadcrumbs,
 }) => {
-  const words = title.split(" ");
+  const words = title.split(' ');
 
   return (
     <div className="bg-white border-b border-gray-100">
@@ -70,7 +70,7 @@ const PageHero: React.FC<PageHeroProps> = ({
                   transition={{
                     duration: 0.5,
                     delay: index * 0.1,
-                    ease: "easeOut",
+                    ease: 'easeOut',
                   }}
                   className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight mr-2"
                 >

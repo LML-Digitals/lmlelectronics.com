@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import React from "react";
-import BadgeComponent from "./BadgeComponent";
-import Image from "next/image";
-import Link from "next/link";
-import { BlogWithDetailsType } from "@/components/blog/types/blogTypes";
-import { Badge } from "@/components/ui/badge";
+import React from 'react';
+import BadgeComponent from './BadgeComponent';
+import Image from 'next/image';
+import Link from 'next/link';
+import { BlogWithDetailsType } from '@/components/blog/types/blogTypes';
+import { Badge } from '@/components/ui/badge';
 
-function FeaturedBlogComp({
+function FeaturedBlogComp ({
   featuredPosts,
 }: {
   featuredPosts: BlogWithDetailsType[];
@@ -37,7 +37,8 @@ function FeaturedBlogComp({
       </div> */}
       <div className="w-full max-w-7xl mx-auto grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {postsToShow.map((post) => {
-          const encodedSlug = encodeURIComponent(post.slug || "");
+          const encodedSlug = encodeURIComponent(post.slug || '');
+
           return (
             <Link
               href={`/blogs/${encodedSlug}`}
@@ -46,7 +47,7 @@ function FeaturedBlogComp({
             >
               <div className="relative w-full h-48">
                 <Image
-                  src={post.image || "/logo.png"}
+                  src={post.image || '/logo.png'}
                   alt={post.title}
                   layout="fill"
                   objectFit="cover"
@@ -67,10 +68,10 @@ function FeaturedBlogComp({
                   </p>
                 )}
                 <p className="text-xs text-gray-500 mt-auto">
-                  {new Date(post.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
+                  {new Date(post.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
                   })}
                 </p>
               </div>

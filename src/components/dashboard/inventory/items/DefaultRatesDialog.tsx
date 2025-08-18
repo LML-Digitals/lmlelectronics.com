@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Loader2, InfoIcon } from "lucide-react";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Loader2, InfoIcon } from 'lucide-react';
 import {
   getDefaultShippingRate,
   getDefaultTaxRate,
-} from "@/components/dashboard/settings/services/inventorySettings";
+} from '@/components/dashboard/settings/services/inventorySettings';
 
 interface DefaultRatesDialogProps {
   trigger?: React.ReactNode;
 }
 
-export function DefaultRatesDialog({ trigger }: DefaultRatesDialogProps) {
+export function DefaultRatesDialog ({ trigger }: DefaultRatesDialogProps) {
   const [open, setOpen] = useState(false);
 
   // Add state for default rates
@@ -41,10 +41,8 @@ export function DefaultRatesDialog({ trigger }: DefaultRatesDialogProps) {
         setShippingRate(shipping || 0);
         setError(null);
       } catch (err) {
-        console.error("Error fetching default rates:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load default rates"
-        );
+        console.error('Error fetching default rates:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load default rates');
       } finally {
         setIsLoading(false);
       }

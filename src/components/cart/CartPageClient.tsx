@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useCartStore } from "@/lib/stores/useCartStore";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { calculateTax } from "@/lib/config/tax";
-import { useEffect } from "react";
+import { useCartStore } from '@/lib/stores/useCartStore';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { calculateTax } from '@/lib/config/tax';
+import { useEffect } from 'react';
 
-export default function CartPageClient() {
+export default function CartPageClient () {
   const router = useRouter();
   const { items, updateItemQuantity, removeItem, clearCart, setCalculatedTax } = useCartStore();
 
@@ -27,13 +27,12 @@ export default function CartPageClient() {
   // Calculate total
   let total = subtotal;
 
-
   // Ensure total is not negative
   total = Math.max(0, total);
 
   const handleProceedToCheckout = () => {
     // Simply navigate to checkout - authentication and payment will be handled there
-    router.push("/checkout");
+    router.push('/checkout');
   };
 
   if (items.length === 0) {
@@ -87,19 +86,17 @@ export default function CartPageClient() {
                     </div>
                     <p className="text-gray-500">
                       ${item.price.toFixed(2)}
-                      
-                      
+
                     </p>
                     <div className="flex items-center mt-4">
                       <Button
                         variant="outline"
                         size="icon"
                         className="h-8 w-8 border-secondary"
-                        onClick={() =>
-                          updateItemQuantity(
-                            item.id,
-                            Math.max(1, item.quantity - 1)
-                          )
+                        onClick={() => updateItemQuantity(
+                          item.id,
+                          Math.max(1, item.quantity - 1),
+                        )
                         }
                       >
                         <Minus className="h-4 w-4" />
@@ -111,15 +108,14 @@ export default function CartPageClient() {
                         variant="outline"
                         size="icon"
                         className="h-8 w-8 border-secondary"
-                        onClick={() =>
-                          updateItemQuantity(item.id, item.quantity + 1)
+                        onClick={() => updateItemQuantity(item.id, item.quantity + 1)
                         }
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
                       <span className="ml-auto font-medium">
                         ${item.total.toFixed(2)}
-                        
+
                       </span>
                     </div>
                   </div>

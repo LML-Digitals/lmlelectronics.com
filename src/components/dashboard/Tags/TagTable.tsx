@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -8,9 +8,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Pencil,
   Trash2,
@@ -19,10 +19,10 @@ import {
   Info,
   Plus,
   Loader2,
-} from "lucide-react";
-import { getTags, deleteTag, getTagUsageStats, Tag } from "./services/tagCrud";
-import { toast } from "@/components/ui/use-toast";
-import { format } from "date-fns";
+} from 'lucide-react';
+import { getTags, deleteTag, getTagUsageStats, Tag } from './services/tagCrud';
+import { toast } from '@/components/ui/use-toast';
+import { format } from 'date-fns';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,23 +32,23 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import TagForm from "./TagForm";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import TagForm from './TagForm';
+import { useRouter } from 'next/navigation';
 
-export default function TagTable() {
+export default function TagTable () {
   const router = useRouter();
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [filteredTags, setFilteredTags] = useState<Tag[]>([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -77,13 +77,14 @@ export default function TagTable() {
       const result = await getTags({
         limit: 1000, // A high number to get all tags
       });
+
       setAllTags(result.tags);
       setHasMore(result.tags.length >= limit);
     } catch (error) {
-      console.error("Error loading tags:", error);
+      console.error('Error loading tags:', error);
       toast({
-        title: "Error",
-        description: "Failed to load tags",
+        title: 'Error',
+        description: 'Failed to load tags',
       });
     } finally {
       setLoading(false);
@@ -93,15 +94,12 @@ export default function TagTable() {
   // Filter tags locally
   useEffect(() => {
     // Apply search filter
-    const filtered =
-      search.trim() === ""
+    const filtered
+      = search.trim() === ''
         ? allTags
-        : allTags.filter(
-            (tag) =>
-              tag.name.toLowerCase().includes(search.toLowerCase()) ||
-              (tag.description &&
-                tag.description.toLowerCase().includes(search.toLowerCase()))
-          );
+        : allTags.filter((tag) => tag.name.toLowerCase().includes(search.toLowerCase())
+              || (tag.description
+                && tag.description.toLowerCase().includes(search.toLowerCase())));
 
     setFilteredTags(filtered);
   }, [allTags, search]);
@@ -116,41 +114,42 @@ export default function TagTable() {
       setIsCreateFormOpen(true);
     };
 
-    const createTagButton = document.querySelector(".create-tag-button");
+    const createTagButton = document.querySelector('.create-tag-button');
+
     if (createTagButton) {
-      createTagButton.addEventListener("click", handleCreateTagClick);
+      createTagButton.addEventListener('click', handleCreateTagClick);
     }
 
     return () => {
       if (createTagButton) {
-        createTagButton.removeEventListener("click", handleCreateTagClick);
+        createTagButton.removeEventListener('click', handleCreateTagClick);
       }
     };
   }, []);
 
   // Infinite scroll callback
   const lastTagElementRef = useCallback((node: HTMLTableRowElement) => {
-    if (loading) return;
-    if (observer.current) observer.current.disconnect();
+    if (loading) { return; }
+    if (observer.current) { observer.current.disconnect(); }
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
         // Load more tags when the last element is visible
         loadMoreTags();
       }
     });
-    if (node) observer.current.observe(node);
+    if (node) { observer.current.observe(node); }
   }, [loading, hasMore]);
 
   const loadMoreTags = async () => {
-    if (loadingMore || !hasMore) return;
-    
+    if (loadingMore || !hasMore) { return; }
+
     setLoadingMore(true);
     try {
       // For now, since we're loading all tags at once, we don't need to fetch more
       // This is a placeholder for when you implement server-side pagination
       setHasMore(false);
     } catch (error) {
-      console.error("Error loading more tags:", error);
+      console.error('Error loading more tags:', error);
     } finally {
       setLoadingMore(false);
     }
@@ -165,13 +164,14 @@ export default function TagTable() {
     setSelectedTag(tag);
     try {
       const usage = await getTagUsageStats(tag.id);
+
       setTagUsage(usage);
       setIsDetailsOpen(true);
     } catch (error) {
-      console.error("Error getting tag usage:", error);
+      console.error('Error getting tag usage:', error);
       toast({
-        title: "Error",
-        description: "Failed to load tag details",
+        title: 'Error',
+        description: 'Failed to load tag details',
       });
     }
   };
@@ -182,27 +182,28 @@ export default function TagTable() {
   };
 
   const confirmDelete = async () => {
-    if (!tagToDelete) return;
+    if (!tagToDelete) { return; }
 
     try {
       const result = await deleteTag(tagToDelete.id);
+
       if (result.success) {
         toast({
-          title: "Success",
+          title: 'Success',
           description: result.message,
         });
         loadTags();
       } else {
         toast({
-          title: "Error",
+          title: 'Error',
           description: result.message,
         });
       }
     } catch (error) {
-      console.error("Error deleting tag:", error);
+      console.error('Error deleting tag:', error);
       toast({
-        title: "Error",
-        description: "Failed to delete tag",
+        title: 'Error',
+        description: 'Failed to delete tag',
       });
     } finally {
       setIsDeleteConfirmOpen(false);
@@ -248,13 +249,13 @@ export default function TagTable() {
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8 sm:py-10">
                   <div className="text-sm sm:text-base">
-                    No tags found. {search && "Try a different search term."}
+                    No tags found. {search && 'Try a different search term.'}
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
               filteredTags.map((tag, index) => (
-                <TableRow 
+                <TableRow
                   key={tag.id}
                   ref={index === filteredTags.length - 1 ? lastTagElementRef : null}
                 >
@@ -262,17 +263,17 @@ export default function TagTable() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <div
                         className="w-4 h-4 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: tag.color || "#3b82f6" }}
-                      ></div>
+                        style={{ backgroundColor: tag.color || '#3b82f6' }}
+                      />
                       <span className="break-words max-w-[100px] sm:max-w-none">{tag.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-sm">{tag.color || "-"}</TableCell>
+                  <TableCell className="hidden sm:table-cell text-sm">{tag.color || '-'}</TableCell>
                   <TableCell className="hidden lg:table-cell max-w-[200px] truncate text-sm">
-                    {tag.description || "-"}
+                    {tag.description || '-'}
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm">
-                    {format(new Date(tag.createdAt), "MMM d, yyyy")}
+                    {format(new Date(tag.createdAt), 'MMM d, yyyy')}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2 sm:gap-4 flex-wrap">
@@ -401,8 +402,8 @@ export default function TagTable() {
               <div className="flex items-center gap-2">
                 <div
                   className="w-6 h-6 rounded-full"
-                  style={{ backgroundColor: selectedTag.color || "#3b82f6" }}
-                ></div>
+                  style={{ backgroundColor: selectedTag.color || '#3b82f6' }}
+                />
                 <h3 className="text-lg font-semibold">{selectedTag.name}</h3>
               </div>
 
@@ -457,8 +458,8 @@ export default function TagTable() {
               </div>
 
               <div className="text-xs text-muted-foreground pt-2">
-                <p>Created: {format(new Date(selectedTag.createdAt), "PPP")}</p>
-                <p>Updated: {format(new Date(selectedTag.updatedAt), "PPP")}</p>
+                <p>Created: {format(new Date(selectedTag.createdAt), 'PPP')}</p>
+                <p>Updated: {format(new Date(selectedTag.updatedAt), 'PPP')}</p>
               </div>
             </div>
           )}

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   ArrowLeft,
   MapPin,
@@ -14,38 +14,38 @@ import {
   Package,
   Mail,
   Phone,
-} from "lucide-react";
-import { format } from "date-fns";
-import Link from "next/link";
-import { toast } from "sonner";
-import type { OrderDetails } from "@/types/api";
-import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import { getOrderDetails } from "@/app/actions/orders";
+} from 'lucide-react';
+import { format } from 'date-fns';
+import Link from 'next/link';
+import { toast } from 'sonner';
+import type { OrderDetails } from '@/types/api';
+import { buildApiUrl, handleApiResponse } from '@/lib/config/api';
+import { getOrderDetails } from '@/app/actions/orders';
 
 interface OrderDetailsClientProps {
   orderId: string;
 }
 
-export default function OrderDetailsClient({
+export default function OrderDetailsClient ({
   orderId,
 }: OrderDetailsClientProps) {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [order, setOrder] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "PAID":
-        return "bg-green-100 text-green-800";
-      case "PENDING":
-        return "bg-yellow-100 text-yellow-800";
-      case "CANCELLED":
-        return "bg-red-100 text-red-800";
-      case "REFUNDED":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-blue-100 text-blue-800";
+    case 'PAID':
+      return 'bg-green-100 text-green-800';
+    case 'PENDING':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'CANCELLED':
+      return 'bg-red-100 text-red-800';
+    case 'REFUNDED':
+      return 'bg-gray-100 text-gray-800';
+    default:
+      return 'bg-blue-100 text-blue-800';
     }
   };
 
@@ -60,12 +60,10 @@ export default function OrderDetailsClient({
       setOrder(orderData);
       setVerified(true);
     } catch (error) {
-      console.error("Error fetching order:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Failed to verify order. Please check your email and try again."
-      );
+      console.error('Error fetching order:', error);
+      toast.error(error instanceof Error
+        ? error.message
+        : 'Failed to verify order. Please check your email and try again.');
     } finally {
       setLoading(false);
     }
@@ -123,22 +121,25 @@ export default function OrderDetailsClient({
     return null;
   }
 
-  const totalRefunded =
-    order.refunds?.reduce((sum, refund) => sum + refund.amount, 0) || 0;
+  const totalRefunded
+    = order.refunds?.reduce((sum, refund) => sum + refund.amount, 0) || 0;
 
   // Helper function to safely format dates
   const formatDate = (
     dateString: string | null | undefined,
-    formatString: string
+    formatString: string,
   ) => {
-    if (!dateString) return "N/A";
+    if (!dateString) { return 'N/A'; }
     try {
       const date = new Date(dateString);
-      if (isNaN(date.getTime())) return "N/A";
+
+      if (isNaN(date.getTime())) { return 'N/A'; }
+
       return format(date, formatString);
     } catch (error) {
-      console.error("Date formatting error:", error);
-      return "N/A";
+      console.error('Date formatting error:', error);
+
+      return 'N/A';
     }
   };
 
@@ -150,7 +151,7 @@ export default function OrderDetailsClient({
             Order Details
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Order #{order.id} - {formatDate(order.createdAt, "MMMM d, yyyy")}
+            Order #{order.id} - {formatDate(order.createdAt, 'MMMM d, yyyy')}
           </p>
         </div>
 
@@ -177,7 +178,7 @@ export default function OrderDetailsClient({
                         <p className="text-gray-500">
                           {formatDate(
                             order.createdAt,
-                            "MMMM d, yyyy 'at' h:mm a"
+                            "MMMM d, yyyy 'at' h:mm a",
                           )}
                         </p>
                       </div>
@@ -187,7 +188,7 @@ export default function OrderDetailsClient({
                       <div>
                         <p className="font-medium">Store Location</p>
                         <p className="text-gray-500">
-                          {order.storeLocation?.name || "N/A"}
+                          {order.storeLocation?.name || 'N/A'}
                         </p>
                       </div>
                     </div>
@@ -257,8 +258,8 @@ export default function OrderDetailsClient({
                       <div>
                         <p className="font-medium">Name</p>
                         <p className="text-gray-500">
-                          {order.customer?.firstName || ""}{" "}
-                          {order.customer?.lastName || ""}
+                          {order.customer?.firstName || ''}{' '}
+                          {order.customer?.lastName || ''}
                         </p>
                       </div>
                     </div>
@@ -267,7 +268,7 @@ export default function OrderDetailsClient({
                       <div>
                         <p className="font-medium">Email</p>
                         <p className="text-gray-500">
-                          {order.customer?.email || ""}
+                          {order.customer?.email || ''}
                         </p>
                       </div>
                     </div>
@@ -276,7 +277,7 @@ export default function OrderDetailsClient({
                       <div>
                         <p className="font-medium">Phone</p>
                         <p className="text-gray-500">
-                          {order.customer?.phone || ""}
+                          {order.customer?.phone || ''}
                         </p>
                       </div>
                     </div>
@@ -307,8 +308,8 @@ export default function OrderDetailsClient({
                               </>
                             )}
                             <br />
-                            {order.customer?.shippingAddress.city},{" "}
-                            {order.customer?.shippingAddress.state}{" "}
+                            {order.customer?.shippingAddress.city},{' '}
+                            {order.customer?.shippingAddress.state}{' '}
                             {order.customer?.shippingAddress.zipCode}
                           </div>
                         </div>

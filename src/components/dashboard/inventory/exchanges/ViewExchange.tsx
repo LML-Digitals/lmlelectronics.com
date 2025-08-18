@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { format } from "date-fns";
-import { Check, X as XIcon } from "lucide-react";
+import { format } from 'date-fns';
+import { Check, X as XIcon } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -12,10 +12,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ExchangeWithRelations } from "./services/types";
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { ExchangeWithRelations } from './services/types';
 
 interface ViewExchangeProps {
   exchange: ExchangeWithRelations;
@@ -26,7 +26,7 @@ interface ViewExchangeProps {
   isPending: boolean;
 }
 
-export function ViewExchange({
+export function ViewExchange ({
   exchange,
   open,
   onOpenChange,
@@ -37,42 +37,38 @@ export function ViewExchange({
   // Helper function for status badges
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "Pending":
-        return (
-          <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+    case 'Pending':
+      return (
+        <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
             Pending
-          </Badge>
-        );
-      case "Approved":
-        return (
-          <Badge variant="outline" className="bg-green-100 text-green-800">
+        </Badge>
+      );
+    case 'Approved':
+      return (
+        <Badge variant="outline" className="bg-green-100 text-green-800">
             Approved
-          </Badge>
-        );
-      case "Rejected":
-        return (
-          <Badge variant="outline" className="bg-red-100 text-red-800">
+        </Badge>
+      );
+    case 'Rejected':
+      return (
+        <Badge variant="outline" className="bg-red-100 text-red-800">
             Rejected
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline">Unknown</Badge>;
+        </Badge>
+      );
+    default:
+      return <Badge variant="outline">Unknown</Badge>;
     }
   };
 
   // Find the selected variations
-  const returnedVariation =
-    exchange.returnedVariationId && exchange.returnedItem.variations
-      ? exchange.returnedItem.variations.find(
-          (v) => v.id === exchange.returnedVariationId
-        )
+  const returnedVariation
+    = exchange.returnedVariationId && exchange.returnedItem.variations
+      ? exchange.returnedItem.variations.find((v) => v.id === exchange.returnedVariationId)
       : null;
 
-  const newVariation =
-    exchange.newVariationId && exchange.newItem.variations
-      ? exchange.newItem.variations.find(
-          (v) => v.id === exchange.newVariationId
-        )
+  const newVariation
+    = exchange.newVariationId && exchange.newItem.variations
+      ? exchange.newItem.variations.find((v) => v.id === exchange.newVariationId)
       : null;
 
   return (
@@ -101,7 +97,7 @@ export function ViewExchange({
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Date:</span>
                 <span className="font-medium">
-                  {format(new Date(exchange.exchangedAt), "MMM dd, yyyy HH:mm")}
+                  {format(new Date(exchange.exchangedAt), 'MMM dd, yyyy HH:mm')}
                 </span>
               </div>
 
@@ -217,7 +213,7 @@ export function ViewExchange({
 
                       <div>
                         <p className="font-medium">
-                          {returnedVariation.name || "Unnamed Variation"}
+                          {returnedVariation.name || 'Unnamed Variation'}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           SKU: {returnedVariation.sku}
@@ -226,8 +222,8 @@ export function ViewExchange({
                     </div>
                   </div>
                 ) : (
-                  exchange.returnedItem.variations &&
-                  exchange.returnedItem.variations.length > 0 && (
+                  exchange.returnedItem.variations
+                  && exchange.returnedItem.variations.length > 0 && (
                     <div className="mt-3 pt-2 border-t">
                       <p className="text-sm font-medium mb-2 text-amber-700">
                         No specific variation selected
@@ -288,7 +284,7 @@ export function ViewExchange({
 
                       <div>
                         <p className="font-medium">
-                          {newVariation.name || "Unnamed Variation"}
+                          {newVariation.name || 'Unnamed Variation'}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           SKU: {newVariation.sku}
@@ -297,8 +293,8 @@ export function ViewExchange({
                     </div>
                   </div>
                 ) : (
-                  exchange.newItem.variations &&
-                  exchange.newItem.variations.length > 0 && (
+                  exchange.newItem.variations
+                  && exchange.newItem.variations.length > 0 && (
                     <div className="mt-3 pt-2 border-t">
                       <p className="text-sm font-medium mb-2 text-amber-700">
                         No specific variation selected
@@ -312,7 +308,7 @@ export function ViewExchange({
         </div>
 
         <DialogFooter className="flex justify-between items-center mt-4">
-          {exchange.status === "Pending" && (
+          {exchange.status === 'Pending' && (
             <div className="flex gap-2">
               <Button
                 variant="outline"

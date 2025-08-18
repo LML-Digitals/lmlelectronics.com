@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,12 +8,12 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Copy, Loader2 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-import { InventoryItemWithRelations } from "./types/ItemType";
-import { createInventoryItem } from "./services/itemsCrud";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Copy, Loader2 } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+import { InventoryItemWithRelations } from './types/ItemType';
+import { createInventoryItem } from './services/itemsCrud';
 
 type BulkDuplicateDialogProps = {
   items: InventoryItemWithRelations[];
@@ -22,7 +22,7 @@ type BulkDuplicateDialogProps = {
   onDuplicated: () => void;
 };
 
-export function BulkDuplicateDialog({
+export function BulkDuplicateDialog ({
   items,
   open,
   onOpenChange,
@@ -46,7 +46,7 @@ export function BulkDuplicateDialog({
           // Duplicate all variations with their stock levels
           variations: item.variations.map((variation) => ({
             name: variation.name,
-            sku: `${variation.sku || ""}-copy`, // Modify SKU to avoid duplicates
+            sku: `${variation.sku || ''}-copy`, // Modify SKU to avoid duplicates
             image: variation.image,
             stockLevels: variation.stockLevels.map((level) => ({
               locationId: level.locationId,
@@ -64,17 +64,17 @@ export function BulkDuplicateDialog({
       await Promise.all(duplicatePromises);
 
       toast({
-        title: "Items duplicated",
+        title: 'Items duplicated',
         description: `Successfully duplicated ${items.length} items`,
       });
       onDuplicated();
     } catch (error) {
-      console.error("Error duplicating items:", error);
+      console.error('Error duplicating items:', error);
       toast({
-        title: "Failed to duplicate items",
+        title: 'Failed to duplicate items',
         description:
-          "There was an error duplicating the items. Please try again.",
-        variant: "destructive",
+          'There was an error duplicating the items. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsDuplicating(false);

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useEffect, useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState, useTransition } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -11,25 +11,25 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Badge } from "@/components/ui/badge";
-import { X, CircleDashedIcon, Upload, ImageIcon } from "lucide-react";
-import dynamic from "next/dynamic";
-import { Controller, type SubmitHandler, useForm } from "react-hook-form";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { toast } from "@/components/ui/use-toast";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+} from '@/components/ui/command';
+import { Badge } from '@/components/ui/badge';
+import { X, CircleDashedIcon, Upload, ImageIcon } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { toast } from '@/components/ui/use-toast';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Form,
   FormControl,
@@ -38,26 +38,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { updateBlog } from "@/components/blog/services/blogCrud";
-import { Tag, BlogCategory, Blog } from "@prisma/client";
-import { DataToBlog } from "@/components/blog/types/blogTypes";
-import { BlogWithDetailsType } from "@/components/blog/types/blogTypes";
+} from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { updateBlog } from '@/components/blog/services/blogCrud';
+import { Tag, BlogCategory, Blog } from '@prisma/client';
+import { DataToBlog } from '@/components/blog/types/blogTypes';
+import { BlogWithDetailsType } from '@/components/blog/types/blogTypes';
 
-const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
 });
 
-import "easymde/dist/easymde.min.css";
+import 'easymde/dist/easymde.min.css';
 
 const blogFormSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(1, 'Title is required'),
   content: z.string().optional(),
-  description: z.string().min(1, "Description is required"),
-  categoryId: z.string().min(1, "Category is required"),
-  link: z.string().url().optional().or(z.literal("")),
+  description: z.string().min(1, 'Description is required'),
+  categoryId: z.string().min(1, 'Category is required'),
+  link: z.string().url().optional().or(z.literal('')),
   tagIds: z.array(z.string()).optional(),
   image: z.string().optional(),
   metaTitle: z.string().optional(),
@@ -75,7 +75,7 @@ interface EditBlogFormProps {
   onSuccess: () => void;
 }
 
-export default function EditBlogForm({
+export default function EditBlogForm ({
   initialData,
   allTags,
   allCategories,
@@ -83,28 +83,24 @@ export default function EditBlogForm({
 }: EditBlogFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [preview, setPreview] = useState<string | null>(
-    initialData?.image || null
-  );
+  const [preview, setPreview] = useState<string | null>(initialData?.image || null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [selectedTags, setSelectedTags] = useState<Tag[]>(
-    initialData?.tags || []
-  );
-  const [tagQuery, setTagQuery] = useState("");
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(initialData?.tags || []);
+  const [tagQuery, setTagQuery] = useState('');
   const [imageLoading, setImageLoading] = useState(false);
 
   const form = useForm<BlogFormData>({
     resolver: zodResolver(blogFormSchema),
     defaultValues: {
-      title: initialData?.title || "",
-      content: initialData?.content || "",
-      description: initialData?.description || "",
-      link: initialData?.link || "",
-      image: initialData?.image || "",
-      categoryId: initialData?.categoryId || "",
+      title: initialData?.title || '',
+      content: initialData?.content || '',
+      description: initialData?.description || '',
+      link: initialData?.link || '',
+      image: initialData?.image || '',
+      categoryId: initialData?.categoryId || '',
       tagIds: initialData?.tags?.map((t) => t.id) || [],
-      metaTitle: initialData?.metaTitle || "",
-      metaDesc: initialData?.metaDesc || "",
+      metaTitle: initialData?.metaTitle || '',
+      metaDesc: initialData?.metaDesc || '',
       isPublished: initialData?.isPublished || false,
       isFeatured: initialData?.isFeatured || false,
     },
@@ -127,56 +123,57 @@ export default function EditBlogForm({
   useEffect(() => {
     if (initialData) {
       form.reset({
-        title: initialData.title || "",
-        content: initialData.content || "",
-        description: initialData.description || "",
-        link: initialData.link || "",
-        image: initialData.image || "",
-        categoryId: initialData.categoryId || "",
+        title: initialData.title || '',
+        content: initialData.content || '',
+        description: initialData.description || '',
+        link: initialData.link || '',
+        image: initialData.image || '',
+        categoryId: initialData.categoryId || '',
         tagIds: initialData.tags?.map((t) => t.id) || [],
-        metaTitle: initialData.metaTitle || "",
-        metaDesc: initialData.metaDesc || "",
+        metaTitle: initialData.metaTitle || '',
+        metaDesc: initialData.metaDesc || '',
         isPublished: initialData.isPublished || false,
         isFeatured: initialData.isFeatured || false,
       });
       setSelectedTags(initialData.tags || []);
-      if (initialData.image) setPreview(initialData.image);
+      if (initialData.image) { setPreview(initialData.image); }
     }
   }, [initialData, form.reset]);
 
-  const filteredTags = allTags.filter(
-    (tag) =>
-      tag.name.toLowerCase().includes(tagQuery.toLowerCase()) &&
-      !selectedTags.find((selectedTag) => selectedTag.id === tag.id)
-  );
+  const filteredTags = allTags.filter((tag) => tag.name.toLowerCase().includes(tagQuery.toLowerCase())
+      && !selectedTags.find((selectedTag) => selectedTag.id === tag.id));
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (file) {
       setImageFile(file);
       setPreview(URL.createObjectURL(file));
-      form.setValue("image", "temp-upload-placeholder");
+      form.setValue('image', 'temp-upload-placeholder');
     }
   };
 
   const uploadImage = async (file: File): Promise<string> => {
     const response = await fetch(`/api/upload?filename=${file.name}`, {
-      method: "POST",
+      method: 'POST',
       body: file,
     });
 
-    if (!response.ok) throw new Error("Failed to upload file.");
+    if (!response.ok) { throw new Error('Failed to upload file.'); }
     const newBlob = await response.json();
+
     return newBlob.url;
   };
 
   const handleImageUpload = (editor: any) => {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
+    const fileInput = document.createElement('input');
+
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
 
     fileInput.onchange = async (e: any) => {
       const file = e.target.files[0];
+
       if (file) {
         try {
           const imageUrl = await uploadImage(file);
@@ -185,9 +182,10 @@ export default function EditBlogForm({
           const cm = editor.codemirror;
           const doc = cm.getDoc();
           const cursor = doc.getCursor();
+
           doc.replaceRange(markdownImage, cursor);
         } catch (error) {
-          console.error("Error inserting image:", error);
+          console.error('Error inserting image:', error);
         }
       }
     };
@@ -197,29 +195,29 @@ export default function EditBlogForm({
 
   const mdeOptions: any = {
     toolbar: [
-      "bold",
-      "italic",
-      "heading",
-      "|",
-      "code",
-      "quote",
-      "unordered-list",
-      "ordered-list",
-      "|",
-      "link",
-      "image",
+      'bold',
+      'italic',
+      'heading',
+      '|',
+      'code',
+      'quote',
+      'unordered-list',
+      'ordered-list',
+      '|',
+      'link',
+      'image',
       {
-        name: "upload-image",
+        name: 'upload-image',
         action: (editor: any) => handleImageUpload(editor),
-        className: "fa fa-upload",
-        title: "Upload Image",
+        className: 'fa fa-upload',
+        title: 'Upload Image',
       },
-      "|",
-      "preview",
-      "side-by-side",
-      "fullscreen",
-      "|",
-      "guide",
+      '|',
+      'preview',
+      'side-by-side',
+      'fullscreen',
+      '|',
+      'guide',
     ],
     spellChecker: false,
     autosave: {
@@ -231,25 +229,26 @@ export default function EditBlogForm({
 
   const handleSelectTag = (tagName: string) => {
     const tagToAdd = allTags.find((tag) => tag.name === tagName);
+
     if (tagToAdd && !selectedTags.find((st) => st.id === tagToAdd.id)) {
       const newSelectedTags = [...selectedTags, tagToAdd];
+
       setSelectedTags(newSelectedTags);
       form.setValue(
-        "tagIds",
-        newSelectedTags.map((t) => t.id)
+        'tagIds',
+        newSelectedTags.map((t) => t.id),
       );
     }
-    setTagQuery("");
+    setTagQuery('');
   };
 
   const handleRemoveTag = (tagIdToRemove: string) => {
-    const newSelectedTags = selectedTags.filter(
-      (tag) => tag.id !== tagIdToRemove
-    );
+    const newSelectedTags = selectedTags.filter((tag) => tag.id !== tagIdToRemove);
+
     setSelectedTags(newSelectedTags);
     form.setValue(
-      "tagIds",
-      newSelectedTags.map((t) => t.id)
+      'tagIds',
+      newSelectedTags.map((t) => t.id),
     );
   };
 
@@ -266,7 +265,7 @@ export default function EditBlogForm({
         //   contentPreview: data.content?.substring(0, 50),
         // });
 
-        let imageUrl = initialData?.image || "";
+        let imageUrl = initialData?.image || '';
 
         // 1. Handle Image Upload
         if (imageFile) {
@@ -277,12 +276,13 @@ export default function EditBlogForm({
           } catch (error) {
             // console.error("Error uploading image:", error);
             toast({
-              variant: "destructive",
-              title: "Image Upload Failed",
+              variant: 'destructive',
+              title: 'Image Upload Failed',
               description:
-                "Failed to upload the new cover image. Please try again.",
+                'Failed to upload the new cover image. Please try again.',
             });
             setImageLoading(false);
+
             return;
           } finally {
             setImageLoading(false);
@@ -292,14 +292,14 @@ export default function EditBlogForm({
         // 2. Prepare Blog Data Payload
         const blogPayload: DataToBlog = {
           title: data.title,
-          content: data.content || "",
+          content: data.content || '',
           description: data.description,
           categoryId: data.categoryId,
           link: data.link || null,
           tagIds: data.tagIds || [],
           image: imageUrl,
-          metaTitle: data.metaTitle || "",
-          metaDesc: data.metaDesc || "",
+          metaTitle: data.metaTitle || '',
+          metaDesc: data.metaDesc || '',
           isFeatured: data.isFeatured,
         };
 
@@ -328,13 +328,13 @@ export default function EditBlogForm({
         // 4. Show appropriate toast based on publish status
         if (shouldBePublished) {
           toast({
-            title: "Blog Updated and Published",
-            description: "Your blog post has been updated and is live.",
+            title: 'Blog Updated and Published',
+            description: 'Your blog post has been updated and is live.',
           });
         } else {
           toast({
-            title: "Blog Updated as Draft",
-            description: "Your blog post has been saved as a draft.",
+            title: 'Blog Updated as Draft',
+            description: 'Your blog post has been saved as a draft.',
           });
         }
 
@@ -344,12 +344,12 @@ export default function EditBlogForm({
       } catch (error) {
         // console.error("Submission error:", error);
         toast({
-          variant: "destructive",
-          title: "Error Updating Blog",
+          variant: 'destructive',
+          title: 'Error Updating Blog',
           description:
             error instanceof Error
               ? error.message
-              : "An unexpected error occurred while updating the blog post. Please try again.",
+              : 'An unexpected error occurred while updating the blog post. Please try again.',
         });
       }
     });
@@ -446,11 +446,11 @@ export default function EditBlogForm({
                 alt="Cover image preview"
                 fill
                 sizes="(max-width: 768px) 100vw, 800px"
-                style={{ objectFit: "cover" }}
+                style={{ objectFit: 'cover' }}
               />
               <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 flex justify-between items-center">
                 <span className="text-sm truncate max-w-[80%]">
-                  {imageFile ? imageFile.name : "Current cover image"}
+                  {imageFile ? imageFile.name : 'Current cover image'}
                 </span>
                 <Button
                   type="button"
@@ -459,7 +459,7 @@ export default function EditBlogForm({
                   onClick={() => {
                     setPreview(null);
                     setImageFile(null);
-                    form.setValue("image", "");
+                    form.setValue('image', '');
                   }}
                 >
                   <X className="h-4 w-4" />
@@ -500,12 +500,12 @@ export default function EditBlogForm({
                 size="sm"
                 className="flex items-center"
                 onClick={() => {
-                  document.getElementById("change-image-upload")?.click();
+                  document.getElementById('change-image-upload')?.click();
                 }}
                 disabled={imageLoading}
               >
                 <Upload className="mr-2 h-4 w-4" />
-                {imageLoading ? "Uploading..." : "Change Image"}
+                {imageLoading ? 'Uploading...' : 'Change Image'}
                 <input
                   id="change-image-upload"
                   type="file"
@@ -552,8 +552,8 @@ export default function EditBlogForm({
                     <CommandList className="absolute z-10 mt-1 w-full bg-popover border rounded-md shadow-md max-h-40 overflow-y-auto">
                       <CommandEmpty>
                         {filteredTags.length === 0 && tagQuery
-                          ? "No tags found."
-                          : "Type to search..."}
+                          ? 'No tags found.'
+                          : 'Type to search...'}
                       </CommandEmpty>
                       <CommandGroup>
                         {filteredTags.map((tag) => (
@@ -685,7 +685,7 @@ export default function EditBlogForm({
           {isPending ? (
             <CircleDashedIcon className="mr-2 h-4 w-4 animate-spin" />
           ) : null}
-          {form.getValues("isPublished") ? "Update & Publish" : "Update Draft"}
+          {form.getValues('isPublished') ? 'Update & Publish' : 'Update Draft'}
         </Button>
       </form>
     </Form>

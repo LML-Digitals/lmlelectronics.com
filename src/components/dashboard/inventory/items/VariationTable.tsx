@@ -14,7 +14,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { VariationImage } from './types/types';
 import { ImageIcon } from './icons';
 
-export function VariationTable({
+export function VariationTable ({
   variations,
   variationImages,
   onEdit,
@@ -73,7 +73,7 @@ export function VariationTable({
                       (total, [_, stockInfo]: any) => {
                         return total + (parseInt(stockInfo.stock) || 0);
                       },
-                      0
+                      0,
                     )}{' '}
                     units
                   </TableCell>

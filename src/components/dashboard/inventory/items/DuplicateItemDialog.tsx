@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -15,20 +15,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useState } from "react";
-import { InventoryItemWithRelations } from "./types/ItemType";
-import { CircleDashed } from "lucide-react";
-import { createInventoryItem } from "./services/itemsCrud";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { useState } from 'react';
+import { InventoryItemWithRelations } from './types/ItemType';
+import { CircleDashed } from 'lucide-react';
+import { createInventoryItem } from './services/itemsCrud';
 
 // Schema for the duplicate form - just focusing on the name for simplicity
 const duplicateSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, 'Name is required'),
 });
 
 interface DuplicateItemDialogProps {
@@ -38,7 +38,7 @@ interface DuplicateItemDialogProps {
   onDuplicated: () => void;
 }
 
-export function DuplicateItemDialog({
+export function DuplicateItemDialog ({
   item,
   open,
   onOpenChange,
@@ -70,7 +70,7 @@ export function DuplicateItemDialog({
         // Duplicate all variations with their stock levels
         variations: item.variations.map((variation) => ({
           name: variation.name,
-          sku: `${variation.sku || ""}-copy`, // Modify SKU to avoid duplicates
+          sku: `${variation.sku || ''}-copy`, // Modify SKU to avoid duplicates
           image: variation.image,
           stockLevels: variation.stockLevels.map((level) => ({
             locationId: level.locationId,
@@ -84,19 +84,19 @@ export function DuplicateItemDialog({
       await createInventoryItem(newItemData);
 
       toast({
-        title: "Success",
+        title: 'Success',
         description: `Duplicate item "${values.name}" created successfully`,
       });
 
       onOpenChange(false);
       onDuplicated();
     } catch (error) {
-      console.error("Error duplicating item:", error);
+      console.error('Error duplicating item:', error);
       toast({
-        variant: "destructive",
-        title: "Duplication failed",
+        variant: 'destructive',
+        title: 'Duplication failed',
         description:
-          "There was an error duplicating the item. Please try again.",
+          'There was an error duplicating the item. Please try again.',
       });
     } finally {
       setIsLoading(false);

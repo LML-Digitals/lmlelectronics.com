@@ -19,7 +19,7 @@ export const LoginButton = () => {
 export const LogoutButton = () => {
   const handleSignOut = async () => {
     await logout();
-    signOut({ callbackUrl: "/", redirect: true });
+    signOut({ callbackUrl: '/', redirect: true });
   };
 
   return (

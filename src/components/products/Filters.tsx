@@ -1,5 +1,5 @@
-"use client";
-import React from "react";
+'use client';
+import React from 'react';
 
 export type FiltersState = {
   category?: string;
@@ -8,7 +8,7 @@ export type FiltersState = {
   deals?: boolean;
 };
 
-export default function Filters({
+export default function Filters ({
   filters,
   onChange,
   categories = [],
@@ -24,7 +24,7 @@ export default function Filters({
         <ul className="mb-8">
           <li>
             <button
-              className={`block w-full text-left py-1.5 px-2 rounded font-semibold ${!filters.category ? "text-black" : "text-gray-700"}`}
+              className={`block w-full text-left py-1.5 px-2 rounded font-semibold ${!filters.category ? 'text-black' : 'text-gray-700'}`}
               onClick={() => onChange({ ...filters, category: undefined })}
             >
               All Items
@@ -33,7 +33,7 @@ export default function Filters({
           {categories.map((cat) => (
             <li key={cat.id}>
               <button
-                className={`block w-full text-left py-1.5 px-2 rounded ${filters.category === cat.id ? "font-bold text-black" : "text-gray-700"}`}
+                className={`block w-full text-left py-1.5 px-2 rounded ${filters.category === cat.id ? 'font-bold text-black' : 'text-gray-700'}`}
                 onClick={() => onChange({ ...filters, category: cat.id })}
               >
                 {cat.name}
@@ -49,7 +49,7 @@ export default function Filters({
               min={0}
               placeholder="Min"
               className="w-20 px-2 py-1 border rounded"
-              value={filters.priceRange?.[0] ?? ""}
+              value={filters.priceRange?.[0] ?? ''}
               onChange={e => onChange({ ...filters, priceRange: [Number(e.target.value) || 0, filters.priceRange?.[1] ?? 0] })}
             />
             <span>-</span>
@@ -58,7 +58,7 @@ export default function Filters({
               min={0}
               placeholder="Max"
               className="w-20 px-2 py-1 border rounded"
-              value={filters.priceRange?.[1] ?? ""}
+              value={filters.priceRange?.[1] ?? ''}
               onChange={e => onChange({ ...filters, priceRange: [filters.priceRange?.[0] ?? 0, Number(e.target.value) || 0] })}
             />
           </div>
@@ -67,7 +67,7 @@ export default function Filters({
           <h3 className="font-semibold mb-2">Availability</h3>
           <select
             className="w-full border rounded px-2 py-1"
-            value={filters.availability || ""}
+            value={filters.availability || ''}
             onChange={e => onChange({ ...filters, availability: e.target.value })}
           >
             <option value="">All</option>
@@ -88,4 +88,4 @@ export default function Filters({
       </div>
     </aside>
   );
-} 
+}

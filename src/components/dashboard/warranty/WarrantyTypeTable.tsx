@@ -1,5 +1,5 @@
-"use client";
-import React, { useState, useEffect } from "react";
+'use client';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -7,10 +7,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -18,17 +18,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { PlusCircle, Search, Edit, Trash2, Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/dialog';
+import { PlusCircle, Search, Edit, Trash2, Clock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import {
   getAllWarrantyTypes,
   deleteWarrantyType,
-} from "./services/warrantyTypeService";
-import { WarrantyTypeProps } from "./types/types";
-import { format } from "date-fns";
-import { WarrantyTypeForm } from "./WarrantyTypeForm";
-import { toast } from "@/components/ui/use-toast";
+} from './services/warrantyTypeService';
+import { WarrantyTypeProps } from './types/types';
+import { format } from 'date-fns';
+import { WarrantyTypeForm } from './WarrantyTypeForm';
+import { toast } from '@/components/ui/use-toast';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,17 +38,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 
-export default function WarrantyTypeTable() {
+export default function WarrantyTypeTable () {
   const [warrantyTypes, setWarrantyTypes] = useState<WarrantyTypeProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedWarrantyType, setSelectedWarrantyType] =
-    useState<WarrantyTypeProps | null>(null);
+  const [selectedWarrantyType, setSelectedWarrantyType]
+    = useState<WarrantyTypeProps | null>(null);
 
   useEffect(() => {
     fetchWarrantyTypes();
@@ -58,13 +58,14 @@ export default function WarrantyTypeTable() {
     setIsLoading(true);
     try {
       const data = await getAllWarrantyTypes();
+
       setWarrantyTypes(data);
     } catch (error) {
-      console.error("Failed to fetch warranty types:", error);
+      console.error('Failed to fetch warranty types:', error);
       toast({
-        title: "Error",
-        description: "Failed to load warranty types. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to load warranty types. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -74,50 +75,48 @@ export default function WarrantyTypeTable() {
   const handleDelete = async (id: string) => {
     try {
       await deleteWarrantyType(id);
-      setWarrantyTypes(
-        warrantyTypes.filter((warrantyType) => warrantyType.id !== id)
-      );
+      setWarrantyTypes(warrantyTypes.filter((warrantyType) => warrantyType.id !== id));
       toast({
-        title: "Success",
-        description: "Warranty type deleted successfully",
+        title: 'Success',
+        description: 'Warranty type deleted successfully',
       });
       setIsDeleteDialogOpen(false);
     } catch (error) {
-      console.error("Failed to delete warranty type:", error);
+      console.error('Failed to delete warranty type:', error);
 
       // Extract error message if available
-      let errorMessage = "Failed to delete warranty type. Please try again.";
+      let errorMessage = 'Failed to delete warranty type. Please try again.';
+
       if (error instanceof Error) {
         errorMessage = error.message;
       }
 
       toast({
-        title: "Error",
+        title: 'Error',
         description: errorMessage,
-        variant: "destructive",
+        variant: 'destructive',
       });
     }
   };
 
-  const filteredWarrantyTypes = warrantyTypes.filter(
-    (warrantyType) =>
-      warrantyType.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      warrantyType.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredWarrantyTypes = warrantyTypes.filter((warrantyType) => warrantyType.name.toLowerCase().includes(searchTerm.toLowerCase())
+      || warrantyType.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const formatDuration = (duration: number) => {
     if (duration === 0) {
-      return "Lifetime (No expiration)";
+      return 'Lifetime (No expiration)';
     }
     if (duration < 12) {
-      return `${duration} month${duration !== 1 ? "s" : ""}`;
+      return `${duration} month${duration !== 1 ? 's' : ''}`;
     }
     const years = Math.floor(duration / 12);
     const months = duration % 12;
-    let result = `${years} year${years !== 1 ? "s" : ""}`;
+    let result = `${years} year${years !== 1 ? 's' : ''}`;
+
     if (months > 0) {
-      result += ` ${months} month${months !== 1 ? "s" : ""}`;
+      result += ` ${months} month${months !== 1 ? 's' : ''}`;
     }
+
     return result;
   };
 
@@ -167,7 +166,7 @@ export default function WarrantyTypeTable() {
       <CardContent>
         {isLoading ? (
           <div className="flex justify-center py-8">
-            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
           </div>
         ) : (
           <div className="rounded-md border">
@@ -189,8 +188,8 @@ export default function WarrantyTypeTable() {
                       className="h-24 text-center text-muted-foreground"
                     >
                       {searchTerm
-                        ? "No warranty types match your search."
-                        : "No warranty types found. Create one to get started."}
+                        ? 'No warranty types match your search.'
+                        : 'No warranty types found. Create one to get started.'}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -212,19 +211,19 @@ export default function WarrantyTypeTable() {
                       <TableCell>
                         {format(
                           new Date(warrantyType.createdAt),
-                          "MMM d, yyyy"
+                          'MMM d, yyyy',
                         )}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Dialog
                             open={
-                              isEditDialogOpen &&
-                              selectedWarrantyType?.id === warrantyType.id
+                              isEditDialogOpen
+                              && selectedWarrantyType?.id === warrantyType.id
                             }
                             onOpenChange={(open) => {
                               setIsEditDialogOpen(open);
-                              if (!open) setSelectedWarrantyType(null);
+                              if (!open) { setSelectedWarrantyType(null); }
                             }}
                           >
                             <DialogTrigger asChild>
@@ -261,12 +260,12 @@ export default function WarrantyTypeTable() {
 
                           <AlertDialog
                             open={
-                              isDeleteDialogOpen &&
-                              selectedWarrantyType?.id === warrantyType.id
+                              isDeleteDialogOpen
+                              && selectedWarrantyType?.id === warrantyType.id
                             }
                             onOpenChange={(open) => {
                               setIsDeleteDialogOpen(open);
-                              if (!open) setSelectedWarrantyType(null);
+                              if (!open) { setSelectedWarrantyType(null); }
                             }}
                           >
                             <Button
@@ -293,9 +292,8 @@ export default function WarrantyTypeTable() {
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  onClick={() =>
-                                    selectedWarrantyType &&
-                                    handleDelete(selectedWarrantyType.id)
+                                  onClick={() => selectedWarrantyType
+                                    && handleDelete(selectedWarrantyType.id)
                                   }
                                 >
                                   Delete

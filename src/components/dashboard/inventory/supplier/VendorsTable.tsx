@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Input } from "@/components/ui/input";
+import { Input } from '@/components/ui/input';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,15 +11,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Trash2, Star } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { AddSupplierDialog } from "./AddSupplierDialog";
-import { EditSupplierDialog } from "./EditSupplierDialog";
-import { SupplierDetailDialog } from "./SupplierDetailDialog";
-import { Button } from "../../../ui/button";
-import { Card } from "../../../ui/card";
+} from '@/components/ui/alert-dialog';
+import { Trash2, Star } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { AddSupplierDialog } from './AddSupplierDialog';
+import { EditSupplierDialog } from './EditSupplierDialog';
+import { SupplierDetailDialog } from './SupplierDetailDialog';
+import { Button } from '../../../ui/button';
+import { Card } from '../../../ui/card';
 import {
   Table,
   TableBody,
@@ -27,29 +27,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../ui/table";
-import { useToast } from "../../../ui/use-toast";
-import { deleteSupplier } from "./services/supplierCrud";
-import { SupplierProps } from "./services/types";
+} from '../../../ui/table';
+import { useToast } from '../../../ui/use-toast';
+import { deleteSupplier } from './services/supplierCrud';
+import { SupplierProps } from './services/types';
 
-function SuppliersTable({ suppliers }: { suppliers: SupplierProps[] }) {
+function SuppliersTable ({ suppliers }: { suppliers: SupplierProps[] }) {
   const router = useRouter();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
-  const [selectedSupplier, setSelectedSupplier] =
-    useState<SupplierProps | null>(null);
+  const [selectedSupplier, setSelectedSupplier]
+    = useState<SupplierProps | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
     setSearch(inputValue);
   };
 
   const filteredItems = suppliers.filter((supplier) => {
     return (
-      search.toLowerCase() === "" ||
-      supplier.name.toLowerCase().includes(search.toLocaleLowerCase())
+      search.toLowerCase() === ''
+      || supplier.name.toLowerCase().includes(search.toLocaleLowerCase())
     );
   });
 
@@ -57,17 +58,18 @@ function SuppliersTable({ suppliers }: { suppliers: SupplierProps[] }) {
     startTransition(async () => {
       try {
         const res = await deleteSupplier(id);
+
         if (res.success) {
           toast({
-            title: "Supplier",
-            description: "Supplier Deleted Successfully",
+            title: 'Supplier',
+            description: 'Supplier Deleted Successfully',
           });
           router.refresh();
         }
       } catch (error) {
         toast({
-          title: "Supplier",
-          description: "Failed to Delete Supplier",
+          title: 'Supplier',
+          description: 'Failed to Delete Supplier',
         });
       }
     });
@@ -79,28 +81,24 @@ function SuppliersTable({ suppliers }: { suppliers: SupplierProps[] }) {
 
     // Add filled stars
     for (let i = 0; i < roundedRating; i++) {
-      stars.push(
-        <Star
-          key={`filled-${i}`}
-          size={16}
-          fill="#EAB308"
-          color="#EAB308"
-          className="inline-block"
-        />
-      );
+      stars.push(<Star
+        key={`filled-${i}`}
+        size={16}
+        fill="#EAB308"
+        color="#EAB308"
+        className="inline-block"
+      />);
     }
 
     // Add empty stars
     for (let i = roundedRating; i < 5; i++) {
-      stars.push(
-        <Star
-          key={`empty-${i}`}
-          size={16}
-          fill="transparent"
-          color="#EAB308"
-          className="inline-block"
-        />
-      );
+      stars.push(<Star
+        key={`empty-${i}`}
+        size={16}
+        fill="transparent"
+        color="#EAB308"
+        className="inline-block"
+      />);
     }
 
     return stars;
@@ -158,8 +156,8 @@ function SuppliersTable({ suppliers }: { suppliers: SupplierProps[] }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredItems &&
-                filteredItems.map((supplier) => (
+              {filteredItems
+                && filteredItems.map((supplier) => (
                   <TableRow
                     key={supplier.id}
                     onClick={() => handleRowClick(supplier)}
@@ -185,7 +183,7 @@ function SuppliersTable({ suppliers }: { suppliers: SupplierProps[] }) {
                           rel="noopener noreferrer"
                           className="font-semibold hover:underline"
                         >
-                          {supplier.website.replace(/^https?:\/\//, "")}
+                          {supplier.website.replace(/^https?:\/\//, '')}
                         </a>
                       ) : (
                         <span className="text-muted-foreground text-xs sm:text-sm italic">
@@ -194,26 +192,26 @@ function SuppliersTable({ suppliers }: { suppliers: SupplierProps[] }) {
                       )}
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm">
-                      {supplier.rating !== null &&
-                      supplier.rating !== undefined ? (
-                        <div className="flex items-center gap-0.5">
-                          {renderStars(supplier.rating)}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground text-xs sm:text-sm italic">
+                      {supplier.rating !== null
+                      && supplier.rating !== undefined ? (
+                          <div className="flex items-center gap-0.5">
+                            {renderStars(supplier.rating)}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-xs sm:text-sm italic">
                           No rating
-                        </span>
-                      )}
+                          </span>
+                        )}
                     </TableCell>
                     <TableCell className="text-xs sm:text-sm">
-                      {supplier.leadTime !== null &&
-                      supplier.leadTime !== undefined ? (
-                        <span>{supplier.leadTime} days</span>
-                      ) : (
-                        <span className="text-muted-foreground text-xs sm:text-sm italic">
+                      {supplier.leadTime !== null
+                      && supplier.leadTime !== undefined ? (
+                          <span>{supplier.leadTime} days</span>
+                        ) : (
+                          <span className="text-muted-foreground text-xs sm:text-sm italic">
                           N/A
-                        </span>
-                      )}
+                          </span>
+                        )}
                     </TableCell>
 
                     <TableCell className="text-xs sm:text-sm">
@@ -234,14 +232,14 @@ function SuppliersTable({ suppliers }: { suppliers: SupplierProps[] }) {
                             <Trash2
                               size={18}
                               className={`text-red-500 cursor-pointer ${
-                                isPending ? "animate-pulse" : ""
+                                isPending ? 'animate-pulse' : ''
                               }`}
                             />
                           </AlertDialogTrigger>
                           <AlertDialogContent
                             onClick={(e) => e.stopPropagation()}
                           >
-                            {" "}
+                            {' '}
                             {/* Prevent row click */}
                             <AlertDialogHeader>
                               <AlertDialogTitle>
@@ -260,7 +258,7 @@ function SuppliersTable({ suppliers }: { suppliers: SupplierProps[] }) {
                                 disabled={isPending}
                                 className="bg-red-500 hover:bg-red-600"
                               >
-                                {isPending ? "Deleting..." : "Delete"}
+                                {isPending ? 'Deleting...' : 'Delete'}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

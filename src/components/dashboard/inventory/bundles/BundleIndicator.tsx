@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Package, Info, ShoppingCart, AlertCircle } from "lucide-react";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Package, Info, ShoppingCart, AlertCircle } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 
 interface BundleComponent {
   name: string;
@@ -33,24 +33,24 @@ interface BundleIndicatorProps {
   showDetails?: boolean;
 }
 
-export default function BundleIndicator({
+export default function BundleIndicator ({
   isBundle,
   componentCount,
   components = [],
   totalComponentPrice,
   bundlePrice,
-  className = "",
+  className = '',
   showDetails = false,
 }: BundleIndicatorProps) {
   if (!isBundle) {
     return null;
   }
 
-  const savings =
-    totalComponentPrice && bundlePrice ? totalComponentPrice - bundlePrice : 0;
+  const savings
+    = totalComponentPrice && bundlePrice ? totalComponentPrice - bundlePrice : 0;
 
-  const savingsPercent =
-    totalComponentPrice && savings > 0
+  const savingsPercent
+    = totalComponentPrice && savings > 0
       ? ((savings / totalComponentPrice) * 100).toFixed(0)
       : 0;
 
@@ -66,7 +66,7 @@ export default function BundleIndicator({
 
       {componentCount && (
         <Badge variant="outline" className="text-xs">
-          {componentCount} {componentCount === 1 ? "item" : "items"}
+          {componentCount} {componentCount === 1 ? 'item' : 'items'}
         </Badge>
       )}
 
@@ -142,16 +142,16 @@ export default function BundleIndicator({
 }
 
 // Simple version for list displays
-export function BundleBadge({
+export function BundleBadge ({
   isBundle,
   componentCount,
-  className = "",
+  className = '',
 }: {
   isBundle: boolean;
   componentCount?: number;
   className?: string;
 }) {
-  if (!isBundle) return null;
+  if (!isBundle) { return null; }
 
   return (
     <div className={`inline-flex items-center space-x-1 ${className}`}>
@@ -170,7 +170,7 @@ export function BundleBadge({
 }
 
 // Stock warning for bundles
-export function BundleStockWarning({
+export function BundleStockWarning ({
   isBundle,
   stock,
   componentLimitations = [],
@@ -183,13 +183,11 @@ export function BundleStockWarning({
     needed: number;
   }>;
 }) {
-  if (!isBundle || stock > 0) return null;
+  if (!isBundle || stock > 0) { return null; }
 
-  const limitingComponents = componentLimitations.filter(
-    (comp) => Math.floor(comp.available / comp.needed) === 0
-  );
+  const limitingComponents = componentLimitations.filter((comp) => Math.floor(comp.available / comp.needed) === 0);
 
-  if (limitingComponents.length === 0) return null;
+  if (limitingComponents.length === 0) { return null; }
 
   return (
     <div className="flex items-center space-x-2 p-2 bg-red-50 border border-red-200 rounded-md">
@@ -197,7 +195,7 @@ export function BundleStockWarning({
       <div className="flex-1">
         <p className="text-sm text-red-800 font-medium">Bundle unavailable</p>
         <p className="text-xs text-red-600">
-          Missing: {limitingComponents.map((comp) => comp.name).join(", ")}
+          Missing: {limitingComponents.map((comp) => comp.name).join(', ')}
         </p>
       </div>
     </div>

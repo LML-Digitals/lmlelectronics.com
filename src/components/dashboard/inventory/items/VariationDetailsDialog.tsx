@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -6,21 +6,21 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Eye, Pencil, Package, Tag } from "lucide-react";
-import { useState } from "react";
-import Image from "next/image";
-import { useToast } from "@/components/ui/use-toast";
-import { BarcodeGenerator } from "./BarcodeGenerator";
-import { updateVariationBarcode } from "./services/barcodeService";
-import { cn } from "@/lib/utils";
-import { EditVariationDialog } from "./EditVariationDialog";
+} from '@/components/ui/dialog';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Eye, Pencil, Package, Tag } from 'lucide-react';
+import { useState } from 'react';
+import Image from 'next/image';
+import { useToast } from '@/components/ui/use-toast';
+import { BarcodeGenerator } from './BarcodeGenerator';
+import { updateVariationBarcode } from './services/barcodeService';
+import { cn } from '@/lib/utils';
+import { EditVariationDialog } from './EditVariationDialog';
 
 interface VariationDetailsDialogProps {
   variation: {
@@ -62,7 +62,7 @@ interface VariationDetailsDialogProps {
   }[];
 }
 
-export function VariationDetailsDialog({
+export function VariationDetailsDialog ({
   variation,
   parentItemName,
   onUpdate,
@@ -70,19 +70,19 @@ export function VariationDetailsDialog({
   locations = [],
 }: VariationDetailsDialogProps) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("details");
+  const [activeTab, setActiveTab] = useState('details');
   const { toast } = useToast();
 
   const totalStock = variation.stockLevels.reduce(
     (sum: number, level: { stock: number }) => sum + level.stock,
-    0
+    0,
   );
 
   const handleGenerateBarcode = async (newBarcode: string) => {
     try {
       toast({
-        title: "Barcode Generated",
-        description: "The barcode has been generated successfully.",
+        title: 'Barcode Generated',
+        description: 'The barcode has been generated successfully.',
       });
 
       if (onUpdate) {
@@ -90,9 +90,9 @@ export function VariationDetailsDialog({
       }
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to generate barcode.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to generate barcode.',
       });
     }
   };
@@ -102,17 +102,18 @@ export function VariationDetailsDialog({
       const updatedBarcode = await updateVariationBarcode(variationId, barcode);
 
       toast({
-        title: "Barcode Updated",
-        description: "The barcode has been saved to the database.",
+        title: 'Barcode Updated',
+        description: 'The barcode has been saved to the database.',
       });
 
       return updatedBarcode;
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update barcode.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to update barcode.',
       });
+
       return barcode;
     }
   };
@@ -171,16 +172,16 @@ export function VariationDetailsDialog({
               <div>
                 <Label className="text-xs text-muted-foreground">Price</Label>
                 <p className="font-medium">
-                  ${variation.sellingPrice?.toFixed(2) || "0.00"}
+                  ${variation.sellingPrice?.toFixed(2) || '0.00'}
                 </p>
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground">Status</Label>
                 <Badge
-                  variant={variation.visible ? "default" : "secondary"}
+                  variant={variation.visible ? 'default' : 'secondary'}
                   className="mt-1"
                 >
-                  {variation.visible ? "Visible" : "Hidden"}
+                  {variation.visible ? 'Visible' : 'Hidden'}
                 </Badge>
               </div>
             </div>
@@ -213,7 +214,7 @@ export function VariationDetailsDialog({
                       Raw Cost
                     </Label>
                     <p className="font-medium">
-                      ${variation.raw?.toFixed(2) || "0.00"}
+                      ${variation.raw?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                   <div>
@@ -221,7 +222,7 @@ export function VariationDetailsDialog({
                       Tax Rate
                     </Label>
                     <p className="font-medium">
-                      {variation.tax?.toFixed(2) || "0.00"}%
+                      {variation.tax?.toFixed(2) || '0.00'}%
                     </p>
                   </div>
                   <div>
@@ -229,7 +230,7 @@ export function VariationDetailsDialog({
                       Shipping Cost
                     </Label>
                     <p className="font-medium">
-                      ${variation.shipping?.toFixed(2) || "0.00"}
+                      ${variation.shipping?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                   <div>
@@ -245,7 +246,7 @@ export function VariationDetailsDialog({
                       Profit
                     </Label>
                     <p className="font-medium text-green-600">
-                      ${variation.profit?.toFixed(2) || "0.00"}
+                      ${variation.profit?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                   <div>
@@ -253,7 +254,7 @@ export function VariationDetailsDialog({
                       Total Cost
                     </Label>
                     <p className="font-medium">
-                      ${variation.totalCost?.toFixed(2) || "0.00"}
+                      ${variation.totalCost?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                   <div>
@@ -261,7 +262,7 @@ export function VariationDetailsDialog({
                       Selling Price
                     </Label>
                     <p className="font-medium">
-                      ${variation.sellingPrice?.toFixed(2) || "0.00"}
+                      ${variation.sellingPrice?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                   <div>
@@ -269,7 +270,7 @@ export function VariationDetailsDialog({
                       Use Default Rates
                     </Label>
                     <p className="font-medium">
-                      {variation.useDefaultRates ? "Yes" : "No"}
+                      {variation.useDefaultRates ? 'Yes' : 'No'}
                     </p>
                   </div>
                 </div>
@@ -285,7 +286,7 @@ export function VariationDetailsDialog({
                         Weight
                       </Label>
                       <p className="font-medium">
-                        {variation.weight?.toFixed(2) || "0.00"} lbs
+                        {variation.weight?.toFixed(2) || '0.00'} lbs
                       </p>
                     </div>
                     <div>
@@ -293,9 +294,9 @@ export function VariationDetailsDialog({
                         Dimensions (L×W×H)
                       </Label>
                       <p className="font-medium">
-                        {variation.length?.toFixed(2) || "0.00"} ×{" "}
-                        {variation.width?.toFixed(2) || "0.00"} ×{" "}
-                        {variation.height?.toFixed(2) || "0.00"} in
+                        {variation.length?.toFixed(2) || '0.00'} ×{' '}
+                        {variation.width?.toFixed(2) || '0.00'} ×{' '}
+                        {variation.height?.toFixed(2) || '0.00'} in
                       </p>
                     </div>
                   </div>
@@ -307,7 +308,7 @@ export function VariationDetailsDialog({
               <Button
                 variant="outline"
                 className="mr-2"
-                onClick={() => setActiveTab("barcode")}
+                onClick={() => setActiveTab('barcode')}
               >
                 Manage Barcode
               </Button>
@@ -372,17 +373,17 @@ export function VariationDetailsDialog({
                         className="flex justify-between items-center p-3 border rounded-md"
                       >
                         <span className="font-medium">
-                          {level.location?.name || "Unknown Location"}
+                          {level.location?.name || 'Unknown Location'}
                         </span>
                         <div className="flex items-center gap-6">
                           <span
                             className={cn(
-                              "text-sm font-medium flex items-center",
+                              'text-sm font-medium flex items-center',
                               level.stock <= 0
-                                ? "text-destructive"
+                                ? 'text-destructive'
                                 : level.stock < 5
-                                ? "text-amber-500"
-                                : "text-emerald-600"
+                                  ? 'text-amber-500'
+                                  : 'text-emerald-600',
                             )}
                           >
                             {level.stock} units

@@ -17,8 +17,8 @@ interface VariationOnLocationType {
 
 const renderStockStatus = ({ row }: any) => {
   const status = row.original.stockStatus;
-  const statusColor =
-    status === 'Low in stock' ? 'text-red-500' : 'text-green-500';
+  const statusColor
+    = status === 'Low in stock' ? 'text-red-500' : 'text-green-500';
 
   return <span className={statusColor}>{status}</span>;
 };
@@ -61,7 +61,7 @@ export const columns: ColumnDef<VariationOnLocationType>[] = [
   },
 ];
 
-export function RecentSales() {
+export function RecentSales () {
   const [variations, setVariations] = useState<VariationOnLocationType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -86,7 +86,7 @@ export function RecentSales() {
         // <DataTableSkeleton columnsCount={5} rowsCount={5} />
         <div>Loading...</div>
       ) : (
-        <DataTable data={variations} columns={columns}></DataTable>
+        <DataTable data={variations} columns={columns} />
       )}
     </div>
   );

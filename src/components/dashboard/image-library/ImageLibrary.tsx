@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect, useCallback } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogHeader,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
+} from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Loader2,
   Search,
@@ -27,14 +27,14 @@ import {
   Copy,
   Edit,
   Link,
-} from "lucide-react";
-import Image from "next/image";
-import { format } from "date-fns";
-import { useToast } from "@/components/ui/use-toast";
+} from 'lucide-react';
+import Image from 'next/image';
+import { format } from 'date-fns';
+import { useToast } from '@/components/ui/use-toast';
 
 // Import server actions and components
-import { getImages, deleteImage, renameImage } from "./actions";
-import UploadButton from "@/components/dashboard/image-library/UploadButton";
+import { getImages, deleteImage, renameImage } from './actions';
+import UploadButton from '@/components/dashboard/image-library/UploadButton';
 
 type ImageItem = {
   id: string;
@@ -47,21 +47,19 @@ type ImageItem = {
   metadata?: Record<string, any>;
 };
 
-export default function ImageLibrary() {
+export default function ImageLibrary () {
   const { toast } = useToast();
   const [images, setImages] = useState<ImageItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"name" | "created_at" | "updated_at">(
-    "created_at"
-  );
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'name' | 'created_at' | 'updated_at'>('created_at');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedImage, setSelectedImage] = useState<ImageItem | null>(null);
   const [isImageViewOpen, setIsImageViewOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [renameLoading, setRenameLoading] = useState(false);
-  const [newFileName, setNewFileName] = useState("");
+  const [newFileName, setNewFileName] = useState('');
 
   const fetchImages = useCallback(async () => {
     try {
@@ -77,11 +75,11 @@ export default function ImageLibrary() {
 
       setImages(result.images || []);
     } catch (error) {
-      console.error("Error fetching images:", error);
+      console.error('Error fetching images:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load images",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to load images',
       });
     } finally {
       setLoading(false);
@@ -104,7 +102,8 @@ export default function ImageLibrary() {
 
       // Create a download link
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
+
       a.href = url;
       a.download = image.name;
       document.body.appendChild(a);
@@ -115,15 +114,15 @@ export default function ImageLibrary() {
       document.body.removeChild(a);
 
       toast({
-        title: "Success",
-        description: "Image downloaded successfully",
+        title: 'Success',
+        description: 'Image downloaded successfully',
       });
     } catch (error) {
-      console.error("Error downloading image:", error);
+      console.error('Error downloading image:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to download image",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to download image',
       });
     }
   };
@@ -145,15 +144,15 @@ export default function ImageLibrary() {
       }
 
       toast({
-        title: "Success",
-        description: "Image deleted successfully",
+        title: 'Success',
+        description: 'Image deleted successfully',
       });
     } catch (error) {
-      console.error("Error deleting image:", error);
+      console.error('Error deleting image:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to delete image",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to delete image',
       });
     } finally {
       setDeleteLoading(false);
@@ -164,15 +163,15 @@ export default function ImageLibrary() {
     try {
       await navigator.clipboard.writeText(image.url);
       toast({
-        title: "Success",
-        description: "Image link copied to clipboard",
+        title: 'Success',
+        description: 'Image link copied to clipboard',
       });
     } catch (error) {
-      console.error("Error copying link:", error);
+      console.error('Error copying link:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to copy link to clipboard",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to copy link to clipboard',
       });
     }
   };
@@ -184,7 +183,7 @@ export default function ImageLibrary() {
   };
 
   const handleRename = async () => {
-    if (!selectedImage || !newFileName.trim()) return;
+    if (!selectedImage || !newFileName.trim()) { return; }
 
     try {
       setRenameLoading(true);
@@ -195,13 +194,9 @@ export default function ImageLibrary() {
       }
 
       // Update the images list with the new name
-      setImages(
-        images.map((img) =>
-          img.id === selectedImage.id
-            ? { ...img, name: newFileName.trim() }
-            : img
-        )
-      );
+      setImages(images.map((img) => img.id === selectedImage.id
+        ? { ...img, name: newFileName.trim() }
+        : img));
 
       // Update selected image if it's still open
       if (isImageViewOpen && selectedImage) {
@@ -209,21 +204,21 @@ export default function ImageLibrary() {
       }
 
       setIsRenameDialogOpen(false);
-      setNewFileName("");
+      setNewFileName('');
 
       toast({
-        title: "Success",
-        description: "Image renamed successfully",
+        title: 'Success',
+        description: 'Image renamed successfully',
       });
 
       // Refresh the images list to get updated data
       fetchImages();
     } catch (error) {
-      console.error("Error renaming image:", error);
+      console.error('Error renaming image:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to rename image",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to rename image',
       });
     } finally {
       setRenameLoading(false);
@@ -231,8 +226,8 @@ export default function ImageLibrary() {
   };
 
   const formatFileSize = (bytes?: number) => {
-    if (!bytes) return "Unknown size";
-    const units = ["B", "KB", "MB", "GB"];
+    if (!bytes) { return 'Unknown size'; }
+    const units = ['B', 'KB', 'MB', 'GB'];
     let size = bytes;
     let unitIndex = 0;
 
@@ -251,8 +246,8 @@ export default function ImageLibrary() {
           <h1 className="text-xl sm:text-2xl font-bold">Image Library</h1>
           {!loading && (
             <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-              {images.length} {images.length === 1 ? "image" : "images"} total
-              {searchQuery && ` (filtered from search)`}
+              {images.length} {images.length === 1 ? 'image' : 'images'} total
+              {searchQuery && ' (filtered from search)'}
             </p>
           )}
         </div>
@@ -268,20 +263,19 @@ export default function ImageLibrary() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8 w-full text-sm sm:text-base"
-              onKeyDown={(e) => e.key === "Enter" && fetchImages()}
+              onKeyDown={(e) => e.key === 'Enter' && fetchImages()}
             />
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">
             <Select
               value={sortBy}
-              onValueChange={(value: "name" | "created_at" | "updated_at") =>
-                setSortBy(value)
+              onValueChange={(value: 'name' | 'created_at' | 'updated_at') => setSortBy(value)
               }
             >
               <SelectTrigger className="w-full sm:w-[140px] min-h-[44px] text-sm sm:text-base">
                 <SelectValue>
-                  {sortBy === "name" ? (
+                  {sortBy === 'name' ? (
                     <div className="flex items-center gap-1">
                       <ArrowDownAZ size={16} />
                       <span>Name</span>
@@ -312,19 +306,19 @@ export default function ImageLibrary() {
 
             <Select
               value={sortOrder}
-              onValueChange={(value: "asc" | "desc") => setSortOrder(value)}
+              onValueChange={(value: 'asc' | 'desc') => setSortOrder(value)}
             >
               <SelectTrigger className="w-full sm:w-[140px] min-h-[44px] text-sm sm:text-base">
                 <SelectValue>
-                  {sortOrder === "asc" ? "A to Z / Oldest" : "Z to A / Newest"}
+                  {sortOrder === 'asc' ? 'A to Z / Oldest' : 'Z to A / Newest'}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="asc" className="text-sm sm:text-base">
-                  {sortBy === "name" ? "A to Z" : "Oldest first"}
+                  {sortBy === 'name' ? 'A to Z' : 'Oldest first'}
                 </SelectItem>
                 <SelectItem value="desc" className="text-sm sm:text-base">
-                  {sortBy === "name" ? "Z to A" : "Newest first"}
+                  {sortBy === 'name' ? 'Z to A' : 'Newest first'}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -370,7 +364,7 @@ export default function ImageLibrary() {
                   {image.name}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {format(new Date(image.created_at), "MMM d, yyyy")}
+                  {format(new Date(image.created_at), 'MMM d, yyyy')}
                 </p>
               </CardContent>
             </Card>
@@ -396,19 +390,19 @@ export default function ImageLibrary() {
 
             <div className="mt-4 space-y-2 text-xs sm:text-sm">
               <p>
-                <strong>Created:</strong>{" "}
-                {format(new Date(selectedImage.created_at), "PPpp")}
+                <strong>Created:</strong>{' '}
+                {format(new Date(selectedImage.created_at), 'PPpp')}
               </p>
               {selectedImage.metadata?.size && (
                 <p>
-                  <strong>Size:</strong>{" "}
+                  <strong>Size:</strong>{' '}
                   {formatFileSize(selectedImage.metadata.size)}
                 </p>
               )}
               {selectedImage.updated_at !== selectedImage.created_at && (
                 <p>
-                  <strong>Last Modified:</strong>{" "}
-                  {format(new Date(selectedImage.updated_at), "PPpp")}
+                  <strong>Last Modified:</strong>{' '}
+                  {format(new Date(selectedImage.updated_at), 'PPpp')}
                 </p>
               )}
             </div>
@@ -478,7 +472,7 @@ export default function ImageLibrary() {
                 placeholder="Enter new file name"
                 className="mt-1 text-sm sm:text-base"
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !renameLoading) {
+                  if (e.key === 'Enter' && !renameLoading) {
                     handleRename();
                   }
                 }}

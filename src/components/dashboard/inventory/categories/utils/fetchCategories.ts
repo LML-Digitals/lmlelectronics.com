@@ -1,7 +1,7 @@
 import { CategoryWithChildren } from '@/components/dashboard/inventory/categories/CategoryTable';
 import { getCategoryWithChildren } from '../services/itemCategoryCrud';
 
-export async function fetchCategories(): Promise<{
+export async function fetchCategories (): Promise<{
   categories: CategoryWithChildren[];
   error: string | null;
 }> {

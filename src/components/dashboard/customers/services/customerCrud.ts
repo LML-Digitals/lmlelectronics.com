@@ -1,18 +1,18 @@
-"use server";
-import prisma from "@/lib/prisma";
+'use server';
+import prisma from '@/lib/prisma';
 import type {
   Customer,
   StoreCredit,
   Ticket,
   LoyaltyProgram,
-} from "@prisma/client";
-import { nanoid } from "nanoid";
-import bcrypt from "bcryptjs";
+} from '@prisma/client';
+import { nanoid } from 'nanoid';
+import bcrypt from 'bcryptjs';
 
 // const emailService = new EmailService();
-import { getOfficeEmail } from "../utils/getOfficeEmail";
-import { generatePassword } from "@/utils/generatePassword";
-import { addCustomersToGroup } from "./groupCrud";
+import { getOfficeEmail } from '../utils/getOfficeEmail';
+import { generatePassword } from '@/utils/generatePassword';
+import { addCustomersToGroup } from './groupCrud';
 
 type CustomerWithTickets = Customer & {
   tickets: Ticket[];
@@ -31,11 +31,11 @@ export const getCustomers = async (): Promise<Customer[]> => {
           },
         },
       },
-      orderBy: [{ createdAt: "desc" }],
+      orderBy: [{ createdAt: 'desc' }],
     });
   } catch (error) {
-    console.error("Error fetching customers:", error);
-    throw new Error("Failed to fetch customers");
+    console.error('Error fetching customers:', error);
+    throw new Error('Failed to fetch customers');
   }
 };
 
@@ -45,17 +45,17 @@ export const getCustomersForLoyalty = async () => {
       include: {
         loyalty: true,
       },
-      orderBy: [{ createdAt: "desc" }],
+      orderBy: [{ createdAt: 'desc' }],
     });
   } catch (error) {
-    console.error("Error fetching customers:", error);
-    throw new Error("Failed to fetch customers");
+    console.error('Error fetching customers:', error);
+    throw new Error('Failed to fetch customers');
   }
 };
 
-export async function createCustomer(
+export async function createCustomer (
   data: Partial<Customer> & { groups?: string[] },
-  message?: string
+  message?: string,
 ) {
   try {
     // Extract groups from data to handle separately *before* the transaction
@@ -68,7 +68,7 @@ export async function createCustomer(
     const passwordToUse = customerData.password || tempPassword;
 
     if (!passwordToUse) {
-      throw new Error("Password generation failed");
+      throw new Error('Password generation failed');
     }
 
     // Check if the customer email already exists first
@@ -78,9 +78,7 @@ export async function createCustomer(
       });
 
       if (existingCustomer) {
-        throw new Error(
-          `A customer with email ${customerData.email} already exists. Please use a different email or update the existing customer.`
-        );
+        throw new Error(`A customer with email ${customerData.email} already exists. Please use a different email or update the existing customer.`);
       }
     }
 
@@ -90,13 +88,13 @@ export async function createCustomer(
     // Transaction for creating customer and handling referrals
     const result = await prisma.$transaction(async (tx) => {
       let createdCustomer: Customer;
-      let referralApplied = false;
-      let signupDiscount = 0;
+      const referralApplied = false;
+      const signupDiscount = 0;
 
       // Handle referral code if provided (customer was referred by someone)
       if (
-        customerData.referralCode &&
-        customerData.referralCode.trim() !== ""
+        customerData.referralCode
+        && customerData.referralCode.trim() !== ''
       ) {
         try {
           // Apply the referral code using our new system
@@ -114,7 +112,7 @@ export async function createCustomer(
           //   signupDiscount = 10; // $10 discount for being referred
           // }
         } catch (error) {
-          console.error("Error applying referral code:", error);
+          console.error('Error applying referral code:', error);
           // Continue with customer creation even if referral fails
         }
       }
@@ -148,6 +146,7 @@ export async function createCustomer(
         const existingCode = await tx.referralCode.findUnique({
           where: { code: newCustomerReferralCode },
         });
+
         if (!existingCode) {
           isUnique = true;
         } else {
@@ -191,7 +190,7 @@ export async function createCustomer(
     // );
 
     // Build the welcome email content
-    const emailSubject = "Welcome to LML Repair!";
+    const emailSubject = 'Welcome to LML Repair!';
     let emailContent = `
       <h1>Welcome to LML Repair!</h1>
       <p>Thank you for signing up, ${createdCustomer.firstName} ${createdCustomer.lastName}!</p>
@@ -236,18 +235,18 @@ export async function createCustomer(
 
     // If a message is passed, send an additional email to the office email.
     if (message) {
-      const messageSubject = "New Customer Message";
+      const messageSubject = 'New Customer Message';
       const messageContent = `
         <h1>New Customer Message</h1>
         <p>Customer <strong>${createdCustomer.firstName} ${
-        createdCustomer.lastName
-      }</strong> (${createdCustomer.email}) sent the following message:</p>
+  createdCustomer.lastName
+}</strong> (${createdCustomer.email}) sent the following message:</p>
         <p>${message}</p>
         ${
-          referralApplied
-            ? `<p><em>Note: This customer was referred and received a $${signupDiscount} discount.</em></p>`
-            : ""
-        }
+  referralApplied
+    ? `<p><em>Note: This customer was referred and received a $${signupDiscount} discount.</em></p>`
+    : ''
+}
       `;
       // await emailService.sendEmail({
       //   to: officeEmail,
@@ -259,18 +258,18 @@ export async function createCustomer(
 
     return createdCustomer;
   } catch (error) {
-    console.error("Error creating customer:", error);
+    console.error('Error creating customer:', error);
     // Provide more detailed error message
     if (error instanceof Error) {
       throw new Error(`Failed to create customer: ${error.message}`);
     }
-    throw new Error("Failed to create customer");
+    throw new Error('Failed to create customer');
   }
 }
 
 export const updateCustomer = async (
   id: string,
-  data: Partial<Customer> & { groups?: string[] }
+  data: Partial<Customer> & { groups?: string[] },
 ) => {
   try {
     // Extract groups from data to handle separately
@@ -278,6 +277,7 @@ export const updateCustomer = async (
 
     if (customerData.password) {
       const hashedPassword = await bcrypt.hash(customerData.password, 10);
+
       customerData.password = hashedPassword;
     } else {
       delete customerData.password;
@@ -308,8 +308,8 @@ export const updateCustomer = async (
 
     return customer;
   } catch (error) {
-    console.error("Error updating customer:", error);
-    throw new Error("Failed to update customer");
+    console.error('Error updating customer:', error);
+    throw new Error('Failed to update customer');
   }
 };
 
@@ -328,13 +328,11 @@ export const deleteCustomer = async (id: string) => {
     });
   } catch (error) {
     console.error(error);
-    throw new Error("Failed to delete customer");
+    throw new Error('Failed to delete customer');
   }
 };
 
-export const getReferral = async (
-  referralCode: string
-): Promise<Customer | null> => {
+export const getReferral = async (referralCode: string): Promise<Customer | null> => {
   try {
     const customer = await prisma.customer.findUnique({
       where: { referralCode },
@@ -342,21 +340,22 @@ export const getReferral = async (
 
     return customer;
   } catch (error) {
-    console.error("Error fetching customer:", error);
-    throw new Error("Failed to fetch customer");
+    console.error('Error fetching customer:', error);
+    throw new Error('Failed to fetch customer');
   }
 };
 
 export const getCustomer = async (
   email?: string,
   location?: string,
-  id?: string
+  id?: string,
 ): Promise<CustomerWithTickets | null> => {
   try {
     const where: any = {};
-    if (email) where.email = email;
-    if (location) where.location = location;
-    if (id) where.id = id;
+
+    if (email) { where.email = email; }
+    if (location) { where.location = location; }
+    if (id) { where.id = id; }
 
     return (await prisma.customer.findFirst({
       where,
@@ -367,41 +366,38 @@ export const getCustomer = async (
       },
     })) as CustomerWithTickets | null;
   } catch (error) {
-    console.error("Error fetching customers:", error);
-    throw new Error("Failed to fetch customers");
+    console.error('Error fetching customers:', error);
+    throw new Error('Failed to fetch customers');
   }
 };
 
-export const createBulkCustomer = async (data: Omit<Customer, "id">[]) => {
+export const createBulkCustomer = async (data: Omit<Customer, 'id'>[]) => {
   try {
     await prisma.$transaction(async (prisma) => {
       await prisma.customer.createMany({ data });
     });
+
     return { success: true };
   } catch (error) {
-    console.error("Error creating customers:", error);
-    throw new Error("Failed to create customers");
+    console.error('Error creating customers:', error);
+    throw new Error('Failed to create customers');
   } finally {
     await prisma.$disconnect();
   }
 };
 
-export const getCustomersByLocation = async (
-  location: string
-): Promise<{ email: string }[]> => {
+export const getCustomersByLocation = async (location: string): Promise<{ email: string }[]> => {
   try {
     return await prisma.customer.findMany({
       where: { location },
     });
   } catch (error) {
-    console.error("Error fetching customers by location:", error);
-    throw new Error("Failed to fetch customers by location");
+    console.error('Error fetching customers by location:', error);
+    throw new Error('Failed to fetch customers by location');
   }
 };
 
-export async function generateReferralCode(
-  customerId: string
-): Promise<string> {
+export async function generateReferralCode (customerId: string): Promise<string> {
   try {
     // Generate a unique referral code using our new format
     let referralCode = `REF-${nanoid(6).toUpperCase()}`;
@@ -411,6 +407,7 @@ export async function generateReferralCode(
       const existingCode = await prisma.referralCode.findUnique({
         where: { code: referralCode },
       });
+
       if (!existingCode) {
         isUnique = true;
       } else {
@@ -425,7 +422,7 @@ export async function generateReferralCode(
     });
 
     if (!customer) {
-      throw new Error("Customer not found");
+      throw new Error('Customer not found');
     }
 
     // Check if customer already has a referral code
@@ -463,14 +460,14 @@ export async function generateReferralCode(
 
     return referralCode;
   } catch (error) {
-    console.error("Error generating referral code:", error);
-    throw new Error("Failed to generate referral code");
+    console.error('Error generating referral code:', error);
+    throw new Error('Failed to generate referral code');
   }
 }
 
-export async function updateCustomerReferralCode(
+export async function updateCustomerReferralCode (
   customerId: string,
-  referralCode: string
+  referralCode: string,
 ) {
   try {
     // Check if the referral code is already in use
@@ -479,7 +476,7 @@ export async function updateCustomerReferralCode(
     });
 
     if (existingCode && existingCode.customerId !== customerId) {
-      throw new Error("Referral code already in use");
+      throw new Error('Referral code already in use');
     }
 
     // Get customer info
@@ -489,7 +486,7 @@ export async function updateCustomerReferralCode(
     });
 
     if (!customer) {
-      throw new Error("Customer not found");
+      throw new Error('Customer not found');
     }
 
     // Check if customer already has a referral code
@@ -527,14 +524,14 @@ export async function updateCustomerReferralCode(
 
     return updatedCustomer;
   } catch (error) {
-    console.error("Error updating referral code:", error);
+    console.error('Error updating referral code:', error);
     throw error;
   }
 }
 
-export async function updateCustomerTotalSpent(
+export async function updateCustomerTotalSpent (
   customerId: string,
-  amount: number
+  amount: number,
 ): Promise<void> {
   try {
     // Get current customer to handle null totalSpent case
@@ -561,17 +558,18 @@ export async function updateCustomerTotalSpent(
 // Function to toggle the active status of a customer
 export const toggleCustomerActiveStatus = async (
   customerId: string,
-  isActive: boolean
+  isActive: boolean,
 ): Promise<Customer> => {
   try {
     const updatedCustomer = await prisma.customer.update({
       where: { id: customerId },
       data: { isActive },
     });
+
     return updatedCustomer;
   } catch (error) {
-    console.error("Error toggling customer active status:", error);
-    throw new Error("Failed to update customer status");
+    console.error('Error toggling customer active status:', error);
+    throw new Error('Failed to update customer status');
   }
 };
 
@@ -583,11 +581,11 @@ export const getCustomersForGroupSelection = async (search?: string) => {
     if (search) {
       whereClause = {
         OR: [
-          { firstName: { contains: search, mode: "insensitive" } },
-          { lastName: { contains: search, mode: "insensitive" } },
-          { email: { contains: search, mode: "insensitive" } },
+          { firstName: { contains: search, mode: 'insensitive' } },
+          { lastName: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
           { phone: { contains: search } },
-          { company: { contains: search, mode: "insensitive" } },
+          { company: { contains: search, mode: 'insensitive' } },
         ],
       };
     }
@@ -602,13 +600,14 @@ export const getCustomersForGroupSelection = async (search?: string) => {
         phone: true,
         company: true,
       },
-      orderBy: [{ firstName: "asc" }, { lastName: "asc" }],
+      orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
       take: 50, // Limit results for performance
     });
 
     return customers;
   } catch (error) {
-    console.error("Error fetching customers for selection:", error);
+    console.error('Error fetching customers for selection:', error);
+
     return [];
   }
 };
@@ -624,10 +623,10 @@ export const getBasicCustomers = async (): Promise<
         lastName: true,
         email: true,
       },
-      orderBy: [{ firstName: "asc" }, { lastName: "asc" }],
+      orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
     });
   } catch (error) {
-    console.error("Error fetching basic customer data:", error);
-    throw new Error("Failed to fetch customers");
+    console.error('Error fetching basic customer data:', error);
+    throw new Error('Failed to fetch customers');
   }
 };
