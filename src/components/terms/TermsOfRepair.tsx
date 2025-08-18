@@ -1,6 +1,5 @@
-export default function TermsOfRepair() {
+export default function TermsOfRepair () {
   return (
-    <>
       <div className="max-w-3xl mx-auto flex flex-col min-h-screen mt-20">
         <h1 className="text-3xl font-bold mb-6  underline underline-offset-1">
           Terms of Repair
@@ -124,6 +123,5 @@ export default function TermsOfRepair() {
           .
         </p>
       </div>
-    </>
   );
 }
