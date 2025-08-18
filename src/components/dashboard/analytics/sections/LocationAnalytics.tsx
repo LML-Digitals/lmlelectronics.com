@@ -73,14 +73,14 @@ export function LocationAnalytics ({ data }: LocationAnalyticsProps) {
     .slice(0, 10); // Top 10 locations by sales
 
   // Calculate total sales - using proper type casting to handle Object.values returning unknown[]
-  const salesValues = Object.values(data.salesByLocation || {});
+  const salesValues = Object.values(data.salesByLocation || {}) as number[];
   const totalSales = salesValues.reduce(
     (sum: number, val: number) => sum + (val || 0),
     0,
   );
 
   // Calculate total tickets - using proper type casting to handle Object.values returning unknown[]
-  const ticketValues = Object.values(data.ticketsByLocation || {});
+  const ticketValues = Object.values(data.ticketsByLocation || {}) as number[];
   const totalTickets = ticketValues.reduce(
     (sum: number, val: number) => sum + (val || 0),
     0,

@@ -1,8 +1,6 @@
 'use server';
 
-import { _hash } from 'bcryptjs';
 import prisma from '@/lib/prisma';
-import { _randomUUID } from 'crypto';
 import { createCustomer } from '@/components/dashboard/customers/services/customerCrud';
 import { z } from 'zod';
 import { getServerSession } from 'next-auth/next';

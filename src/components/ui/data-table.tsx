@@ -57,7 +57,7 @@ export function DataTable<TData, TValue> ({
         <Input
           placeholder='Filter variationName...'
           value={
-            (table.getColumn('variationName')?.getFilterValue() as string) ?? '',
+            (table.getColumn('variationName')?.getFilterValue() as string) ?? ''
           }
           onChange={(event) => {
             table.getColumn('variationName')?.setFilterValue(event.target.value);
@@ -101,7 +101,7 @@ export function DataTable<TData, TValue> ({
                     </TableCell>
                   ))}
                 </TableRow>
-              )),
+              ))
             ) : (
               <TableRow>
                 <TableCell

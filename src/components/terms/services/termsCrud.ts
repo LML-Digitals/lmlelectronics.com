@@ -1,7 +1,7 @@
 'use server';
 
 import { PrismaClient, TermVersion } from '@prisma/client';
-import { _TermWithVersions } from '@/lib/types';
+
 import { fetchSession } from '@/lib/session';
 
 const prisma = new PrismaClient();

@@ -1,7 +1,6 @@
-import { _buildApiUrl } from './api';
+
 import {
   calculateShippingCost,
-  _getShippingRateByState,
 } from '@/components/dashboard/shipping/services/shippingService';
 
 export async function calculateShipping (state: string): Promise<number> {

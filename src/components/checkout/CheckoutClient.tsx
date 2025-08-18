@@ -30,7 +30,7 @@ import { calculateShipping } from '@/lib/config/shipping';
 import SquarePaymentForm, { SquarePaymentFormRef } from './SquarePaymentForm';
 import { sendOrderConfirmationEmail } from '@/lib/email/sendOrderConfirmation';
 import { getStoreLocations } from '@/components/locations/services/storeLocationCrud';
-import { createOrderFromCheckout } from '@/app/actions/checkout';
+import { processCheckout } from '@/app/actions/checkout';
 
 interface CustomerFormData {
   firstName: string;
@@ -210,6 +210,7 @@ const CheckoutClient = () => {
     try {
       const checkoutData = {
         items,
+        location,
         paymentMethod: 'Square',
         paymentToken: paymentTokenToUse,
         customerId: null,
@@ -242,7 +243,7 @@ const CheckoutClient = () => {
         paymentMethod: 'Square Card',
       };
 
-      const result = await createOrderFromCheckout(checkoutDataWithPayment);
+              const result = await processCheckout(checkoutDataWithPayment);
       const data = result;
 
       toast.success(`Order #${data.orderId} has been created`);

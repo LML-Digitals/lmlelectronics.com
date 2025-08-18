@@ -277,7 +277,7 @@ export function CreateLocationDialog ({ onSuccess }: CreateLocationDialogProps) 
       const uploadedImages = await Promise.all(images
         .filter((img) => img.isNew && img.file)
         .map(async (img) => {
-          const url = await uploadImage(img.file);
+          const url = await uploadImage(img.file!);
 
           return url;
         }));
@@ -670,7 +670,14 @@ export function CreateLocationDialog ({ onSuccess }: CreateLocationDialogProps) 
                       <SocialMediaManager
                         links={socialLinks}
                         onLinksChange={setSocialLinks}
-                        onIconUpload={(file) => void handleIconUpload(file)}
+                        onIconUpload={async (file) => {
+                          try {
+                            return await handleIconUpload(file);
+                          } catch (error) {
+                            // Handle error silently or show toast
+                            return '';
+                          }
+                        }}
                       />
 
                       <Separator />
@@ -678,7 +685,14 @@ export function CreateLocationDialog ({ onSuccess }: CreateLocationDialogProps) 
                       <ListingsManager
                         listings={listings}
                         onListingsChange={setListings}
-                        onIconUpload={(file) => void handleIconUpload(file)}
+                        onIconUpload={async (file) => {
+                          try {
+                            return await handleIconUpload(file);
+                          } catch (error) {
+                            // Handle error silently or show toast
+                            return '';
+                          }
+                        }}
                       />
 
                       <div className="space-y-2">

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { CheckCircle, Clock, ChevronDown, ChevronUp, CircleDashed } from 'lucide-react';
-import { _Badge } from '@/components/ui/badge';
+
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';

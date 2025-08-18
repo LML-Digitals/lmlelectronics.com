@@ -3,12 +3,22 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/config/authOptions';
 import prisma from '@/lib/prisma';
-import { _updateCustomer } from '@/components/dashboard/customers/services/customerCrud';
-import { _adjustStockLevel } from '@/components/dashboard/inventory/items/services/itemsCrud';
+import { updateCustomer } from '@/components/dashboard/customers/services/customerCrud';
+import { adjustStockLevel } from '@/components/dashboard/inventory/items/services/itemsCrud';
+
+// Type for cart items
+export type CartItem = {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  quantity: number;
+  type?: string;
+};
 
 // Type for the cart data coming from the client
 export type CartData = {
-  items: unknown[];
+  items: CartItem[];
   paymentMethod?: string;
   location: string;
   customerId?: string | null;
@@ -59,7 +69,7 @@ export async function processCheckout (cartData: CartData): Promise<{
     }
 
     // Update customer with latest location preference
-    await _updateCustomer(customer.id, {
+    await updateCustomer(customer.id, {
       location: cartData.location,
     });
 
@@ -67,21 +77,29 @@ export async function processCheckout (cartData: CartData): Promise<{
     const order = await prisma.order.create({
       data: {
         customerId: customer.id,
-        items: cartData.items,
         subtotal: cartData.subtotal,
         taxAmount: cartData.taxAmount,
         total: cartData.total,
         paymentMethod: cartData.paymentMethod ?? 'cash',
-        location: cartData.location,
+        storeLocationId: parseInt(cartData.location),
         status: 'completed',
         discountAmount: cartData.discountAmount ?? 0,
-        discountType: cartData.discountType ?? 'none',
+        discountType: cartData.discountType ? (cartData.discountType as any) : null,
+        items: {
+          create: cartData.items.map((item: CartItem) => ({
+            itemType: item.type || 'product',
+            sourceId: item.id,
+            description: item.name || item.description || 'Unknown item',
+            price: item.price,
+            quantity: item.quantity,
+          })),
+        },
       },
     });
 
     // Update stock levels for all items
     for (const item of cartData.items) {
-      await _adjustStockLevel(item.id, -item.quantity);
+      await adjustStockLevel(item.id, parseInt(cartData.location), -item.quantity, 'Order completed', undefined, true);
     }
 
     return {
