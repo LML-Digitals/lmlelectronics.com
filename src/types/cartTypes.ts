@@ -1,6 +1,6 @@
-export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
+export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
 
-export type ItemType = "product" | "bundle";
+export type ItemType = 'product' | 'bundle';
 
 export interface AvailableItem {
   id: string;

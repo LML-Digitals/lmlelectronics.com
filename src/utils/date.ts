@@ -6,9 +6,9 @@ import { format } from 'date-fns';
  * @param formatString Optional custom format string
  * @returns Formatted date string
  */
-export function formattedDateString(
+export function formattedDateString (
   date: Date,
-  formatString: string = 'PPP'
+  formatString = 'PPP',
 ): string {
   return format(date, formatString);
 }

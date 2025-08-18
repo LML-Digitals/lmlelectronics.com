@@ -18,9 +18,9 @@ export interface PriceCalculationInput {
 /**
  * Calculate the base cost of an item (before markup/labour/fee)
  */
-export function calculateCost(input: PriceCalculationInput): number {
+export function calculateCost (input: PriceCalculationInput): number {
   const { raw, tax = 0, shipping = 0, itemType } = input;
-  
+
   if (itemType === 'Services') {
     return raw;
   } else {
@@ -32,7 +32,7 @@ export function calculateCost(input: PriceCalculationInput): number {
 /**
  * Calculate the final price of an item
  */
-export function calculatePrice(input: PriceCalculationInput): number {
+export function calculatePrice (input: PriceCalculationInput): number {
   const cost = calculateCost(input);
   const { labour = 0, markup = 0, fee = 0, itemType } = input;
 
@@ -50,14 +50,14 @@ export function calculatePrice(input: PriceCalculationInput): number {
 /**
  * Calculate estimated cost for a quote
  */
-export function calculateQuoteEstimate(input: PriceCalculationInput): number {
+export function calculateQuoteEstimate (input: PriceCalculationInput): number {
   return calculatePrice(input);
 }
 
 /**
  * Format price to currency string
  */
-export function formatPrice(price: number): string {
+export function formatPrice (price: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
