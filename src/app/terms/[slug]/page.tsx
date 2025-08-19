@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { getActiveTermsBySlug } from '@/components/terms/services/termsCrud';
+import { getActiveTermsBySlug } from '@/lib/services/terms';
 import TermComponent from '@/components/terms/term-components/TermComponent';
 
 interface TermDetailPageProps {

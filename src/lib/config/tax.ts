@@ -4,7 +4,7 @@ import {
   getActiveTaxRates,
   getTaxDueOverview,
   getTaxSummary,
-} from "@/components/dashboard/tax/services/taxService";
+} from "@/lib/services/tax";
 import { TaxCategory } from "@prisma/client";
 
 export async function calculateTax(amount: number): Promise<number> {

@@ -170,11 +170,18 @@ export interface Bundle {
   bundleComponents: Array<{
     id: string;
     quantity: number;
+    displayOrder: number;
+    isHighlight: boolean;
     componentVariation: {
       id: string;
       name: string;
       sku: string;
       sellingPrice: number;
+      image: string | null;
+      inventoryItem: {
+        name: string;
+        description: string | null;
+      } | null;
     };
   }>;
   calculatedStock: any;

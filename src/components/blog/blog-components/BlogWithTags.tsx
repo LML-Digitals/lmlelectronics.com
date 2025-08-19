@@ -13,9 +13,9 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { getPublishedBlogs } from "@/components/blog/services/blogCrud";
-import { getTags } from "@/components/dashboard/Tags/services/tagCrud";
-import { getBlogCategories } from "@/components/blog/services/blogCategoryCrud"; // Assuming services are exported from an index file
+import { getPublishedBlogs } from "@/lib/services/blog";
+import { getTags } from "@/lib/services/blog";
+import { getBlogCategories } from "@/lib/services/blog";
 import { BlogWithDetailsType } from "@/components/blog/types/blogTypes";
 import { BlogCategory, Tag } from "@prisma/client";
 

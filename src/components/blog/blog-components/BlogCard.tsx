@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 // import BadgeComponent from "./BadgeComponent"; // Removed
-import { updateBlogSlugs } from "@/components/blog/services/blogCrud";
+import { updateBlogSlugs } from "@/lib/services/blog";
 import { toast } from "../../ui/use-toast";
 // Use a more specific type if available, like BlogWithAuthorAndTagsType or BlogWithDetailsType
 // Assuming BlogWithDetailsType is passed which includes category
