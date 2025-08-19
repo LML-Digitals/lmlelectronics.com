@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
 
     // Send email notification
     try {
-      await resend.emails.send({
+      if (resend) {
+        await resend.emails.send({
         from: "LML Electronics <noreply@lmlelectronics.com>",
         to: ["support@lmlelectronics.com"],
         subject: `New Contact Form Submission: ${subject}`,
@@ -54,7 +55,8 @@ export async function POST(req: NextRequest) {
           <hr>
           <p><small>Submitted on: ${new Date().toLocaleString()}</small></p>
         `,
-      });
+        });
+      }
     } catch (emailError) {
       console.error("Failed to send email notification:", emailError);
       // Don't fail the request if email fails

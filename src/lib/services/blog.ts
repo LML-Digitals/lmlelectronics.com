@@ -136,3 +136,20 @@ export async function updateBlogSlugs(): Promise<{ success: boolean; message?: s
     return { success: false, message: "Failed to update blog slugs" };
   }
 }
+
+// Function to get blog category by name from LML repair API
+export async function getBlogCategoryByName(name: string): Promise<any | null> {
+  try {
+    const response = await fetch(buildApiUrl(`/api/blogs/categories/name/${name}`), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await handleApiResponse<any>(response);
+  } catch (error) {
+    console.error(`Error fetching blog category ${name}:`, error);
+    return null;
+  }
+}

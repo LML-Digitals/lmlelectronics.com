@@ -13,7 +13,7 @@ function simpleHash(str: string): string {
 }
 import { v4 as uuidv4 } from "uuid";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(req: NextRequest) {
   try {
@@ -79,7 +79,8 @@ export async function POST(req: NextRequest) {
 
     // Send welcome email with discount code
     try {
-      await resend.emails.send({
+      if (resend) {
+        await resend.emails.send({
         from: "LML Electronics <noreply@lmlelectronics.com>",
         to: [email],
         subject: "Welcome to LML Electronics Newsletter! 🎉",
@@ -114,7 +115,8 @@ export async function POST(req: NextRequest) {
             </p>
           </div>
         `,
-      });
+        });
+      }
     } catch (emailError) {
       console.error("Failed to send welcome email:", emailError);
       // Don't fail the request if email fails
