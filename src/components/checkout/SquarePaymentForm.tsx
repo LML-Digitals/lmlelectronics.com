@@ -326,4 +326,6 @@ const SquarePaymentForm = forwardRef<SquarePaymentFormRef, SquarePaymentFormProp
   );
 });
 
+SquarePaymentForm.displayName = 'SquarePaymentForm';
+
 export default SquarePaymentForm;

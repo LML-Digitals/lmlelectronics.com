@@ -25,7 +25,7 @@ export function BarcodeScanner ({
   const scannerRef = useRef<HTMLDivElement>(null);
   const [lastResult, setLastResult] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const scanTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const scanTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Helper function to properly stop the scanner
   const stopScanner = () => {

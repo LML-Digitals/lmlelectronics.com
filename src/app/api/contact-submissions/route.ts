@@ -57,9 +57,8 @@ export async function POST (req: NextRequest) {
           <p><small>Submitted on: ${new Date().toLocaleString()}</small></p>
         `,
       });
-    } catch (emailError) {
-      console.error('Failed to send email notification:', emailError);
-      // Don't fail the request if email fails
+    } catch (_emailError) {
+      // Failed to send email notification - don't fail the request if email fails
     }
 
     return NextResponse.json(
@@ -71,7 +70,7 @@ export async function POST (req: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    console.error('Error processing contact form:', error);
+    // Error processing contact form
 
     return NextResponse.json(
       {

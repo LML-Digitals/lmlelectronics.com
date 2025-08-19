@@ -25,6 +25,7 @@ Command.displayName = CommandPrimitive.displayName;
 
 interface CommandDialogProps extends DialogProps {
   // This interface extends DialogProps and may be extended in the future
+  _placeholder?: never;
 }
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {

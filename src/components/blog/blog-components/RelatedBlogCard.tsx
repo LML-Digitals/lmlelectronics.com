@@ -61,10 +61,10 @@ function RelatedBlogCard ({ blog }: RelatedBlogCardProps) {
         <div className="mt-auto flex flex-wrap gap-1">
           {displayedTags.map((tag) => (
             <Link
+              key={tag.name}
               href={`/blogs/tags/${encodeURIComponent(tag.name.toLowerCase().replace(/ /g, '-'))}`}
             >
               <span
-                key={tag.name}
                 className="bg-gray-200 text-gray-700 px-2 py-1 text-xs rounded-full max-w-[100px] truncate"
               >
                 {tag.name}

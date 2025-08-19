@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { BlogCategory } from '@prisma/client';
+import Link from 'next/link';
 
 import { getBlogsByCategory } from '@/components/blog/services/blogCrud';
 import { BlogWithDetailsType } from '@/components/blog/types/blogTypes';
@@ -133,12 +134,12 @@ export default async function CategoryPage ({
             <p className='text-gray-600 mb-6'>
               No blog posts found in the {decodedSlug} category at the moment.
             </p>
-            <a
+            <Link
               href='/blogs'
               className='bg-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition-colors'
             >
               View All Blogs
-            </a>
+            </Link>
           </div>
         )}
       </div>

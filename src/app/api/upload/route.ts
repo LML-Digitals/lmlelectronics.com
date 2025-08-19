@@ -15,10 +15,10 @@ export async function POST (request: Request): Promise<NextResponse> {
 
     const { searchParams } = new URL(request.url);
     const filename = searchParams.get('filename');
-    const size = searchParams.get('size')
+    const _size = searchParams.get('size')
       ? parseInt(searchParams.get('size') as string, 10)
       : null;
-    const mimeType = searchParams.get('mimeType') || '';
+    const mimeType = searchParams.get('mimeType') ?? '';
 
     if (!filename || !request.body) {
       return NextResponse.json(
@@ -32,7 +32,7 @@ export async function POST (request: Request): Promise<NextResponse> {
       .from('lml-repair')
       .list('', { search: filename });
 
-    if (existingFiles && existingFiles.some((file) => file.name === filename)) {
+    if (existingFiles?.some((file) => file.name === filename)) {
       // If image exists, return its public URL without uploading again
       const { data: publicUrlData } = await supabase.storage
         .from('lml-repair')
@@ -61,7 +61,7 @@ export async function POST (request: Request): Promise<NextResponse> {
       });
 
     if (error) {
-      console.error('Supabase storage upload error:', error);
+      // Supabase storage upload error
 
       return NextResponse.json(
         { message: 'Failed to upload image to storage' },
@@ -75,7 +75,7 @@ export async function POST (request: Request): Promise<NextResponse> {
       .getPublicUrl(filename);
 
     if (!publicUrlData) {
-      console.error('Failed to generate public URL');
+      // Failed to generate public URL
 
       return NextResponse.json(
         { message: 'Failed to generate public URL' },
@@ -103,7 +103,7 @@ export async function POST (request: Request): Promise<NextResponse> {
 
     return response;
   } catch (error) {
-    console.error('Upload error:', error);
+    // Upload error
 
     return NextResponse.json(
       { message: 'Internal server error' },
