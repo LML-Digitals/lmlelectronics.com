@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import ProductCard from "./ProductCard";
 import type { InventoryItem } from "@/types/api";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
-import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
+import { getInventoryItems } from "@/lib/services/inventory";
 
 interface ProductListingProps {
   filters?: any;

@@ -7,11 +7,8 @@ export function ConditionalFooter() {
   const pathname = usePathname();
 
   // Exclude footer from these paths
-  const excludedPaths = [
-    "/dashboard",
-    "/auth/signin",
-    "/auth/signup",
-    "/auth/forgot-password",
+  const excludedPaths: string[] = [
+    // No excluded paths since we removed dashboard and auth
   ];
 
   // Check if current path should exclude footer

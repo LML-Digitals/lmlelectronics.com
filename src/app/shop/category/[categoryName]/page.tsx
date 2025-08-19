@@ -10,7 +10,7 @@ import type { InventoryItemCategory, InventoryVariation } from "@/types/api";
 import ProductCard from "@/components/products/ProductCard";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import PageHero from "@/components/PageHero";
-import { getInventoryCategoryBySlug } from "@/components/dashboard/inventory/categories/services/itemCategoryCrud";
+import { getInventoryCategoryBySlug } from "@/lib/services/inventory";
 
 // Generate dynamic metadata
 export async function generateMetadata({

@@ -30,7 +30,7 @@ import { calculateShipping } from "@/lib/config/shipping";
 import SquarePaymentForm, { SquarePaymentFormRef } from "./SquarePaymentForm";
 import { sendOrderConfirmationEmail } from "@/lib/email/sendOrderConfirmation";
 import { getStoreLocations } from "@/components/locations/services/storeLocationCrud";
-import { createOrderFromCheckout } from "@/app/actions/checkout";
+// Removed dashboard checkout action - will implement API call instead
 
 interface CustomerFormData {
   firstName: string;
@@ -236,8 +236,20 @@ const CheckoutClient = () => {
         paymentMethod: "Square Card",
       };
 
-      const result = await createOrderFromCheckout(checkoutDataWithPayment);
-      const data = result;
+      // Create order via API call to LML repair
+      const response = await fetch(buildApiUrl("/api/orders"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(checkoutDataWithPayment),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create order");
+      }
+
+      const data = await response.json();
       toast.success(`Order #${data.orderId} has been created`);
 
       // Send order confirmation email

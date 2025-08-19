@@ -9,7 +9,7 @@ import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import PageHero from "@/components/PageHero";
 import ProductsClientPage from "./ProductsClientPage";
 import Script from "next/script";
-import { getInventoryCategories } from "@/components/dashboard/inventory/categories/services/itemCategoryCrud";
+import { getInventoryCategories } from "@/lib/services/inventory";
 
 
 export async function generateMetadata(): Promise<Metadata> {

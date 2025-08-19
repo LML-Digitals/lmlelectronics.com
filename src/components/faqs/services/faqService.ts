@@ -1,19 +1,13 @@
 import { FAQ, FAQSubmission } from "@prisma/client";
 import {
-  searchFAQs as searchFAQsAdmin,
-  getFAQs,
-  createFAQSubmission,
-} from "@/components/dashboard/faqs/Services/faqCrud";
-import {
-  createCustomer,
-  getCustomer,
-} from "@/components/dashboard/customers/services/customerCrud";
+  getPublicFAQs as getPublicFAQsFromAPI,
+  searchPublicFAQs as searchPublicFAQsFromAPI,
+  submitFAQQuestion as submitFAQQuestionToAPI,
+} from "@/lib/services/faq";
 
 export async function getPublicFAQs(): Promise<FAQ[]> {
   try {
-    // Use the existing getFAQs function but filter for published ones only
-    const faqs = await getFAQs();
-    return faqs.filter((faq) => faq.isPublished);
+    return await getPublicFAQsFromAPI();
   } catch (error) {
     console.error("Error fetching FAQs:", error);
     return [];
@@ -42,9 +36,7 @@ export async function getPublicFAQsByCategory(): Promise<
 
 export async function searchPublicFAQs(query: string): Promise<FAQ[]> {
   try {
-    // Use the existing searchFAQs function but filter for published ones only
-    const results = await searchFAQsAdmin(query);
-    return results.filter((faq) => faq.isPublished);
+    return await searchPublicFAQsFromAPI(query);
   } catch (error) {
     console.error("Error searching FAQs:", error);
     return [];
@@ -57,45 +49,9 @@ export async function submitFAQQuestion(submission: {
   question: string;
 }): Promise<FAQSubmission> {
   try {
-    // Split name into first and last names (basic split)
-    const nameParts = submission.customerName.split(" ");
-    const firstName = nameParts[0];
-    const lastName = nameParts.slice(1).join(" ");
-
-    let customerId: string | undefined;
-
-    try {
-      // 1. Find customer by email
-      const existingCustomer = await getCustomer(submission.customerEmail);
-
-      if (existingCustomer) {
-        customerId = existingCustomer.id;
-      } else {
-        // 2. If not found, create a new customer
-        try {
-          const newCustomer = await createCustomer({
-            firstName: firstName,
-            lastName: lastName || "",
-            email: submission.customerEmail,
-          });
-          customerId = newCustomer.id;
-        } catch (createError) {
-          console.error("Failed to create new customer:", createError);
-        }
-      }
-    } catch (findError) {
-      console.error("Error finding/creating customer:", findError);
-    }
-
-    // 3. Create the FAQ submission
-    return await createFAQSubmission({
-      customerName: submission.customerName,
-      customerEmail: submission.customerEmail,
-      question: submission.question,
-    });
+    return await submitFAQQuestionToAPI(submission);
   } catch (error) {
     console.error("Error submitting FAQ:", error);
-    // Rethrowing the specific error might be more informative
     if (error instanceof Error) {
       throw new Error(`Failed to submit FAQ question: ${error.message}`);
     }

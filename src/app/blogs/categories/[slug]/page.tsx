@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { BlogCategory } from "@prisma/client";
-import { getBlogsByCategory } from "@/components/blog/services/blogCrud";
+import { getBlogsByCategory } from "@/lib/services/blog";
 import { BlogWithDetailsType } from "@/components/blog/types/blogTypes";
 import { getBlogCategories } from "@/components/blog/services/blogCategoryCrud"; // Updated import path
 import BlogCard from "@/components/blog/blog-components/BlogCard";

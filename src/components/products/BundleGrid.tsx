@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Package } from "lucide-react";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import { Card } from "@/components/ui/card";
-import { getBundles } from "../dashboard/inventory/bundles/services/bundles";
+import { getBundles } from "@/lib/services/bundles";
 
 interface BundleItem {
   id: string;
@@ -43,9 +43,9 @@ export default function BundleGrid() {
         setLoading(true);
         const bundles = await getBundles();
 
-        // Filter for bundles that are visible and have stock.
-        const visibleBundles = bundles.bundles?.filter((bundle) =>
-          bundle.variations.some((v) => v.visible)
+        // Filter for bundles that have variations.
+        const visibleBundles = bundles?.filter((bundle) =>
+          bundle.variations.length > 0
         );
         const data = visibleBundles;
 
