@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { Separator } from '@/components/ui/separator';
-import { getActiveTerms } from '@/components/terms/services/termsCrud';
+import { getActiveTerms } from '@/lib/services/terms';
 import TermCard from '@/components/terms/term-components/TermCard';
 import SearchableTerms from '@/components/terms/term-components/SearchableTerms';
 import Script from 'next/script';

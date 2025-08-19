@@ -12,8 +12,7 @@ import { InventoryItem } from "@/types/api";
 import { InventoryItemCategory } from "@/types/api";
 import { Product } from "@/components/products/ProductCarousel";
 import { Star, User } from "lucide-react";
-import { getInventoryItems } from "@/components/dashboard/inventory/items/services/itemsCrud";
-import { getInventoryCategories } from "@/components/dashboard/inventory/categories/services/itemCategoryCrud";
+import { getInventoryItems, getInventoryCategories } from "@/lib/services/inventory";
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = "https://lmlelectronics.com";

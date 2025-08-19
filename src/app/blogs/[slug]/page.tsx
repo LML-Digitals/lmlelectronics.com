@@ -1,6 +1,6 @@
 
 import BadgeComponent from "@/components/blog/blog-components/BadgeComponent";
-import { getBlogBySlug } from "@/components/blog/services/blogCrud";
+import { getBlogBySlug } from "@/lib/services/blog";
 import { Clock, User, Tag } from "lucide-react";
 import type { Metadata } from "next";
 import ReactMarkdown from "react-markdown";

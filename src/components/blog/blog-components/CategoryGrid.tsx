@@ -2,7 +2,7 @@
 import { useState, useEffect, JSX } from "react";
 import Link from "next/link";
 import { BlogCategory } from "@prisma/client";
-import { getBlogCategories } from "@/components/blog/services/blogCategoryCrud";
+import { getBlogCategories } from "@/lib/services/blog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 

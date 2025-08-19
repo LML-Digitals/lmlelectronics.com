@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import FeaturedBlogComp from "@/components/blog/blog-components/FeaturedBlogComp";
-import { getFeaturedBlog } from "@/components/blog/services/blogCrud";
+import { getFeaturedBlog } from "@/lib/services/blog";
 import BlogWithTags from "@/components/blog/blog-components/BlogWithTags";
 import { BlogWithDetailsType } from "@/components/blog/types/blogTypes";
 import Script from "next/script";

@@ -4,7 +4,7 @@ import BundleDetails from "@/components/bundles/BundleDetails";
 import { buildApiUrl, handleApiResponse } from "@/lib/config/api";
 import { BundleDetailsProps } from "@/components/bundles/BundleDetails";
 import PageHero from "@/components/PageHero";
-import { getBundleById } from "@/components/dashboard/inventory/bundles/services/bundles";
+import { getBundleById } from "@/lib/services/bundles";
 
 interface BundlePageProps {
   params: Promise<{
@@ -19,7 +19,7 @@ async function getBundleData(id: string) {
     if (!data) {
       return null;
     }
-    return data.bundle;
+    return data;
   } catch (error) {
     console.error("Error fetching bundle:", error);
     return null;
