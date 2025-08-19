@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { signIn } from 'next-auth/react';
 import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
@@ -23,7 +24,7 @@ const LoginForm = () => {
   const [error, setError] = useState('');
   const [isPending, startTransition] = useTransition();
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [captchaToken, setCaptchaToken] = useState('');
+  const [_captchaToken, setCaptchaToken] = useState('');
   const router = useRouter();
   const [step, setStep] = useState<'credentials' | '2fa'>('credentials');
   const [code, setCode] = useState('');

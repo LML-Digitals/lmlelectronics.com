@@ -28,13 +28,13 @@ export async function POST (request: Request): Promise<NextResponse> {
     }
 
     // Check if an image with the same filename already exists in storage
-    const { data: existingFiles } = await supabase.storage
+    const { data: existingFiles } = supabase.storage
       .from('lml-repair')
       .list('', { search: filename });
 
     if (existingFiles?.some((file) => file.name === filename)) {
       // If image exists, return its public URL without uploading again
-      const { data: publicUrlData } = await supabase.storage
+      const { data: publicUrlData } = supabase.storage
         .from('lml-repair')
         .getPublicUrl(filename);
 
@@ -53,7 +53,7 @@ export async function POST (request: Request): Promise<NextResponse> {
 
     // Upload to Supabase Storage
     const bucketName = 'lml-repair';
-    const { data, error } = await supabase.storage
+    const { data: _data, error } = await supabase.storage
       .from(bucketName)
       .upload(filename, fileData, {
         contentType: mimeType,
@@ -70,7 +70,7 @@ export async function POST (request: Request): Promise<NextResponse> {
     }
 
     // Get the public URL for the uploaded file
-    const { data: publicUrlData } = await supabase.storage
+    const { data: publicUrlData } = supabase.storage
       .from(bucketName)
       .getPublicUrl(filename);
 
@@ -102,7 +102,7 @@ export async function POST (request: Request): Promise<NextResponse> {
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
     return response;
-  } catch (error) {
+  } catch (_error) {
     // Upload error
 
     return NextResponse.json(

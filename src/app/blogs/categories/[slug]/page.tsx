@@ -4,9 +4,8 @@ import Link from 'next/link';
 
 import { getBlogsByCategory } from '@/components/blog/services/blogCrud';
 import { BlogWithDetailsType } from '@/components/blog/types/blogTypes';
-import { getBlogCategories } from '@/components/blog/services/blogCategoryCrud'; // Updated import path
+import { getBlogCategories, getBlogCategoryByName } from '@/components/blog/services/blogCategoryCrud';
 import BlogCard from '@/components/blog/blog-components/BlogCard';
-import { getBlogCategoryByName } from '@/components/blog/services/blogCategoryCrud';
 
 export async function generateMetadata ({
   params,
