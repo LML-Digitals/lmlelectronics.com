@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Define allowed origins
+const allowedOrigins = [
+  'https://lmlelectronics.com',
+  'https://www.lmlelectronics.com',
+  'https://lmlrepair.com',
+  'https://www.lmlrepair.com'
+];
+
+// Add localhost for development
+if (process.env.NODE_ENV === 'development') {
+  allowedOrigins.push('http://localhost:3000', 'http://localhost:3001');
+}
+
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const { pathname } = req.nextUrl;
+  const origin = req.headers.get('origin');
 
   // Handle CORS for API routes
   if (pathname.startsWith("/api")) {
@@ -10,7 +24,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
       return new NextResponse(null, {
         status: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Origin": allowedOrigins.includes(origin || '') ? origin! : allowedOrigins[0],
           "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
           "Access-Control-Allow-Headers":
             "Content-Type, Authorization, X-Requested-With",
@@ -22,7 +36,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     const response = NextResponse.next();
 
     // Add CORS headers to all API responses
-    response.headers.set("Access-Control-Allow-Origin", "*");
+    response.headers.set("Access-Control-Allow-Origin", allowedOrigins.includes(origin || '') ? origin! : allowedOrigins[0]);
     response.headers.set(
       "Access-Control-Allow-Methods",
       "GET, POST, PUT, DELETE, OPTIONS"
