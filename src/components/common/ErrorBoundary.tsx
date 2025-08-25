@@ -37,32 +37,35 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log detailed error information to console
-    console.group(`🚨 Client-Side Error (${this.state.errorId})`);
-    console.error("Error:", error);
-    console.error("Error Stack:", error.stack);
-    console.error("Component Stack:", errorInfo.componentStack);
-    console.error("Error Info:", errorInfo);
-    
-    // Log additional context
-    console.log("URL:", window.location.href);
-    console.log("User Agent:", navigator.userAgent);
-    console.log("Timestamp:", new Date().toISOString());
-    console.log("Session Storage:", Object.keys(sessionStorage));
-    console.log("Local Storage:", Object.keys(localStorage));
-    
-    // Check for common issues
-    this.diagnoseCommonIssues(error, errorInfo);
-    
-    console.groupEnd();
+    // Log error details for debugging (only in development)
+    if (process.env.NODE_ENV === "development") {
+      console.log("URL:", window.location.href);
+      console.log("User Agent:", navigator.userAgent);
+      console.log("Timestamp:", new Date().toISOString());
+      console.log("Session Storage:", Object.keys(sessionStorage));
+      console.log("Local Storage:", Object.keys(localStorage));
+    }
 
-    // Update state with error info
     this.setState({
+      hasError: true,
+      error,
       errorInfo,
     });
 
-    // Send error to analytics or monitoring service (if configured)
-    this.reportError(error, errorInfo);
+    // In production, you might want to send this to an error reporting service
+    if (process.env.NODE_ENV === "production") {
+      // Send to error reporting service (e.g., Sentry, LogRocket)
+      // reportError(error, errorInfo);
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
+    if (prevState.hasError && !this.state.hasError) {
+      // Error was resolved, log for debugging
+      if (process.env.NODE_ENV === "development") {
+        console.log("This often happens when server and client render different content");
+      }
+    }
   }
 
   private diagnoseCommonIssues(error: Error, errorInfo: React.ErrorInfo) {
