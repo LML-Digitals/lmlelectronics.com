@@ -59,7 +59,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     }
   }
 
-  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
+  componentDidUpdate(prevProps: Readonly<ErrorBoundaryProps>, prevState: Readonly<ErrorBoundaryState>) {
     if (prevState.hasError && !this.state.hasError) {
       // Error was resolved, log for debugging
       if (process.env.NODE_ENV === "development") {
