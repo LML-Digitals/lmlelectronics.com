@@ -4,8 +4,49 @@ import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
+// Simple rate limiting store (in production, use Redis)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+function sanitizeInput(input: string): string {
+  return input
+    .trim()
+    .replace(/[<>]/g, '') // Remove potential HTML tags
+    .substring(0, 1000); // Limit length
+}
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000; // 15 minutes
+  const maxRequests = 5; // 5 requests per 15 minutes
+
+  const record = rateLimitStore.get(ip);
+  
+  if (!record || now > record.resetTime) {
+    rateLimitStore.set(ip, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+
+  if (record.count >= maxRequests) {
+    return false;
+  }
+
+  record.count++;
+  return true;
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // Rate limiting
+    const forwarded = req.headers.get('x-forwarded-for');
+    const realIp = req.headers.get('x-real-ip');
+    const ip = forwarded?.split(',')[0] || realIp || 'unknown';
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const data = await req.json();
     const { firstName, lastName, email, subject, message } = data;
 
@@ -17,9 +58,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Sanitize inputs
+    const sanitizedData = {
+      firstName: sanitizeInput(firstName),
+      lastName: sanitizeInput(lastName),
+      email: sanitizeInput(email).toLowerCase(),
+      subject: sanitizeInput(subject),
+      message: sanitizeInput(message),
+    };
+
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(sanitizedData.email)) {
       return NextResponse.json(
         { error: "Invalid email format" },
         { status: 400 }
@@ -29,11 +79,11 @@ export async function POST(req: NextRequest) {
     // Create contact submission in database
     const submission = await prisma.contactSubmission.create({
       data: {
-        firstName,
-        lastName,
-        email,
-        subject,
-        message,
+        firstName: sanitizedData.firstName,
+        lastName: sanitizedData.lastName,
+        email: sanitizedData.email,
+        subject: sanitizedData.subject,
+        message: sanitizedData.message,
         status: "UNREAD",
       },
     });
@@ -44,14 +94,14 @@ export async function POST(req: NextRequest) {
         await resend.emails.send({
         from: "LML Electronics <noreply@lmlelectronics.com>",
         to: ["support@lmlelectronics.com"],
-        subject: `New Contact Form Submission: ${subject}`,
+        subject: `New Contact Form Submission: ${sanitizedData.subject}`,
         html: `
           <h2>New Contact Form Submission</h2>
-          <p><strong>From:</strong> ${firstName} ${lastName}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>From:</strong> ${sanitizedData.firstName} ${sanitizedData.lastName}</p>
+          <p><strong>Email:</strong> ${sanitizedData.email}</p>
+          <p><strong>Subject:</strong> ${sanitizedData.subject}</p>
           <p><strong>Message:</strong></p>
-          <p>${message}</p>
+          <p>${sanitizedData.message}</p>
           <hr>
           <p><small>Submitted on: ${new Date().toLocaleString()}</small></p>
         `,

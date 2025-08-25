@@ -1,16 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Resend } from "resend";
-// Simple hash function to replace bcryptjs
-function simpleHash(str: string): string {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  return hash.toString(36);
-}
+import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
@@ -63,7 +54,7 @@ export async function POST(req: NextRequest) {
     
     // Create a random password for new customer
     const plainPassword = uuidv4().substring(0, 8);
-    const hashedPassword = simpleHash(plainPassword);
+    const hashedPassword = await bcrypt.hash(plainPassword, 12);
 
     // Create new customer with newsletter subscription
     const customer = await prisma.customer.create({
